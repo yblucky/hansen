@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 幸运积分项目，免登录验证的接口 -->
+<no_authorized>
+	<url>/mall/user/wxlogin</url>
+	<url>/goods/sortlist</url>
+	<url>/goods/goodslist</url>
+	<url>/goods/detail</url>
+	<url>/order/detail</url>
+	<url>/mall/upload/getToken</url>
+	<url>/index</url>
+	<url>/order/cartlist</url>
+	<url>/order/addcart</url>
+	<url>/user/token</url>
+	<url>/user/userinfo</url>
+
+
+	<!-- 静态资源-->
+	<url>/resources</url>
+	<url>/download</url>
+	<url>/MP_verify</url>
+
+</no_authorized>
+
+
+
+

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall.mapper.MallGoodsMapper">
+
+	<sql id="fields">
+		id, sortId, storeId, storeName, name, icon, price,detail, goodsType, stock, isTop, isRecommend,originalPrice,
+		createTime, updateTime, status, remark
+	</sql>
+
+	<sql id="table">mall_goods</sql>
+
+	<sql id="selector">
+		SELECT
+		<include refid="fields" />
+		FROM
+		<include refid="table" />
+	</sql>
+
+	<sql id="condition">
+		<where>
+			1=1
+			<if test="model.id != null">AND id= #{model.id}</if>
+			<if test="model.sortId != null">AND sortId= #{model.sortId}</if>
+			<if test="model.isTop != null">AND isTop= #{model.isTop}</if>
+			<if test="model.isRecommend != null">AND isRecommend= #{model.isRecommend}</if>
+			<if test="model.name != null">AND name= #{model.name}</if>
+			<if test="model.status != null">AND status= #{model.status}</if>
+		</where>
+	</sql>
+
+	<insert id="create"  useGeneratedKeys="true"   keyProperty="id">
+		INSERT INTO
+		<include refid="table" />
+		(
+		<include refid="fields" />
+		)
+		VALUES (#{id}, #{sortId}, #{storeId},
+		         #{storeName}, #{name},#{icon}, #{price},#{detail},#{goodsType}, #{stock},
+			     #{isTop}, #{isRecommend},#{originalPrice},
+	             #{createTime}, #{updateTime}, #{status},#{remark})
+	</insert>
+
+
+
+	<!--<update id="update">-->
+		<!--UPDATE-->
+		<!--<include refid="table" />-->
+		<!--<set>-->
+			<!--<if test="model.name != null">name= #{model.name},</if>-->
+			<!--<if test="model.icon != null">icon= #{model.icon},</if>-->
+			<!--<if test="model.price != null">price= #{model.price},</if>-->
+			<!--<if test="model.drawPrice != null">drawPrice= #{model.drawPrice},</if>-->
+			<!--<if test="model.drawNum != null">drawNum= #{model.drawNum},</if>-->
+			<!--<if test="model.detail != null">detail= #{model.detail},</if>-->
+			<!--<if test="model.stock != null">stock= #{model.stock},</if>-->
+			<!--<if test="model.curIssueNo != null">curIssueNo= #{model.curIssueNo},</if>-->
+			<!--<if test="model.curIssueId != null">curIssueId= #{model.curIssueId},</if>-->
+			<!--<if test="model.saleSwitch != null">saleSwitch= #{model.saleSwitch},</if>-->
+			<!--<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>-->
+			<!--<if test="model.status != null">status= #{model.status},</if>-->
+			<!--<if test="model.remark != null">remark= #{model.remark},</if>-->
+			<!--<if-->
+				<!--test="model.firstReferrerScale != null and model.firstReferrerScale >= 0">firstReferrerScale= #{model.firstReferrerScale},</if>-->
+			<!--<if-->
+				<!--test="model.secondReferrerScale != null  and model.secondReferrerScale >= 0">secondReferrerScale= #{model.secondReferrerScale},</if>-->
+			<!--<if-->
+				<!--test="model.thirdReferrerScale != null  and model.thirdReferrerScale >= 0">thirdReferrerScale= #{model.thirdReferrerScale},</if>-->
+			<!--<if test="model.businessSendEp != null  and model.businessSendEp >= 0">businessSendEp= #{model.businessSendEp},</if>-->
+			<!--<if test="model.originalPrice != null">originalPrice= #{model.originalPrice}</if>-->
+		<!--</set>-->
+		<!--WHERE id = #{id}-->
+	<!--</update>-->
+
+	 <!---->
+
+
+	<select id="readById" resultType="com.mall.model.MallGoods">
+		<include refid="selector"/>
+		where id=#{id} limit 1;
+	</select>
+
+	<select id="readList" resultType="com.mall.model.MallGoods">
+		<include refid="selector"/>
+		<include refid="condition"/>
+		ORDER BY createTime DESC
+		limit #{startRow}, #{pageSize};
+	</select>
+
+
+	<select id="readCount" resultType="int">
+		select count(1) from
+		<include refid="table"/>
+		<include refid="condition"/>
+	</select>
+
+	<select id="readOne" resultType="com.mall.model.MallGoods">
+		<include refid="selector"/>
+		<include refid="condition"/>
+		limit 1;
+	</select>
+
+
+	<update id="deleteById">
+		update
+		<include refid="table"/>
+		set status = 1,updateTime=now() where id = #{id}
+	</update>
+</mapper>
+
+

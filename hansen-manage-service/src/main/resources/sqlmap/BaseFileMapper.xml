@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall.mapper.BaseFileMapper">
+
+	<sql id="fields">
+        id, filename, icon, uploadUserId, type,
+		createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_sys_file_link</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.id != null and model.id != ''">id=#{model.id}</if>
+            <if test="model.uploadUserId != null ">and uploadUserId=#{model.uploadUserId}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{id}, #{fileId}, #{linkId}, #{linkType}, #{isDefault}, 
+			#{createTime}, #{updateTime}, #{status}, #{remark})
+    </insert>
+
+
+
+
+
+    <select id="readById" resultType="com.mall.model.BaseFile">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.BaseFile">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        ORDER BY createTime DESC
+        limit #{startRow}, #{pageSize};
+    </select>
+
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table"/>
+        <include refid="condition"/>
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.BaseFile">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+
+    <update id="deleteById">
+        update
+        <include refid="table"/>
+        set status = 1,updateTime=now() where id = #{id}
+    </update>
+	
+</mapper>
+
+
