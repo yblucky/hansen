@@ -3,21 +3,21 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.yanbao</groupId>
-		<artifactId>mall</artifactId>
+		<artifactId>hansen</artifactId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>mall-manage-web</artifactId>
+	<artifactId>hansen-manage-web</artifactId>
 	<packaging>war</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.yanbao</groupId>
-			<artifactId>mall-core</artifactId>
+			<artifactId>hansen-core</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency> 
 			<groupId>com.yanbao</groupId>
-			<artifactId>mall-manage-service</artifactId>
+			<artifactId>hansen-manage-service</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
