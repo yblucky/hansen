@@ -46,7 +46,7 @@ public class UserController {
     /**
      * 微信登录
      */
-    @ResponseBody
+  /*  @ResponseBody
     @RequestMapping(value = "/token", method = RequestMethod.GET)
     public JsonResult loginByWeixin(HttpServletRequest request, String id) throws Exception {
         if (StringUtils.isBlank(id)) {
@@ -64,9 +64,9 @@ public class UserController {
     }
 
 
-    /**
+    *//**
      * 微信登录
-     */
+     *//*
     @ResponseBody
     @RequestMapping(value = "/wxlogin", method = RequestMethod.POST)
     public JsonResult loginByWeixin(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
@@ -117,9 +117,9 @@ public class UserController {
     }
 
 
-    /**
+    *//**
      * 微信分享
-     */
+     *//*
     @RequestMapping(value = "/share", method = RequestMethod.GET)
     public ModelAndView share(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -138,9 +138,9 @@ public class UserController {
         return mv;
     }
 
-    /**
+    *//**
      * 微信分享回调
-     */
+     *//*
     @RequestMapping(value = "/share/callback", method = RequestMethod.GET)
     public ModelAndView share(HttpServletRequest request, String code, String state) throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -173,9 +173,9 @@ public class UserController {
         return mv;
     }
 
-    /**
+    *//**
      * App下载页面
-     */
+     *//*
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public ModelAndView share(HttpServletRequest request, String uid) throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -185,9 +185,9 @@ public class UserController {
         return mv;
     }
 
-    /*
+    *//*
      * 根据token获取用户信息
-     */
+     *//*
     @ResponseBody
     @RequestMapping(value = "/userinfo", method = RequestMethod.GET)
     public JsonResult getUserInfo(HttpServletRequest request) throws Exception {
@@ -206,9 +206,9 @@ public class UserController {
         return new JsonResult(user);
     }
 
-    /**
+    *//**
      * 设置/修改支付密码
-     */
+     *//*
     @ResponseBody
     @RequestMapping(value = "/change/payPwd", method = RequestMethod.POST)
     public JsonResult changePayPwd(HttpServletRequest request, @RequestBody PayPwdVo vo) throws Exception {
@@ -242,5 +242,5 @@ public class UserController {
         model.setPayWord(Md5Util.MD5Encode(vo.getNewPayPwd(), user.getSalt()));
         userService.updateById(token.getId(), model);
         return new JsonResult();
-    }
+    }*/
 }
