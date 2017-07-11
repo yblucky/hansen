@@ -63,7 +63,7 @@
 	
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-		<property name="basePackage" value="com.mall.mapper" />
+		<property name="basePackage" value="com.manage.mapper" />
 	</bean>
 
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -103,7 +103,7 @@
 	</bean>
 
 	<mvc:interceptors>
-		<bean class="com.mall.interceptor.ApiActionInterceptor"></bean>
+		<bean class="com.manage.interceptor.ApiActionInterceptor"></bean>
 	</mvc:interceptors>	
 
 	<import resource="classpath*:config/spring-redis.xml" />

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.mall.mapper.WalletTransactionMapper">
+<mapper namespace="com.manage.mapper.WalletTransactionMapper">
 
 	<sql id="fields">
 		userId,txtId,prepayId,transactionLongTime,transactionTime,address,amount,category,fee,confirmations,transactionStatus,message,createTime,updateTime,status,remark
@@ -41,15 +41,15 @@
 		values(#{id},#{userId},#{txtId},#{prepayId},#{transactionLongTime},#{transactionTime},#{address},#{amount},#{category},#{fee},#{confirmations},#{transactionStatus},#{message},now(),now(),#{status},#{remark});
 	</insert>
 
-	<select id="readById" resultType="com.mall.model.WalletTransaction">
+	<select id="readById" resultType="com.manage.model.WalletTransaction">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.mall.model.WalletTransaction">
+	<select id="readList" resultType="com.manage.model.WalletTransaction">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.mall.model.WalletTransaction">
+	<select id="readOne" resultType="com.manage.model.WalletTransaction">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

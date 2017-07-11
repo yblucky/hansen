@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.mall.mapper.TradeRecordDetailMapper">
+<mapper namespace="com.manage.mapper.TradeRecordDetailMapper">
 	<sql id="fields">
 		orderNo,userId,amount,recordType,firstReferrerScale,scale,createTime,updateTime,status,remark
 	</sql>
@@ -34,15 +34,15 @@
 		values(#{id},#{orderNo},#{userId},#{amount},#{recordType},#{firstReferrerScale},#{scale},now(),now(),#{status},#{remark});
 	</insert>
 
-	<select id="readById" resultType="com.mall.model.TradeRecordDetail">
+	<select id="readById" resultType="com.manage.model.TradeRecordDetail">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.mall.model.TradeRecordDetail">
+	<select id="readList" resultType="com.manage.model.TradeRecordDetail">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.mall.model.TradeRecordDetail">
+	<select id="readOne" resultType="com.manage.model.TradeRecordDetail">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

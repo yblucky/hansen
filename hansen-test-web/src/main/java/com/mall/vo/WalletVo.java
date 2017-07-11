@@ -1,4 +1,4 @@
-package com.mall.vo;
+package com.manage.vo;
 
 import java.io.Serializable;
 

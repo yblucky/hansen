@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.mall.mapper.CardGradeMapper">
+<mapper namespace="com.manage.mapper.CardGradeMapper">
 
 	<sql id="fields">
 		grade,insuranceAmt,releaseScale,activeCodeNo,registerCodeNo,outMultiple,createTime,updateTime,status,remark
@@ -35,15 +35,15 @@
 		values(#{id},#{grade},#{insuranceAmt},#{releaseScale},#{activeCodeNo},#{registerCodeNo},#{outMultiple},now(),now(),#{status},#{remark});
 	</insert>
 
-	<select id="readById" resultType="com.mall.model.CardGrade">
+	<select id="readById" resultType="com.manage.model.CardGrade">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.mall.model.CardGrade">
+	<select id="readList" resultType="com.manage.model.CardGrade">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.mall.model.CardGrade">
+	<select id="readOne" resultType="com.manage.model.CardGrade">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

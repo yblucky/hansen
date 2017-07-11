@@ -1,4 +1,4 @@
-package com.mall.util;
+package com.manage.util;
 /** 
 * @author   zzwei 
 * @version  2016年6月13日 下午5:18:05 

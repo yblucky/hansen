@@ -1,10 +1,10 @@
-package com.mall.controller;
+package com.manage.controller;
 
-import com.mall.constant.OrderType;
-import com.mall.core.page.JsonResult;
-import com.mall.model.MallOrder;
-import com.mall.service.*;
-import com.mall.util.WechatUtil;
+import com.manage.constant.OrderType;
+import com.manage.core.page.JsonResult;
+import com.manage.model.MallOrder;
+import com.manage.service.*;
+import com.manage.util.WechatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

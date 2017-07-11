@@ -1,4 +1,4 @@
-package com.mall.util;
+package com.manage.util;
 
 
 import java.io.BufferedReader;

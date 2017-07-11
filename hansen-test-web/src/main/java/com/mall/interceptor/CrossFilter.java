@@ -1,4 +1,4 @@
-package com.mall.interceptor;
+package com.manage.interceptor;
 
 import java.io.IOException;
 

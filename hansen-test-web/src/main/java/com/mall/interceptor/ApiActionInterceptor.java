@@ -1,12 +1,12 @@
-package com.mall.interceptor;
+package com.manage.interceptor;
 
-import com.mall.common.Token;
-import com.mall.constant.RedisKey;
-import com.mall.constant.ResultCode;
-import com.mall.core.exception.CommonException;
-import com.mall.redis.Strings;
-import com.mall.util.FileUtil;
-import com.mall.util.TokenUtil;
+import com.manage.common.Token;
+import com.manage.constant.RedisKey;
+import com.manage.constant.ResultCode;
+import com.manage.core.exception.CommonException;
+import com.manage.redis.Strings;
+import com.manage.util.FileUtil;
+import com.manage.util.TokenUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;

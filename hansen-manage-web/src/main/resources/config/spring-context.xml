@@ -12,7 +12,7 @@
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
-	<context:component-scan base-package="com.mall" />
+	<context:component-scan base-package="com.manage" />
 	
 	<mvc:annotation-driven/> 
 	
@@ -56,7 +56,7 @@
 	
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-		<property name="basePackage" value="com.mall.mapper" />
+		<property name="basePackage" value="com.manage.mapper" />
 	</bean>
 
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -82,7 +82,7 @@
     </bean>
     
     <mvc:interceptors>
-		<bean class="com.mall.interceptor.ActionInterceptor"></bean>
+		<bean class="com.manage.interceptor.ActionInterceptor"></bean>
 	</mvc:interceptors>	
 
 	<import resource="classpath*:config/spring-redis.xml" />
