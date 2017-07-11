@@ -1,4 +1,4 @@
-package com.manage.task;
+package com.api.task;
 
 import java.util.List;
 
@@ -9,17 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.manage.constant.DrawType;
-import com.manage.constant.IssueType;
-import com.manage.constant.RecordType;
-import com.manage.model.GoodsIssue;
-import com.manage.model.GoodsIssueDetail;
-import com.manage.model.WalletRecord;
-import com.manage.service.GoodsIssueDetailService;
-import com.manage.service.GoodsIssueService;
-import com.manage.service.MallGoodsService;
-import com.manage.service.BaseUserService;
-import com.manage.service.MallRecordService;
+import com.api.constant.DrawType;
+import com.api.constant.IssueType;
+import com.api.constant.RecordType;
+import com.api.model.GoodsIssue;
+import com.api.model.GoodsIssueDetail;
+import com.api.model.WalletRecord;
+import com.api.service.GoodsIssueDetailService;
+import com.api.service.GoodsIssueService;
+import com.api.service.MallGoodsService;
+import com.api.service.BaseUserService;
+import com.api.service.MallRecordService;
 
 /**
  * 竞拍回退定时器

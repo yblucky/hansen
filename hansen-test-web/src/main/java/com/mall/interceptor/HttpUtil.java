@@ -1,4 +1,4 @@
-package com.manage.interceptor;
+package com.api.interceptor;
 
 
 import net.sf.json.JSONObject;

@@ -31,18 +31,18 @@
         </where>
     </sql>
 
-    <select id="readById" resultType="com.manage.model.Parameter">
+    <select id="readById" resultType="com.api.model.Parameter">
         <include refid="selector"/>
         where id=#{id} limit 1;
     </select>
 
-    <select id="readList" resultType="com.manage.model.Parameter">
+    <select id="readList" resultType="com.api.model.Parameter">
         <include refid="selector"/>
         <include refid="condition"/>
         limit #{startRow}, #{pageSize};
     </select>
 
-    <select id="readOne" resultType="com.manage.model.Parameter">
+    <select id="readOne" resultType="com.api.model.Parameter">
         <include refid="selector"/>
         <include refid="condition"/>
         limit 1;
@@ -82,7 +82,7 @@
     </update>
 
     <!-- 查询所有系统参数 -->
-    <select id="getList" resultType="com.manage.model.Parameter">
+    <select id="getList" resultType="com.api.model.Parameter">
         <include refid="selector"/>
     </select>
 

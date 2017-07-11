@@ -1,4 +1,4 @@
-package com.manage.vo;
+package com.api.vo;
 
 import java.io.Serializable;
 

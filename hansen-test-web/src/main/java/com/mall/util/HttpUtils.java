@@ -1,4 +1,4 @@
-package com.manage.util;
+package com.api.util;
 
 
 import java.io.BufferedReader;

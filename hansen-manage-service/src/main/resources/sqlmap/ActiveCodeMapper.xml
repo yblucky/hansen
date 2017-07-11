@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.manage.mapper.ActiveCodeMapper">
+<mapper namespace="com.api.mapper.ActiveCodeMapper">
 	<sql id="fields">
 		code,ownerId,type,usedUserId,createTime,updateTime,status,remark
 	</sql>
@@ -32,15 +32,15 @@
 		values(#{id},#{code},#{ownerId},#{type},#{usedUserId},now(),now(),#{status},#{remark});
 	</insert>
 
-	<select id="readById" resultType="com.manage.model.ActiveCode">
+	<select id="readById" resultType="com.api.model.ActiveCode">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.manage.model.ActiveCode">
+	<select id="readList" resultType="com.api.model.ActiveCode">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.manage.model.ActiveCode">
+	<select id="readOne" resultType="com.api.model.ActiveCode">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

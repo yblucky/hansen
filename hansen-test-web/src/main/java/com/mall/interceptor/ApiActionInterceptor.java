@@ -1,12 +1,12 @@
-package com.manage.interceptor;
+package com.api.interceptor;
 
-import com.manage.common.Token;
-import com.manage.constant.RedisKey;
-import com.manage.constant.ResultCode;
-import com.manage.core.exception.CommonException;
-import com.manage.redis.Strings;
-import com.manage.util.FileUtil;
-import com.manage.util.TokenUtil;
+import com.api.common.Token;
+import com.api.constant.RedisKey;
+import com.api.constant.ResultCode;
+import com.api.core.exception.CommonException;
+import com.api.redis.Strings;
+import com.api.util.FileUtil;
+import com.api.util.TokenUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;

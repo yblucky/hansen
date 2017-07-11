@@ -1,4 +1,4 @@
-package com.manage.util;
+package com.api.util;
 
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;

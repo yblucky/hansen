@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.manage.mapper.WalletCurrencyMapper">
+<mapper namespace="com.api.mapper.WalletCurrencyMapper">
 	<sql id="fields">
 		currencyName,currencyType,createTime,updateTime,status,remark
 	</sql>
@@ -30,15 +30,15 @@
 		values(#{id},#{currencyName},#{currencyType},now(),now(),#{status},#{remark});
 	</insert>
 
-	<select id="readById" resultType="com.manage.model.WalletCurrency">
+	<select id="readById" resultType="com.api.model.WalletCurrency">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.manage.model.WalletCurrency">
+	<select id="readList" resultType="com.api.model.WalletCurrency">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.manage.model.WalletCurrency">
+	<select id="readOne" resultType="com.api.model.WalletCurrency">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

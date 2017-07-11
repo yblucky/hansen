@@ -1,4 +1,4 @@
-package com.manage.util;
+package com.api.util;
 /** 
 * @author   zzwei 
 * @version  2016年6月13日 下午5:18:05 

@@ -1,4 +1,4 @@
-package com.manage.util;
+package com.api.util;
 
 /**
  * 短信模板类

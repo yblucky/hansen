@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.manage.mapper.UserMapper">
+<mapper namespace="com.api.mapper.UserMapper">
 
 	<sql id="fields">
 		uid,unionId,phone,loginName,email,amount,nickName,sex,salt,headImgUrl,province,city,county,addr,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardLevel
@@ -63,15 +63,15 @@
 		values(#{id},#{uid},#{unionId},#{phone},#{loginName},#{email},#{amount},#{nickName},#{sex},#{salt},#{headImgUrl},#{province},#{city},#{county},#{addr},#{loginTime},#{openId},#{payWord},#{password},#{firstReferrer},#{secondReferrer},#{grade},#{cardLevel},#{releaseTime},#{equityAmt},#{payAmt},#{tradeAmt},#{maxProfits},#{sumProfits},#{cashOutProfits},#{contactUserId},#{activeCodeNo},#{registerCodeNo},#{levles},now(),now(),#{status},#{remark});
 	</insert>
 
-	<select id="readById" resultType="com.manage.model.User">
+	<select id="readById" resultType="com.api.model.User">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.manage.model.User">
+	<select id="readList" resultType="com.api.model.User">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.manage.model.User">
+	<select id="readOne" resultType="com.api.model.User">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

@@ -14,7 +14,7 @@
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		">
  
-	<context:component-scan base-package="com.manage" />
+	<context:component-scan base-package="com.api" />
 	
 	<mvc:annotation-driven/> 
 	
@@ -63,7 +63,7 @@
 	
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-		<property name="basePackage" value="com.manage.mapper" />
+		<property name="basePackage" value="com.api.mapper" />
 	</bean>
 
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -105,7 +105,7 @@
     </bean>
     
     <mvc:interceptors>
-		<bean class="com.manage.interceptor.ApiActionInterceptor"></bean>
+		<bean class="com.api.interceptor.ApiActionInterceptor"></bean>
 	</mvc:interceptors>	
 
 	<import resource="classpath*:config/spring-redis.xml" />
