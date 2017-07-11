@@ -25,8 +25,4 @@ public class BaseUserServiceImpl extends CommonServiceImpl<BaseUser> implements 
         return BaseUser.class;
     }
 
-    @Override
-    public BaseUser readByUnionId(String unionId) {
-        return baseUserDao.readByUnionId(unionId);
-    }
 }

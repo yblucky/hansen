@@ -1,7 +1,7 @@
 package com.mall.mapper;
 
+import com.mall.core.dao.CommonDao;
 import com.mall.model.Parameter;
-import com.yanbao.core.dao.CommonDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,6 +15,7 @@ public interface ParameterMapper extends CommonDao<Parameter> {
 
     /**
      * 代理区域或搜索区域商家列表
+     *
      * @return
      * @throws Exception
      */

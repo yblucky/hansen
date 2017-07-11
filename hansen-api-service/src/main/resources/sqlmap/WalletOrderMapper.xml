@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall.mapper.WalletOrderMapper">
+
+	<sql id="fields">
+		orderNo,sendUserId,receviceUserId,amount,confirmAmt,poundage,orderType,createTime,updateTime,status,remark
+	</sql>
+
+	<sql id="fields_id">
+		id,<include refid="fields"/>
+	</sql>
+
+	<sql id="table_name">wallet_order</sql>
+
+	<sql id="selector">
+		select <include refid="fields_id"/> from <include refid="table_name"/>
+	</sql>
+
+	<sql id="condition">
+		<where>
+			<if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+			<if test="model.sendUserId != null and model.sendUserId != ''">and sendUserId=#{model.sendUserId}</if>
+			<if test="model.receviceUserId != null and model.receviceUserId != ''">and receviceUserId=#{model.receviceUserId}</if>
+			<if test="model.amount != null">and amount=#{model.amount}</if>
+			<if test="model.confirmAmt != null">and confirmAmt=#{model.confirmAmt}</if>
+			<if test="model.poundage != null">and poundage=#{model.poundage}</if>
+			<if test="model.orderType != null">and orderType=#{model.orderType}</if>
+			<if test="model.status != null">and status=#{model.status}</if>
+			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+		</where>
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{orderNo},#{sendUserId},#{receviceUserId},#{amount},#{confirmAmt},#{poundage},#{orderType},now(),now(),#{status},#{remark});
+	</insert>
+
+	<select id="readById" resultType="com.mall.model.WalletOrder">
+		<include refid="selector"/> where id=#{id}  limit 1;
+	</select>
+
+	<select id="readList" resultType="com.mall.model.WalletOrder">
+		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+	</select>
+
+	<select id="readOne" resultType="com.mall.model.WalletOrder">
+		<include refid="selector"/> <include refid="condition"/> limit 1;
+	</select>
+
+	<select id="readCount" resultType="int">
+		select count(1) from <include refid="table_name"/> <include refid="condition"/>
+	</select>
+
+	<update id="updateById">
+		update <include refid="table_name"/>
+		<set>
+			<if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+			<if test="model.sendUserId != null and model.sendUserId !=''">sendUserId= #{model.sendUserId},</if>
+			<if test="model.receviceUserId != null and model.receviceUserId !=''">receviceUserId= #{model.receviceUserId},</if>
+			<if test="model.amount != null">amount= #{model.amount},</if>
+			<if test="model.confirmAmt != null">confirmAmt= #{model.confirmAmt},</if>
+			<if test="model.poundage != null">poundage= #{model.poundage},</if>
+			<if test="model.orderType != null">orderType= #{model.orderType},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			updateTime=now()
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="deleteById">
+		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+	</update>
+</mapper>
+
+
+

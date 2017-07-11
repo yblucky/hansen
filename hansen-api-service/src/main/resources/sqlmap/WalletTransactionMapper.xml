@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall.mapper.WalletTransactionMapper">
+
+	<sql id="fields">
+		userId,txtId,prepayId,transactionLongTime,transactionTime,address,amount,category,fee,confirmations,transactionStatus,message,createTime,updateTime,status,remark
+	</sql>
+
+	<sql id="fields_id">
+		id,<include refid="fields"/>
+	</sql>
+
+	<sql id="table_name">wallet_transaction</sql>
+
+	<sql id="selector">
+		select <include refid="fields_id"/> from <include refid="table_name"/>
+	</sql>
+
+	<sql id="condition">
+		<where>
+			<if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
+			<if test="model.txtId != null and model.txtId != ''">and txtId=#{model.txtId}</if>
+			<if test="model.prepayId != null and model.prepayId != ''">and prepayId=#{model.prepayId}</if>
+			<if test="model.transactionLongTime != null">and transactionLongTime=#{model.transactionLongTime}</if>
+			<if test="model.transactionTime != null">and transactionTime=#{model.transactionTime}</if>
+			<if test="model.address != null and model.address != ''">and address=#{model.address}</if>
+			<if test="model.amount != null">and amount=#{model.amount}</if>
+			<if test="model.category != null and model.category != ''">and category=#{model.category}</if>
+			<if test="model.fee != null">and fee=#{model.fee}</if>
+			<if test="model.confirmations != null">and confirmations=#{model.confirmations}</if>
+			<if test="model.transactionStatus != null and model.transactionStatus != ''">and transactionStatus=#{model.transactionStatus}</if>
+			<if test="model.message != null and model.message != ''">and message=#{model.message}</if>
+			<if test="model.status != null">and status=#{model.status}</if>
+			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+		</where>
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{userId},#{txtId},#{prepayId},#{transactionLongTime},#{transactionTime},#{address},#{amount},#{category},#{fee},#{confirmations},#{transactionStatus},#{message},now(),now(),#{status},#{remark});
+	</insert>
+
+	<select id="readById" resultType="com.mall.model.WalletTransaction">
+		<include refid="selector"/> where id=#{id}  limit 1;
+	</select>
+
+	<select id="readList" resultType="com.mall.model.WalletTransaction">
+		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+	</select>
+
+	<select id="readOne" resultType="com.mall.model.WalletTransaction">
+		<include refid="selector"/> <include refid="condition"/> limit 1;
+	</select>
+
+	<select id="readCount" resultType="int">
+		select count(1) from <include refid="table_name"/> <include refid="condition"/>
+	</select>
+
+	<update id="updateById">
+		update <include refid="table_name"/>
+		<set>
+			<if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+			<if test="model.txtId != null and model.txtId !=''">txtId= #{model.txtId},</if>
+			<if test="model.prepayId != null and model.prepayId !=''">prepayId= #{model.prepayId},</if>
+			<if test="model.transactionLongTime != null">transactionLongTime= #{model.transactionLongTime},</if>
+			<if test="model.transactionTime != null">transactionTime= #{model.transactionTime},</if>
+			<if test="model.address != null and model.address !=''">address= #{model.address},</if>
+			<if test="model.amount != null">amount= #{model.amount},</if>
+			<if test="model.category != null and model.category !=''">category= #{model.category},</if>
+			<if test="model.fee != null">fee= #{model.fee},</if>
+			<if test="model.confirmations != null">confirmations= #{model.confirmations},</if>
+			<if test="model.transactionStatus != null and model.transactionStatus !=''">transactionStatus= #{model.transactionStatus},</if>
+			<if test="model.message != null and model.message !=''">message= #{model.message},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			updateTime=now()
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="deleteById">
+		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+	</update>
+
+</mapper>
+
+
+

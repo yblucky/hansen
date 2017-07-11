@@ -9,7 +9,7 @@ import com.mall.common.BaseModel;
  */
 public class Grade extends BaseModel {
 
-    private static final long serialVersionUID = 24145337309873387877L;
+    private static final long serialVersionUID = 241453873387877L;
     /**
      * 等级编号  普通：0、 VIP：1、 一星合伙人：2、 二星合伙人：3、 三星合伙人：4、 四星合伙人：5、 五星合伙人
      */

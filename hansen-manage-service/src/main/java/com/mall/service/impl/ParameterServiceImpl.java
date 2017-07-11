@@ -1,11 +1,11 @@
 package com.mall.service.impl;
 
+import com.mall.core.dao.CommonDao;
+import com.mall.core.service.impl.CommonServiceImpl;
+import com.mall.mapper.ParameterMapper;
 import com.mall.model.Parameter;
-import com.yanbao.core.dao.CommonDao;
-import com.yanbao.core.service.impl.CommonServiceImpl;
-import com.yanbao.mapper.ParameterMapper;
-import com.yanbao.service.ParameterService;
-import com.yanbao.util.ParamUtil;
+import com.mall.service.ParameterService;
+import com.mall.util.ParamUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

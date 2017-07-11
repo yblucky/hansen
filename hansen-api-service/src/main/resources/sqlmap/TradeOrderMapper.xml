@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall.mapper.TradeOrderMapper">
+	<sql id="fields">
+		orderNo,sendUserId,receviceUserId,amt,confirmAmt,poundage,source,firstReferrerScale,secondReferrerScale,equityAmtScale,payAmtScale,tradeAmtScale,createTime,updateTime,status,remark
+	</sql>
+
+	<sql id="fields_id">
+		id,<include refid="fields"/>
+	</sql>
+
+	<sql id="table_name">trade_order</sql>
+
+	<sql id="selector">
+		select <include refid="fields_id"/> from <include refid="table_name"/>
+	</sql>
+
+	<sql id="condition">
+		<where>
+			<if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+			<if test="model.sendUserId != null and model.sendUserId != ''">and sendUserId=#{model.sendUserId}</if>
+			<if test="model.receviceUserId != null and model.receviceUserId != ''">and receviceUserId=#{model.receviceUserId}</if>
+			<if test="model.amt != null">and amt=#{model.amt}</if>
+			<if test="model.confirmAmt != null">and confirmAmt=#{model.confirmAmt}</if>
+			<if test="model.poundage != null">and poundage=#{model.poundage}</if>
+			<if test="model.source != null">and source=#{model.source}</if>
+			<if test="model.firstReferrerScale != null">and firstReferrerScale=#{model.firstReferrerScale}</if>
+			<if test="model.secondReferrerScale != null">and secondReferrerScale=#{model.secondReferrerScale}</if>
+			<if test="model.equityAmtScale != null">and equityAmtScale=#{model.equityAmtScale}</if>
+			<if test="model.payAmtScale != null">and payAmtScale=#{model.payAmtScale}</if>
+			<if test="model.tradeAmtScale != null">and tradeAmtScale=#{model.tradeAmtScale}</if>
+			<if test="model.status != null">and status=#{model.status}</if>
+			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+		</where>
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{orderNo},#{sendUserId},#{receviceUserId},#{amt},#{confirmAmt},#{poundage},#{source},#{firstReferrerScale},#{secondReferrerScale},#{equityAmtScale},#{payAmtScale},#{tradeAmtScale},now(),now(),#{status},#{remark});
+	</insert>
+
+	<select id="readById" resultType="com.mall.model.TradeOrder">
+		<include refid="selector"/> where id=#{id}  limit 1;
+	</select>
+
+	<select id="readList" resultType="com.mall.model.TradeOrder">
+		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+	</select>
+
+	<select id="readOne" resultType="com.mall.model.TradeOrder">
+		<include refid="selector"/> <include refid="condition"/> limit 1;
+	</select>
+
+	<select id="readCount" resultType="int">
+		select count(1) from <include refid="table_name"/> <include refid="condition"/>
+	</select>
+
+	<update id="updateById">
+		update <include refid="table_name"/>
+		<set>
+			<if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+			<if test="model.sendUserId != null and model.sendUserId !=''">sendUserId= #{model.sendUserId},</if>
+			<if test="model.receviceUserId != null and model.receviceUserId !=''">receviceUserId= #{model.receviceUserId},</if>
+			<if test="model.amt != null">amt= #{model.amt},</if>
+			<if test="model.confirmAmt != null">confirmAmt= #{model.confirmAmt},</if>
+			<if test="model.poundage != null">poundage= #{model.poundage},</if>
+			<if test="model.source != null">source= #{model.source},</if>
+			<if test="model.firstReferrerScale != null">firstReferrerScale= #{model.firstReferrerScale},</if>
+			<if test="model.secondReferrerScale != null">secondReferrerScale= #{model.secondReferrerScale},</if>
+			<if test="model.equityAmtScale != null">equityAmtScale= #{model.equityAmtScale},</if>
+			<if test="model.payAmtScale != null">payAmtScale= #{model.payAmtScale},</if>
+			<if test="model.tradeAmtScale != null">tradeAmtScale= #{model.tradeAmtScale},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			updateTime=now()
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="deleteById">
+		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+	</update>
+
+</mapper>
+
+
+

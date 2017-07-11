@@ -9,6 +9,5 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface BaseUserService extends CommonService<BaseUser> {
 
-    BaseUser readByUnionId(String unionId);
 
 }

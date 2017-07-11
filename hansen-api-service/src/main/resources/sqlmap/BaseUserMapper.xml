@@ -4,101 +4,126 @@
 <mapper namespace="com.mall.mapper.BaseUserMapper">
 
 	<sql id="fields">
-		id, uid,unionId, openId, phone, salt, nickName,sex, headImgUrl,province,city,county,addr,loginTime,amount,payWord,
-		createTime, updateTime, status, remark
+		uid,unionId,phone,loginName,email,amount,nickName,sex,salt,headImgUrl,province,city,county,addr,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardLevel
+		,releaseTime,equityAmt,payAmt,tradeAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,levles,createTime,updateTime,status,remark
 	</sql>
 
-	<sql id="table">base_user</sql>
+	<sql id="fields_id">
+		id,<include refid="fields"/>
+	</sql>
+
+	<sql id="table_name">base_user</sql>
 
 	<sql id="selector">
-		SELECT
-		<include refid="fields" />
-		FROM
-		<include refid="table" />
+		select <include refid="fields_id"/> from <include refid="table_name"/>
 	</sql>
 
 	<sql id="condition">
 		<where>
-			1=1
-			<if test="model.id != null">AND id= #{model.id}</if>
-			<if test="model.unionId != null">AND unionId= #{model.unionId}</if>
-			<if test="model.openId != null">AND openId= #{model.openId}</if>
-			<if test="model.phone != null">AND phone= #{model.phone}</if>
-			<if test="model.status != null">AND status= #{model.status}</if>
-			<if test="model.openId != null">AND openId= #{model.openId}</if>
-			<if test="model.amount != null">AND amount= #{model.amount}</if>
-			<if test="model.payWord != null">AND payWord= #{model.payWord}</if>
+			<if test="model.uid != null">uid=#{model.uid}</if>
+			<if test="model.unionId != null and model.unionId != ''">and unionId=#{model.unionId}</if>
+			<if test="model.phone != null and model.phone != ''">and phone=#{model.phone}</if>
+			<if test="model.loginName != null and model.loginName != ''">and loginName=#{model.loginName}</if>
+			<if test="model.email != null and model.email != ''">and email=#{model.email}</if>
+			<if test="model.amount != null">and amount=#{model.amount}</if>
+			<if test="model.nickName != null and model.nickName != ''">and nickName=#{model.nickName}</if>
+			<if test="model.sex != null">and sex=#{model.sex}</if>
+			<if test="model.salt != null and model.salt != ''">and salt=#{model.salt}</if>
+			<if test="model.headImgUrl != null and model.headImgUrl != ''">and headImgUrl=#{model.headImgUrl}</if>
+			<if test="model.province != null and model.province != ''">and province=#{model.province}</if>
+			<if test="model.city != null and model.city != ''">and city=#{model.city}</if>
+			<if test="model.county != null and model.county != ''">and county=#{model.county}</if>
+			<if test="model.addr != null and model.addr != ''">and addr=#{model.addr}</if>
+			<if test="model.loginTime != null">and loginTime=#{model.loginTime}</if>
+			<if test="model.openId != null and model.openId != ''">and openId=#{model.openId}</if>
+			<if test="model.payWord != null and model.payWord != ''">and payWord=#{model.payWord}</if>
+			<if test="model.password != null and model.password != ''">and password=#{model.password}</if>
+			<if test="model.firstReferrer != null and model.firstReferrer != ''">and firstReferrer=#{model.firstReferrer}</if>
+			<if test="model.secondReferrer != null and model.secondReferrer != ''">and secondReferrer=#{model.secondReferrer}</if>
+			<if test="model.grade != null">and grade=#{model.grade}</if>
+			<if test="model.cardLevel != null">and cardLevel=#{model.cardLevel}</if>
+			<if test="model.releaseTime != null and model.releaseTime != ''">and releaseTime=#{model.releaseTime}</if>
+			<if test="model.equityAmt != null">and equityAmt=#{model.equityAmt}</if>
+			<if test="model.payAmt != null">and payAmt=#{model.payAmt}</if>
+			<if test="model.tradeAmt != null">and tradeAmt=#{model.tradeAmt}</if>
+			<if test="model.maxProfits != null">and maxProfits=#{model.maxProfits}</if>
+			<if test="model.sumProfits != null">and sumProfits=#{model.sumProfits}</if>
+			<if test="model.cashOutProfits != null">and cashOutProfits=#{model.cashOutProfits}</if>
+			<if test="model.contactUserId != null and model.contactUserId != ''">and contactUserId=#{model.contactUserId}</if>
+			<if test="model.activeCodeNo != null">and activeCodeNo=#{model.activeCodeNo}</if>
+			<if test="model.registerCodeNo != null">and registerCodeNo=#{model.registerCodeNo}</if>
+			<if test="model.levles != null">and levles=#{model.levles}</if>
+			<if test="model.status != null">and status=#{model.status}</if>
+			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
 		</where>
 	</sql>
 
-	<insert id="create" useGeneratedKeys="true"   keyProperty="id">
-		INSERT INTO
-		<include refid="table" />
-		(
-		<include refid="fields" />
-		)
-		VALUES (#{id}, #{uid}, #{unionId},#{openId}, #{phone}, #{salt},  #{nickName}, #{sex},
-		#{headImgUrl},#{province},#{city},#{county},#{addr},#{loginTime},#{amount},#{payWord},
-		#{createTime}, #{updateTime}, #{status}, #{remark})
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{uid},#{unionId},#{phone},#{loginName},#{email},#{amount},#{nickName},#{sex},#{salt},#{headImgUrl},#{province},#{city},#{county},#{addr},#{loginTime},#{openId},#{payWord},#{password},#{firstReferrer},#{secondReferrer},#{grade},#{cardLevel},#{releaseTime},#{equityAmt},#{payAmt},#{tradeAmt},#{maxProfits},#{sumProfits},#{cashOutProfits},#{contactUserId},#{activeCodeNo},#{registerCodeNo},#{levles},now(),now(),#{status},#{remark});
 	</insert>
 
-
-
-	<update id="updateById">
-		UPDATE
-		<include refid="table" />
-		<set>
-			<if test="model.phone != null">phone= #{model.phone},</if>
-			<if test="model.nickName != null">nickName= #{model.nickName},</if>
-			<if test="model.sex != null">sex= #{model.sex},</if>
-			<if test="model.headImgUrl != null">headImgUrl= #{model.headImgUrl},</if>
-			<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
-			<if test="model.status != null">status= #{model.status},</if>
-			<if test="model.remark != null">remark= #{model.remark},</if>
-			<if test="model.loginTime != null">loginTime= #{model.loginTime},</if>
-			<if test="model.openId != null">openId= #{model.openId},</if>
-			<if test="model.unionId != null">unionId= #{model.unionId},</if>
-			<if test="model.amount != null">amount=#{model.amount},</if>
-			<if test="model.payWord != null">payWord=#{model.payWord}</if>
-		</set>
-		WHERE id = #{id}
-	</update>
-
 	<select id="readById" resultType="com.mall.model.BaseUser">
-		<include refid="selector"/>
-		where id=#{id} limit 1;
-	</select>
-
-	<select id="readByUnionId" resultType="com.mall.model.BaseUser">
-		<include refid="selector"/>
-		where unionId=#{unionId} limit 1;
+		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
 	<select id="readList" resultType="com.mall.model.BaseUser">
-		<include refid="selector"/>
-		<include refid="condition"/>
-		ORDER BY createTime DESC
-		limit #{startRow}, #{pageSize};
-	</select>
-
-
-	<select id="readCount" resultType="int">
-		select count(1) from
-		<include refid="table"/>
-		<include refid="condition"/>
+		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
 	<select id="readOne" resultType="com.mall.model.BaseUser">
-		<include refid="selector"/>
-		<include refid="condition"/>
-		limit 1;
+		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 
+	<select id="readCount" resultType="int">
+		select count(1) from <include refid="table_name"/> <include refid="condition"/>
+	</select>
+
+	<update id="updateById">
+		update <include refid="table_name"/>
+		<set>
+			<if test="model.uid != null">uid= #{model.uid},</if>
+			<if test="model.unionId != null and model.unionId !=''">unionId= #{model.unionId},</if>
+			<if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
+			<if test="model.loginName != null and model.loginName !=''">loginName= #{model.loginName},</if>
+			<if test="model.email != null and model.email !=''">email= #{model.email},</if>
+			<if test="model.amount != null">amount= #{model.amount},</if>
+			<if test="model.nickName != null and model.nickName !=''">nickName= #{model.nickName},</if>
+			<if test="model.sex != null">sex= #{model.sex},</if>
+			<if test="model.salt != null and model.salt !=''">salt= #{model.salt},</if>
+			<if test="model.headImgUrl != null and model.headImgUrl !=''">headImgUrl= #{model.headImgUrl},</if>
+			<if test="model.province != null and model.province !=''">province= #{model.province},</if>
+			<if test="model.city != null and model.city !=''">city= #{model.city},</if>
+			<if test="model.county != null and model.county !=''">county= #{model.county},</if>
+			<if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
+			<if test="model.loginTime != null">loginTime= #{model.loginTime},</if>
+			<if test="model.openId != null and model.openId !=''">openId= #{model.openId},</if>
+			<if test="model.payWord != null and model.payWord !=''">payWord= #{model.payWord},</if>
+			<if test="model.password != null and model.password !=''">password= #{model.password},</if>
+			<if test="model.firstReferrer != null and model.firstReferrer !=''">firstReferrer= #{model.firstReferrer},</if>
+			<if test="model.secondReferrer != null and model.secondReferrer !=''">secondReferrer= #{model.secondReferrer},</if>
+			<if test="model.grade != null">grade= #{model.grade},</if>
+			<if test="model.cardLevel != null">cardLevel= #{model.cardLevel},</if>
+			<if test="model.releaseTime != null and model.releaseTime !=''">releaseTime= #{model.releaseTime},</if>
+			<if test="model.equityAmt != null">equityAmt= #{model.equityAmt},</if>
+			<if test="model.payAmt != null">payAmt= #{model.payAmt},</if>
+			<if test="model.tradeAmt != null">tradeAmt= #{model.tradeAmt},</if>
+			<if test="model.maxProfits != null">maxProfits= #{model.maxProfits},</if>
+			<if test="model.sumProfits != null">sumProfits= #{model.sumProfits},</if>
+			<if test="model.cashOutProfits != null">cashOutProfits= #{model.cashOutProfits},</if>
+			<if test="model.contactUserId != null and model.contactUserId !=''">contactUserId= #{model.contactUserId},</if>
+			<if test="model.activeCodeNo != null">activeCodeNo= #{model.activeCodeNo},</if>
+			<if test="model.registerCodeNo != null">registerCodeNo= #{model.registerCodeNo},</if>
+			<if test="model.levles != null">levles= #{model.levles},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			updateTime=now()
+		</set>
+		where id=#{id}
+	</update>
 
 	<update id="deleteById">
-		update
-		<include refid="table"/>
-		set status = 1,updateTime=now() where id = #{id}
+		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
 
 </mapper>

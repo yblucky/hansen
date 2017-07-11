@@ -1,6 +1,5 @@
 package com.mall.util;
 
-import com.mall.model.BaseAdmin;
 import org.apache.commons.lang.ArrayUtils;
 
 import java.lang.reflect.Field;

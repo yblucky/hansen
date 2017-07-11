@@ -9,7 +9,7 @@ import com.mall.common.BaseModel;
  */
 public class CardGrade extends BaseModel {
 
-    private static final long serialVersionUID = 24145337309879839887L;
+    private static final long serialVersionUID = 2417309879839887L;
     /**
      * 卡等级编号  普通：1、 普卡	2 铜卡	3 银卡	4金卡	 5钻石卡
      */

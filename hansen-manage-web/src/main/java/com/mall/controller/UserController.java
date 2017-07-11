@@ -1,12 +1,10 @@
 package com.mall.controller;
 
-import com.mall.common.BaseModel;
 import com.mall.common.Token;
 import com.mall.core.page.JsonResult;
 import com.mall.core.page.Page;
 import com.mall.core.page.PageResult;
 import com.mall.model.BaseUser;
-import com.mall.model.MallGoods;
 import com.mall.service.BaseUserService;
 import com.mall.util.TokenUtil;
 import org.slf4j.Logger;

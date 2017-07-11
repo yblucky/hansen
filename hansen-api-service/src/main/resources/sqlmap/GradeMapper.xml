@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall.mapper.GradeMapper">
+
+	<sql id="fields">
+		grade,sumPerformance,removeNo,remainScale,rewardScale,createTime,updateTime,status,remark
+	</sql>
+
+	<sql id="fields_id">
+		id,<include refid="fields"/>
+	</sql>
+
+	<sql id="table_name">grade</sql>
+
+	<sql id="selector">
+		select <include refid="fields_id"/> from <include refid="table_name"/>
+	</sql>
+
+	<sql id="condition">
+		<where>
+			<if test="model.grade != null">grade=#{model.grade}</if>
+			<if test="model.sumPerformance != null">and sumPerformance=#{model.sumPerformance}</if>
+			<if test="model.removeNo != null">and removeNo=#{model.removeNo}</if>
+			<if test="model.remainScale != null">and remainScale=#{model.remainScale}</if>
+			<if test="model.rewardScale != null">and rewardScale=#{model.rewardScale}</if>
+			<if test="model.status != null">and status=#{model.status}</if>
+			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+		</where>
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{grade},#{sumPerformance},#{removeNo},#{remainScale},#{rewardScale},now(),now(),#{status},#{remark});
+	</insert>
+
+	<select id="readById" resultType="com.mall.model.Grade">
+		<include refid="selector"/> where id=#{id}  limit 1;
+	</select>
+
+	<select id="readList" resultType="com.mall.model.Grade">
+		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+	</select>
+
+	<select id="readOne" resultType="com.mall.model.Grade">
+		<include refid="selector"/> <include refid="condition"/> limit 1;
+	</select>
+
+	<select id="readCount" resultType="int">
+		select count(1) from <include refid="table_name"/> <include refid="condition"/>
+	</select>
+
+	<update id="updateById">
+		update <include refid="table_name"/>
+		<set>
+			<if test="model.grade != null">grade= #{model.grade},</if>
+			<if test="model.sumPerformance != null">sumPerformance= #{model.sumPerformance},</if>
+			<if test="model.removeNo != null">removeNo= #{model.removeNo},</if>
+			<if test="model.remainScale != null">remainScale= #{model.remainScale},</if>
+			<if test="model.rewardScale != null">rewardScale= #{model.rewardScale},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			updateTime=now()
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="deleteById">
+		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+	</update>
+
+</mapper>
+
+
+
