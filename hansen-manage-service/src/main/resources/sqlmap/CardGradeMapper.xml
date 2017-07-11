@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall.mapper.CardGradeMapper">
+
+	<sql id="fields">
+		grade,insuranceAmt,releaseScale,activeCodeNo,registerCodeNo,outMultiple,createTime,updateTime,status,remark
+	</sql>
+
+	<sql id="fields_id">
+		id,<include refid="fields"/>
+	</sql>
+
+	<sql id="table_name">card_grade</sql>
+
+	<sql id="selector">
+		select <include refid="fields_id"/> from <include refid="table_name"/>
+	</sql>
+
+	<sql id="condition">
+		<where>
+			<if test="model.grade != null">grade=#{model.grade}</if>
+			<if test="model.insuranceAmt != null">and insuranceAmt=#{model.insuranceAmt}</if>
+			<if test="model.releaseScale != null">and releaseScale=#{model.releaseScale}</if>
+			<if test="model.activeCodeNo != null">and activeCodeNo=#{model.activeCodeNo}</if>
+			<if test="model.registerCodeNo != null">and registerCodeNo=#{model.registerCodeNo}</if>
+			<if test="model.outMultiple != null">and outMultiple=#{model.outMultiple}</if>
+			<if test="model.status != null">and status=#{model.status}</if>
+			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+		</where>
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{grade},#{insuranceAmt},#{releaseScale},#{activeCodeNo},#{registerCodeNo},#{outMultiple},now(),now(),#{status},#{remark});
+	</insert>
+
+	<select id="readById" resultType="com.mall.model.CardGrade">
+		<include refid="selector"/> where id=#{id}  limit 1;
+	</select>
+
+	<select id="readList" resultType="com.mall.model.CardGrade">
+		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+	</select>
+
+	<select id="readOne" resultType="com.mall.model.CardGrade">
+		<include refid="selector"/> <include refid="condition"/> limit 1;
+	</select>
+
+	<select id="readCount" resultType="int">
+		select count(1) from <include refid="table_name"/> <include refid="condition"/>
+	</select>
+
+	<update id="updateById">
+		update <include refid="table_name"/>
+		<set>
+			<if test="model.grade != null">grade= #{model.grade},</if>
+			<if test="model.insuranceAmt != null">insuranceAmt= #{model.insuranceAmt},</if>
+			<if test="model.releaseScale != null">releaseScale= #{model.releaseScale},</if>
+			<if test="model.activeCodeNo != null">activeCodeNo= #{model.activeCodeNo},</if>
+			<if test="model.registerCodeNo != null">registerCodeNo= #{model.registerCodeNo},</if>
+			<if test="model.outMultiple != null">outMultiple= #{model.outMultiple},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			updateTime=now()
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="deleteById">
+		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+	</update>
+
+</mapper>
+
+
+

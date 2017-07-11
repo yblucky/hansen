@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall.mapper.TradeRecordDetailMapper">
+	<sql id="fields">
+		orderNo,userId,amount,recordType,firstReferrerScale,scale,createTime,updateTime,status,remark
+	</sql>
+
+	<sql id="fields_id">
+		id,<include refid="fields"/>
+	</sql>
+
+	<sql id="table_name">trade_record_detail</sql>
+
+	<sql id="selector">
+		select <include refid="fields_id"/> from <include refid="table_name"/>
+	</sql>
+
+	<sql id="condition">
+		<where>
+			<if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+			<if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+			<if test="model.amount != null">and amount=#{model.amount}</if>
+			<if test="model.recordType != null">and recordType=#{model.recordType}</if>
+			<if test="model.firstReferrerScale != null">and firstReferrerScale=#{model.firstReferrerScale}</if>
+			<if test="model.scale != null">and scale=#{model.scale}</if>
+			<if test="model.status != null">and status=#{model.status}</if>
+			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+		</where>
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{orderNo},#{userId},#{amount},#{recordType},#{firstReferrerScale},#{scale},now(),now(),#{status},#{remark});
+	</insert>
+
+	<select id="readById" resultType="com.mall.model.TradeRecordDetail">
+		<include refid="selector"/> where id=#{id}  limit 1;
+	</select>
+
+	<select id="readList" resultType="com.mall.model.TradeRecordDetail">
+		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+	</select>
+
+	<select id="readOne" resultType="com.mall.model.TradeRecordDetail">
+		<include refid="selector"/> <include refid="condition"/> limit 1;
+	</select>
+
+	<select id="readCount" resultType="int">
+		select count(1) from <include refid="table_name"/> <include refid="condition"/>
+	</select>
+
+	<update id="updateById">
+		update <include refid="table_name"/>
+		<set>
+			<if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+			<if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+			<if test="model.amount != null">amount= #{model.amount},</if>
+			<if test="model.recordType != null">recordType= #{model.recordType},</if>
+			<if test="model.firstReferrerScale != null">firstReferrerScale= #{model.firstReferrerScale},</if>
+			<if test="model.scale != null">scale= #{model.scale},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			updateTime=now()
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="deleteById">
+		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+	</update>
+</mapper>
+
+
+

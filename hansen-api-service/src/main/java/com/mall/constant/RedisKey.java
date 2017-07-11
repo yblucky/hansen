@@ -102,7 +102,10 @@ public enum RedisKey {
 	WEIXIN_CALLBACK("weixin_callback", 2*60*60),
 	
 	/**手动支付回调*/
-	HANDLE_CALLBACK("handle_callback", 30);
+	HANDLE_CALLBACK("handle_callback", 30),
+
+	/**系统参数更新标致(保存72小时)*/
+	SYS_PARAM_UPDTOKEN("sys_param_updtoken", 72*60*60);
 
 	private final String key;
 

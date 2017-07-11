@@ -8,8 +8,6 @@ import com.mall.service.BaseUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * @date 2016年11月27日
  */
@@ -27,8 +25,4 @@ public class BaseUserServiceImpl extends CommonServiceImpl<BaseUser> implements 
         return BaseUser.class;
     }
 
-    @Override
-    public List<BaseUser>  list() {
-        return baseUserDao.readList(new BaseUser(),1,1);
-    }
 }
