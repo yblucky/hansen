@@ -9,4 +9,5 @@ import com.api.model.CardGrade;
 public interface CardGradeService extends CommonService<CardGrade> {
 
 
+    CardGrade getUserCardGrade(Integer cardLevel);
 }
