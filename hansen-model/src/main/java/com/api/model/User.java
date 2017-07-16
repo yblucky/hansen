@@ -115,6 +115,10 @@ public class User extends BaseModel {
      */
     private Double tradeAmt;
     /**
+     * 剩余保单金额
+     */
+    private Double insuranceAmt;
+    /**
      * 预期最大收益
      */
     private Double maxProfits;
@@ -405,5 +409,13 @@ public class User extends BaseModel {
 
     public void setLevles(Integer levles) {
         this.levles = levles;
+    }
+
+    public Double getInsuranceAmt() {
+        return insuranceAmt;
+    }
+
+    public void setInsuranceAmt(Double insuranceAmt) {
+        this.insuranceAmt = insuranceAmt;
     }
 }

@@ -5,7 +5,7 @@
 
 	<sql id="fields">
 		uid,unionId,phone,loginName,email,amount,nickName,sex,salt,headImgUrl,province,city,county,addr,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardLevel
-		,releaseTime,equityAmt,payAmt,tradeAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,levles,createTime,updateTime,status,remark
+		,releaseTime,equityAmt,payAmt,tradeAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,levles,createTime,updateTime,status,remark,insuranceAmt
 	</sql>
 
 	<sql id="fields_id">
@@ -55,12 +55,13 @@
 			<if test="model.levles != null">and levles=#{model.levles}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+			<if test="model.insuranceAmt != null and model.insuranceAmt != ''">and insuranceAmt=#{model.insuranceAmt}</if>
 		</where>
 	</sql>
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{uid},#{unionId},#{phone},#{loginName},#{email},#{amount},#{nickName},#{sex},#{salt},#{headImgUrl},#{province},#{city},#{county},#{addr},#{loginTime},#{openId},#{payWord},#{password},#{firstReferrer},#{secondReferrer},#{grade},#{cardLevel},#{releaseTime},#{equityAmt},#{payAmt},#{tradeAmt},#{maxProfits},#{sumProfits},#{cashOutProfits},#{contactUserId},#{activeCodeNo},#{registerCodeNo},#{levles},now(),now(),#{status},#{remark});
+		values(#{id},#{uid},#{unionId},#{phone},#{loginName},#{email},#{amount},#{nickName},#{sex},#{salt},#{headImgUrl},#{province},#{city},#{county},#{addr},#{loginTime},#{openId},#{payWord},#{password},#{firstReferrer},#{secondReferrer},#{grade},#{cardLevel},#{releaseTime},#{equityAmt},#{payAmt},#{tradeAmt},#{maxProfits},#{sumProfits},#{cashOutProfits},#{contactUserId},#{activeCodeNo},#{registerCodeNo},#{levles},now(),now(),#{status},#{remark},#{insuranceAmt});
 	</insert>
 
 	<select id="readById" resultType="com.api.model.User">
@@ -117,6 +118,7 @@
 			<if test="model.levles != null">levles= #{model.levles},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			<if test="model.insuranceAmt != null and model.insuranceAmt !=''">insuranceAmt= #{model.insuranceAmt},</if>
 			updateTime=now()
 		</set>
 		where id=#{id}
