@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 订单号生成器
- * @date 2016年12月7日
+ * @date   2016年12月7日
  */
-public class OrderNoUtil {
+public class  OrderNoUtil {
 
 	private static final ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<Integer>();
 
