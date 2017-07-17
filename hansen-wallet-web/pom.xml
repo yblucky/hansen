@@ -10,8 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
 
-    <name>hansen-wallet</name>
-    <artifactId>hansen-wallet</artifactId>
+    <name>hansen-wallet-web</name>
+    <artifactId>hansen-wallet-web</artifactId>
 
     <build>
         <plugins>
