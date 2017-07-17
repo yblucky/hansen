@@ -21,4 +21,6 @@ public interface UserService extends CommonService<User> {
     void pushBonus(String pushUserId);
 
     void manageBonus(String pushUserId);
+
+    void reloadUserGrade(User user) throws Exception;
 }

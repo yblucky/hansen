@@ -1,13 +1,16 @@
 package com.api.service.impl;
 
+import com.api.constant.GradeType;
 import com.api.constant.RecordType;
 import com.api.constant.UserStatusType;
 import com.api.core.dao.CommonDao;
 import com.api.core.service.impl.CommonServiceImpl;
 import com.api.mapper.UserMapper;
 import com.api.model.CardGrade;
+import com.api.model.Grade;
 import com.api.model.User;
 import com.api.service.CardGradeService;
+import com.api.service.GradeService;
 import com.api.service.UserService;
 import com.api.util.PoundageUtil;
 import com.api.util.ToolUtil;
@@ -28,6 +31,8 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     private UserService userService;
     @Autowired
     private CardGradeService cardGradeService;
+    @Autowired
+    private GradeService gradeService;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -206,6 +211,71 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
                 calc(incomeAmt, parentUser.getId(), RecordType.MANAGE);
                 // TODO: 2017/7/14 记录二代直推奖记录
             }
+        }
+    }
+    /**
+     * 更新用户等级
+     * @param user
+     * */
+    @Override
+    @Transactional
+    public void reloadUserGrade(User user) throws Exception {
+        Grade userGrade = gradeService.getUserGrade(user.getId());
+        if(userGrade != null && userGrade.getGrade().intValue() > user.getGrade().intValue()){
+            User model = new User();
+            model.setGrade(userGrade.getGrade());
+            this.updateById(user.getId(),model);
+            // TODO: 2017/7/17 记录会员等级升级记录
+        }
+    }
+    /**
+     * 用户动态收益-级差奖
+     *
+     * @param userId 推荐人id
+     */
+    public void differnceBonus(String userId){
+        User user = userService.readById(userId);
+        if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
+            System.out.println("用户未激活保单");
+            return;
+        }
+        double bonusScale = 0d;
+        Grade grade = gradeService.getGradeDetail(user.getGrade());
+        if(grade != null){
+            bonusScale = grade.getRewardScale();
+        }
+        User childUser = user;
+        for(int i=0;i<5;i++){
+            User parentUser = userService.readById(childUser.getId());
+            if (parentUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
+                System.out.println("用户未激活保单");
+                continue;
+            }
+            if (parentUser.getGrade() == null || parentUser.getGrade().intValue() <1) {
+                System.out.println("用户业绩未达标，不能领取级差奖");
+                //中断级差
+                return;
+            }
+            //上级小于下级
+            if(parentUser.getGrade().intValue()  < user.getGrade().intValue() ){
+                // TODO: 2017/7/17 级差中断是否要记录
+                //中断级差
+                return;
+            }
+            //上下级平级且等级都超过二星
+            if(parentUser.getGrade().intValue() > GradeType.GRADE1.getCode().intValue() && parentUser.getGrade().intValue()  == user.getGrade().intValue() ){
+                // TODO: 2017/7/17 领取平级奖  保单金额*1%
+                //中断级差
+                return;
+            }
+            //上下级形成级差
+            if(parentUser.getGrade().intValue() > user.getGrade().intValue() ){
+                // TODO: 2017/7/17 领取平级奖  保单金额*1%
+                //中断级差
+                return;
+            }
+
+            childUser = parentUser;
         }
     }
 }

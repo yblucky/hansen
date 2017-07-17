@@ -16,6 +16,8 @@ public class UserDepartment extends BaseModel {
 	private Integer uid;
 	/** 业绩 */
 	private Double performance;
+	/** 此部门所属用户Id */
+	private Double parentUserId;
 
 	public String getUserId() {
 		return userId;
@@ -39,5 +41,13 @@ public class UserDepartment extends BaseModel {
 
 	public void setPerformance(Double performance) {
 		this.performance = performance;
+	}
+
+	public Double getParentUserId() {
+		return parentUserId;
+	}
+
+	public void setParentUserId(Double parentUserId) {
+		this.parentUserId = parentUserId;
 	}
 }

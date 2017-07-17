@@ -1,12 +1,16 @@
 package com.api.service.impl;
 
+import com.api.constant.StatusType;
 import com.api.core.dao.CommonDao;
 import com.api.core.service.impl.CommonServiceImpl;
 import com.api.mapper.UserDepartmentMapper;
 import com.api.model.UserDepartment;
 import com.api.service.UserDepartmentService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @date 2016年11月27日
@@ -25,4 +29,16 @@ public class BaseUserDepartmentServiceImpl extends CommonServiceImpl<UserDepartm
         return UserDepartment.class;
     }
 
+    @Override
+    public List<UserDepartment> getAll(String parentUserId){
+        if(StringUtils.isEmpty(parentUserId)){
+            return null;
+        }
+        return this.getAll(parentUserId);
+    }
+
+    @Override
+    public Double getSumAmt(String parentUserId) {
+        return baseUserDepartmentMapper.getSumAmt(parentUserId);
+    }
 }

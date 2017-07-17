@@ -9,4 +9,7 @@ import com.api.model.Grade;
 public interface GradeService extends CommonService<Grade> {
 
 
+    Grade getGradeDetail(Integer grade);
+
+    Grade getUserGrade(String userId) throws Exception;
 }

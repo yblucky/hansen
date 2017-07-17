@@ -4,7 +4,7 @@
 <mapper namespace="com.api.mapper.UserDepartmentMapper">
 
 	<sql id="fields">
-		userId,uid,performance,createTime,updateTime,status,remark
+		userId,uid,performance,createTime,updateTime,status,remark,parentUserId
 	</sql>
 
 	<sql id="fields_id">
@@ -64,6 +64,17 @@
 	<update id="deleteById">
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
+
+	<select id="getAll" resultType="com.api.model.UserDepartment">
+		select <include refid="fields_id"/> from <include refid="table_name"/> as a
+		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and b.contactUserId = a.id and a.status = 1
+		order by a.performance desc
+	</select>
+
+	<select id="getSumAmt" resultType="java.lang.Double">
+		select sum(performance) sumAmt from <include refid="table_name"/> as a
+		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and b.contactUserId = a.id and a.status = 1
+	</select>
 
 </mapper>
 
