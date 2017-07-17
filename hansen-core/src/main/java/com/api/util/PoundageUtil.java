@@ -1,6 +1,7 @@
 package com.api.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * 四舍五入计算手续费
@@ -52,4 +53,75 @@ public class PoundageUtil {
 		return poundage;
 	}
 
+
+	/**
+	 * 加法
+	 * @param v1    加数
+	 * @param v2    加数
+	 * @param scale 表示表示需要精确到小数点以后几位。
+	 */
+
+	public static double add(double v1, double v2, int scale)
+	{
+		if (scale < 0) {
+			scale=1;
+		}
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.add(b2).setScale(scale,RoundingMode.HALF_EVEN).doubleValue();
+	}
+	/**
+	 * 减法
+	 * @param v1    被减数
+	 * @param v2    减数
+	 * @param scale 表示表示需要精确到小数点以后几位。
+	 */
+
+	public static double subtract(double v1, double v2, int scale)
+	{
+		if (scale < 0) {
+			scale=1;
+		}
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.subtract(b2).setScale(scale,RoundingMode.HALF_EVEN).doubleValue();
+	}
+
+
+
+	/**
+	 * 乘法
+	 * @param v1    被减数
+	 * @param v2    减数
+	 * @param scale 表示表示需要精确到小数点以后几位。
+	 */
+
+	public static double multiply(double v1, double v2, int scale)
+	{
+		if (scale < 0) {
+			scale=1;
+		}
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.multiply(b2).setScale(scale,RoundingMode.HALF_EVEN).doubleValue();
+	}
+
+
+	/**
+	 * 除法
+	 * @param v1    被除数
+	 * @param v2    除数
+	 * @param scale 表示表示需要精确到小数点以后几位。
+	 * @return 两个参数的商
+	 */
+
+	public static double divide(double v1, double v2, int scale)
+	{
+		if (scale < 0) {
+			scale=1;
+		}
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.divide(b2, scale, RoundingMode.HALF_EVEN).doubleValue();
+	}
 }

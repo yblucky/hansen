@@ -2,7 +2,9 @@ package com.api.controller;
 
 import com.api.constant.CacheKey;
 import com.api.core.page.JsonResult;
+import com.api.model.BaseAdmin;
 import com.api.redis.Strings;
+import com.api.service.BaseAdminService;
 import com.api.util.Md5Util;
 import com.api.util.TokenUtil;
 import com.api.vo.LoginVo;
@@ -65,7 +67,7 @@ public class LoginController {
     }
 
     public static void main(String[] args) {
-        System.out.println(Md5Util.MD5Encode("1234","111"));
+        System.out.println(Md5Util.MD5Encode("1234", "111"));
     }
 
 }
