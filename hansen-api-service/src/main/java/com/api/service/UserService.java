@@ -12,10 +12,10 @@ public interface UserService extends CommonService<User> {
 
 
     @Transactional
-    void calc(Double incomAmt, String userId, RecordType type);
+    void userIncomeAmt(Double incomAmt, String userId, RecordType type, String orderNo);
 
     @Transactional
-    void weeklyIncome(User user);
+    void weeklyIncomeAmt(User user);
 
     @Transactional
     void pushBonus(String pushUserId);
@@ -23,4 +23,6 @@ public interface UserService extends CommonService<User> {
     void manageBonus(String pushUserId);
 
     void reloadUserGrade(User user) throws Exception;
+
+    void differnceBonus(String userId);
 }

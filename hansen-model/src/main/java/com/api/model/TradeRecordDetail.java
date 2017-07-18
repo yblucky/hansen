@@ -25,7 +25,7 @@ public class TradeRecordDetail extends BaseModel {
     /**
      * 流水类型：1、扣除账户交易币   2、 扣除账户支付币  3、直推奖  4、管理奖  5、级差奖    6、平级奖   7、每周收益'
      */
-    private Double recordType;
+    private Integer recordType;
     /**
      * 一级分销
      */
@@ -59,11 +59,11 @@ public class TradeRecordDetail extends BaseModel {
         this.amount = amount;
     }
 
-    public Double getRecordType() {
+    public Integer getRecordType() {
         return recordType;
     }
 
-    public void setRecordType(Double recordType) {
+    public void setRecordType(Integer recordType) {
         this.recordType = recordType;
     }
 

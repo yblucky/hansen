@@ -6,12 +6,9 @@ import com.api.constant.UserStatusType;
 import com.api.core.dao.CommonDao;
 import com.api.core.service.impl.CommonServiceImpl;
 import com.api.mapper.UserMapper;
-import com.api.model.CardGrade;
-import com.api.model.Grade;
-import com.api.model.User;
-import com.api.service.CardGradeService;
-import com.api.service.GradeService;
-import com.api.service.UserService;
+import com.api.model.*;
+import com.api.service.*;
+import com.api.util.OrderNoUtil;
 import com.api.util.PoundageUtil;
 import com.api.util.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +30,12 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     private CardGradeService cardGradeService;
     @Autowired
     private GradeService gradeService;
+    @Autowired
+    private TradeOrderService tradeOrderService;
+    @Autowired
+    private TradeRecordService tradeRecordService;
+    @Autowired
+    private TradeRecordDetailService tradeRecordDetailService;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -54,15 +57,15 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
      */
     @Override
     @Transactional
-    public void calc(Double incomAmt, String userId, RecordType type) {
+    public void userIncomeAmt(Double incomAmt, String userId, RecordType type,String orderNo) {
         User user = userService.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
             return;
         }
-        Double equityAmt = PoundageUtil.getPoundage(incomAmt * 0.7, 1d);
-        Double payAmt = PoundageUtil.getPoundage(incomAmt * 0.2, 1d);
-        Double tradeAmt = PoundageUtil.getPoundage(incomAmt * 0.1, 1d);
+        Double equityAmt = PoundageUtil.getPoundage(incomAmt * 0.07, 1d);
+        Double payAmt = PoundageUtil.getPoundage(incomAmt * 0.02, 1d);
+        Double tradeAmt = PoundageUtil.getPoundage(incomAmt * 0.01, 1d);
         User model = new User();
         model.setId(user.getId());
         model.setEquityAmt(equityAmt);
@@ -70,6 +73,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         model.setTradeAmt(tradeAmt);
         userService.updateById(user.getId(), model);
         // TODO: 2017/7/14 记录收货三种币收入信息
+        tradeRecordService.addRecord(userId,incomAmt,equityAmt,payAmt,tradeAmt,orderNo,type);
     }
 
     /**
@@ -77,7 +81,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
      */
     @Override
     @Transactional
-    public void weeklyIncome(User user) {
+    public void weeklyIncomeAmt(User user) {
         if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode().intValue()) {
             System.out.println("用户不是激活状态");
             return;
@@ -90,11 +94,12 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             System.out.println("用户累计收益已超过最大收益，不能继续领取");
             return;
         }
+        String orderNo = OrderNoUtil.get();
         CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardLevel());
         //静态收益
         double incomeAmt = PoundageUtil.getPoundage(user.getInsuranceAmt() * cardGrade.getReleaseScale(), 1d);
         //静态收益转为三种币
-        calc(incomeAmt, user.getId(), RecordType.RELASE);
+        userIncomeAmt(incomeAmt, user.getId(), RecordType.RELASE,orderNo);
         //用户剩余保单金额
         double insuranceAmt = PoundageUtil.getPoundage(user.getInsuranceAmt() - incomeAmt, 1d);
         User model = new User();
@@ -115,7 +120,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         }
         this.updateById(user.getId(), model);
         // TODO: 2017/7/14 记录用户释放信息
-
+        this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE);
     }
 
     /**
@@ -135,14 +140,16 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         User parentUser = this.readById(pushUser.getFirstReferrer());
         //一代推荐人必须也是激活状态
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
+            String orderNo = OrderNoUtil.get();
             //保单等级以最小为准
             Integer cardLevel = parentUser.getCardLevel() > pushUser.getCardLevel() ? pushUser.getCardLevel() : parentUser.getCardLevel();
             CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
             //直推收益按两者最小保单金额*6%
             double incomeAmt = PoundageUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.06, 1d);
             //存入一代推荐人的三种钱包中
-            calc(incomeAmt, parentUser.getId(), RecordType.PUSH);
+            userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH,orderNo);
             // TODO: 2017/7/14 记录一代直推奖记录
+            this.addTradeOrder(pushUserId, parentUser.getId(),orderNo , incomeAmt, RecordType.PUSH);
         }
         //二代直推奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
@@ -154,14 +161,16 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             selModel.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
             Integer count = this.readCount(selModel);
             if (count >= 3) {
+                String orderNo = OrderNoUtil.get();
                 //保单等级以最小为准
                 Integer cardLevel = grandfatherUser.getCardLevel() > pushUser.getCardLevel() ? pushUser.getCardLevel() : grandfatherUser.getCardLevel();
                 CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
                 //直推收益按两者最小保单金额*4%
                 double incomeAmt = PoundageUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.04, 1d);
                 //存入二代推荐人的三种钱包中
-                calc(incomeAmt, parentUser.getId(), RecordType.PUSH);
+                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH,orderNo);
                 // TODO: 2017/7/14 记录二代直推奖记录
+                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH);
             }
         }
     }
@@ -183,14 +192,16 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         User parentUser = this.readById(pushUser.getFirstReferrer());
         //一代推荐人必须也是激活状态并且一代推荐人的保单等级大于或等于推荐人
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode() && parentUser.getCardLevel().intValue() >= pushUser.getCardLevel()) {
+            String orderNo = OrderNoUtil.get();
             //保单等级以最小为准
             Integer cardLevel = pushUser.getCardLevel();
             CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
             //管理收益按两者最小保单金额*2%
             double incomeAmt = PoundageUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.02, 1d);
             //存入一代推荐人的三种钱包中
-            calc(incomeAmt, parentUser.getId(), RecordType.MANAGE);
+            userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE,orderNo);
             // TODO: 2017/7/14 记录一代管理奖记录
+            this.addTradeOrder(pushUserId, parentUser.getId(),orderNo, incomeAmt, RecordType.MANAGE);
         }
         //二代管理奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
@@ -202,80 +213,123 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             selModel.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
             Integer count = this.readCount(selModel);
             if (count >= 3) {
+                String orderNo = OrderNoUtil.get();
                 //保单等级以最小为准
                 Integer cardLevel = pushUser.getCardLevel();
                 CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
                 //管理收益按两者最小保单金额*4%
                 double incomeAmt = PoundageUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.01, 1d);
                 //存入二代推荐人的三种钱包中
-                calc(incomeAmt, parentUser.getId(), RecordType.MANAGE);
+                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE,orderNo);
                 // TODO: 2017/7/14 记录二代直推奖记录
+                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.MANAGE);
             }
         }
     }
+
     /**
      * 更新用户等级
+     *
      * @param user
-     * */
+     */
     @Override
     @Transactional
     public void reloadUserGrade(User user) throws Exception {
         Grade userGrade = gradeService.getUserGrade(user.getId());
-        if(userGrade != null && userGrade.getGrade().intValue() > user.getGrade().intValue()){
+        if (userGrade != null && userGrade.getGrade().intValue() > user.getGrade().intValue()) {
             User model = new User();
             model.setGrade(userGrade.getGrade());
-            this.updateById(user.getId(),model);
+            this.updateById(user.getId(), model);
             // TODO: 2017/7/17 记录会员等级升级记录
         }
     }
+
     /**
      * 用户动态收益-级差奖
      *
      * @param userId 推荐人id
      */
-    public void differnceBonus(String userId){
+    @Override
+    public void differnceBonus(String userId) {
         User user = userService.readById(userId);
         if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
             System.out.println("用户未激活保单");
             return;
         }
+        //用户激活的保单等级
+        CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardLevel());
+        double insuranceAmt = cardGrade.getInsuranceAmt();
         double bonusScale = 0d;
+        //用户所处的等级
         Grade grade = gradeService.getGradeDetail(user.getGrade());
-        if(grade != null){
+        if (grade != null) {
             bonusScale = grade.getRewardScale();
+        } else {
+            user.setGrade(0);
         }
         User childUser = user;
-        for(int i=0;i<5;i++){
+        //1星到5星的奖励比率为 3% < 5% < 10% < 15% < 20% 平级奖 1% 最多领取21%
+        for (int i = 0; i < 5; i++) {
             User parentUser = userService.readById(childUser.getId());
             if (parentUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
                 System.out.println("用户未激活保单");
-                continue;
+                return;
             }
-            if (parentUser.getGrade() == null || parentUser.getGrade().intValue() <1) {
+            if (parentUser.getGrade() == null || parentUser.getGrade().intValue() < 1) {
                 System.out.println("用户业绩未达标，不能领取级差奖");
                 //中断级差
                 return;
             }
             //上级小于下级
-            if(parentUser.getGrade().intValue()  < user.getGrade().intValue() ){
+            if (parentUser.getGrade().intValue() < user.getGrade().intValue()) {
                 // TODO: 2017/7/17 级差中断是否要记录
                 //中断级差
                 return;
             }
             //上下级平级且等级都超过二星
-            if(parentUser.getGrade().intValue() > GradeType.GRADE1.getCode().intValue() && parentUser.getGrade().intValue()  == user.getGrade().intValue() ){
+            if (parentUser.getGrade().intValue() > GradeType.GRADE1.getCode().intValue() && parentUser.getGrade().intValue() == user.getGrade().intValue()) {
                 // TODO: 2017/7/17 领取平级奖  保单金额*1%
+                String orderNo = OrderNoUtil.get();
+                double incomeAmt = PoundageUtil.getPoundage(insuranceAmt * 0.01, 1d);
+                this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.EQUALITY,orderNo);
+                //领取平级奖记录
+                this.addTradeOrder(userId, parentUser.getId(), orderNo, incomeAmt, RecordType.EQUALITY);
                 //中断级差
                 return;
             }
             //上下级形成级差
-            if(parentUser.getGrade().intValue() > user.getGrade().intValue() ){
-                // TODO: 2017/7/17 领取平级奖  保单金额*1%
-                //中断级差
-                return;
+            if (parentUser.getGrade().intValue() > user.getGrade().intValue()) {
+                String orderNo = OrderNoUtil.get();
+                //第一级由激活保单的用户自己领取
+                if (bonusScale > 0 && i == 0) {
+                    double incomeAmt = PoundageUtil.getPoundage(insuranceAmt * bonusScale, 1d);
+                    this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT,orderNo);
+                }
+                // TODO: 2017/7/17 领取级差奖  保单金额*1%
+                Grade parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
+                //当前可领取的比率减去上一级的比率
+                double scale = PoundageUtil.getPoundage(parentGrade.getRewardScale() - bonusScale, 1d);
+                double incomeAmt = PoundageUtil.getPoundage(insuranceAmt * scale, 1d);
+                this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.DIFFERENT,orderNo);
+                bonusScale = parentGrade.getRewardScale();
+                //领取级差奖
+                this.addTradeOrder(userId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT);
             }
-
             childUser = parentUser;
         }
+    }
+
+    //新增用户收入记录
+    private void addTradeOrder(String sendUserId, String receviceUserId, String order, Double amt, RecordType recordType) {
+        TradeOrder model = new TradeOrder();
+        model.setSendUserId(sendUserId);
+        model.setReceviceUserId(receviceUserId);
+        model.setOrderNo(order);
+        model.setAmt(amt);
+        model.setConfirmAmt(amt);
+        model.setPoundage(0d);
+        model.setSource(recordType.getCode());
+        model.setRemark(recordType.getMsg());
+        tradeOrderService.create(model);
     }
 }
