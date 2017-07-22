@@ -30,8 +30,75 @@
 	</sql>
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
-		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{grade},#{sumPerformance},#{removeNo},#{remainScale},#{rewardScale},now(),now(),#{status},#{remark});
+		insert into <include refid="table_name"/>(
+		<trim  suffixOverrides="," >
+			<if test="model.id!= null  and model.id!=''">
+				id,
+			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				grade,
+			</if>
+			<if test="model.sumPerformance!= null  and model.sumPerformance!=''">
+				sumPerformance,
+			</if>
+			<if test="model.removeNo!= null  and model.removeNo!=''">
+				removeNo,
+			</if>
+			<if test="model.remainScale!= null  and model.remainScale!=''">
+				remainScale,
+			</if>
+			<if test="model.rewardScale!= null  and model.rewardScale!=''">
+				rewardScale,
+			</if>
+			<if test="model.createTime!= null  and model.createTime!=''">
+				createTime,
+			</if>
+			<if test="model.updateTime!= null  and model.updateTime!=''">
+				updateTime,
+			</if>
+			<if test="model.status!= null  and model.status!=''">
+				status,
+			</if>
+			<if test="model.remark!= null  and model.remark!=''">
+				remark,
+			</if>
+		</trim>
+		)
+		values(
+		<trim  suffixOverrides="," >
+
+			<if test="model.id!= null  and model.id!=''">
+				#{model.id},
+			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				#{model.grade},
+			</if>
+			<if test="model.sumPerformance!= null  and model.sumPerformance!=''">
+				#{model.sumPerformance},
+			</if>
+			<if test="model.removeNo!= null  and model.removeNo!=''">
+				#{model.removeNo},
+			</if>
+			<if test="model.remainScale!= null  and model.remainScale!=''">
+				#{model.remainScale},
+			</if>
+			<if test="model.rewardScale!= null  and model.rewardScale!=''">
+				#{model.rewardScale},
+			</if>
+			<if test="model.createTime!= null  and model.createTime!=''">
+				#{model.createTime},
+			</if>
+			<if test="model.updateTime!= null  and model.updateTime!=''">
+				#{model.updateTime},
+			</if>
+			<if test="model.status!= null  and model.status!=''">
+				#{model.status},
+			</if>
+			<if test="model.remark!= null  and model.remark!=''">
+				#{model.remark},
+			</if>
+		</trim>
+		);
 	</insert>
 
 	<select id="readById" resultType="com.api.model.Grade">

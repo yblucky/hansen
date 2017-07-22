@@ -33,8 +33,75 @@
     </sql>
 
     <insert id="create" useGeneratedKeys="true" keyProperty="id">
-        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
-        values(#{id},#{currencyType},#{name},#{value},#{kind},#{title},now(),now(),#{status},#{remark});
+        insert into <include refid="table_name"/>(
+        <trim  suffixOverrides="," >
+            <if test="model.id!= null  and model.id!=''">
+                id,
+            </if>
+            <if test="model.currencyType!= null  and model.currencyType!=''">
+                currencyType,
+            </if>
+            <if test="model.name!= null  and model.name!=''">
+                name,
+            </if>
+            <if test="model.value!= null  and model.value!=''">
+                value,
+            </if>
+            <if test="model.kind!= null  and model.kind!=''">
+                kind,
+            </if>
+            <if test="model.title!= null  and model.title!=''">
+                title,
+            </if>
+            <if test="model.createTime!= null  and model.createTime!=''">
+                createTime,
+            </if>
+            <if test="model.updateTime!= null  and model.updateTime!=''">
+                updateTime,
+            </if>
+            <if test="model.status!= null  and model.status!=''">
+                status,
+            </if>
+            <if test="model.remark!= null  and model.remark!=''">
+                remark,
+            </if>
+        </trim>
+        )
+        values(
+        <trim  suffixOverrides="," >
+
+            <if test="model.id!= null  and model.id!=''">
+                #{model.id},
+            </if>
+            <if test="model.currencyType!= null  and model.currencyType!=''">
+                #{model.currencyType},
+            </if>
+            <if test="model.name!= null  and model.name!=''">
+                #{model.name},
+            </if>
+            <if test="model.value!= null  and model.value!=''">
+                #{model.value},
+            </if>
+            <if test="model.kind!= null  and model.kind!=''">
+                #{model.kind},
+            </if>
+            <if test="model.title!= null  and model.title!=''">
+                #{model.title},
+            </if>
+            <if test="model.createTime!= null  and model.createTime!=''">
+                #{model.createTime},
+            </if>
+            <if test="model.updateTime!= null  and model.updateTime!=''">
+                #{model.updateTime},
+            </if>
+            <if test="model.status!= null  and model.status!=''">
+                #{model.status},
+            </if>
+            <if test="model.remark!= null  and model.remark!=''">
+                #{model.remark},
+            </if>
+        </trim>
+        );
     </insert>
 
     <select id="readById" resultType="com.api.model.WalletParameter">

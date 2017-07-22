@@ -1,5 +1,6 @@
 package com.api.service.impl;
 
+import com.api.constant.GradeRecordType;
 import com.api.constant.GradeType;
 import com.api.constant.RecordType;
 import com.api.constant.UserStatusType;
@@ -35,7 +36,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Autowired
     private TradeRecordService tradeRecordService;
     @Autowired
-    private TradeRecordDetailService tradeRecordDetailService;
+    private UserGradeRecordService userGradeRecordService;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -235,12 +236,18 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Override
     @Transactional
     public void reloadUserGrade(User user) throws Exception {
+        if(user.getGrade() == null || "".equals(user.getGrade())){
+            user.setGrade(0);
+        }
         Grade userGrade = gradeService.getUserGrade(user.getId());
         if (userGrade != null && userGrade.getGrade().intValue() > user.getGrade().intValue()) {
             User model = new User();
             model.setGrade(userGrade.getGrade());
             this.updateById(user.getId(), model);
             // TODO: 2017/7/17 记录会员等级升级记录
+            Integer historyGrade = user.getGrade();
+            user = this.readById(user.getId());
+            userGradeRecordService.addGradeRecord(user, GradeRecordType.GRADEUPDATE,historyGrade);
         }
     }
 

@@ -60,8 +60,249 @@
 	</sql>
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
-		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{uid},#{unionId},#{phone},#{loginName},#{email},#{amount},#{nickName},#{sex},#{salt},#{headImgUrl},#{province},#{city},#{county},#{addr},#{loginTime},#{openId},#{payWord},#{password},#{firstReferrer},#{secondReferrer},#{grade},#{cardLevel},#{releaseTime},#{equityAmt},#{payAmt},#{tradeAmt},#{maxProfits},#{sumProfits},#{cashOutProfits},#{contactUserId},#{activeCodeNo},#{registerCodeNo},#{levles},now(),now(),#{status},#{remark},#{insuranceAmt});
+		insert into <include refid="table_name"/>(
+		<trim  suffixOverrides="," >
+			<if test="model.id!= null  and model.id!=''">
+				id,
+			</if>
+			<if test="model.uid!= null  and model.uid!=''">
+				uid,
+			</if>
+			<if test="model.unionId!= null  and model.unionId!=''">
+				unionId,
+			</if>
+			<if test="model.phone!= null  and model.phone!=''">
+				phone,
+			</if>
+			<if test="model.loginName!= null  and model.loginName!=''">
+				loginName,
+			</if>
+			<if test="model.email!= null  and model.email!=''">
+				email,
+			</if>
+			<if test="model.amount!= null  and model.amount!=''">
+				amount,
+			</if>
+			<if test="model.nickName!= null  and model.nickName!=''">
+				nickName,
+			</if>
+			<if test="model.sex!= null  and model.sex!=''">
+				sex,
+			</if>
+			<if test="model.salt!= null  and model.salt!=''">
+				salt,
+			</if>
+			<if test="model.headImgUrl!= null  and model.headImgUrl!=''">
+				headImgUrl,
+			</if>
+			<if test="model.province!= null  and model.province!=''">
+				province,
+			</if>
+			<if test="model.city!= null  and model.city!=''">
+				city,
+			</if>
+			<if test="model.county!= null  and model.county!=''">
+				county,
+			</if>
+			<if test="model.addr!= null  and model.addr!=''">
+				addr,
+			</if>
+			<if test="model.loginTime!= null  and model.loginTime!=''">
+				loginTime,
+			</if>
+			<if test="model.openId!= null  and model.openId!=''">
+				openId,
+			</if>
+			<if test="model.payWord!= null  and model.payWord!=''">
+				payWord,
+			</if>
+			<if test="model.password!= null  and model.password!=''">
+				password,
+			</if>
+			<if test="model.firstReferrer!= null  and model.firstReferrer!=''">
+				firstReferrer,
+			</if>
+			<if test="model.secondReferrer!= null  and model.secondReferrer!=''">
+				secondReferrer,
+			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				grade,
+			</if>
+			<if test="model.cardLevel!= null  and model.cardLevel!=''">
+				cardLevel,
+			</if>
+			<if test="model.releaseTime!= null  and model.releaseTime!=''">
+				releaseTime,
+			</if>
+			<if test="model.equityAmt!= null  and model.equityAmt!=''">
+				equityAmt,
+			</if>
+			<if test="model.payAmt!= null  and model.payAmt!=''">
+				payAmt,
+			</if>
+			<if test="model.tradeAmt!= null  and model.tradeAmt!=''">
+				tradeAmt,
+			</if>
+			<if test="model.insuranceAmt!= null  and model.insuranceAmt!=''">
+				insuranceAmt,
+			</if>
+			<if test="model.maxProfits!= null  and model.maxProfits!=''">
+				maxProfits,
+			</if>
+			<if test="model.sumProfits!= null  and model.sumProfits!=''">
+				sumProfits,
+			</if>
+			<if test="model.cashOutProfits!= null  and model.cashOutProfits!=''">
+				cashOutProfits,
+			</if>
+			<if test="model.contactUserId!= null  and model.contactUserId!=''">
+				contactUserId,
+			</if>
+			<if test="model.activeCodeNo!= null  and model.activeCodeNo!=''">
+				activeCodeNo,
+			</if>
+			<if test="model.registerCodeNo!= null  and model.registerCodeNo!=''">
+				registerCodeNo,
+			</if>
+			<if test="model.levles!= null  and model.levles!=''">
+				levles,
+			</if>
+			<if test="model.createTime!= null  and model.createTime!=''">
+				createTime,
+			</if>
+			<if test="model.updateTime!= null  and model.updateTime!=''">
+				updateTime,
+			</if>
+			<if test="model.status!= null  and model.status!=''">
+				status,
+			</if>
+			<if test="model.remark!= null  and model.remark!=''">
+				remark,
+			</if>
+		</trim>
+		)
+		values(
+		<trim  suffixOverrides="," >
+
+			<if test="model.id!= null  and model.id!=''">
+				#{model.id},
+			</if>
+			<if test="model.uid!= null  and model.uid!=''">
+				#{model.uid},
+			</if>
+			<if test="model.unionId!= null  and model.unionId!=''">
+				#{model.unionId},
+			</if>
+			<if test="model.phone!= null  and model.phone!=''">
+				#{model.phone},
+			</if>
+			<if test="model.loginName!= null  and model.loginName!=''">
+				#{model.loginName},
+			</if>
+			<if test="model.email!= null  and model.email!=''">
+				#{model.email},
+			</if>
+			<if test="model.amount!= null  and model.amount!=''">
+				#{model.amount},
+			</if>
+			<if test="model.nickName!= null  and model.nickName!=''">
+				#{model.nickName},
+			</if>
+			<if test="model.sex!= null  and model.sex!=''">
+				#{model.sex},
+			</if>
+			<if test="model.salt!= null  and model.salt!=''">
+				#{model.salt},
+			</if>
+			<if test="model.headImgUrl!= null  and model.headImgUrl!=''">
+				#{model.headImgUrl},
+			</if>
+			<if test="model.province!= null  and model.province!=''">
+				#{model.province},
+			</if>
+			<if test="model.city!= null  and model.city!=''">
+				#{model.city},
+			</if>
+			<if test="model.county!= null  and model.county!=''">
+				#{model.county},
+			</if>
+			<if test="model.addr!= null  and model.addr!=''">
+				#{model.addr},
+			</if>
+			<if test="model.loginTime!= null  and model.loginTime!=''">
+				#{model.loginTime},
+			</if>
+			<if test="model.openId!= null  and model.openId!=''">
+				#{model.openId},
+			</if>
+			<if test="model.payWord!= null  and model.payWord!=''">
+				#{model.payWord},
+			</if>
+			<if test="model.password!= null  and model.password!=''">
+				#{model.password},
+			</if>
+			<if test="model.firstReferrer!= null  and model.firstReferrer!=''">
+				#{model.firstReferrer},
+			</if>
+			<if test="model.secondReferrer!= null  and model.secondReferrer!=''">
+				#{model.secondReferrer},
+			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				#{model.grade},
+			</if>
+			<if test="model.cardLevel!= null  and model.cardLevel!=''">
+				#{model.cardLevel},
+			</if>
+			<if test="model.releaseTime!= null  and model.releaseTime!=''">
+				#{model.releaseTime},
+			</if>
+			<if test="model.equityAmt!= null  and model.equityAmt!=''">
+				#{model.equityAmt},
+			</if>
+			<if test="model.payAmt!= null  and model.payAmt!=''">
+				#{model.payAmt},
+			</if>
+			<if test="model.tradeAmt!= null  and model.tradeAmt!=''">
+				#{model.tradeAmt},
+			</if>
+			<if test="model.insuranceAmt!= null  and model.insuranceAmt!=''">
+				#{model.insuranceAmt},
+			</if>
+			<if test="model.maxProfits!= null  and model.maxProfits!=''">
+				#{model.maxProfits},
+			</if>
+			<if test="model.sumProfits!= null  and model.sumProfits!=''">
+				#{model.sumProfits},
+			</if>
+			<if test="model.cashOutProfits!= null  and model.cashOutProfits!=''">
+				#{model.cashOutProfits},
+			</if>
+			<if test="model.contactUserId!= null  and model.contactUserId!=''">
+				#{model.contactUserId},
+			</if>
+			<if test="model.activeCodeNo!= null  and model.activeCodeNo!=''">
+				#{model.activeCodeNo},
+			</if>
+			<if test="model.registerCodeNo!= null  and model.registerCodeNo!=''">
+				#{model.registerCodeNo},
+			</if>
+			<if test="model.levles!= null  and model.levles!=''">
+				#{model.levles},
+			</if>
+			<if test="model.createTime!= null  and model.createTime!=''">
+				#{model.createTime},
+			</if>
+			<if test="model.updateTime!= null  and model.updateTime!=''">
+				#{model.updateTime},
+			</if>
+			<if test="model.status!= null  and model.status!=''">
+				#{model.status},
+			</if>
+			<if test="model.remark!= null  and model.remark!=''">
+				#{model.remark},
+			</if>
+		</trim>
+		);
 	</insert>
 
 	<select id="readById" resultType="com.api.model.User">

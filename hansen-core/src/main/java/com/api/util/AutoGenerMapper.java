@@ -1,6 +1,6 @@
 package com.api.util;
 
-import com.api.model.User;
+import com.api.model.*;
 import org.apache.commons.lang.ArrayUtils;
 
 import java.lang.reflect.Field;
@@ -13,7 +13,7 @@ import java.lang.reflect.Modifier;
 public class AutoGenerMapper {
 
     public static void main(String[] args) {
-        genMapperXml(User.class);
+        genMapperXml(WalletTransaction.class);
     }
 
     public static void genMapperXml(Class clz) {
@@ -92,6 +92,27 @@ public class AutoGenerMapper {
 
         }
 
+        String[] fieldList= sb.toString().split(",");
+        StringBuffer keys=new StringBuffer();
+        StringBuffer values=new StringBuffer();
+        keys.append("\t\n\t\t<trim  suffixOverrides=\",\" >");
+        values.append("\t\n\t\t<trim  suffixOverrides=\",\" >\t\n\t\t");
+        for(String str:fieldList){
+            if("".equals(str)){
+                keys.append("\t\n\t\t\t<if test=\"model.id!= null  and model.id!=''\">\t\n\t\t\t id,\t\n\t\t\t</if>");
+                values.append("\t\n\t\t\t<if test=\"model.id!= null  and model.id!=''\">\t\n\t\t\t#{model.id},\t\n\t\t\t</if>");
+            }else {
+                keys.append("\t\n\t\t\t<if test=\"model." + str + "!= null  and model." + str + "!=''\">\t\n\t\t\t" +
+                        str +
+                        ",\t\n\t\t\t</if>");
+                values.append("\t\n\t\t\t<if test=\"model." + str + "!= null  and model." + str + "!=''\">\t\n\t\t\t#{model." +
+                        str +
+                        "},\t\n\t\t\t</if>");
+            }
+        }
+        keys.append("\t\n\t\t</trim>\t\n\t\t");
+        values.append("\t\n\t\t</trim> \t\n\t\t");
+
         condition.append("\t<sql id=\"condition\">\r\n").append("\t\t<where>\t\t\t").append(sb3).append("\r\n\t\t</where>\r\n\t</sql>");
 
         StringBuilder xml = new StringBuilder();
@@ -117,7 +138,7 @@ public class AutoGenerMapper {
         xml.append(condition.toString());
         xml.append("\r\n");
         xml.append("\r\n");
-        xml.append("\t<insert id=\"create\" useGeneratedKeys=\"true\" keyProperty=\"id\">\r\n\t\tinsert into <include refid=\"table_name\"/>(<include refid=\"fields_id\"/>)\r\n\t\tvalues(" + sb2.toString().replaceFirst(",", "") + ");\r\n\t</insert>");
+        xml.append("\t<insert id=\"create\" useGeneratedKeys=\"true\" keyProperty=\"id\">\r\n\t\tinsert into <include refid=\"table_name\"/>("+keys+")\r\n\t\tvalues(" + values + ");\r\n\t</insert>");
         xml.append("\r\n");
         xml.append("\r\n");
         xml.append("\t<select id=\"readById\" resultType=\"" + fullModelName + "\">\r\n\t\t<include refid=\"selector\"/> where id=#{id}  limit 1;\r\n\t</select>");

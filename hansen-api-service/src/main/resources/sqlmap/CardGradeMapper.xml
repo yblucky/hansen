@@ -31,8 +31,81 @@
 	</sql>
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
-		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{grade},#{insuranceAmt},#{releaseScale},#{activeCodeNo},#{registerCodeNo},#{outMultiple},now(),now(),#{status},#{remark});
+		insert into <include refid="table_name"/>(
+		<trim  suffixOverrides="," >
+			<if test="model.id!= null  and model.id!=''">
+				id,
+			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				grade,
+			</if>
+			<if test="model.insuranceAmt!= null  and model.insuranceAmt!=''">
+				insuranceAmt,
+			</if>
+			<if test="model.releaseScale!= null  and model.releaseScale!=''">
+				releaseScale,
+			</if>
+			<if test="model.activeCodeNo!= null  and model.activeCodeNo!=''">
+				activeCodeNo,
+			</if>
+			<if test="model.registerCodeNo!= null  and model.registerCodeNo!=''">
+				registerCodeNo,
+			</if>
+			<if test="model.outMultiple!= null  and model.outMultiple!=''">
+				outMultiple,
+			</if>
+			<if test="model.createTime!= null  and model.createTime!=''">
+				createTime,
+			</if>
+			<if test="model.updateTime!= null  and model.updateTime!=''">
+				updateTime,
+			</if>
+			<if test="model.status!= null  and model.status!=''">
+				status,
+			</if>
+			<if test="model.remark!= null  and model.remark!=''">
+				remark,
+			</if>
+		</trim>
+		)
+		values(
+		<trim  suffixOverrides="," >
+
+			<if test="model.id!= null  and model.id!=''">
+				#{model.id},
+			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				#{model.grade},
+			</if>
+			<if test="model.insuranceAmt!= null  and model.insuranceAmt!=''">
+				#{model.insuranceAmt},
+			</if>
+			<if test="model.releaseScale!= null  and model.releaseScale!=''">
+				#{model.releaseScale},
+			</if>
+			<if test="model.activeCodeNo!= null  and model.activeCodeNo!=''">
+				#{model.activeCodeNo},
+			</if>
+			<if test="model.registerCodeNo!= null  and model.registerCodeNo!=''">
+				#{model.registerCodeNo},
+			</if>
+			<if test="model.outMultiple!= null  and model.outMultiple!=''">
+				#{model.outMultiple},
+			</if>
+			<if test="model.createTime!= null  and model.createTime!=''">
+				#{model.createTime},
+			</if>
+			<if test="model.updateTime!= null  and model.updateTime!=''">
+				#{model.updateTime},
+			</if>
+			<if test="model.status!= null  and model.status!=''">
+				#{model.status},
+			</if>
+			<if test="model.remark!= null  and model.remark!=''">
+				#{model.remark},
+			</if>
+		</trim>
+		);
 	</insert>
 
 	<select id="readById" resultType="com.api.model.CardGrade">
