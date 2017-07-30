@@ -1,4 +1,4 @@
-package com.api.interceptor;
+package com.hansen.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import com.api.core.exception.CoreException;
-import com.api.core.page.JsonResult;
+import com.hansen.base.exception.CoreException;
+import com.hansen.base.page.JsonResult;
 
 /**
  * 全局异常处理器

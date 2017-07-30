@@ -1,4 +1,4 @@
-package com.api.util;
+package com.hansen.util;
 
 /**
  * 短信模板类

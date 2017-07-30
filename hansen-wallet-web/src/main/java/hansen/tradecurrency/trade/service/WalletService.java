@@ -1,13 +1,13 @@
 package hansen.tradecurrency.trade.service;
 
+import hansen.tradecurrency.trade.model.Transaction;
+
 import java.math.BigDecimal;
 
-import hansen.wallet.trade.model.Transaction;
-
 public interface WalletService {
-	public String getAccountAddress(String account);
-	
-	public void sendToAddress(Transaction transaction);
-	
-	public BigDecimal getBalance();
+    public String getAccountAddress(String account);
+
+    public void sendToAddress(Transaction transaction);
+
+    public BigDecimal getBalance();
 }

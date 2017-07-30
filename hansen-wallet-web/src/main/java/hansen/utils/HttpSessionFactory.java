@@ -15,8 +15,8 @@
  */
 package hansen.utils;
 
+import hansen.bitcoin.http.HttpSession;
 import org.apache.commons.httpclient.Credentials;
-import ru.paradoxs.bitcoin.http.HttpSession;
 
 import java.net.URI;
 

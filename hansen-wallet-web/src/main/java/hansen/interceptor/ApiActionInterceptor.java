@@ -1,12 +1,12 @@
 package hansen.interceptor;
 
-import com.api.common.Token;
-import com.api.constant.RedisKey;
-import com.api.constant.ResultCode;
-import com.api.core.exception.CommonException;
-import com.api.redis.Strings;
-import com.api.util.FileUtil;
-import com.api.util.TokenUtil;
+import com.hansen.common.Token;
+import com.hansen.constant.RedisKey;
+import com.hansen.constant.ResultCode;
+import com.hansen.base.exception.CommonException;
+import com.hansen.redis.Strings;
+import com.hansen.util.FileUtil;
+import com.hansen.util.TokenUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;

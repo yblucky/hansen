@@ -2,9 +2,9 @@ package hansen.tradecurrency.trade.dao;
 
 import java.util.List;
 
+import hansen.tradecurrency.trade.model.Prepay;
 import org.apache.ibatis.annotations.Param;
 
-import hansen.wallet.trade.model.Prepay;
 
 public interface PrepayDao {
 	public Boolean insert(Prepay prepay);

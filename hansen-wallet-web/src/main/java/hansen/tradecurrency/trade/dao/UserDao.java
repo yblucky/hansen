@@ -1,7 +1,7 @@
 package hansen.tradecurrency.trade.dao;
 
 
-import hansen.wallet.trade.model.RtbUser;
+import hansen.tradecurrency.trade.model.RtbUser;
 
 public interface UserDao {
 	public Boolean insert(RtbUser user);

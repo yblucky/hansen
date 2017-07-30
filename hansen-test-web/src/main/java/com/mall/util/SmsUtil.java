@@ -1,4 +1,4 @@
-package com.api.util;
+package com.hansen.util;
 
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;

@@ -1,8 +1,8 @@
 package hansen.tradecurrency.trade.service;
 
-import java.util.List;
+import hansen.tradecurrency.trade.model.Transaction;
 
-import hansen.wallet.trade.model.Transaction;
+import java.util.List;
 
 public interface TransactionService {
 	public Boolean insert(Transaction transaction);

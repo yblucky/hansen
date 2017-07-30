@@ -2,14 +2,14 @@ package hansen.tradecurrency.task;
 
 import java.util.List;
 
+import com.hansen.common.constant.ENumCode;
+import hansen.bitcoin.client.TransactionInfo;
+import hansen.tradecurrency.trade.model.Transaction;
+import hansen.tradecurrency.trade.service.TransactionService;
+import hansen.utils.WalletUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.json.JSONObject;
-import ru.paradoxs.bitcoin.client.TransactionInfo;
-import ru.paradoxs.utils.WalletUtil;
-import hansen.model.ENumCode;
-import hansen.wallet.trade.model.Transaction;
-import hansen.wallet.trade.service.TransactionService;
 
 public class TransactionTask extends BaseScheduleTask {
 	@Autowired

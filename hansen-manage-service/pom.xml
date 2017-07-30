@@ -14,14 +14,9 @@
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>cn.jpush.api</groupId>
-			<artifactId>jpush-client</artifactId>
-			<version>3.2.15</version>
-		</dependency>
-		<dependency>
-			<groupId>cn.jpush.api</groupId>
-			<artifactId>jiguang-common</artifactId>
-			<version>1.0.1</version>
+			<groupId>com.yanbao</groupId>
+			<artifactId>hansen-common-service</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
     </dependencies>
 </project>

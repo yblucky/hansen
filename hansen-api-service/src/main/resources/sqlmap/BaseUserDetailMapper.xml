@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.api.mapper.UserDetailMapper">
+<mapper namespace="com.hansen.mapper.UserDetailMapper">
 
 	<sql id="fields">
 		userId,uid,performance,createTime,updateTime,status,remark
@@ -87,15 +87,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.api.model.UserDepartment">
+	<select id="readById" resultType="com.hansen.model.UserDepartment">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.api.model.UserDepartment">
+	<select id="readList" resultType="com.hansen.model.UserDepartment">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.api.model.UserDepartment">
+	<select id="readOne" resultType="com.hansen.model.UserDepartment">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

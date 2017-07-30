@@ -1,10 +1,10 @@
-package com.api.controller;
+package com.hansen.controller;
 
-import com.api.constant.OrderType;
-import com.api.core.page.JsonResult;
-import com.api.model.MallOrder;
-import com.api.service.*;
-import com.api.util.WechatUtil;
+import com.hansen.constant.OrderType;
+import com.hansen.base.page.JsonResult;
+import com.hansen.model.MallOrder;
+import com.hansen.service.*;
+import com.hansen.util.WechatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

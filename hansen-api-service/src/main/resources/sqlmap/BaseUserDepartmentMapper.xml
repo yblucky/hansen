@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.api.mapper.UserDepartmentMapper">
+<mapper namespace="com.hansen.mapper.UserDepartmentMapper">
 
 	<sql id="fields">
 		userId,uid,performance,createTime,updateTime,status,remark,parentUserId
@@ -93,15 +93,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.api.model.UserDepartment">
+	<select id="readById" resultType="com.hansen.model.UserDepartment">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.api.model.UserDepartment">
+	<select id="readList" resultType="com.hansen.model.UserDepartment">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.api.model.UserDepartment">
+	<select id="readOne" resultType="com.hansen.model.UserDepartment">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 
@@ -126,7 +126,7 @@
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
 
-	<select id="getAll" resultType="com.api.model.UserDepartment">
+	<select id="getAll" resultType="com.hansen.model.UserDepartment">
 		select <include refid="fields_id"/> from <include refid="table_name"/> as a
 		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and b.contactUserId = a.id and a.status = 1
 		order by a.performance desc

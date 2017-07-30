@@ -7,11 +7,11 @@
         id,name,value,kind,createtime,updatetime,status,remark,title
     </sql>
 
-    <resultMap id="getStoreMap" type="HashMap">
+    <resultMap id="map" type="HashMap">
         <result column=""></result>
     </resultMap>
 
-    <sql id="table">hb_parameter</sql>
+    <sql id="table">base_parameter</sql>
 
     <sql id="selector">
         SELECT
@@ -31,18 +31,18 @@
         </where>
     </sql>
 
-    <select id="readById" resultType="com.api.model.Parameter">
+    <select id="readById" resultType="com.hansen.model.Parameter">
         <include refid="selector"/>
         where id=#{id} limit 1;
     </select>
 
-    <select id="readList" resultType="com.api.model.Parameter">
+    <select id="readList" resultType="com.hansen.model.Parameter">
         <include refid="selector"/>
         <include refid="condition"/>
         limit #{startRow}, #{pageSize};
     </select>
 
-    <select id="readOne" resultType="com.api.model.Parameter">
+    <select id="readOne" resultType="com.hansen.model.Parameter">
         <include refid="selector"/>
         <include refid="condition"/>
         limit 1;
@@ -149,7 +149,7 @@
     </update>
 
     <!-- 查询所有系统参数 -->
-    <select id="getList" resultType="com.api.model.Parameter">
+    <select id="getList" resultType="com.hansen.model.Parameter">
         <include refid="selector"/>
     </select>
 

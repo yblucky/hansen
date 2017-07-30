@@ -1,4 +1,4 @@
-package com.api.vo;
+package com.hansen.vo;
 
 import java.io.Serializable;
 

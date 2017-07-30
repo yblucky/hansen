@@ -1,8 +1,8 @@
 package hansen.tradecurrency.trade.model;
 
-import java.math.BigDecimal;
+import com.hansen.common.BaseModel;
 
-import hansen.model.BaseModel;
+import java.math.BigDecimal;
 
 public class Prepay extends BaseModel {
 	

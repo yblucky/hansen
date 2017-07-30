@@ -1,4 +1,4 @@
-package com.api.task;
+package com.hansen.task;
 
 import java.util.List;
 
@@ -9,19 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.api.constant.DrawType;
-import com.api.constant.RecordType;
-import com.api.constant.RedisKey;
-import com.api.model.GoodsIssue;
-import com.api.model.GoodsIssueDetail;
-import com.api.model.WalletRecord;
-import com.api.redis.Hash;
-import com.api.redis.Strings;
-import com.api.service.GoodsIssueDetailService;
-import com.api.service.GoodsIssueService;
-import com.api.service.MallGoodsService;
-import com.api.service.BaseUserService;
-import com.api.service.MallRecordService;
+import com.hansen.constant.DrawType;
+import com.hansen.constant.RecordType;
+import com.hansen.constant.RedisKey;
+import com.hansen.model.GoodsIssue;
+import com.hansen.model.GoodsIssueDetail;
+import com.hansen.model.WalletRecord;
+import com.hansen.redis.Hash;
+import com.hansen.redis.Strings;
+import com.hansen.service.GoodsIssueDetailService;
+import com.hansen.service.GoodsIssueService;
+import com.hansen.service.MallGoodsService;
+import com.hansen.service.BaseUserService;
+import com.hansen.service.MallRecordService;
 
 /**
  * 竞拍回退定时器

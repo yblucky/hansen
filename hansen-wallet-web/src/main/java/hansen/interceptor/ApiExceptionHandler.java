@@ -1,7 +1,7 @@
 package hansen.interceptor;
 
-import com.api.core.exception.CoreException;
-import com.api.core.page.JsonResult;
+import com.hansen.base.exception.CoreException;
+import com.hansen.base.page.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;

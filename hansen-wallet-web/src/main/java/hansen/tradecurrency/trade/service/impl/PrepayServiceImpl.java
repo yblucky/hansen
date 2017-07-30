@@ -2,12 +2,12 @@ package hansen.tradecurrency.trade.service.impl;
 
 import java.util.List;
 
+import hansen.tradecurrency.trade.dao.PrepayDao;
+import hansen.tradecurrency.trade.model.Prepay;
+import hansen.tradecurrency.trade.service.PrepayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import hansen.wallet.trade.dao.PrepayDao;
-import hansen.wallet.trade.model.Prepay;
-import hansen.wallet.trade.service.PrepayService;
 
 @Service
 public class PrepayServiceImpl implements PrepayService {
