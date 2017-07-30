@@ -1,14 +1,14 @@
 package com.hansen.common.utils.serviceutils;
 
 import com.hansen.base.page.Page;
-import com.hansen.common.utils.constant.RedisKey;
-import com.hansen.common.utils.service.ParameterService;
+import com.hansen.common.constant.RedisKey;
 import com.hansen.common.utils.toolutils.ToolUtil;
 import com.hansen.model.Parameter;
 import com.hansen.redis.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import service.ParameterService;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;

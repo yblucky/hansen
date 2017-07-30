@@ -1,15 +1,14 @@
 package com.hansen.interceptor;
 
-import com.hansen.common.FileUtils.FileUtil;
+import com.hansen.base.page.JsonResult;
 import com.hansen.common.Token;
 import com.hansen.common.base.TokenUtil;
-import com.hansen.base.page.JsonResult;
 import com.hansen.common.constant.RedisKey;
 import com.hansen.common.constant.ResultCode;
+import com.hansen.common.utils.FileUtils.FileUtil;
 import com.hansen.redis.Strings;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.cache.CacheKey;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -86,7 +85,7 @@ public class ActionInterceptor extends HandlerInterceptorAdapter {
         }
         // Redis获取Token
         Token tokenObj = (Token) obj;
-        String redisToken = Strings.get(RedisKey.BOSS_TOKEN_API.getKey()+tokenObj.getId());
+        String redisToken = Strings.get(RedisKey.BOSS_TOKEN_API.getKey() + tokenObj.getId());
         if (StringUtils.isEmpty(redisToken) || !token.equals(redisToken)) {
             JSONObject responseJSONObject = JSONObject.fromObject(new JsonResult(ResultCode.NO_LOGIN.getCode(), "请登录"));
             PrintWriter out = response.getWriter();
@@ -94,7 +93,7 @@ public class ActionInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         // 检验通过，更新redis中token生命周期
-        Strings.setEx(RedisKey.BOSS_TOKEN_API.getKey()+tokenObj.getId(), 30 * 60, token);
+        Strings.setEx(RedisKey.BOSS_TOKEN_API.getKey() + tokenObj.getId(), 30 * 60, token);
         return true;
 
     }

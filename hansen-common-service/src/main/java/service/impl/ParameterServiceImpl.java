@@ -2,12 +2,12 @@ package service.impl;
 
 import com.hansen.base.dao.CommonDao;
 import com.hansen.base.service.impl.CommonServiceImpl;
-import com.hansen.common.serviceutils.ParamUtil;
-import com.hansen.mapper.ParameterMapper;
+import com.hansen.common.utils.mapper.ParameterMapper;
+import com.hansen.common.utils.serviceutils.ParamUtil;
 import com.hansen.model.Parameter;
-import com.hansen.service.ParameterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import service.ParameterService;
 
 import java.util.List;
 

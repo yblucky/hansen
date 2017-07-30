@@ -3,7 +3,7 @@ package hansen.tradecurrency.trade.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.hansen.base.page.JsonResult;
-import com.hansen.common.utils.constant.ENumCode;
+import com.hansen.common.constant.ENumCode;
 import com.hansen.model.User;
 import com.hansen.service.UserService;
 import hansen.bitcoin.client.TransactionInfo;

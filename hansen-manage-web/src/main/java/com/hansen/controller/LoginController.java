@@ -2,8 +2,8 @@ package com.hansen.controller;
 
 import com.hansen.base.page.JsonResult;
 import com.hansen.common.base.TokenUtil;
-import com.hansen.common.codeutils.Md5Util;
 import com.hansen.common.constant.RedisKey;
+import com.hansen.common.utils.codeutils.Md5Util;
 import com.hansen.model.BaseAdmin;
 import com.hansen.redis.Strings;
 import com.hansen.service.BaseAdminService;
