@@ -1,9 +1,9 @@
 package com.hansen.base.service.impl;
 
-import com.hansen.common.BaseModel;
 import com.hansen.base.dao.CommonDao;
 import com.hansen.base.page.DBPage;
-import com.hansen.util.UUIDUtil;
+import com.hansen.common.BaseModel;
+import com.hansen.toolutils.ToolUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -60,7 +60,7 @@ public abstract class CommonServiceImpl<M extends BaseModel> {
     public void createWithUUID(M model) {
         try {
 //            defaultStatus(model);
-            model.setId(UUIDUtil.getUUID());
+            model.setId(ToolUtil.getUUID());
             getDao().create(model);
             processCacheAfterCreate(model);
         } catch (Exception e) {
@@ -173,25 +173,25 @@ public abstract class CommonServiceImpl<M extends BaseModel> {
     }
 
     public void defaultCreate(M model) {
-	 try {
-         Integer status = model.getStatus();
-         status = status == null ? 0:status;
-         model.setStatus(status);
-         if (StringUtils.isEmpty(model.getId())){
-             model.setId(UUIDUtil.getUUID());
-         }
-         if (model.getCreateTime()==null){
-             model.setCreateTime(new Date());
-         }
-	 } catch (Exception e) {
-	 model.setStatus(1);
-	 }
+        try {
+            Integer status = model.getStatus();
+            status = status == null ? 0 : status;
+            model.setStatus(status);
+            if (StringUtils.isEmpty(model.getId())) {
+                model.setId(ToolUtil.getUUID());
+            }
+            if (model.getCreateTime() == null) {
+                model.setCreateTime(new Date());
+            }
+        } catch (Exception e) {
+            model.setStatus(1);
+        }
     }
 
     public void defaultUpdate(M model) {
         try {
             Integer status = model.getStatus();
-            status = status == null ? 0:status;
+            status = status == null ? 0 : status;
             model.setStatus(status);
             model.setUpdateTime(new Date());
         } catch (Exception e) {

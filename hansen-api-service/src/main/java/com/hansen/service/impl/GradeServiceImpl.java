@@ -4,7 +4,7 @@ import com.hansen.base.dao.CommonDao;
 import com.hansen.base.service.impl.CommonServiceImpl;
 import com.hansen.common.constant.GradeType;
 import com.hansen.common.constant.UserStatusType;
-import com.hansen.common.numberutils.CurrencyUtil;
+import com.hansen.common.utils.numberutils.CurrencyUtil;
 import com.hansen.mapper.GradeMapper;
 import com.hansen.model.Grade;
 import com.hansen.model.User;
