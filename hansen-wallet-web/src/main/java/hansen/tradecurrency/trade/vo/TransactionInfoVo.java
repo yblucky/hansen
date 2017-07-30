@@ -1,6 +1,6 @@
 package hansen.tradecurrency.trade.vo;
 
-import ru.paradoxs.utils.ToolUtil;
+import com.hansen.common.utils.toolutils.ToolUtil;
 
 public class TransactionInfoVo {
 	

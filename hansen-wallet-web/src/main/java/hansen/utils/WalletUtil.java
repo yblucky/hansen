@@ -1,7 +1,7 @@
 package hansen.utils;
 
 import com.alibaba.fastjson.JSONArray;
-import com.hansen.common.constant.ENumCode;
+import com.hansen.common.utils.constant.ENumCode;
 import hansen.bitcoin.client.BitcoinClient;
 import hansen.bitcoin.client.TransactionInfo;
 import net.sf.json.JSONObject;

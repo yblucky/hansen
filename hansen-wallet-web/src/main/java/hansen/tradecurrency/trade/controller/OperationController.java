@@ -3,10 +3,10 @@ package hansen.tradecurrency.trade.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.hansen.base.page.JsonResult;
-import com.hansen.common.constant.ENumCode;
+import com.hansen.common.utils.constant.ENumCode;
+import com.hansen.model.User;
 import com.hansen.service.UserService;
 import hansen.bitcoin.client.TransactionInfo;
-import hansen.tradecurrency.trade.model.RtbUser;
 import hansen.tradecurrency.trade.model.Transaction;
 import hansen.tradecurrency.trade.service.TransactionService;
 import hansen.tradecurrency.trade.vo.TransactionInfoVo;
@@ -31,26 +31,21 @@ public class OperationController {
     @RequestMapping(value = "/getAddressById", method = RequestMethod.GET)
     @ResponseBody
     public JsonResult getAccountAddress(String account) {
-        JsonResult result = new JsonResult(ENumCode.SUCCESS);
+        JsonResult result = null;
         try {
             if (ToolUtil.isEmpty(account)) {
-                result.addData("message", "账号不能为空");
-                return result;
+                return new JsonResult("账号不能为空");
             }
-            RtbUser u = userService.selectByUserId(Integer.valueOf(account));
+            User u = userService.readById(account);
             if (u != null) {
-                result.addData("message", "账号已存在");
-                return result;
+                return new JsonResult("账号已存在");
             }
             String address = WalletUtil.getAccountAddress(account);
             if (ToolUtil.isNotEmpty(address)) {
-                RtbUser user = new RtbUser();
-                user.setAddress(address);
-                user.setBalance(new BigDecimal("0.0"));
-                user.setUserId(Integer.valueOf(account));
-                userService.insert(user);
+                User user = new User();
+                userService.create(user);
             }
-            result.addData("address", address);
+            return new JsonResult(address);
         } catch (Exception e) {
             e.printStackTrace();
             result = new JsonResult(ENumCode.ERROR);
@@ -100,8 +95,7 @@ public class OperationController {
             } else {
                 blance = WalletUtil.getBalance(account);
             }
-            result = new JsonResult(ENumCode.SUCCESS);
-            result.addData("blance", blance);
+            return new JsonResult(blance);
         } catch (Exception e) {
             e.printStackTrace();
             result = new JsonResult(ENumCode.ERROR);
@@ -150,10 +144,12 @@ public class OperationController {
 
             result = new JsonResult(ENumCode.SUCCESS);
             long confirmations = transaction.getConfirmations();
+            Map map = new HashMap();
 
-            result.addData("status", WalletUtil.checkTransactionStatus((int) confirmations));
+            map.put("status", WalletUtil.checkTransactionStatus((int) confirmations));
 
-            result.addData("txId", transaction);
+            map.put("txId", transaction);
+            return new JsonResult(map);
         } catch (Exception e) {
             e.printStackTrace();
             result = new JsonResult(ENumCode.ERROR);
@@ -179,7 +175,7 @@ public class OperationController {
                 map.put("time", transactionInfo.getTime());
                 list.add(map);
             }
-            result.addData("list", list);
+            return new JsonResult(list);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -194,7 +190,7 @@ public class OperationController {
         JsonResult result = new JsonResult(ENumCode.SUCCESS);
         Integer userId = null;
         if (start == null || end == null) {
-            result.addData("message", "time is empty");
+            return new JsonResult("time is empty");
         }
         if (account != null) {
             userId = new Integer(account);
@@ -215,7 +211,7 @@ public class OperationController {
                 map.put("userId", transaction.getUserId());
                 list.add(map);
             }
-            result.addData("list", list);
+            return new JsonResult(list);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -226,16 +222,11 @@ public class OperationController {
 
     public static void main(String[] args) throws Exception {
         System.out.println(ToolUtil.getCurrentDateTime());
-        System.out.println(ToolUtil.convertByteToString(ru.paradoxs.utils.Key.getEncode()));
         System.out.println("**************");
         System.out.println(ToolUtil.getCurrentDateTime());
         System.out.println("**************");
         System.out.println("===========");
-        System.out.println(ru.paradoxs.utils.Key.check(ToolUtil.convertByteToString(ru.paradoxs.utils.Key.getEncode())));
-        ;
         System.out.println("===========");
-        System.out.println(ru.paradoxs.utils.Key.check("8,-14,-99,100,-8,-128,110,-105,-91,104,99,-112,-105,112,34,26,75,-30,63,56,88,72,-87,86,116,-51,-80,-118,-21,-25,93,-16,-73,-42,-91,-93,-37,-3,25,-83,-68,94,64,-9,125,26,-92,-5,20,-121,71,22,-34,96,45,72,126,118,106,-50,-85,-17,45,-96,-67,124,118,96,-75,-101,69,-63,-4,-83,88,-46,75,83,96,-60,-67,-9,110,81,41,-58,24,22,-121,-80,-29,84,61,69,56,98,-95,-77,-5,25,-48,111,-120,47,-121,76,-100,106,-79,-99,-68,70,100,-24,6,-128,-38,-77,-64,119,-18,13,42,-120,-82,117,-75,-28,50,-86,-28,-41,20,-48,-119,31,123,-41,-24,-74,-10,-114,102,-108,45,20,-59,0,-67,-115,-4,-73,-38,24,13,-90,-14,124,84,19,7,29,51,28,112,100,-29,-43,53,-20,-16,75,-97,4,-43,-66,-33,46,-40,-85,-97,46,60,-78,121,40,-96,12,-68,-112,-14,-114,-126,71,99,21,-11,-49,-15,-72,-79,-127,34,18,-125,-105,-120,-15,-53,61,96,-43,-126,30,12,13,-79,107,-116,32,69,115,-19,-123,50,-88,-89,-124,18,-15,-48,-100,83,19,61,8,5,113,14,4,71,-13,55,-103,85,97,88,97,101,0,45,-104,36,-38,6,-75"));
-        ;
         System.out.println("===========");
         System.out.println(new Date().getTime());
         System.out.println(new Date().getTime() / 100000);
