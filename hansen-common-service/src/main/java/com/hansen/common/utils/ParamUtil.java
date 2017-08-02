@@ -1,4 +1,4 @@
-package com.hansen.common.utils.serviceutils;
+package com.hansen.common.utils;
 
 import com.hansen.base.page.Page;
 import com.hansen.common.constant.RedisKey;
