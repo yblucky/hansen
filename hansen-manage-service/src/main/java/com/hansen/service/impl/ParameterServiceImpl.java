@@ -2,7 +2,7 @@ package com.hansen.service.impl;
 
 import com.hansen.base.dao.CommonDao;
 import com.hansen.base.service.impl.CommonServiceImpl;
-import com.hansen.common.utils.serviceutils.ParamUtil;
+import com.hansen.common.utils.ParamUtil;
 import com.hansen.mapper.ParameterMapper;
 import com.hansen.model.Parameter;
 import com.hansen.service.ParameterService;

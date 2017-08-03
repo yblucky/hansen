@@ -76,7 +76,7 @@ public class ParamUtil {
             updateToken = Strings.get(RedisKey.SYS_PARAM_UPDTOKEN.getKey());
             //初始化redis
             if (updateToken == null || "".equalsIgnoreCase(updateToken)) {
-                Strings.setEx(RedisKey.SYS_PARAM_UPDTOKEN.getKey(), RedisKey.SYS_PARAM_UPDTOKEN.getSeconds(), ToolUtil.getUUID());
+                Strings.set(RedisKey.SYS_PARAM_UPDTOKEN.getKey(), ToolUtil.getUUID());
                 updateToken = Strings.get(RedisKey.SYS_PARAM_UPDTOKEN.getKey());
             }
             hmProperties_ = new HashMap<String, Parameter>();
@@ -107,10 +107,46 @@ public class ParamUtil {
 
     //管理端更新系统参数
     public synchronized void reloadParam() {
-        Strings.setEx(RedisKey.SYS_PARAM_UPDTOKEN.getKey(), RedisKey.SYS_PARAM_UPDTOKEN.getSeconds(), ToolUtil.getUUID());
+        Strings.set(RedisKey.SYS_PARAM_UPDTOKEN.getKey(), ToolUtil.getUUID());
         reload();
     }
 
+
+
+
+    /**
+     * 范例: prop.getInstance().getAllModel("SYS");
+     * <p>
+     * 返回所有的系统参数
+     *
+     * @return
+     * @throws Exception
+     */
+
+    public synchronized List<Parameter> getAllModel(String group) throws Exception {
+
+        if (isUpdateParam()) {
+            reload();
+        }
+
+        if (hmProperties_ == null || hmProperties_.size() == 0) {
+            reload();
+        }
+        if (hmProperties_ == null || hmProperties_.size() == 0) {
+            return null;
+        }
+        List<Parameter> list = new ArrayList<Parameter>();
+        Parameter model = null;
+        //遍历map中的键
+        for (String key : hmProperties_.keySet()) {
+            model = hmProperties_.get(key);
+            if(model !=null && model.getGroupType().equals(group)) {
+                list.add(model);
+            }
+        }
+        return list;
+
+    }
 
     /**
      * 范例: prop.getInstance().getAllModel();
