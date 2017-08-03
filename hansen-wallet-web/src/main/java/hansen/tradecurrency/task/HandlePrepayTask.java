@@ -1,7 +1,6 @@
 package hansen.tradecurrency.task;
 
-import hansen.tradecurrency.trade.model.Prepay;
-import hansen.utils.WalletUtil;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -16,14 +15,14 @@ public class HandlePrepayTask extends BaseScheduleTask {
     protected void doScheduleTask() {
         logger.error("HandlePrepayTask  start.......time:");
 
-        List<Prepay> prepayList = null;
+        List<String> prepayList = null;
 //		    List<Prepay> prepayList = prepayService.listByStartToEnd(Config.START, Config.END);
-        for (Prepay prepay : prepayList) {
+        for (String prepay : prepayList) {
             String txtId = "";
             try {
-                txtId = WalletUtil.sendToAddress(prepay.getAddress(), prepay.getAmount(), prepay.getMessage(), prepay.getPrepayId());
+//                txtId = WalletUtil.sendToAddress(prepay.getAddress(), prepay.getAmount(), prepay.getMessage(), prepay.getPrepayId());
                     /*try {
-						prepayService.updatePrepayId(prepay.getPrepayId(),Prepay.PrepayStatus.HANDLED.toString());
+                        prepayService.updatePrepayId(prepay.getPrepayId(),Prepay.PrepayStatus.HANDLED.toString());
 						try {
 							Transaction transaction = new Transaction();
 							transaction.setUserId(prepay.getUserId());
@@ -48,7 +47,7 @@ public class HandlePrepayTask extends BaseScheduleTask {
 					}
 				*/
             } catch (Exception e) {
-                logger.error("HandlePrepayTask  start.......  prepay 预付单发送指令失败  prepayId=  " + prepay.getPrepayId());
+//                logger.error("HandlePrepayTask  start.......  prepay 预付单发送指令失败  prepayId=  " + prepay.getPrepayId());
                 e.printStackTrace();
             }
 

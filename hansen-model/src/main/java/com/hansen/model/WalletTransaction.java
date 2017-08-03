@@ -3,7 +3,8 @@ package com.hansen.model;
 import com.hansen.common.BaseModel;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 钱包提币转币订单表
@@ -61,6 +62,10 @@ public class WalletTransaction extends BaseModel {
      * 交易状态
      */
     private String message;
+    /**
+     * 交易描述
+     */
+    private Map<String, Object> details;
 
 
     public String getUserId() {
@@ -157,5 +162,13 @@ public class WalletTransaction extends BaseModel {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Map<String, Object> getDetails() {
+        return details;
+    }
+
+    public void setDetails(Map<String, Object> details) {
+        this.details = details;
     }
 }

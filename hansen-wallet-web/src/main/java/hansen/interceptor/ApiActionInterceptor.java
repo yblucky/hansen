@@ -1,12 +1,12 @@
 package hansen.interceptor;
 
-import com.api.common.Token;
-import com.api.constant.RedisKey;
-import com.api.constant.ResultCode;
-import com.api.core.exception.CommonException;
-import com.api.redis.Strings;
-import com.api.util.FileUtil;
-import com.api.util.TokenUtil;
+import com.hansen.base.exception.CommonException;
+import com.hansen.common.Token;
+import com.hansen.common.base.TokenUtil;
+import com.hansen.common.constant.RedisKey;
+import com.hansen.common.constant.ResultCode;
+import com.hansen.common.utils.FileUtils.FileUtil;
+import com.hansen.redis.Strings;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ public class ApiActionInterceptor extends HandlerInterceptorAdapter {
         String uri = request.getRequestURI();
         // 过滤配置列表中的URL
         for (String uriKey : noAuthorized) {
-            if (uri.indexOf(uriKey) >=0) {
+            if (uri.indexOf(uriKey) >= 0) {
                 return true;
             }
         }
@@ -73,7 +73,7 @@ public class ApiActionInterceptor extends HandlerInterceptorAdapter {
         logger.error("********************************************");
         Object obj = TokenUtil.getTokenObject(token);
         logger.error("00000000000000000000000000000000000000000000");
-        logger.error("getTokenObj-->obj:  "+obj);
+        logger.error("getTokenObj-->obj:  " + obj);
         logger.error("00000000000000000000000000000000000000000000");
 
         if (obj == null) {

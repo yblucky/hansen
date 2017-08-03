@@ -1,7 +1,7 @@
 package hansen.interceptor;
 
-import com.api.core.exception.CoreException;
-import com.api.core.page.JsonResult;
+import com.hansen.base.exception.CoreException;
+import com.hansen.base.page.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,34 +13,35 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 全局异常处理器
+ *
  * @date 2016年12月8日
  */
 @ControllerAdvice
 public class ApiExceptionHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
-	@ResponseBody
-	@ExceptionHandler
-	public final JsonResult handleException(Exception ex, WebRequest request) {
-		int code = 500;
-		if (ex instanceof CoreException) {
-			CoreException oex = (CoreException) ex;
-			code = oex.getCode();
-		}
-		JsonResult body = new JsonResult();
-		body.setCode(code);
+    @ResponseBody
+    @ExceptionHandler
+    public final JsonResult handleException(Exception ex, WebRequest request) {
+        int code = 500;
+        if (ex instanceof CoreException) {
+            CoreException oex = (CoreException) ex;
+            code = oex.getCode();
+        }
+        JsonResult body = new JsonResult();
+        body.setCode(code);
 
-		HttpServletRequest req = (HttpServletRequest) request.resolveReference(WebRequest.REFERENCE_REQUEST);
-		String requestUrl = null == req ? "" : req.getRequestURI() + "|" + req.getParameterMap();
-		if (ex instanceof CoreException) {
-			body.setMsg(ex.getMessage());
-			logger.error(((CoreException) ex).getCode() + "|" + ex.getMessage() + "|" + requestUrl);
-		} else {
-			body.setMsg("服务器异常，请稍候再试！");
-			logger.error(requestUrl, ex);
-		}
-		return body;
-	}
+        HttpServletRequest req = (HttpServletRequest) request.resolveReference(WebRequest.REFERENCE_REQUEST);
+        String requestUrl = null == req ? "" : req.getRequestURI() + "|" + req.getParameterMap();
+        if (ex instanceof CoreException) {
+            body.setMsg(ex.getMessage());
+            logger.error(((CoreException) ex).getCode() + "|" + ex.getMessage() + "|" + requestUrl);
+        } else {
+            body.setMsg("服务器异常，请稍候再试！");
+            logger.error(requestUrl, ex);
+        }
+        return body;
+    }
 
 }

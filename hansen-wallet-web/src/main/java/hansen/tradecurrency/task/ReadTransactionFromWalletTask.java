@@ -2,6 +2,7 @@ package hansen.tradecurrency.task;
 
 import com.hansen.model.WalletTransaction;
 import com.hansen.service.WalletTransactionService;
+import hansen.utils.WalletUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
@@ -19,35 +20,38 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
         logger.error("readTransactionFromWalletTask  start.......time:");
         try {
 
-            List<TransactionInfo> infolist = WalletUtil.listTransactionsDefault();
-            for (WalletTransaction : infolist) {
+            List<TransactionInfo> infolist = WalletUtil.listTransactions("", 10);
+            for (TransactionInfo info: infolist) {
 //				Config.LAST_WALLET_INSERT_TIME=info.getTime();
-                int count = transactionService.selectByTxtIdAndCategory(info.getTxId(), info.getCategory());
+                WalletTransaction conditon = new WalletTransaction();
+                conditon.setTxtId("");
+                conditon.setCategory("send");
+                int count = transactionService.readCount(conditon);
                 if (count > 0) {
 //					continue;
                     break;
                 }
                 WalletTransaction transaction = new WalletTransaction();
-                transaction.setUserId(info.getAccount());
-                transaction.setAmount(info.getAmount());
+                transaction.setUserId(info.getOtherAccount());
+                transaction.setAmount(info.getAmount().doubleValue());
                 transaction.setCategory(info.getCategory());
                 transaction.setConfirmations(Integer.valueOf(info.getConfirmations() + ""));
                 transaction.setCreateTime(new Date());
-                transaction.setFee(info.getFee());
+                transaction.setFee(info.getFee().doubleValue());
                 transaction.setPrepayId(info.getTo());
                 transaction.setMessage(info.getMessage());
                 transaction.setTransactionLongTime(info.getTime() * 1000);
                 transaction.setTxtId(info.getTxId());
-                transaction.setTransactionTime(new Date(info.getTime() * 1000));
+                transaction.setTransactionTime(new Date(info.getTime()*1000));
                 if (info.getCategory().equals("immature") || info.getCategory().equals("generate")) {
                     transaction.setAddress("");
                 } else {
-                    transaction.setAddress(info.getAddress());
+                    transaction.setAddress(info.getOtherAccount());
                 }
                 transaction.setTransactionStatus(hansen.utils.WalletUtil.checkTransactionStatus(Integer.valueOf(info.getConfirmations() + "")).toString());
-                transactionService.insert(transaction);
+                transactionService.create(transaction);
                 if (hansen.utils.ToolUtil.isNotEmpty(info.getTo())) {
-                    prepayService.updatePrepayId(info.getTo(), hansen.tradecurrency.trade.model.Prepay.PrepayStatus.HANDLED.toString());
+//                    prepayService.updatePrepayId(info.getTo(), "HANDLED");
                 }
             }
         } catch (Exception e) {

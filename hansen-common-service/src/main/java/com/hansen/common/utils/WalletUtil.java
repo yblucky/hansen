@@ -1,4 +1,4 @@
-package hansen.utils;
+package com.hansen.common.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.hansen.common.constant.ENumCode;

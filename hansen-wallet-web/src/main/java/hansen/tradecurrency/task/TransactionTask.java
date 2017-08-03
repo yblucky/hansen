@@ -6,6 +6,7 @@ import com.hansen.service.WalletTransactionService;
 import hansen.utils.WalletUtil;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.paradoxs.bitcoin.client.TransactionInfo;
 
 import java.util.List;
 
@@ -20,14 +21,13 @@ public class TransactionTask extends BaseScheduleTask {
 
         List<WalletTransaction> list = transactionService.listByStartToEnd(start, end);
         for (WalletTransaction transaction : list) {
-            JSONObject jsonObject = WalletUtil.getTransactionJSON(transaction.getTxtId());
-            WalletTransaction transactionInfo = WalletUtil.parseTransactionInfo(jsonObject);
+            TransactionInfo transactionInfo = WalletUtil.getTransactionJSON(transaction.getTxtId());;
             if (transaction.getConfirmations() != transactionInfo.getConfirmations()) {
                 Integer confir = Integer.valueOf(String.valueOf(Long.valueOf(transactionInfo.getConfirmations())));
                 ENumCode eNumCode = WalletUtil.checkTransactionStatus(confir);
                 WalletTransaction updateModel = new WalletTransaction();
                 updateModel.setId(null);
-                updateModel.setTxtId(transactionInfo.getTxtId());
+                updateModel.setTxtId(transactionInfo.getTxId());
                 updateModel.setConfirmations(confir);
                 transactionService.updateById(updateModel.getId(), updateModel);
             }

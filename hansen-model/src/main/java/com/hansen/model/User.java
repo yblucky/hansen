@@ -196,38 +196,6 @@ public class User extends BaseModel {
         this.headImgUrl = headImgUrl;
     }
 
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getCounty() {
-        return county;
-    }
-
-    public void setCounty(String county) {
-        this.county = county;
-    }
-
-    public String getAddr() {
-        return addr;
-    }
-
-    public void setAddr(String addr) {
-        this.addr = addr;
-    }
-
     public Date getLoginTime() {
         return loginTime;
     }
@@ -352,6 +320,7 @@ public class User extends BaseModel {
         return contactUserId;
     }
 
+
     public void setContactUserId(String contactUserId) {
         this.contactUserId = contactUserId;
     }
@@ -372,13 +341,6 @@ public class User extends BaseModel {
         this.registerCodeNo = registerCodeNo;
     }
 
-    public Integer getLevles() {
-        return levles;
-    }
-
-    public void setLevles(Integer levles) {
-        this.levles = levles;
-    }
 
     public Double getInsuranceAmt() {
         return insuranceAmt;
