@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.hansen.common.constant.ENumCode;
 import com.hansen.model.WalletTransaction;
 import net.sf.json.JSONObject;
-import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 public class WalletUtil {
+
+
+
     public static BitcoinClient client = Bitc BitcoinClientFactory.getBitcoinClient("rtb");
 
     public static void main(String[] args) {

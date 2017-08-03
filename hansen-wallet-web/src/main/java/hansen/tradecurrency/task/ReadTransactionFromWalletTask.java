@@ -19,8 +19,8 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
         logger.error("readTransactionFromWalletTask  start.......time:");
         try {
 
-            List<TransactionInfo> infolist = hansen.utils.WalletUtil.listTransactionsDefault();
-            for (WalletTransaction info : infolist) {
+            List<TransactionInfo> infolist = WalletUtil.listTransactionsDefault();
+            for (WalletTransaction : infolist) {
 //				Config.LAST_WALLET_INSERT_TIME=info.getTime();
                 int count = transactionService.selectByTxtIdAndCategory(info.getTxId(), info.getCategory());
                 if (count > 0) {

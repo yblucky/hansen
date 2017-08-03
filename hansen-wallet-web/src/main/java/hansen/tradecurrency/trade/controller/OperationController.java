@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.hansen.service.UserService;
+import com.hansen.service.WalletTransactionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +25,6 @@ import net.sf.json.JSONObject;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 import ru.paradoxs.utils.ToolUtil;
 import ru.paradoxs.utils.WalletUtil;
-import hansen.model.ENumCode;
-import hansen.model.JsonResult;
-import hansen.wallet.trade.model.RtbUser;
-import hansen.wallet.trade.model.Transaction;
-import hansen.wallet.trade.service.TransactionService;
-import hansen.wallet.trade.service.UserService;
-import hansen.wallet.trade.vo.TransactionInfoVo;
 
 @Controller
 @RequestMapping("/rtb")
@@ -37,7 +32,7 @@ public class OperationController {
 	@Resource
 	private UserService userService;
 	@Resource
-	private TransactionService transactionService;
+	private WalletTransactionService transactionService;
 
 	@RequestMapping(value = "/getAddressById", method = RequestMethod.GET)
 	@ResponseBody
