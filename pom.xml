@@ -13,6 +13,7 @@
 		<module>hansen-api-web</module>
 	 	<module>hansen-manage-service</module>
 		<module>hansen-manage-web</module>
+		<module>hansen-wallet-web</module>
         <!--	<module>hansen-test-web</module>
         <module>hansen-h5</module>-->
 
@@ -235,22 +236,13 @@
 			<artifactId>xstream</artifactId>
 			<version>1.4.8</version>
 		</dependency>
-		<dependency>
-			<groupId>bitcoin.com</groupId>
-			<artifactId>bitcoin.code</artifactId>
-			<version>0.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
-		</dependency>
+
 		<!-- <dependency>
 			<groupId>com.yanbao</groupId>
 			<artifactId>taobao-sdk</artifactId>
 			<version>1.0.0</version>
 		</dependency> -->
-	</dependencies>
+	</dependencies>w
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

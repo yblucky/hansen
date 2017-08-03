@@ -2,6 +2,7 @@ package com.hansen.model;
 
 import com.hansen.common.BaseModel;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 /**
@@ -60,6 +61,7 @@ public class WalletTransaction extends BaseModel {
      * 交易状态
      */
     private String message;
+
 
     public String getUserId() {
         return userId;

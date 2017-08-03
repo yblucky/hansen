@@ -3,122 +3,199 @@
 
 <mapper namespace="com.hansen.mapper.UserDetailMapper">
 
-	<sql id="fields">
-		userId,uid,performance,createTime,updateTime,status,remark
+    <sql id="fields">
+		userId,uid,levles,province,city,county,addr,num,forzenNum,currencyType,inAddress,outAddress,createTime,updateTime,status,remark
 	</sql>
 
-	<sql id="fields_id">
-		id,<include refid="fields"/>
-	</sql>
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
 
-	<sql id="table_name">base_user_department</sql>
+    <sql id="table_name">base_user_detail</sql>
 
-	<sql id="selector">
-		select <include refid="fields_id"/> from <include refid="table_name"/>
-	</sql>
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
 
-	<sql id="condition">
-		<where>
-			<if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
-			<if test="model.uid != null">and uid=#{model.uid}</if>
-			<if test="model.performance != null">and performance=#{model.performance}</if>
-			<if test="model.status != null">and status=#{model.status}</if>
-			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
-		</where>
-	</sql>
+    <sql id="condition">
+        <where>
+            <if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
+            <if test="model.performance != null">and performance=#{model.performance}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
 
-	<insert id="create" useGeneratedKeys="true" keyProperty="id">
-		insert into <include refid="table_name"/>(
-		<trim  suffixOverrides="," >
-			<if test="model.id!= null  and model.id!=''">
-				id,
-			</if>
-			<if test="model.userId!= null  and model.userId!=''">
-				userId,
-			</if>
-			<if test="model.addressType!= null  and model.addressType!=''">
-				addressType,
-			</if>
-			<if test="model.equityAddress!= null  and model.equityAddress!=''">
-				equityAddress,
-			</if>
-			<if test="model.createTime!= null  and model.createTime!=''">
-				createTime,
-			</if>
-			<if test="model.updateTime!= null  and model.updateTime!=''">
-				updateTime,
-			</if>
-			<if test="model.status!= null  and model.status!=''">
-				status,
-			</if>
-			<if test="model.remark!= null  and model.remark!=''">
-				remark,
-			</if>
-		</trim>
-		)
-		values(
-		<trim  suffixOverrides="," >
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(
+        <trim suffixOverrides=",">
+            <if test="model.id!= null  and model.id!=''">
+                id,
+            </if>
+            <if test="model.userId!= null  and model.userId!=''">
+                userId,
+            </if>
+            <if test="model.province!= null  and model.province!=''">
+                province
+            </if>
+            <if test="model.city!= null  and model.city!=''">
+                city
+            </if>
+            <if test="model.county!= null  and model.county!=''">
+                county
+            </if>
+            <if test="model.addr!= null  and model.addr!=''">
+                addr
+            </if>
+            <if test="model.levles!= null  and model.levles!=''">
+                levles
+            </if>
+            <if test="model.outAddress!= null  and model.outAddress!=''">
+                outAddress
+            </if>
+            <if test="model.inAddress!= null  and model.inAddress!=''">
+                inAddress
+            </if>
+            <if test="model.currencyType!= null  and model.currencyType!=''">
+                currencyType
+            </if>
+            <if test="model.forzenNum!= null  and model.forzenNum!=''">
+                forzenNum
+            </if>
+            <if test="model.num!= null  and model.num!=''">
+                num
+            </if>
+            <if test="model.createTime!= null  and model.createTime!=''">
+                createTime,
+            </if>
+            <if test="model.updateTime!= null  and model.updateTime!=''">
+                updateTime,
+            </if>
+            <if test="model.status!= null  and model.status!=''">
+                status,
+            </if>
+            <if test="model.remark!= null  and model.remark!=''">
+                remark,
+            </if>
+        </trim>
+        )
+        values(
+        <trim suffixOverrides=",">
 
-			<if test="model.id!= null  and model.id!=''">
-				#{model.id},
-			</if>
-			<if test="model.userId!= null  and model.userId!=''">
-				#{model.userId},
-			</if>
-			<if test="model.addressType!= null  and model.addressType!=''">
-				#{model.addressType},
-			</if>
-			<if test="model.equityAddress!= null  and model.equityAddress!=''">
-				#{model.equityAddress},
-			</if>
-			<if test="model.createTime!= null  and model.createTime!=''">
-				#{model.createTime},
-			</if>
-			<if test="model.updateTime!= null  and model.updateTime!=''">
-				#{model.updateTime},
-			</if>
-			<if test="model.status!= null  and model.status!=''">
-				#{model.status},
-			</if>
-			<if test="model.remark!= null  and model.remark!=''">
-				#{model.remark},
-			</if>
-		</trim>
-		);
-	</insert>
+            <if test="model.id!= null  and model.id!=''">
+                #{model.id},
+            </if>
+            <if test="model.userId!= null  and model.userId!=''">
+                #{model.userId},
+            </if>
+            <if test="model.addressType!= null  and model.addressType!=''">
+                #{model.addressType},
+            </if>
+            <if test="model.equityAddress!= null  and model.equityAddress!=''">
+                #{model.equityAddress},
+            </if>
+            <if test="model.createTime!= null  and model.createTime!=''">
+                #{model.createTime},
+            </if>
+            <if test="model.updateTime!= null  and model.updateTime!=''">
+                #{model.updateTime},
+            </if>
+            <if test="model.status!= null  and model.status!=''">
+                #{model.status},
+            </if>
+            <if test="model.remark!= null  and model.remark!=''">
+                #{model.remark},
+            </if>
+            <if test="model.province!= null  and model.province!=''">
+                #{model.province},
+            </if>
+            <if test="model.city!= null  and model.city!=''">
+                #{model.city},
+            </if>
+            <if test="model.county!= null  and model.county!=''">
+                #{model.county},
+            </if>
+            <if test="model.addr!= null  and model.addr!=''">
+                #{model.addr},
+            </if>
+            <if test="model.levles!= null  and model.levles!=''">
+            #{model.levles},
+            </if>
+            <if test="model.outAddress!= null  and model.outAddress!=''">
+                #{model.outAddress},
+            </if>
+            <if test="model.inAddress!= null  and model.inAddress!=''">
+                #{model.inAddress},
+            </if>
+            <if test="model.currencyType!= null  and model.currencyType!=''">
+                #{model.currencyType},
+            </if>
+            <if test="model.forzenNum!= null  and model.forzenNum!=''">
+                #{model.forzenNum},
+            </if>
+            <if test="model.num!= null  and model.num!=''">
+                #{model.num},
+            </if>
+        </trim>
+        );
+    </insert>
 
-	<select id="readById" resultType="com.hansen.model.UserDepartment">
-		<include refid="selector"/> where id=#{id}  limit 1;
-	</select>
+    <select id="readById" resultType="com.hansen.model.UserDepartment">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
 
-	<select id="readList" resultType="com.hansen.model.UserDepartment">
-		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
-	</select>
+    <select id="readList" resultType="com.hansen.model.UserDepartment">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
 
-	<select id="readOne" resultType="com.hansen.model.UserDepartment">
-		<include refid="selector"/> <include refid="condition"/> limit 1;
-	</select>
+    <select id="readOne" resultType="com.hansen.model.UserDepartment">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
 
-	<select id="readCount" resultType="int">
-		select count(1) from <include refid="table_name"/> <include refid="condition"/>
-	</select>
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
 
-	<update id="updateById">
-		update <include refid="table_name"/>
-		<set>
-			<if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
-			<if test="model.uid != null">uid= #{model.uid},</if>
-			<if test="model.performance != null">performance= #{model.performance},</if>
-			<if test="model.status != null">status= #{model.status},</if>
-			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
-			updateTime=now()
-		</set>
-		where id=#{id}
-	</update>
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.uid != null">uid= #{model.uid},</if>
+            <if test="model.performance != null">performance= #{model.performance},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.province != null and model.province !=''">province= #{model.province},</if>
+            <if test="model.city != null and model.city !=''">city= #{model.city},</if>
+            <if test="model.county != null and model.county !=''">county= #{model.county},</if>
+            <if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
+            <if test="model.levles != null and model.levles !=''">levles= #{model.levles},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            <if test="model.num != null and model.num !=''">num= #{model.num},</if>
+            <if test="model.forzenNum != null and model.forzenNum !=''">forzenNum= #{model.forzenNum},</if>
+            <if test="model.currencyType != null and model.currencyType !=''">currencyType= #{model.currencyType},</if>
+            <if test="model.inAddress != null and model.inAddress !=''">inAddress= #{model.inAddress},</if>
+            <if test="model.outAddress != null and model.outAddress !=''">outAddress= #{model.outAddress},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
 
-	<update id="deleteById">
-		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
-	</update>
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
 
 </mapper>
 

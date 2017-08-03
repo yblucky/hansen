@@ -48,22 +48,6 @@ public class User extends BaseModel {
      * 头像地址
      */
     private String headImgUrl;
-    /**
-     * 省
-     */
-    private String province;
-    /**
-     * 市
-     */
-    private String city;
-    /**
-     * 县
-     */
-    private String county;
-    /**
-     * 详细地址
-     */
-    private String addr;
 
     /***登录时间**/
     private Date loginTime;
@@ -138,10 +122,6 @@ public class User extends BaseModel {
      * 注册码个数
      */
     private Integer registerCodeNo;
-    /**
-     * 所属层级
-     */
-    private Integer levles;
 
     public Integer getUid() {
         return uid;

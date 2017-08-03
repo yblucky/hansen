@@ -8,13 +8,15 @@ import com.hansen.service.WalletTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.TreeMap;
+
 /**
  * @date 2016年11月27日
  */
 @Service
 public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransaction> implements WalletTransactionService {
-    @Autowired
-    private WalletTransactionMapper walletTransactionMapper;
+
 
     @Override
     protected CommonDao<WalletTransaction> getDao() {
@@ -24,6 +26,23 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     @Override
     protected Class<WalletTransaction> getModelClass() {
         return WalletTransaction.class;
+    }
+
+
+    @Autowired
+    private WalletTransactionMapper walletTransactionMapper;
+
+
+
+    @Override
+    public List<WalletTransaction> listByTransactionTime(Long start, Long end, Integer userId) {
+        return walletTransactionMapper.listByTransactionTime(start, end,userId);
+    }
+
+
+    @Override
+    public List<WalletTransaction> listByStartToEnd(Long start, Long end) {
+        return walletTransactionMapper.listByStartToEnd(start, end);
     }
 
 }
