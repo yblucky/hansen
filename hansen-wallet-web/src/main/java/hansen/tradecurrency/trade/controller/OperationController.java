@@ -2,12 +2,12 @@ package hansen.tradecurrency.trade.controller;
 
 import com.hansen.base.page.JsonResult;
 import com.hansen.common.constant.ENumCode;
+import com.hansen.common.utils.WalletUtil;
 import com.hansen.common.utils.toolutils.ToolUtil;
 import com.hansen.model.WalletTransaction;
 import com.hansen.service.UserService;
 import com.hansen.service.WalletTransactionService;
 import hansen.tradecurrency.vo.TransactionInfoVo;
-import hansen.utils.WalletUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
