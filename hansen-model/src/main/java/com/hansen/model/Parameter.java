@@ -10,244 +10,13 @@ import com.hansen.common.BaseModel;
 public class Parameter extends BaseModel {
 
     private static final long serialVersionUID = -76937973371276572L;
-    /**
-     * 最小中奖积分
-     */
-    public static final String DRAWMINSCORE = "drawMinScore";
-    /**
-     * 幸运中拍奖金比例上限
-     */
-    public static final String WINNERSCALEMAX = "winnerScaleMax";
-    /**
-     * 幸运中拍奖金比例下限
-     */
-    public static final String WINNERSCALEMIN = "winnerScaleMin";
-    /**
-     * 系统分销比例
-     */
-    public static final String SYSTEMPOUNDAGESCALE = "systemPoundageScale";
-    /**
-     * 斗拍一级分销
-     */
-    public static final String FIRSTREFERRERSCALE = "firstReferrerScale";
-    /**
-     * 斗拍二级分销
-     */
-    public static final String SECONDREFERRERSCALE = "secondReferrerScale";
-    /**
-     * 斗拍三级分销
-     */
-    public static final String THIRDREFERRERSCALE = "thirdReferrerScale";
-    /**
-     * 最大开奖人数
-     */
-    public static final String DRAWNUMMAX = "drawNumMax";
-    /**
-     * 最小开奖人数
-     */
-    public static final String DRAWNUMMIN = "drawNumMin";
-    /**
-     * 排行榜上榜数
-     */
-    public static final String WINNERLISTNUM = "winnerListNum";
-    /**
-     * 转账（捐赠）开关：0：禁用，1：启用
-     **/
-    public static final String DONATESWICH = "donateSwich";
-    /**
-     * 单次转账（捐赠）最大值
-     */
-    public static final String DONATEMAX = "donateMax";
-    /**
-     * 单次转账（捐赠）最小值
-     */
-    public static final String DONATEMIN = "donateMin";
-    /**
-     * 转账手续费
-     */
-    public static final String DONATEPOUNDAGESCALE = "donatePoundageScale";
-    /**
-     * 积分兑换（提现）开关：0：禁用，1：启用
-     */
-    public static final String EXCHANGESWITCH = "exchangeSwitch";
-    /**
-     * 单次兑换（提现）最大值
-     */
-    public static final String EXCHANGEMAX = "exchangeMax";
-    /**
-     * 单次兑换（提现）最小值
-     */
-    public static final String EXCHANGEMIN = "exchangeMin";
-    /**
-     * 兑换手续费
-     */
-    public static final String EXCHANGEPOUNDAGESCALE = "exchangePoundageScale";
-    /**
-     * 开店条件：默认100积分
-     */
-    public static final String CREATESTORECONDITION = "createStoreCondition";
-    /**
-     * 商铺商品最大库存
-     */
-    public static final String STORESTOCKMAX = "storeStockMax";
-    /**
-     * 商铺发布商品数量限制
-     */
-    public static final String STOREGOODSMAX = "storeGoodsMax";
-    /**
-     * 邀请开关：0：禁用，1：启用
-     */
-    public static final String INVITESWICH = "inviteSwich";
-    /**
-     * VIP用户中奖概率
-     */
-    public static final String VIPWINSCALE = "vipWinScale";
-    /**
-     * 最新安卓客户端版本号
-     */
-    public static final String ANDROIDAPPVERSION = "androidAppVersion";
-    /**
-     * 最新安卓客户端下载地址
-     */
-    public static final String ANDROIDAPPURL = "androidAppUrl";
-    /**
-     * 最新安卓客户端更新说明
-     */
-    public static final String ANDROIDAPPDETAIL = "androidAppDetail";
-    /**
-     * 安卓客户端是否强制更新：0：否，1：是
-     */
-    public static final String ANDROIDAPPFORCEUPDATE = "androidAppForceUpdate";
-    /**
-     * 最新ios客户端版本号
-     */
-    public static final String IOSAPPVERSION = "iosAppVersion";
-    /**
-     * 最新ios客户端下载地址
-     */
-    public static final String IOSAPPURL = "iosAppUrl";
-    /**
-     * 最新ios客户端更新说明
-     */
-    public static final String IOSAPPDETAIL = "iosAppDetail";
-    /**
-     * ios客户端是否强制更新：0：否，1：是
-     */
-    public static final String IOSAPPFORCEUPDATE = "iosAppForceUpdate";
-    /**
-     * 系统版权
-     */
-    public static final String SYSTEMCOPYRIGHT = "systemCopyright";
-    /**
-     * 系统官方域名
-     */
-    public static final String SYSTEMDOMAIN = "systemDomain";
-    /**
-     * 查询层级
-     */
-    public static final String LEVELNO = "levelNo";
-    /**
-     * 注册赠送ep
-     */
-    public static final String REGISTEREP = "registerEP";
-    /**
-     * 邀请人赠送ep
-     */
-    public static final String INVITEREP = "inviterEP";
-    /**
-     * 绑定者赠送ep
-     */
-    public static final String BINDEP = "bindEP";
-    /**
-     * mail推送人
-     */
-    public static final String MAILPEOPLE = "mailPeople";
-    /**
-     * 分享标题
-     */
-    public static final String SHARETITLE = "shareTitle";
-    /**
-     * 区域抽佣比例
-     */
-    public static final String TRADERATE = "tradeRate";
-    /**
-     * 分享内容
-     */
-    public static final String SHAREMESSAGE = "shareMessage";
-    /**
-     * EP销售业绩比例
-     */
-    public static final String EPSCALE = "EPScale";
-    /**
-     * 销售业绩比例
-     */
-    public static final String BALANCESCALE = "balanceScale";
-    /**
-     * 代理结算日期
-     */
-    public static final String BILLDAY = "billDay";
-    /**
-     * 加入合伙人的金额
-     */
-    public static final String JOINEP = "joinEp";
-    /**
-     * 加入合伙人一级分销比例
-     */
-    public static final String JOINFIRSTREFERRERSCALE = "joinFirstReferrerScale";
-    /**
-     * 加入合伙人二级分销比例
-     */
-    public static final String JOINSECONDREFERRERSCALE = "joinSecondReferrerScale";
-    /**
-     * 加入合伙人三级分销比例
-     */
-    public static final String JOINTHIRDREFERRERSCALE = "joinThirdReferrerScale";
-    /**
-     * 引导页标致
-     */
-    public static final String GUIDEFLAG = "guideFlag";
-    /**
-     * ep兑换成斗斗比例
-     */
-    public static final String EPTODOUSCALE = "EPToDouScale";
-    /**
-     * ep兑换最小值
-     */
-    public static final String MINEPCONVERTNUM = "minEPConvertNum";
-    /**
-     * ep兑换最大值
-     */
-    public static final String MAXEPCONVERTNUM = "maxEPConvertNum";
-    /**
-     * 普通会员释放比例
-     */
-    public static final String COMMONRELEASESCALE = "commonReleaseScale";
-    /**
-     * VIP会员释放比例
-     */
-    public static final String VIPRELEASESCALE = "vipReleaseScale";
-    /**
-     * 斗斗签到最小值
-     */
-    public static final String MINSIGNDOUNUM = "minSignDouNum";
-    /**
-     * ep开关：on  off
-     */
-    public static final String EPSWITCH = "epSwitch";
-    /**
-     * 加入合伙人时EP兑换成斗斗比例
-     */
-    public static final String JOINTODOUSCALE = "joinToDouScale";
-    /**
-     * 公司客服电话，为空就不显示
-     */
-    public static final String SERVICEPHONE = "servicePhone";
 
     private String name;
     private String value;
     private String kind;
     private String title;
     private String remark;
+    private String groupType;
 
     public String getName() {
         return name;
@@ -287,5 +56,13 @@ public class Parameter extends BaseModel {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(String groupType) {
+        this.groupType = groupType;
     }
 }

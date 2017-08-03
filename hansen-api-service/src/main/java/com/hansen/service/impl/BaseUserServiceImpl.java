@@ -84,6 +84,10 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Override
     @Transactional
     public void weeklyIncomeAmt(User user) {
+        if (user == null) {
+            System.out.println("找不到用户....");
+            return;
+        }
         if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode().intValue()) {
             System.out.println("用户不是激活状态");
             return;
@@ -134,6 +138,10 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Transactional
     public void pushBonus(String pushUserId) {
         User pushUser = this.readById(pushUserId);
+        if (pushUser == null) {
+            System.out.println("找不到用户....");
+            return;
+        }
         if (pushUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
             System.out.println("用户未激活保单");
             return;
@@ -186,6 +194,10 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Transactional
     public void manageBonus(String pushUserId) {
         User pushUser = this.readById(pushUserId);
+        if (pushUser == null) {
+            System.out.println("找不到用户....");
+            return;
+        }
         if (pushUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
             System.out.println("用户未激活保单");
             return;
@@ -237,6 +249,10 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Override
     @Transactional
     public void reloadUserGrade(User user) throws Exception {
+        if (user == null) {
+            System.out.println("找不到用户....");
+            return;
+        }
         if (user.getGrade() == null || "".equals(user.getGrade())) {
             user.setGrade(0);
         }
@@ -260,6 +276,10 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Override
     public void differnceBonus(String userId) {
         User user = this.readById(userId);
+        if (user == null) {
+            System.out.println("找不到用户....");
+            return;
+        }
         if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
             System.out.println("用户未激活保单");
             return;
@@ -339,5 +359,65 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         model.setSource(recordType.getCode());
         model.setRemark(recordType.getMsg());
         tradeOrderService.create(model);
+    }
+
+    /**
+     * 点位升级
+     * @param userId 用户ID
+     * @param cardGrade 升级等级
+     * */
+    @Override
+    public void originUpgrade(String userId,Integer cardGrade){
+        User user = this.readById(userId);
+        if (user == null) {
+            System.out.println("找不到用户....");
+            return;
+        }
+        if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
+            System.out.println("用户未激活保单");
+            return;
+        }
+        CardGrade model = new CardGrade();
+        model.setGrade(cardGrade);
+        CardGrade grade = cardGradeService.readOne(model);
+        if(user.getCardGrade() >= grade.getGrade()){
+            System.out.println("点位升级只能从低往高升级！！！");
+            return;
+        }
+        User updateModel = new User();
+        updateModel.setGrade(grade.getGrade());
+        updateModel.setMaxProfits(grade.getInsuranceAmt());
+        this.updateById(userId,updateModel);
+        // TODO: 2017/8/3 点位升级成功后的记录
+    }
+
+    /**
+     * 覆盖升级
+     * @param userId 用户ID
+     * @param cardGrade 升级等级
+     * */
+    @Override
+    public void coverageUpgrade(String userId, Integer cardGrade){
+        User user = this.readById(userId);
+        if (user == null) {
+            System.out.println("找不到用户....");
+            return;
+        }
+        if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
+            System.out.println("用户未激活保单");
+            return;
+        }
+        CardGrade model = new CardGrade();
+        model.setGrade(cardGrade);
+        CardGrade grade = cardGradeService.readOne(model);
+        if(user.getCardGrade() >= grade.getGrade()){
+            System.out.println("覆盖升级只能从低往高升级！！！");
+            return;
+        }
+        User updateModel = new User();
+        updateModel.setGrade(grade.getGrade());
+        updateModel.setMaxProfits(CurrencyUtil.getPoundage(grade.getInsuranceAmt()+user.getMaxProfits(),1d));
+        this.updateById(userId,updateModel);
+        // TODO: 2017/8/3 覆盖升级成功后的记录
     }
 }

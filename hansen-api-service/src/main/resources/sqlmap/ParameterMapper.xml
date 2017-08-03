@@ -4,7 +4,7 @@
 <mapper namespace="com.hansen.mapper.ParameterMapper">
 
     <sql id="fields">
-        id,name,value,kind,createtime,updatetime,status,remark,title
+        id,name,value,kind,createtime,updatetime,status,remark,title,groupType
     </sql>
 
     <resultMap id="map" type="HashMap">
@@ -87,6 +87,9 @@
             <if test="model.remark!= null  and model.remark!=''">
                 remark,
             </if>
+            <if test="model.groupType!= null  and model.groupType!=''">
+                groupType,
+            </if>
         </trim>
         )
         values(
@@ -122,6 +125,9 @@
             <if test="model.remark!= null  and model.remark!=''">
                 #{model.remark},
             </if>
+            <if test="model.groupType!= null  and model.groupType!=''">
+                #{model.groupType},
+            </if>
         </trim>
         );
     </insert>
@@ -137,6 +143,7 @@
             <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
             <if test="model.status != null and model.status !=''">status= #{model.status},</if>
             <if test="model.title != null and model.title !=''">title= #{model.title},</if>
+            <if test="model.groupType != null and model.groupType !=''">groupType= #{model.groupType},</if>
             updateTime=now()
         </set>
         where id=#{id}
