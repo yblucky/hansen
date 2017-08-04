@@ -13,7 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 public class WalletUtil {
-    public static BitcoinClient bitcoinClient = null;
+    public static BitcoinClient getBitCoinClient(String rpcallowip, String rpcuser, String rpcpassword, int rpcport) {
+        BitcoinClient bitcoinClient = null;
+        if (bitcoinClient == null) {
+            bitcoinClient = new BitcoinClient(rpcallowip, rpcuser, rpcpassword,rpcport);
+            System.out.println(bitcoinClient);
+        }
+        return bitcoinClient;
+    }
 
     public static void main(String[] args) {
         long a = new Date().getTime();
@@ -27,42 +34,43 @@ public class WalletUtil {
         // WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new
         // BigDecimal(0.02), "a", "b");
         // WalletUtil.getAccountAddress("000001");
-//        System.out.println(WalletUtil.getAccountAddress("000001"));
+        BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
+        System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
 
     }
 
     // 生成钱包地址
-    public static String getAccountAddress(String account) {
+    public static String getAccountAddress(BitcoinClient bitcoinClient, String account) {
         return bitcoinClient.getAccountAddress(account);
     }
 
     // 查询钱包余额
-    public static BigDecimal getBalance() {
+    public static BigDecimal getBalance(BitcoinClient bitcoinClient) {
         return bitcoinClient.getBalance();
     }
 
     // 查询钱包余额
-    public static BigDecimal getBalance(String account) {
+    public static BigDecimal getBalance(BitcoinClient bitcoinClient, String account) {
         return bitcoinClient.getBalance(account);
     }
 
     // 发送币给指定地址
-    public static String sendToAddress(String bitcoinAddress, BigDecimal amount, String comment, String commentTo) {
+    public static String sendToAddress(BitcoinClient bitcoinClient, String bitcoinAddress, BigDecimal amount, String comment, String commentTo) {
         return bitcoinClient.sendToAddress(bitcoinAddress, amount, comment, commentTo);
     }
 
     // 根据交易编号查询交易信息
-    public static TransactionInfo getTransactionJSON(String txId) {
+    public static TransactionInfo getTransactionJSON(BitcoinClient bitcoinClient, String txId) {
         return bitcoinClient.getTransaction(txId);
     }
 
     // 查询单个账户的交易记录
-    public static List<TransactionInfo> listTransactions(String account, int count) {
+    public static List<TransactionInfo> listTransactions(BitcoinClient bitcoinClient, String account, int count) {
         return bitcoinClient.listTransactions(account, count);
     }
 
     // 查询单个账户的交易记录
-    public static ENumCode checkTransactionStatus(int confirmations) {
+    public static ENumCode checkTransactionStatus(BitcoinClient bitcoinClient, int confirmations) {
         if (confirmations == 0) {
             return ENumCode.UNCHECKED;
         } else if (confirmations > 0 && confirmations < 3) {
@@ -73,7 +81,7 @@ public class WalletUtil {
         return ENumCode.ERROR;
     }
 
-    public static WalletTransaction parseTransactionInfo(JSONObject transactionInfo) {
+    public static WalletTransaction parseTransactionInfo(BitcoinClient bitcoinClient, JSONObject transactionInfo) {
         WalletTransaction transaction = new WalletTransaction();
         if (transactionInfo.containsKey("amount")) {
             transaction.setAmount(transactionInfo.getDouble("amount"));
@@ -106,15 +114,6 @@ public class WalletUtil {
         }
         return transaction;
     }
-
-    public static BitcoinClient getBitcoinClient(String rpcallowip, String rpcuser, String rpcpassword, int rpcport) {
-        if (bitcoinClient == null) {
-            bitcoinClient = new BitcoinClient(rpcallowip, rpcuser, rpcpassword);
-            System.out.println(bitcoinClient);
-        }
-        return bitcoinClient;
-    }
-
 
 
 }

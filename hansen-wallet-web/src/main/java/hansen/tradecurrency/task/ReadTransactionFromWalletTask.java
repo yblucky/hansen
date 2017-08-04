@@ -1,13 +1,16 @@
 package hansen.tradecurrency.task;
 
+import com.hansen.common.utils.WalletUtil;
 import com.hansen.model.WalletTransaction;
 import com.hansen.service.WalletTransactionService;
-import hansen.utils.WalletUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.hansen.common.utils.WalletUtil.getBitCoinClient;
 
 public class ReadTransactionFromWalletTask extends BaseScheduleTask {
     @Autowired
@@ -19,9 +22,9 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
         logger.error("readTransactionFromWalletTask  start.......time:");
         logger.error("readTransactionFromWalletTask  start.......time:");
         try {
-
-            List<TransactionInfo> infolist = WalletUtil.listTransactions("", 10);
-            for (TransactionInfo info: infolist) {
+            BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
+            List<TransactionInfo> infolist = WalletUtil.listTransactions(bitcoinClient,"", 10);
+            for (TransactionInfo info : infolist) {
 //				Config.LAST_WALLET_INSERT_TIME=info.getTime();
                 WalletTransaction conditon = new WalletTransaction();
                 conditon.setTxtId("");
@@ -42,13 +45,14 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
                 transaction.setMessage(info.getMessage());
                 transaction.setTransactionLongTime(info.getTime() * 1000);
                 transaction.setTxtId(info.getTxId());
-                transaction.setTransactionTime(new Date(info.getTime()*1000));
+                transaction.setTransactionTime(new Date(info.getTime() * 1000));
                 if (info.getCategory().equals("immature") || info.getCategory().equals("generate")) {
                     transaction.setAddress("");
                 } else {
                     transaction.setAddress(info.getOtherAccount());
                 }
-                transaction.setTransactionStatus(hansen.utils.WalletUtil.checkTransactionStatus(Integer.valueOf(info.getConfirmations() + "")).toString());
+
+                transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(bitcoinClient,Integer.valueOf(info.getConfirmations() + "")).toString());
                 transactionService.create(transaction);
                 if (hansen.utils.ToolUtil.isNotEmpty(info.getTo())) {
 //                    prepayService.updatePrepayId(info.getTo(), "HANDLED");
