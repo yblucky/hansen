@@ -61,7 +61,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<finalName>manag323e</finalName>
+		<finalName>hongbao</finalName>
 	</build>
 
 	<dependencies>

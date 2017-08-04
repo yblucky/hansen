@@ -22,22 +22,7 @@ public class WalletUtil {
         return bitcoinClient;
     }
 
-    public static void main(String[] args) {
-        long a = new Date().getTime();
-        System.out.println(new Date().getTime());
-     /*   for (int i = 0; i < 1000; i++) {
 
-            // System.out.println(WalletUtil.client.getBalance("123"));
-            System.out.println(WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new BigDecimal(0.02), "a", "b"));
-        }
-        System.out.println((new Date().getTime() - a) / 1000);*/
-        // WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new
-        // BigDecimal(0.02), "a", "b");
-        // WalletUtil.getAccountAddress("000001");
-        BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
-        System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
-
-    }
 
     // 生成钱包地址
     public static String getAccountAddress(BitcoinClient bitcoinClient, String account) {
@@ -115,5 +100,21 @@ public class WalletUtil {
         return transaction;
     }
 
+    public static void main(String[] args) {
+        long a = new Date().getTime();
+        System.out.println(new Date().getTime());
+     /*   for (int i = 0; i < 1000; i++) {
+
+            // System.out.println(WalletUtil.client.getBalance("123"));
+            System.out.println(WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new BigDecimal(0.02), "a", "b"));
+        }
+        System.out.println((new Date().getTime() - a) / 1000);*/
+        // WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new
+        // BigDecimal(0.02), "a", "b");
+        // WalletUtil.getAccountAddress("000001");
+        BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
+        System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
+
+    }
 
 }
