@@ -4,10 +4,13 @@ import com.hansen.common.utils.WalletUtil;
 import com.hansen.model.WalletTransaction;
 import com.hansen.service.WalletTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.hansen.common.utils.WalletUtil.getBitCoinClient;
 
 public class ReadTransactionFromWalletTask extends BaseScheduleTask {
     @Autowired
@@ -19,8 +22,8 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
         logger.error("readTransactionFromWalletTask  start.......time:");
         logger.error("readTransactionFromWalletTask  start.......time:");
         try {
-
-            List<TransactionInfo> infolist = WalletUtil.listTransactions("", 10);
+            BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
+            List<TransactionInfo> infolist = WalletUtil.listTransactions(bitcoinClient,"", 10);
             for (TransactionInfo info : infolist) {
 //				Config.LAST_WALLET_INSERT_TIME=info.getTime();
                 WalletTransaction conditon = new WalletTransaction();
@@ -48,7 +51,8 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
                 } else {
                     transaction.setAddress(info.getOtherAccount());
                 }
-                transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(Integer.valueOf(info.getConfirmations() + "")).toString());
+
+                transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(bitcoinClient,Integer.valueOf(info.getConfirmations() + "")).toString());
                 transactionService.create(transaction);
                 if (hansen.utils.ToolUtil.isNotEmpty(info.getTo())) {
 //                    prepayService.updatePrepayId(info.getTo(), "HANDLED");

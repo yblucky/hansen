@@ -10,11 +10,14 @@ import com.hansen.service.WalletTransactionService;
 import hansen.tradecurrency.vo.TransactionInfoVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+
+import static com.hansen.common.utils.WalletUtil.getBitCoinClient;
 
 @Controller
 @RequestMapping("/rtb")
@@ -31,8 +34,9 @@ public class OperationController {
         JsonResult result = null;
         WalletTransaction transaction = null;
         try {
+            BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
             BigDecimal money = new BigDecimal(vo.getAmount());
-            String res = WalletUtil.sendToAddress(vo.getAddress(), money, vo.getComment(), vo.getCommentTo());
+            String res = WalletUtil.sendToAddress(bitcoinClient, vo.getAddress(), money, vo.getComment(), vo.getCommentTo());
             transaction = new WalletTransaction();
             transaction.setAddress(vo.getAddress());
             transaction.setAmount(vo.getAmount());
@@ -54,13 +58,15 @@ public class OperationController {
     @ResponseBody
     @RequestMapping(value = "/getBalance", method = RequestMethod.GET)
     public JsonResult getBalance(String account) {
+
         JsonResult result = null;
         try {
+            BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
             BigDecimal blance = null;
             if (ToolUtil.isEmpty(account)) {
-                blance = WalletUtil.getBalance();
+                blance = WalletUtil.getBalance(bitcoinClient);
             } else {
-                blance = WalletUtil.getBalance(account);
+                blance = WalletUtil.getBalance(bitcoinClient, account);
             }
             result = new JsonResult(blance);
         } catch (Exception e) {
@@ -75,9 +81,10 @@ public class OperationController {
     public JsonResult getTransactionJSON(String txtId) {
         JsonResult result = null;
         try {
+            BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
             TransactionInfo transaction = new TransactionInfo();
 
-            TransactionInfo transactionInfo = WalletUtil.getTransactionJSON(txtId);
+            TransactionInfo transactionInfo = WalletUtil.getTransactionJSON(bitcoinClient, txtId);
 
 
             transaction.setAmount(transactionInfo.getAmount());
@@ -118,8 +125,9 @@ public class OperationController {
     public JsonResult listtransactions(@RequestParam(value = "account", defaultValue = "", required = false) String account, @RequestParam(value = "pageNo", defaultValue = "1", required = false) int pageNo, @RequestParam(value = "pageSize", defaultValue = "1", required = false) int pageSize) {
         JsonResult result = null;
         try {
+            BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
             TransactionInfo transaction = new TransactionInfo();
-            List<TransactionInfo> transactionInfoList = WalletUtil.listTransactions(account, pageSize);
+            List<TransactionInfo> transactionInfoList = WalletUtil.listTransactions(bitcoinClient, account, pageSize);
             result = new JsonResult(ENumCode.SUCCESS);
             List<Map<String, Object>> list = new ArrayList<>();
             for (TransactionInfo transactionInfo : transactionInfoList) {
@@ -144,7 +152,7 @@ public class OperationController {
         JsonResult result = new JsonResult(ENumCode.SUCCESS);
         Integer userId = null;
         if (start == null || end == null) {
-          return   new JsonResult("time is empty");
+            return new JsonResult("time is empty");
         }
         if (account != null) {
             userId = new Integer(account);
