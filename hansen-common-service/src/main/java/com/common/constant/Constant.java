@@ -5,5 +5,5 @@ package com.common.constant;
  */
 public class Constant {
     public  static  final String SYSTEM_USER_ID="AAAAABBBBBCCCCCDDDDDEE";
-    public  static  final Integer SYSTEM_USER_UID=200000;
+    public  static  final Integer  SYSTEM_USER_UID=200000;
 }
