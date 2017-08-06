@@ -37,6 +37,14 @@ public class LoginUserVo {
      */
     private String password;
 
+    /**
+     * 卡的级别
+     */
+    private Integer cardGrade;
+    /**
+     * 邀请人uid
+     */
+    private Integer uid;
 
     public String getLoginName() {
         return loginName;
@@ -84,5 +92,22 @@ public class LoginUserVo {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    public Integer getCardGrade() {
+        return cardGrade;
+    }
+
+    public void setCardGrade(Integer cardGrade) {
+        this.cardGrade = cardGrade;
+    }
+
+    public Integer getUid() {
+        return uid;
+    }
+
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 }

@@ -2,30 +2,64 @@ package com.common.constant;
 
 /**
  * 订单类型枚举类 <br/>
- * 
- * @author zhuzh
- * @date 2016年11月15日
+ *
+ * @date 2017年08月07日
  */
 public enum OrderType {
-	PURCHASE(1, "直接购买"),
+    INSURANCE(1, "保单"),
+    /**
+     * 直推奖
+     */
+    PUSH(2, "直推奖"),
 
-	CARTPAY(2, "购物车购买");
+    /**
+     * 管理奖
+     */
+    MANAGE(3, "管理奖"),
 
-	private final Integer code;
+    /**
+     * 级差奖
+     */
+    DIFFERENT(4, "级差奖"),
 
-	private final String msg;
+    /**
+     * 平级奖
+     */
+    EQUALITY(5, "平级奖"),
+    /**
+     * 平级奖
+     **/
+    RELASE(6, "每周收益");
 
-	private OrderType(Integer code, String msg) {
-		this.code = code;
-		this.msg = msg;
-	}
+    private final Integer code;
 
-	public Integer getCode() {
-		return code;
-	}
+    private final String msg;
 
-	public String getMsg() {
-		return msg;
-	}
+    private OrderType(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public static OrderType fromCode(Integer code) {
+        try {
+            for(OrderType orderType : OrderType.values()){
+                if(orderType.getCode().intValue() == code.intValue()){
+                    return orderType;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
 }

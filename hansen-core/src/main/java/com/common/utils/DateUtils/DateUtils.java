@@ -17,6 +17,7 @@ import java.util.Locale;
 
 public class DateUtils {
 
+    private static final SimpleDateFormat dateFormatToggeter = new SimpleDateFormat("yyyyMMdd");
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
@@ -84,7 +85,20 @@ public class DateUtils {
      */  
     public static String currentDate() {  
         return dateFormat.format(now());  
-    }  
+    }
+
+    /**
+     * 获得当前日期
+     * <p>
+     * 日期格式yyyyMMdd
+     *
+     * @return
+     */
+    public static String currentDateToggeter() {
+        return dateFormatToggeter.format(now());
+    }
+
+
   
     /** 
      * 格式化日期 
@@ -398,7 +412,7 @@ public class DateUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(111);
+        System.out.println(getCurrMonthStartDate());
     }
 
 }
