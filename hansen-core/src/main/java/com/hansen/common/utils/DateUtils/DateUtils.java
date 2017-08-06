@@ -1,5 +1,8 @@
-package hansen.utils;
+package com.hansen.common.utils.DateUtils;
 
+
+import com.hansen.common.utils.codeutils.EncryptUtil;
+import com.hansen.common.utils.toolutils.ToolUtil;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -63,7 +66,7 @@ public class DateUtils {
      * @return 
      */  
     public static String formatDatetime(Date date, String pattern) {
-    	if(hansen.utils.ToolUtil.isEmpty(date)){
+    	if(ToolUtil.isEmpty(date)){
     		return "";
     	}
     	

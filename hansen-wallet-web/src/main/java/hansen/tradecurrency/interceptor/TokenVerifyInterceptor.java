@@ -3,7 +3,7 @@ package hansen.tradecurrency.interceptor;
 
 import hansen.utils.Key;
 import hansen.utils.ResourceUtil;
-import hansen.utils.ToolUtil;
+import hansen.utils.EncryptUtil;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -26,7 +26,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
         response.setContentType("application/json; charset=utf-8");
 
         if (ResourceUtil.getIsEncrypt()) {
-            if (!ToolUtil.isEmpty(sign)) {
+            if (!EncryptUtil.isEmpty(sign)) {
                 if (Key.check(sign)) {
                     return true;
                 }
@@ -34,7 +34,7 @@ public class TokenVerifyInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
         }
-        if (ToolUtil.isNotEmpty(ResourceUtil.getIsDebug()) && ResourceUtil.getIsDebug().equals("true")) {
+        if (EncryptUtil.isNotEmpty(ResourceUtil.getIsDebug()) && ResourceUtil.getIsDebug().equals("true")) {
             return true;
         }
         System.out.println("isDebug false");

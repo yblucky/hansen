@@ -1,4 +1,4 @@
-package hansen.utils;
+package com.hansen.common.utils.codeutils;
 
 
 import javax.crypto.*;
@@ -15,7 +15,7 @@ public class Key {
 	public static String STORE_PASSWORD ="123456789";
 	public static String CERT_PASSWORD ="abcdefghijkl";  
 	public static String DES_ALGORITHM ="DES";
-	public static String ENCRIPT_STRING ="ABCDEFG"+ ToolUtil.getCurrentDateTime();
+	public static String ENCRIPT_STRING ="ABCDEFG"+ EncryptUtil.getCurrentDateTime();
 	public static String DEFAULT_ENCODING ="UTF-8";
 	public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 //		SecretKey secretKey = Key.getSecretKey(DES_ALGORITHM);
@@ -33,10 +33,10 @@ public class Key {
 		try {
 			long time=System.currentTimeMillis();
 			for (int i = 0; i < 100000; i++) {
-				System.out.println(ToolUtil.convertByteToString(getEncode()));
+				System.out.println(EncryptUtil.convertByteToString(getEncode()));
 			}
 			System.out.println("=============  "+(System.currentTimeMillis()-time));
-			getDecode(ToolUtil.convertByteToString(getEncode()));
+			getDecode(EncryptUtil.convertByteToString(getEncode()));
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -159,7 +159,7 @@ public class Key {
 	    fis2.close();
 	    Cipher c2 = Cipher.getInstance(RSA_ALGORITHM);
 	    c2.init(Cipher.DECRYPT_MODE, pk2);
-	    byte[] decode = c2.doFinal(ToolUtil.convertStringToByte(encdoe)); // 解密后的数据
+	    byte[] decode = c2.doFinal(EncryptUtil.convertStringToByte(encdoe)); // 解密后的数据
 	    System.out.println(new String(decode, DEFAULT_ENCODING)); // 将解密数据转为字符串  
 	    return  decode;
 	}

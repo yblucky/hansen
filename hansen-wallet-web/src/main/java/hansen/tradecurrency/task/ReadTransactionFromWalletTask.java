@@ -3,6 +3,7 @@ package hansen.tradecurrency.task;
 import com.hansen.common.utils.WalletUtil;
 import com.hansen.model.WalletTransaction;
 import com.hansen.service.WalletTransactionService;
+import hansen.utils.EncryptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
@@ -54,7 +55,7 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
 
                 transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(bitcoinClient,Integer.valueOf(info.getConfirmations() + "")).toString());
                 transactionService.create(transaction);
-                if (hansen.utils.ToolUtil.isNotEmpty(info.getTo())) {
+                if (EncryptUtil.isNotEmpty(info.getTo())) {
 //                    prepayService.updatePrepayId(info.getTo(), "HANDLED");
                 }
             }
