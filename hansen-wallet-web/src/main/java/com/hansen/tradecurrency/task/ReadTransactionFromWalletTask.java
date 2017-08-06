@@ -28,10 +28,9 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
             for (TransactionInfo info : infolist) {
 //				Config.LAST_WALLET_INSERT_TIME=info.getTime();
                 WalletTransaction conditon = new WalletTransaction();
-                conditon.setTxtId("");
-                conditon.setCategory("send");
+                conditon.setTxtId(info.getTxId());
                 int count = transactionService.readCount(conditon);
-                if (count > 0) {
+                if (count >0) {
 //					continue;
                     break;
                 }
@@ -65,5 +64,11 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
         logger.error("readTransactionFromWalletTask  end.......");
         logger.error("readTransactionFromWalletTask  end.......");
         logger.error("readTransactionFromWalletTask  end.......");
+    }
+
+    public static void main(String[] args) {
+        BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
+        List<TransactionInfo> infolist = WalletUtil.listTransactions(bitcoinClient, "test01", 10000);
+        System.out.println(infolist.size());
     }
 }
