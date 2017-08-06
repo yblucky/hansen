@@ -196,6 +196,7 @@ public class UserController {
         user.setContactUserId(null);
         user.setPassword(Md5Util.MD5Encode(vo.getPassword(), DateUtils.currentDateToggeter()));
         user.setSalt(DateUtils.currentDateToggeter());
+        user.setStatus(UserStatusType.REGISTERSUCCESSED.getCode());
         userService.create(user);
         UserDetail userDetail = new UserDetail();
         userDetail.setUserId(user.getId());
@@ -276,6 +277,9 @@ public class UserController {
         //TODO 扣减账号币数量 对应人民币市值换算
         updateActiveUser.setTradeAmt(activeUser.getTradeAmt() - cardGrade.getInsuranceAmt() * 50 / 100);
         updateActiveUser.setPayAmt(activeUser.getPayAmt() - cardGrade.getInsuranceAmt() * 50 / 100);
+        updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
+        //写入最大收益
+        updateActiveUser.setMaxProfits(cardGrade.getOutMultiple()*cardGrade.getInsuranceAmt());
         updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
         userService.updateById(updateActiveUser.getId(), updateActiveUser);
         UserDetail activeUserDetailContion = new UserDetail();
