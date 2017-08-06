@@ -175,7 +175,7 @@ public abstract class CommonServiceImpl<M extends BaseModel> {
     public void defaultCreate(M model) {
         try {
             Integer status = model.getStatus();
-            status = status == null ? 0 : status;
+            status = status == null ? 1 : status;
             model.setStatus(status);
             if (StringUtils.isEmpty(model.getId())) {
                 model.setId(ToolUtil.getUUID());
