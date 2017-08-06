@@ -23,8 +23,7 @@ import com.hansen.service.MallRecordService;
 
 /**
  * 竞拍回退定时器
- * 
- * @author zhuzh
+
  * @date 2016年12月30日
  */
 @Service

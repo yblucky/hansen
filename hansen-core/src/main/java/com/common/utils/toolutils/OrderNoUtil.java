@@ -8,9 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 订单号生成器
- * 
- * @author zhuzh
- * @date 2016年12月7日
+ * @date 2017年08月07日
  */
 public class OrderNoUtil {
 

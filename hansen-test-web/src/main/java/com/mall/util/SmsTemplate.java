@@ -2,9 +2,7 @@ package com.hansen.util;
 
 /**
  * 短信模板类
- * 
- * @author zhuzh
- * @date 2016年11月15日
+ * @date 2017年08月07日
  */
 public enum SmsTemplate {
 

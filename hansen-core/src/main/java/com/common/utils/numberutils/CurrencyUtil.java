@@ -6,9 +6,7 @@ import java.math.RoundingMode;
 
 /**
  * 四舍五入计算手续费
- *
- * @author zhuzh
- * @date 2016年12月14日
+ * @date 2017年08月07日
  */
 public class CurrencyUtil {
 

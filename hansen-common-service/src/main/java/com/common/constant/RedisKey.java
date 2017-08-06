@@ -2,9 +2,7 @@ package com.common.constant;
 
 /**
  * redis相关key
- * 
- * @author zhuzh
- * @date 2016年11月15日
+ * @date 2017年08月07日
  */
 public enum RedisKey {
 

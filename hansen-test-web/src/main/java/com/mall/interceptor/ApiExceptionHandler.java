@@ -14,9 +14,7 @@ import com.hansen.base.page.JsonResult;
 
 /**
  * 全局异常处理器
- * 
- * @author zhuzh
- * @date 2016年12月8日
+ * @date 2017年08月07日
  */
 @ControllerAdvice
 public class ApiExceptionHandler {

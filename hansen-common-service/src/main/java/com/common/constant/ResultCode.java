@@ -2,9 +2,7 @@ package com.common.constant;
 
 /**
  * 返回码定义
- * 
- * @author zhuzh
- * @date 2016年11月15日
+ * @date 2017年08月07日
  */
 public enum ResultCode {
 	/** 失败 */

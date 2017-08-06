@@ -8,9 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * 过滤非UTF-8字符集，如Emoji表情
- * 
- * @author zhuzh
- * @date 2017年1月6日
+ * @date 2017年08月07日
  */
 public class EmojiUtil {
 

@@ -8,9 +8,7 @@ import java.io.ObjectOutputStream;
 /**
  * 
  * 序列化与反序列化
- * 
- * @author zhuzh
- * @date 2016年12月7日
+ * @date 2017年08月07日
  */
 public class SerializeUtil {
 
