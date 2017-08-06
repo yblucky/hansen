@@ -3,8 +3,7 @@ package com.hansen.vo;
 import java.io.Serializable;
 
 /**
- * 
- * @author zhuzh
+ *
  * @date 2017年2月4日
  */
 public class PayPwdVo implements Serializable {
