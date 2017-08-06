@@ -18,6 +18,10 @@ public class UserVo implements Serializable {
      */
     private Integer uid;
     /**
+     * 登录名称
+     */
+    private String loginName;
+    /**
      * 真实姓名
      */
     private String userName;
@@ -41,18 +45,6 @@ public class UserVo implements Serializable {
      * 备注
      */
     private String remark;
-    /**
-     * 商铺Id
-     */
-    private String storeId;
-    /**
-     * 用户收货地址
-     */
-    private String province;
-
-    private String city;
-
-    private String address;
 
     public String getId() {
         return id;
@@ -93,31 +85,6 @@ public class UserVo implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getToken() {
         return token;
     }
@@ -148,13 +115,5 @@ public class UserVo implements Serializable {
 
     public void setSex(Integer sex) {
         this.sex = sex;
-    }
-
-    public String getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(String storeId) {
-        this.storeId = storeId;
     }
 }

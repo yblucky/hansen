@@ -8,69 +8,42 @@ package com.hansen.vo;
 public class LoginUserVo {
 
     /**
-     * 微信 unionId
-     */
-    private String unionId;
-
-    /**
      * 昵称
      */
     private String nickName;
     /**
+     * 登录名称
+     */
+    private String loginName;
+    /**
      * 性别：0：男，1：女，2：保密
      */
     private Integer sex;
+
     /**
      * 头像地址
      */
     private String headImgUrl;
 
-    /***微信openid**/
-    private String openId;
 
-    private String province;
-
-    private String city;
-
-    private String county;
-
-    private String addr;
-
-    private String encryptedData;
-
-    private String token;
+    /**
+     * '密码
+     */
+    private String payWord;
 
 
-    public String getCounty() {
-        return county;
+    /**
+     * '密码
+     */
+    private String password;
+
+
+    public String getLoginName() {
+        return loginName;
     }
 
-    public void setCounty(String county) {
-        this.county = county;
-    }
-
-    public String getEncryptedData() {
-        return encryptedData;
-    }
-
-    public void setEncryptedData(String encryptedData) {
-        this.encryptedData = encryptedData;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getUnionId() {
-        return unionId;
-    }
-
-    public void setUnionId(String unionId) {
-        this.unionId = unionId;
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
     }
 
     public String getNickName() {
@@ -97,35 +70,19 @@ public class LoginUserVo {
         this.headImgUrl = headImgUrl;
     }
 
-    public String getOpenId() {
-        return openId;
+    public String getPayWord() {
+        return payWord;
     }
 
-    public void setOpenId(String openId) {
-        this.openId = openId;
+    public void setPayWord(String payWord) {
+        this.payWord = payWord;
     }
 
-    public String getProvince() {
-        return province;
+    public String getPassword() {
+        return password;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getAddr() {
-        return addr;
-    }
-
-    public void setAddr(String addr) {
-        this.addr = addr;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

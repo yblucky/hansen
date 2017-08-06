@@ -1,8 +1,7 @@
 package com.common.constant;
 
 /**
- * 标准状态枚举类 <br/>
- * @date 2016年11月15日
+ * @date 2017年08月06日
  */
 public enum CurrencyType {
 

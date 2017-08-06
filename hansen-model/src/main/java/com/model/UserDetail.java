@@ -15,25 +15,32 @@ public class UserDetail extends BaseModel {
      */
     private String userId;
     /**
-     * 币的数量
+     * 冻结支付币的数量
      */
-    private Double num;
+    private Double forzenPayAmt;
     /**
-     * 冻结币的数量
+     * 冻结交易币的数量
      */
-    private Double forzenNum;
+    private Double forzenTradeAmt;
     /**
-     * 充币钱包地址类型  1 交易币  2 支付币  3 股权币
+     * 冻结股权币的数量
      */
-    private String currencyType;
+    private Double forzenEquityAmt;
     /**
      * 充币钱包地址
      */
-    private Integer inAddress;
+
+    private String inPayAddress;
+    private String inTradeAddress;
+    private String inEquityAddress;
     /**
      * 提币钱包地址
      */
-    private String outAddress;
+    private String outPayAddress;
+    private String outEquityAddress;
+
+    private String outTradeAddress;
+
     private Integer levles;
     /**
      * 省
@@ -60,44 +67,76 @@ public class UserDetail extends BaseModel {
         this.userId = userId;
     }
 
-    public Double getNum() {
-        return num;
+    public Double getForzenPayAmt() {
+        return forzenPayAmt;
     }
 
-    public void setNum(Double num) {
-        this.num = num;
+    public void setForzenPayAmt(Double forzenPayAmt) {
+        this.forzenPayAmt = forzenPayAmt;
     }
 
-    public Double getForzenNum() {
-        return forzenNum;
+    public Double getForzenTradeAmt() {
+        return forzenTradeAmt;
     }
 
-    public void setForzenNum(Double forzenNum) {
-        this.forzenNum = forzenNum;
+    public void setForzenTradeAmt(Double forzenTradeAmt) {
+        this.forzenTradeAmt = forzenTradeAmt;
     }
 
-    public String getCurrencyType() {
-        return currencyType;
+    public Double getForzenEquityAmt() {
+        return forzenEquityAmt;
     }
 
-    public void setCurrencyType(String currencyType) {
-        this.currencyType = currencyType;
+    public void setForzenEquityAmt(Double forzenEquityAmt) {
+        this.forzenEquityAmt = forzenEquityAmt;
     }
 
-    public Integer getInAddress() {
-        return inAddress;
+    public String getInPayAddress() {
+        return inPayAddress;
     }
 
-    public void setInAddress(Integer inAddress) {
-        this.inAddress = inAddress;
+    public void setInPayAddress(String inPayAddress) {
+        this.inPayAddress = inPayAddress;
     }
 
-    public String getOutAddress() {
-        return outAddress;
+    public String getInTradeAddress() {
+        return inTradeAddress;
     }
 
-    public void setOutAddress(String outAddress) {
-        this.outAddress = outAddress;
+    public void setInTradeAddress(String inTradeAddress) {
+        this.inTradeAddress = inTradeAddress;
+    }
+
+    public String getInEquityAddress() {
+        return inEquityAddress;
+    }
+
+    public void setInEquityAddress(String inEquityAddress) {
+        this.inEquityAddress = inEquityAddress;
+    }
+
+    public String getOutPayAddress() {
+        return outPayAddress;
+    }
+
+    public void setOutPayAddress(String outPayAddress) {
+        this.outPayAddress = outPayAddress;
+    }
+
+    public String getOutEquityAddress() {
+        return outEquityAddress;
+    }
+
+    public void setOutEquityAddress(String outEquityAddress) {
+        this.outEquityAddress = outEquityAddress;
+    }
+
+    public String getOutTradeAddress() {
+        return outTradeAddress;
+    }
+
+    public void setOutTradeAddress(String outTradeAddress) {
+        this.outTradeAddress = outTradeAddress;
     }
 
     public Integer getLevles() {
