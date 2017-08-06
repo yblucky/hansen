@@ -1,13 +1,12 @@
 package com.hansen.interceptor;
 
-import java.io.IOException;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.filter.OncePerRequestFilter;
+import java.io.IOException;
 
 /**
  * Created by summer on 2016-12-22:16:51;

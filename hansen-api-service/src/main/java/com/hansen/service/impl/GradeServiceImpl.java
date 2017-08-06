@@ -1,17 +1,17 @@
 package com.hansen.service.impl;
 
-import com.hansen.base.dao.CommonDao;
-import com.hansen.base.service.impl.CommonServiceImpl;
-import com.hansen.common.constant.GradeType;
-import com.hansen.common.constant.UserStatusType;
-import com.hansen.common.utils.numberutils.CurrencyUtil;
+import com.base.dao.CommonDao;
+import com.base.service.impl.CommonServiceImpl;
+import com.common.constant.GradeType;
+import com.common.constant.UserStatusType;
+import com.common.utils.numberutils.CurrencyUtil;
 import com.hansen.mapper.GradeMapper;
-import com.hansen.model.Grade;
-import com.hansen.model.User;
-import com.hansen.model.UserDepartment;
 import com.hansen.service.GradeService;
 import com.hansen.service.UserDepartmentService;
 import com.hansen.service.UserService;
+import com.model.Grade;
+import com.model.User;
+import com.model.UserDepartment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

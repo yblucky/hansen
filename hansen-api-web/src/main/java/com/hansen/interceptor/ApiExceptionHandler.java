@@ -1,7 +1,7 @@
 package com.hansen.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.base.exception.CoreException;
+import com.base.page.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import com.hansen.base.exception.CoreException;
-import com.hansen.base.page.JsonResult;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 全局异常处理器

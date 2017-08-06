@@ -104,18 +104,18 @@
         );
     </insert>
 
-    <select id="readById" resultType="com.hansen.model.WalletParameter">
+    <select id="readById" resultType="WalletParameter">
         <include refid="selector"/>
         where id=#{id} limit 1;
     </select>
 
-    <select id="readList" resultType="com.hansen.model.WalletParameter">
+    <select id="readList" resultType="WalletParameter">
         <include refid="selector"/>
         <include refid="condition"/>
         limit #{startRow}, #{pageSize};
     </select>
 
-    <select id="readOne" resultType="com.hansen.model.WalletParameter">
+    <select id="readOne" resultType="WalletParameter">
         <include refid="selector"/>
         <include refid="condition"/>
         limit 1;

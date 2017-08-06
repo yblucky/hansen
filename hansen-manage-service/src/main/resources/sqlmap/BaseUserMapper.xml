@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.hansen.mapper.UserMapper">
+<mapper namespace="com.mapper.UserMapper">
 
 	<sql id="fields">
 		uid,unionId,phone,loginName,email,amount,nickName,sex,salt,headImgUrl,province,city,county,addr,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardLevel
@@ -304,15 +304,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.hansen.model.User">
+	<select id="readById" resultType="User">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.hansen.model.User">
+	<select id="readList" resultType="User">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.hansen.model.User">
+	<select id="readOne" resultType="User">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

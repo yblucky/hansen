@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.hansen.mapper.UserGradeRecordMapper">
+<mapper namespace="com.mapper.UserGradeRecordMapper">
 
 	<sql id="fields">
 		userId,recordType,historyGrade,currencyGrade,createTime,updateTime,status,remark
@@ -94,15 +94,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.hansen.model.UserGradeRecord">
+	<select id="readById" resultType="UserGradeRecord">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.hansen.model.UserGradeRecord">
+	<select id="readList" resultType="UserGradeRecord">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.hansen.model.UserGradeRecord">
+	<select id="readOne" resultType="UserGradeRecord">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

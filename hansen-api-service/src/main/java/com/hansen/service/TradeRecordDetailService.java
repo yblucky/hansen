@@ -1,8 +1,8 @@
 package com.hansen.service;
 
-import com.hansen.base.service.CommonService;
-import com.hansen.common.constant.RecordType;
-import com.hansen.model.TradeRecordDetail;
+import com.base.service.CommonService;
+import com.common.constant.RecordType;
+import com.model.TradeRecordDetail;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

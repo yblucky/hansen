@@ -1,10 +1,10 @@
 package com.hansen.service.impl;
 
-import com.hansen.base.dao.CommonDao;
-import com.hansen.base.service.impl.CommonServiceImpl;
+import com.base.dao.CommonDao;
+import com.base.service.impl.CommonServiceImpl;
 import com.hansen.mapper.GradeMapper;
-import com.hansen.model.Grade;
 import com.hansen.service.GradeService;
+import com.model.Grade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

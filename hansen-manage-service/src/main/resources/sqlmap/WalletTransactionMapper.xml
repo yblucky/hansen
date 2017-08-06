@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.hansen.mapper.WalletTransactionMapper">
+<mapper namespace="com.hansen.hansen.mapper.WalletTransactionMapper">
 
 	<sql id="fields">
 		userId,txtId,prepayId,transactionLongTime,transactionTime,address,amount,category,fee,confirmations,transactionStatus,message,createTime,updateTime,status,remark
@@ -150,15 +150,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.hansen.model.WalletTransaction">
+	<select id="readById" resultType="WalletTransaction">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.hansen.model.WalletTransaction">
+	<select id="readList" resultType="WalletTransaction">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.hansen.model.WalletTransaction">
+	<select id="readOne" resultType="WalletTransaction">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 
@@ -191,6 +191,29 @@
 	<update id="deleteById">
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
+
+
+
+	<select id="listByTransactionTime" resultType="hansen.wallet.trade.model.Transaction">
+
+		SELECT * FROM rtb_transaction
+		<where>
+			1=1
+			<if test="start!=null">
+				and transactionLongTime <![CDATA[ >	]]> #{start}
+			</if>
+			<if test="end!=null">
+				and transactionLongTime <![CDATA[ < 	]]> #{end}
+			</if>
+			<if test="userId!=null">
+				and user_id=#{userId}
+			</if>
+		</where>
+	</select>
+
+	<select id="listByStartToEnd" resultType="hansen.wallet.trade.model.Transaction">
+		SELECT * FROM rtb_transaction where transactionLongTime <![CDATA[ > ]]> #{start}  and transactionLongTime <![CDATA[ < ]]> #{end} and confirmations  <![CDATA[ < ]]>  4
+	</select>
 
 </mapper>
 

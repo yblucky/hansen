@@ -1,15 +1,14 @@
 package com.hansen.controller;
 
-import com.hansen.base.page.JsonResult;
-import com.hansen.common.base.TokenUtil;
-import com.hansen.common.constant.RedisKey;
-import com.hansen.common.utils.codeutils.Md5Util;
-import com.hansen.model.BaseAdmin;
-import com.hansen.redis.Strings;
+import com.base.page.JsonResult;
+import com.common.base.TokenUtil;
+import com.common.constant.RedisKey;
+import com.common.utils.codeutils.Md5Util;
 import com.hansen.service.BaseAdminService;
 import com.hansen.vo.LoginVo;
+import com.model.BaseAdmin;
+import com.redis.Strings;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

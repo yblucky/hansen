@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.hansen.mapper.UserMapper">
+<mapper namespace="com.mapper.UserMapper">
 
 	<sql id="fields">
-		uid,unionId,phone,loginName,email,nickName,sex,salt,headImgUrl,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardGrade
-		,releaseTime,equityAmt,payAmt,tradeAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,createTime,updateTime,status,remark,insuranceAmt
+		uid,unionId,phone,loginName,email,amount,nickName,sex,salt,headImgUrl,province,city,county,addr,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardLevel
+		,releaseTime,equityAmt,payAmt,tradeAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,levles,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -30,6 +30,10 @@
 			<if test="model.sex != null">and sex=#{model.sex}</if>
 			<if test="model.salt != null and model.salt != ''">and salt=#{model.salt}</if>
 			<if test="model.headImgUrl != null and model.headImgUrl != ''">and headImgUrl=#{model.headImgUrl}</if>
+			<if test="model.province != null and model.province != ''">and province=#{model.province}</if>
+			<if test="model.city != null and model.city != ''">and city=#{model.city}</if>
+			<if test="model.county != null and model.county != ''">and county=#{model.county}</if>
+			<if test="model.addr != null and model.addr != ''">and addr=#{model.addr}</if>
 			<if test="model.loginTime != null">and loginTime=#{model.loginTime}</if>
 			<if test="model.openId != null and model.openId != ''">and openId=#{model.openId}</if>
 			<if test="model.payWord != null and model.payWord != ''">and payWord=#{model.payWord}</if>
@@ -48,9 +52,9 @@
 			<if test="model.contactUserId != null and model.contactUserId != ''">and contactUserId=#{model.contactUserId}</if>
 			<if test="model.activeCodeNo != null">and activeCodeNo=#{model.activeCodeNo}</if>
 			<if test="model.registerCodeNo != null">and registerCodeNo=#{model.registerCodeNo}</if>
+			<if test="model.levles != null">and levles=#{model.levles}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
-			<if test="model.insuranceAmt != null and model.insuranceAmt != ''">and insuranceAmt=#{model.insuranceAmt}</if>
 		</where>
 	</sql>
 
@@ -89,6 +93,18 @@
 			</if>
 			<if test="model.headImgUrl!= null  and model.headImgUrl!=''">
 				headImgUrl,
+			</if>
+			<if test="model.province!= null  and model.province!=''">
+				province,
+			</if>
+			<if test="model.city!= null  and model.city!=''">
+				city,
+			</if>
+			<if test="model.county!= null  and model.county!=''">
+				county,
+			</if>
+			<if test="model.addr!= null  and model.addr!=''">
+				addr,
 			</if>
 			<if test="model.loginTime!= null  and model.loginTime!=''">
 				loginTime,
@@ -147,6 +163,9 @@
 			<if test="model.registerCodeNo!= null  and model.registerCodeNo!=''">
 				registerCodeNo,
 			</if>
+			<if test="model.levles!= null  and model.levles!=''">
+				levles,
+			</if>
 			<if test="model.createTime!= null  and model.createTime!=''">
 				createTime,
 			</if>
@@ -196,6 +215,18 @@
 			</if>
 			<if test="model.headImgUrl!= null  and model.headImgUrl!=''">
 				#{model.headImgUrl},
+			</if>
+			<if test="model.province!= null  and model.province!=''">
+				#{model.province},
+			</if>
+			<if test="model.city!= null  and model.city!=''">
+				#{model.city},
+			</if>
+			<if test="model.county!= null  and model.county!=''">
+				#{model.county},
+			</if>
+			<if test="model.addr!= null  and model.addr!=''">
+				#{model.addr},
 			</if>
 			<if test="model.loginTime!= null  and model.loginTime!=''">
 				#{model.loginTime},
@@ -254,6 +285,9 @@
 			<if test="model.registerCodeNo!= null  and model.registerCodeNo!=''">
 				#{model.registerCodeNo},
 			</if>
+			<if test="model.levles!= null  and model.levles!=''">
+				#{model.levles},
+			</if>
 			<if test="model.createTime!= null  and model.createTime!=''">
 				#{model.createTime},
 			</if>
@@ -270,15 +304,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.hansen.model.User">
+	<select id="readById" resultType="User">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.hansen.model.User">
+	<select id="readList" resultType="User">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.hansen.model.User">
+	<select id="readOne" resultType="User">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 
@@ -299,6 +333,10 @@
 			<if test="model.sex != null">sex= #{model.sex},</if>
 			<if test="model.salt != null and model.salt !=''">salt= #{model.salt},</if>
 			<if test="model.headImgUrl != null and model.headImgUrl !=''">headImgUrl= #{model.headImgUrl},</if>
+			<if test="model.province != null and model.province !=''">province= #{model.province},</if>
+			<if test="model.city != null and model.city !=''">city= #{model.city},</if>
+			<if test="model.county != null and model.county !=''">county= #{model.county},</if>
+			<if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
 			<if test="model.loginTime != null">loginTime= #{model.loginTime},</if>
 			<if test="model.openId != null and model.openId !=''">openId= #{model.openId},</if>
 			<if test="model.payWord != null and model.payWord !=''">payWord= #{model.payWord},</if>
@@ -317,9 +355,9 @@
 			<if test="model.contactUserId != null and model.contactUserId !=''">contactUserId= #{model.contactUserId},</if>
 			<if test="model.activeCodeNo != null">activeCodeNo= #{model.activeCodeNo},</if>
 			<if test="model.registerCodeNo != null">registerCodeNo= #{model.registerCodeNo},</if>
+			<if test="model.levles != null">levles= #{model.levles},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
-			<if test="model.insuranceAmt != null and model.insuranceAmt !=''">insuranceAmt= #{model.insuranceAmt},</if>
 			updateTime=now()
 		</set>
 		where id=#{id}

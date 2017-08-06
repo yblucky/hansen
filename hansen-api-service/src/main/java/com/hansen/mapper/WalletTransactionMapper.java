@@ -1,7 +1,7 @@
 package com.hansen.mapper;
 
-import com.hansen.base.dao.CommonDao;
-import com.hansen.model.WalletTransaction;
+import com.base.dao.CommonDao;
+import com.model.WalletTransaction;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

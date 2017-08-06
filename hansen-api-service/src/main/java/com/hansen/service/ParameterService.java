@@ -1,7 +1,7 @@
 package com.hansen.service;
 
-import com.hansen.base.service.CommonService;
-import com.hansen.model.Parameter;
+import com.base.service.CommonService;
+import com.model.Parameter;
 
 import java.util.List;
 

@@ -82,7 +82,7 @@
     </bean>
     
     <mvc:interceptors>
-		<bean class="com.hansen.interceptor.ActionInterceptor"></bean>
+		<bean class="com.interceptor.ActionInterceptor"></bean>
 	</mvc:interceptors>	
 
 	<import resource="classpath*:config/spring-redis.xml" />

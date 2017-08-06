@@ -1,7 +1,7 @@
 package com.hansen.mapper;
 
-import com.hansen.base.dao.CommonDao;
-import com.hansen.model.Parameter;
+import com.base.dao.CommonDao;
+import com.model.Parameter;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

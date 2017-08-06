@@ -1,7 +1,7 @@
 package com.hansen.mapper;
 
-import com.hansen.base.dao.CommonDao;
-import com.hansen.model.CardGrade;
+import com.base.dao.CommonDao;
+import com.model.CardGrade;
 import org.springframework.stereotype.Repository;
 
 @Repository

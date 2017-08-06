@@ -1,9 +1,9 @@
 package com.hansen.service;
 
-import com.hansen.base.service.CommonService;
-import com.hansen.common.constant.GradeRecordType;
-import com.hansen.model.User;
-import com.hansen.model.UserGradeRecord;
+import com.base.service.CommonService;
+import com.common.constant.GradeRecordType;
+import com.model.User;
+import com.model.UserGradeRecord;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

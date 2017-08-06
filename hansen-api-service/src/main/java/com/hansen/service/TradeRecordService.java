@@ -1,8 +1,8 @@
 package com.hansen.service;
 
-import com.hansen.base.service.CommonService;
-import com.hansen.common.constant.RecordType;
-import com.hansen.model.TradeRecord;
+import com.base.service.CommonService;
+import com.common.constant.RecordType;
+import com.model.TradeRecord;
 
 /**
  * @date 2016年11月27日

@@ -1,7 +1,7 @@
 package com.hansen.service;
 
-import com.hansen.base.service.CommonService;
-import com.hansen.model.Grade;
+import com.base.service.CommonService;
+import com.model.Grade;
 
 /**
  * @date 2016年11月27日

@@ -1,8 +1,8 @@
 package com.hansen.service;
 
 
-import com.hansen.base.service.CommonService;
-import com.hansen.model.BaseAdmin;
+import com.base.service.CommonService;
+import com.model.BaseAdmin;
 
 /**
  * @date 2016年11月27日

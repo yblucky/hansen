@@ -85,15 +85,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.hansen.model.WalletOrder">
+	<select id="readById" resultType="WalletOrder">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.hansen.model.WalletOrder">
+	<select id="readList" resultType="WalletOrder">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.hansen.model.WalletOrder">
+	<select id="readOne" resultType="WalletOrder">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

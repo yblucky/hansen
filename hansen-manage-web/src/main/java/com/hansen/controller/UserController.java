@@ -1,12 +1,12 @@
 package com.hansen.controller;
 
-import com.hansen.base.page.JsonResult;
-import com.hansen.base.page.Page;
-import com.hansen.base.page.PageResult;
-import com.hansen.common.Token;
-import com.hansen.common.base.TokenUtil;
-import com.hansen.model.User;
+import com.base.page.JsonResult;
+import com.base.page.Page;
+import com.base.page.PageResult;
+import com.common.Token;
+import com.common.base.TokenUtil;
 import com.hansen.service.UserService;
+import com.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

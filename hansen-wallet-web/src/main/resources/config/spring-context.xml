@@ -14,10 +14,13 @@
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		">
  
-	<context:component-scan base-package="com.api" />
+	<context:component-scan base-package="com.hansen" />
 	
-	<mvc:annotation-driven/> 
-	
+	<mvc:annotation-driven/>
+
+	<import resource="classpath*:config/spring-redis.xml" />
+	<import resource="classpath*:config/spring-scheduled.xml" />
+
 	<!-- 批量读取配置文件 -->
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -63,7 +66,7 @@
 	
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-		<property name="basePackage" value="com.api.mapper" />
+		<property name="basePackage" value="com.hansen.mapper" />
 	</bean>
 
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -78,9 +81,8 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 	
-	<mvc:resources mapping="/resources/**" location="/resources/" />
- 	<mvc:resources mapping="/**" location="/" />
- 	
+
+
  	<!-- 邮件 -->
 	<bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="${email.host}" />
@@ -105,9 +107,6 @@
     </bean>
     
     <mvc:interceptors>
-		<bean class="com.api.interceptor.ApiActionInterceptor"></bean>
-	</mvc:interceptors>	
-
-	<import resource="classpath*:config/spring-redis.xml" />
- 
+		<bean class="com.hansen.interceptor.ApiActionInterceptor"></bean>
+	</mvc:interceptors>
 </beans>

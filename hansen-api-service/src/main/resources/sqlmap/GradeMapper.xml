@@ -101,15 +101,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.hansen.model.Grade">
+	<select id="readById" resultType="Grade">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.hansen.model.Grade">
+	<select id="readList" resultType="Grade">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.hansen.model.Grade">
+	<select id="readOne" resultType="Grade">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

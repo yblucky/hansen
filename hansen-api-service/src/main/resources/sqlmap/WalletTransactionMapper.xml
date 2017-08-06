@@ -150,15 +150,15 @@
 		);
 	</insert>
 
-	<select id="readById" resultType="com.hansen.model.WalletTransaction">
+	<select id="readById" resultType="WalletTransaction">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="com.hansen.model.WalletTransaction">
+	<select id="readList" resultType="WalletTransaction">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="com.hansen.model.WalletTransaction">
+	<select id="readOne" resultType="WalletTransaction">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 
@@ -194,16 +194,15 @@
 
 
 
-	<select id="listByTransactionTime" resultType="hansen.wallet.trade.model.Transaction">
-
-		SELECT * FROM rtb_transaction
+	<select id="listByTransactionTime" resultType="WalletTransaction">
+		<include refid="selector"/>
 		<where>
 			1=1
 			<if test="start!=null">
-				and transaction_long_time <![CDATA[ >	]]> #{start}
+				and transactionLongTime <![CDATA[ >	]]> #{start}
 			</if>
 			<if test="end!=null">
-				and transaction_long_time <![CDATA[ < 	]]> #{end}
+				and transactionLongTime <![CDATA[ < 	]]> #{end}
 			</if>
 			<if test="userId!=null">
 				and user_id=#{userId}
@@ -211,8 +210,8 @@
 		</where>
 	</select>
 
-	<select id="listByStartToEnd" resultType="hansen.wallet.trade.model.Transaction">
-		SELECT * FROM rtb_transaction where transaction_long_time <![CDATA[ > ]]> #{start}  and transaction_long_time <![CDATA[ < ]]> #{end} and confirmations  <![CDATA[ < ]]>  4
+	<select id="listByStartToEnd" resultType="WalletTransaction">
+		<include refid="selector"/>  where transactionLongTime <![CDATA[ > ]]> #{start}  and transactionLongTime <![CDATA[ < ]]> #{end} and confirmations  <![CDATA[ < ]]>  4
 	</select>
 
 </mapper>

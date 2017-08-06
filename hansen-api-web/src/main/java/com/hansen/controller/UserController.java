@@ -1,11 +1,11 @@
 package com.hansen.controller;
 
-import com.hansen.base.page.JsonResult;
-import com.hansen.common.base.TokenUtil;
-import com.hansen.common.constant.RedisKey;
-import com.hansen.model.User;
-import com.hansen.redis.Strings;
+import com.base.page.JsonResult;
+import com.common.base.TokenUtil;
+import com.common.constant.RedisKey;
 import com.hansen.service.UserService;
+import com.model.User;
+import com.redis.Strings;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

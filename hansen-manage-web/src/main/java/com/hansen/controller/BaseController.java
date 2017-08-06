@@ -1,7 +1,7 @@
 package com.hansen.controller;
 
-import com.hansen.base.page.JsonResult;
-import com.hansen.base.page.Page;
+import com.base.page.JsonResult;
+import com.base.page.Page;
 
 import javax.servlet.http.HttpServletRequest;
 

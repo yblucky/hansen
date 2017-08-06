@@ -1,7 +1,7 @@
 package com.hansen.mapper;
 
-import com.hansen.base.dao.CommonDao;
-import com.hansen.model.UserDepartment;
+import com.base.dao.CommonDao;
+import com.model.UserDepartment;
 import org.springframework.stereotype.Repository;
 
 @Repository
