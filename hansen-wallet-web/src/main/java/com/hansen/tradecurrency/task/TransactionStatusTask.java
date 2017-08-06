@@ -13,7 +13,7 @@ import java.util.List;
 
 import static com.common.utils.WalletUtil.getBitCoinClient;
 
-public class TransactionTask extends BaseScheduleTask {
+public class TransactionStatusTask extends BaseScheduleTask {
     @Autowired
     private WalletTransactionService transactionService;
 

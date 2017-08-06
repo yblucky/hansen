@@ -1,5 +1,6 @@
 package com.common.utils.classutils;
 
+import com.model.Image;
 import com.model.User;
 import org.apache.commons.lang.ArrayUtils;
 
@@ -13,7 +14,7 @@ import java.lang.reflect.Modifier;
 public class AutoGenerMapper {
 
     public static void main(String[] args) {
-        genMapperXml(User.class);
+        genMapperXml(Image.class);
     }
 
     public static void genMapperXml(Class clz) {
