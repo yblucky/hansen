@@ -6,9 +6,13 @@ package com.common.constant;
  */
 public enum CodeType {
 
-	/** 1 */
+	/**
+	 * 1.激活码
+	 */
 	ACTIVATECODE(1, "激活码"),
-	/** 已删除 */
+	/**
+	 * 注册码
+	 */
 	REGISTERCODE(2,  "注册码");
 
 	private final Integer code;
