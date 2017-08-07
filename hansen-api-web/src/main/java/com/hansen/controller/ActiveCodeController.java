@@ -9,7 +9,6 @@ import com.common.utils.toolutils.ToolUtil;
 import com.hansen.service.ActiveCodeService;
 import com.hansen.vo.CodeVo;
 import com.model.ActiveCode;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
