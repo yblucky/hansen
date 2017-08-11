@@ -9,7 +9,52 @@ import com.common.BaseModel;
  */
 public class Parameter extends BaseModel {
 
-    private static final long serialVersionUID = -76937973371276572L;
+    public static final long serialVersionUID = -76937973371276572L;
+
+    public static final String equityRpcPassword = "equityRpcPassword";
+    public static final String equityDaemon = "equityDaemon";
+    public static final String equityRpcuser = "equityRpcuser";
+    public static final String equityServer = "equityServer";
+    public static final String equityListen = "equityListen";
+    public static final String equityAddnode = "equityAddnode";
+    public static final String jumpRewardLimit = "jumpRewardLimit";
+    public static final String payRpcallowip = "payRpcallowip";
+    public static final String payRpcuser = "payRpcuser";
+    public static final String payServer = "payServer";
+    public static final String payListen = "payListen";
+    public static final String payAddnode = "payAddnode";
+    public static final String payRpcpassword = "payRpcpassword";
+    public static final String tradeAddnode = "tradeAddnode";
+    public static final String tradeDaemon = "V";
+    public static final String PayDaemon = "PayDaemon";
+    public static final String tradeRpcallowip = "tradeRpcallowip";
+    public static final String tradeRpcuser = "tradeRpcuser";
+    public static final String tradeServer = "tradeServer";
+    public static final String tradeListen = "tradeListen";
+    public static final String tradeRpcpassword = "tradeRpcpassword";
+    public static final String activeCodePrice = "activeCodePrice";
+    public static final String registerCodePrice = "registerCodePrice";
+    public static final String insurancePayScale = "insurancePayScale";
+    public static final String insuranceTradeScale = "insuranceTradeScale";
+    public static final String pushFirstReferrerScale = "pushFirstReferrerScale";
+    public static final String pushSecondReferrerScale = "pushSecondReferrerScale";
+    public static final String manageFirstReferrerScale = "manageFirstReferrerScale";
+    public static final String manageSecondReferrerScale = "manageSecondReferrerScale";
+    public static final String maxGradeScale = "maxGradeScale";
+    public static final String rmbConvertPayScale = "rmbConvertPayScale";
+    public static final String rmbConvertTradeScale = "rmbConvertTradeScale";
+    public static final String rmbConvertEquityScale = "rmbConvertEquityScale";
+    public static final String thirdReferrerScale = "thirdReferrerScale";
+    public static final String interval = "interval";
+    public static final String rewardConvertPayScale = "rewardConvertPayScale";
+    public static final String rewardConvertTradeScale = "rewardConvertTradeScale";
+    public static final String rewardConvertEquityScale = "rewardConvertEquityScale";
+    public static final String upGradeOriginSwitch = "upGradeOriginSwitch";
+    public static final String upGradeCoverSwitch = "upGradeCoverSwitch";
+    public static final String burnsPush = "burnsPush";
+    public static final String burnsLevel = "burnsLevel";
+    public static final String burnsManage = "burnsManage";
+
 
     private String name;
     private String value;
