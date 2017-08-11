@@ -32,27 +32,94 @@ public class Parameter extends BaseModel {
     public static final String TRADESERVER = "tradeServer";
     public static final String TRADELISTEN = "tradeListen";
     public static final String TRADERPCPASSWORD = "tradeRpcpassword";
+
+
+    /**
+     * 激活码价格
+     **/
     public static final String ACTIVECODEPRICE = "activeCodePrice";
+    /**
+     * 注册码价格
+     **/
     public static final String REGISTERCODEPRICE = "registerCodePrice";
+    /**
+     * 生成保单时支付币必须有的比例数量
+     **/
     public static final String INSURANCEPAYSCALE = "insurancePayScale";
+    /**
+     * 生成保单时交易币必须有的比例数量
+     **/
     public static final String INSURANCETRADESCALE = "insuranceTradeScale";
+    /**
+     * 直推奖一代6%
+     **/
     public static final String PUSHFIRSTREFERRERSCALE = "pushFirstReferrerScale";
+    /**
+     * 直推奖二代4%
+     **/
     public static final String PUSHSECONDREFERRERSCALE = "pushSecondReferrerScale";
+    /**
+     * 管理奖一代2%
+     **/
     public static final String MANAGEFIRSTREFERRERSCALE = "manageFirstReferrerScale";
+    /**
+     * 管理奖二代1%
+     **/
     public static final String MANAGESECONDREFERRERSCALE = "manageSecondReferrerScale";
+    /**
+     * 星级奖最大分销比例限制
+     **/
     public static final String MAXGRADESCALE = "maxGradeScale";
+
+
+    /**
+     * 人民币兑换支付币汇率
+     **/
     public static final String RMBCONVERTPAYSCALE = "rmbConvertPayScale";
+    /**
+     * 人民币兑换交易币汇率
+     **/
     public static final String RMBCONVERTTRADESCALE = "rmbConvertTradeScale";
+    /**
+     * 人民币兑换股权币汇率
+     **/
     public static final String RMBCONVERTEQUITYSCALE = "rmbConvertEquityScale";
-    public static final String THIRDREFERRERSCALE = "thirdReferrerScale";
+
+    /**
+     * 收益间隔时间
+     **/
     public static final String INTERVAL = "interval";
+    /**
+     * 收益转化成支付币数量比例
+     **/
     public static final String REWARDCONVERTPAYSCALE = "rewardConvertPayScale";
+    /**
+     * 收益转化成交易币数量比例
+     **/
     public static final String REWARDCONVERTTRADESCALE = "rewardConvertTradeScale";
+    /**
+     * 收益转化成股权币数量比例
+     **/
     public static final String REWARDCONVERTEQUITYSCALE = "rewardConvertEquityScale";
+    /**
+     * 原点升级（1开  2关）
+     **/
     public static final String UPGRADEORIGINSWITCH = "upGradeOriginSwitch";
+    /**
+     * 覆盖升级（1开  2关）
+     **/
     public static final String UPGRADECOVERSWITCH = "upGradeCoverSwitch";
+    /**
+     * 直推奖烧伤（1开  2关）
+     **/
     public static final String BURNSPUSH = "burnsPush";
+    /**
+     * 级差奖烧伤（1开  2关）
+     **/
     public static final String BURNSLEVEL = "burnsLevel";
+    /**
+     * 管理奖烧伤（1开  2关）
+     **/
     public static final String BURNSMANAGE = "burnsManage";
 
 
