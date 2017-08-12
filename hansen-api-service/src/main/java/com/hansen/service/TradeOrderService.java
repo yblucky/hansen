@@ -9,5 +9,8 @@ import com.model.User;
  * @date 2016年11月27日
  */
 public interface TradeOrderService extends CommonService<TradeOrder> {
+
    TradeOrder  createInsuranceTradeOrder(User activeUser, CardGrade cardGrade);
+
+   Boolean  handleInsuranceTradeOrder(String orderNo) throws  Exception;
 }

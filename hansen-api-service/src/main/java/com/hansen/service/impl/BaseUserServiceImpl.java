@@ -504,28 +504,13 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             return  new JsonResult(ResultCode.ERROR.getCode(),"交易币数量不足，无法激活账号");
         }
 
-        double payAmt=CurrencyUtil.multiply(payRmbAmt,Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)),2);
-        double tradeAmt=CurrencyUtil.multiply(tradeRmbAmt,Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)),2);
-        this.updatePayAmtByUserId(activeUser.getId(), -payAmt);
-        this.updatePayAmtByUserId(activeUser.getId(), -tradeAmt);
         User updateActiveUser = new User();
         updateActiveUser.setId(activeUser.getId());
         updateActiveUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
-        updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-        //写入最大收益
-        updateActiveUser.setMaxProfits(cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
-        updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-        this.updateById(updateActiveUser.getId(), updateActiveUser);
-        UserDetail activeUserDetailContion = new UserDetail();
-        activeUserDetailContion.setUserId(activeUser.getId());
-        UserDetail activeUserDetail = userDetailService.readOne(activeUserDetailContion);
-        //写入冻结
-        userDetailService.updateForzenPayAmtByUserId(activeUser.getId(),payAmt);
-        userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(),tradeAmt);
-        userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(),0d);
+        updateActiveUser.setStatus(UserStatusType.WAITACTIVATE.getCode());
         //生成保单
         tradeOrderService.createInsuranceTradeOrder(activeUser,cardGrade);
-        return new JsonResult(ResultCode.SUCCESS.getCode(),"激活账号成功");
+        return new JsonResult(ResultCode.SUCCESS.getCode(),UserStatusType.WAITACTIVATE.getMsg());
 
     }
 
