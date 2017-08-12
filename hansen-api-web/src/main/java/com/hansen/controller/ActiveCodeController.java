@@ -81,6 +81,7 @@ public class ActiveCodeController {
     public JsonResult getExistCode(HttpServletRequest request, HttpServletResponse response, @RequestBody CodeVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
 
+
         ActiveCode model = new ActiveCode();
         model.setStatus(1);
         model.setOwnerId(token.getId());
