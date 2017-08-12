@@ -1,9 +1,11 @@
 package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
-import com.base.page.JsonResult;
 import com.base.service.impl.CommonServiceImpl;
-import com.common.constant.*;
+import com.common.constant.Constant;
+import com.common.constant.OrderStatus;
+import com.common.constant.OrderType;
+import com.common.constant.UserStatusType;
 import com.common.utils.ParamUtil;
 import com.common.utils.numberutils.CurrencyUtil;
 import com.common.utils.toolutils.OrderNoUtil;
@@ -16,6 +18,7 @@ import com.hansen.service.UserService;
 import com.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @date 2016年11月27日
@@ -27,7 +30,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     @Autowired
     private UserService userService;
     @Autowired
-    private UserDetailService    userDetailService;
+    private UserDetailService userDetailService;
     @Autowired
     private CardGradeService cardGradeService;
 
@@ -63,27 +66,28 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     }
 
     @Override
-    public Boolean handleInsuranceTradeOrder(String orderNo) throws  Exception {
-        String msg="";
-        if (ToolUtil.isEmpty(orderNo)){
+    @Transactional
+    public Boolean handleInsuranceTradeOrder(String orderNo) throws Exception {
+        String msg = "";
+        if (ToolUtil.isEmpty(orderNo)) {
             return false;
         }
         TradeOrder orderModel = new TradeOrder();
         orderModel.setOrderNo(orderNo);
-        TradeOrder tradeOrder= this.readOne(orderModel);
-        User activeUser=userService.readById(tradeOrder.getSendUserId());
+        TradeOrder tradeOrder = this.readOne(orderModel);
+        User activeUser = userService.readById(tradeOrder.getSendUserId());
         CardGrade cardGradeMdel = new CardGrade();
         cardGradeMdel.setGrade(tradeOrder.getCardGrade());
-        CardGrade cardGrade= cardGradeService.readOne(cardGradeMdel);
+        CardGrade cardGrade = cardGradeService.readOne(cardGradeMdel);
 
         double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
         if (activeUser.getPayAmt() < payRmbAmt) {
-            msg="支付币数量不足，无法激活账号";
+            msg = "支付币数量不足，无法激活账号";
         }
 
         double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
         if (activeUser.getTradeAmt() < tradeRmbAmt) {
-            msg="交易币数量不足，无法激活账号";
+            msg = "交易币数量不足，无法激活账号";
         }
         double payAmt = CurrencyUtil.multiply(payRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
         double tradeAmt = CurrencyUtil.multiply(tradeRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
@@ -101,10 +105,10 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         activeUserDetailContion.setUserId(activeUser.getId());
         UserDetail activeUserDetail = userDetailService.readOne(activeUserDetailContion);
         //写入冻结
-          userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
+        userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
         userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
         userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(), 0d);
         //TODO  更改订单的结算状态
-        return  true;
+        return true;
     }
 }
