@@ -14,7 +14,6 @@ import com.common.utils.toolutils.ToolUtil;
 import com.hansen.mapper.UserMapper;
 import com.hansen.service.*;
 import com.model.*;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +41,11 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Autowired
     private UserGradeRecordService userGradeRecordService;
     @Autowired
-    private  UserDetailService userDetailService;
+    private UserDetailService userDetailService;
+    @Autowired
+    private UserDepartmentService userDepartmentService;
+    @Autowired
+    private  WalletTransactionService walletTransactionService;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -368,11 +371,12 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
 
     /**
      * 点位升级
-     * @param userId 用户ID
+     *
+     * @param userId    用户ID
      * @param cardGrade 升级等级
-     * */
+     */
     @Override
-    public void originUpgrade(String userId,Integer cardGrade){
+    public void originUpgrade(String userId, Integer cardGrade) {
         User user = this.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
@@ -385,24 +389,25 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         CardGrade model = new CardGrade();
         model.setGrade(cardGrade);
         CardGrade grade = cardGradeService.readOne(model);
-        if(user.getCardGrade() >= grade.getGrade()){
+        if (user.getCardGrade() >= grade.getGrade()) {
             System.out.println("点位升级只能从低往高升级！！！");
             return;
         }
         User updateModel = new User();
         updateModel.setGrade(grade.getGrade());
         updateModel.setMaxProfits(grade.getInsuranceAmt());
-        this.updateById(userId,updateModel);
+        this.updateById(userId, updateModel);
         // TODO: 2017/8/3 点位升级成功后的记录
     }
 
     /**
      * 覆盖升级
-     * @param userId 用户ID
+     *
+     * @param userId    用户ID
      * @param cardGrade 升级等级
-     * */
+     */
     @Override
-    public void coverageUpgrade(String userId, Integer cardGrade){
+    public void coverageUpgrade(String userId, Integer cardGrade) {
         User user = this.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
@@ -415,14 +420,14 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         CardGrade model = new CardGrade();
         model.setGrade(cardGrade);
         CardGrade grade = cardGradeService.readOne(model);
-        if(user.getCardGrade() >= grade.getGrade()){
+        if (user.getCardGrade() >= grade.getGrade()) {
             System.out.println("覆盖升级只能从低往高升级！！！");
             return;
         }
         User updateModel = new User();
         updateModel.setGrade(grade.getGrade());
-        updateModel.setMaxProfits(CurrencyUtil.getPoundage(grade.getInsuranceAmt()+user.getMaxProfits(),1d));
-        this.updateById(userId,updateModel);
+        updateModel.setMaxProfits(CurrencyUtil.getPoundage(grade.getInsuranceAmt() + user.getMaxProfits(), 1d));
+        this.updateById(userId, updateModel);
         // TODO: 2017/8/3 覆盖升级成功后的记录
     }
 
@@ -444,11 +449,14 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
 
     @Override
     public User createRegisterUser(User user, CardGrade cardGrade, User inviterUser) throws Exception {
+        user.setFirstReferrer(inviterUser.getId());
+        user.setSecondReferrer(inviterUser.getFirstReferrer());
         user.setGrade(cardGrade.getGrade());
         user.setStatus(UserStatusType.REGISTER.getCode());
-        BitcoinClient payBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
-        BitcoinClient equityBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
-        BitcoinClient tradeBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
+        BitcoinClient payBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
+        BitcoinClient equityBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP),Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
+        BitcoinClient tradeBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+
         /**生成钱包地址**/
         String payAddress = WalletUtil.getAccountAddress(payBitcoinClient, user.getLoginName());
         String equityAddress = WalletUtil.getAccountAddress(equityBitcoinClient, user.getLoginName());
@@ -475,12 +483,19 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     public User innerRegister(User innerUser, User user, User inviterUser, CardGrade cardGrade) throws Exception {
         /**扣注册码**/
         this.updateUserRegisterCode(innerUser, cardGrade);
+        /**创建用户账号**/
         this.createRegisterUser(user, cardGrade, inviterUser);
-        return  user;
+        /**建立部门关系**/
+        UserDepartment userDepartment = new UserDepartment();
+        userDepartment.setParentUserId(innerUser.getId());
+        userDepartment.setUid(user.getUid());
+        userDepartment.setUserId(user.getId());
+        userDepartmentService.createUserDepartment(userDepartment);
+        return user;
     }
 
     @Override
-    public void updateUserStatus(String userId,Integer status) {
+    public void updateUserStatus(String userId, Integer status) {
         User updateUser = new User();
         updateUser.setId(userId);
         updateUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
@@ -492,16 +507,16 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Transactional
     public JsonResult innerActicveUser(User innerUser, User activeUser, CardGrade cardGrade) throws Exception {
         /**扣激活码**/
-        this.updateUserActiveCode(innerUser,cardGrade);
+        this.updateUserActiveCode(innerUser, cardGrade);
         //冻结账号虚拟币 激活账号
-        double payRmbAmt=CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)),2);
-        if (activeUser.getPayAmt()<payRmbAmt){
-            return  new JsonResult(ResultCode.ERROR.getCode(),"支付币数量不足，无法激活账号");
+        double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
+        if (activeUser.getPayAmt() < payRmbAmt) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
         }
 
-        double tradeRmbAmt=CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)),2);
-        if (activeUser.getTradeAmt()<tradeRmbAmt){
-            return  new JsonResult(ResultCode.ERROR.getCode(),"交易币数量不足，无法激活账号");
+        double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
+        if (activeUser.getTradeAmt() < tradeRmbAmt) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足，无法激活账号");
         }
 
         User updateActiveUser = new User();
@@ -509,23 +524,23 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         updateActiveUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
         updateActiveUser.setStatus(UserStatusType.WAITACTIVATE.getCode());
         //生成保单
-        tradeOrderService.createInsuranceTradeOrder(activeUser,cardGrade);
-        return new JsonResult(ResultCode.SUCCESS.getCode(),UserStatusType.WAITACTIVATE.getMsg());
+        tradeOrderService.createInsuranceTradeOrder(activeUser, cardGrade);
+        return new JsonResult(ResultCode.SUCCESS.getCode(), UserStatusType.WAITACTIVATE.getMsg());
 
     }
 
     @Override
     public Integer updateEquityAmtByUserId(String userId, Double amt) {
-        return baseUserDao.updateEquityAmtByUserId(userId,amt);
+        return baseUserDao.updateEquityAmtByUserId(userId, amt);
     }
 
     @Override
     public Integer updatePayAmtByUserId(String userId, Double amt) {
-        return baseUserDao.updatePayAmtByUserId(userId,amt);
+        return baseUserDao.updatePayAmtByUserId(userId, amt);
     }
 
     @Override
     public Integer updateTradeAmtByUserId(String userId, Double amt) {
-        return baseUserDao.updateTradeAmtByUserId(userId,amt);
+        return baseUserDao.updateTradeAmtByUserId(userId, amt);
     }
 }

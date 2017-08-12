@@ -45,7 +45,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     }
 
     @Override
-    public TradeOrder createInsuranceTradeOrder(User activeUser, CardGrade cardGrade) {
+    public TradeOrder createInsuranceTradeOrder(User activeUser, CardGrade cardGrade)  throws Exception{
         TradeOrder tradeOrder = new TradeOrder();
         tradeOrder.setOrderNo(OrderNoUtil.get());
         tradeOrder.setAmt(cardGrade.getInsuranceAmt());
@@ -53,12 +53,12 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
         tradeOrder.setSource(OrderType.INSURANCE.getCode());
         tradeOrder.setRemark(OrderType.INSURANCE.getMsg());
-        tradeOrder.setFirstReferrerScale(0d);
-        tradeOrder.setSecondReferrerScale(0d);
-        tradeOrder.setPayAmtScale(0.5);
-        tradeOrder.setTradeAmtScale(0.5);
-        tradeOrder.setEquityAmtScale(0d);
-        tradeOrder.setConfirmAmt(0d);
+        tradeOrder.setPushFirstReferrerScale(Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHFIRSTREFERRERSCALE)));
+        tradeOrder.setPushSecondReferrerScale(Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHSECONDREFERRERSCALE)));
+        tradeOrder.setPayAmtScale(Double.valueOf(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE)));
+        tradeOrder.setTradeAmtScale(Double.valueOf(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE)));
+        tradeOrder.setEquityAmtScale(Double.valueOf(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE)));
+        tradeOrder.setConfirmAmt(cardGrade.getInsuranceAmt());
         tradeOrder.setPoundage(0d);
         tradeOrder.setStatus(OrderStatus.PENDING.getCode());
         this.create(tradeOrder);

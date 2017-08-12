@@ -18,16 +18,14 @@ import java.util.Map;
 @Component
 public class WalletUtil {
 
-    public static BitcoinClient getBitCoinClient(String type) throws Exception {
+    public static BitcoinClient getBitCoinClient(Integer currencyType) throws Exception {
         BitcoinClient bitcoinClient = null;
-        if (ToolUtil.isEmpty(type)) {
-            return null;
-        } else if ("pay".equals(type)) {
-            bitcoinClient = new BitcoinClient(ParamUtil.getIstance().get(Parameter.PAYRPCALLOWIP), ParamUtil.getIstance().get(Parameter.PAYRPCUSER), ParamUtil.getIstance().get(Parameter.PAYRPCPASSWORD, ParamUtil.getIstance().get(Parameter.PAYRPCPORT)));
-        } else if ("trade".equals(type)) {
-            bitcoinClient = new BitcoinClient(ParamUtil.getIstance().get(Parameter.TRADERPCALLOWIP), ParamUtil.getIstance().get(Parameter.TRADERPCUSER), ParamUtil.getIstance().get(Parameter.TRADERPCPASSWORD, ParamUtil.getIstance().get(Parameter.TRADERPCPORT)));
-        } else if ("equity".equals(type)) {
-            bitcoinClient = new BitcoinClient(ParamUtil.getIstance().get(Parameter.EQUITYRPCALLOWIP), ParamUtil.getIstance().get(Parameter.EQUITYRPCUSER), ParamUtil.getIstance().get(Parameter.EQUITYRPCPASSWORD, ParamUtil.getIstance().get(Parameter.EQUITYRPCPORT)));
+        if (currencyType==1) {
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
+        } else if (currencyType==2) {
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+        } else if (currencyType==3) {
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
         }
 
         System.out.println(bitcoinClient);
@@ -76,7 +74,7 @@ public class WalletUtil {
     }
 
     // 查询单个账户的交易记录
-    public static ENumCode checkTransactionStatus(BitcoinClient bitcoinClient, int confirmations) {
+    public static ENumCode checkTransactionStatus( long confirmations) {
         if (confirmations == 0) {
             return ENumCode.UNCHECKED;
         } else if (confirmations > 0 && confirmations < 3) {
@@ -97,7 +95,7 @@ public class WalletUtil {
         }
 
         if (transactionInfo.containsKey("confirmations")) {
-            transaction.setConfirmations(transactionInfo.getInt("confirmations"));
+            transaction.setConfirmations(transactionInfo.getLong("confirmations"));
         }
 
         if (transactionInfo.containsKey("blocktime")) {

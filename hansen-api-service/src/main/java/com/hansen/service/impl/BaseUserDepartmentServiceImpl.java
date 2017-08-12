@@ -40,4 +40,12 @@ public class BaseUserDepartmentServiceImpl extends CommonServiceImpl<UserDepartm
     public Double getSumAmt(String parentUserId) {
         return baseUserDepartmentMapper.getSumAmt(parentUserId);
     }
+
+    @Override
+    public Boolean createUserDepartment(UserDepartment userDepartment) {
+        userDepartment.setPerformance(0d);
+        baseUserDepartmentMapper.create(userDepartment);
+        return  true;
+
+    }
 }

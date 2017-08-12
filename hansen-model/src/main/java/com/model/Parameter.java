@@ -11,30 +11,31 @@ public class Parameter extends BaseModel {
 
     public static final long serialVersionUID = -76937973371276572L;
 
-    public static final String EQUITYRPCALLOWIP = "equityRpcallowip";
-    public static final String EQUITYRPCPASSWORD = "equityRpcPassword";
-    public static final String EQUITYDAEMON = "equityDaemon";
-    public static final String EQUITYRPCUSER = "equityRpcser";
-    public static final String EQUITYSERVER = "equityServer";
-    public static final String EQUITYRPCPORT = "equityRpcport";
-    public static final String EQUITYLISTEN = "equityListen";
-    public static final String EQUITYADDNODE = "equityAddnode";
-    public static final String JUMPREWARDLIMIT = "jumpRewardLimit";
-    public static final String PAYRPCALLOWIP = "payRpcallowip";
-    public static final String PAYRPCUSER = "payRpcuser";
-    public static final String PAYRPCPORT = "payRpcport";
-    public static final String PAYSERVER = "payServer";
-    public static final String PAYLISTEN = "payListen";
-    public static final String PAYADDNODE = "payAddnode";
-    public static final String PAYRPCPASSWORD = "payRpcpassword";
-    public static final String TRADEADDNODE = "tradeAddnode";
-    public static final String PAYDAEMON = "payDaemon";
-    public static final String TRADERPCALLOWIP = "tradeRpcallowip";
-    public static final String TRADERPCUSER = "tradeRpcuser";
-    public static final String TRADERPCPORT = "tradeRpcport";
-    public static final String TRADESERVER = "tradeServer";
-    public static final String TRADELISTEN = "tradeListen";
-    public static final String TRADERPCPASSWORD = "tradeRpcpassword";
+    public static final String EQUITY_RPCALLOWIP = "equityRpcallowip";
+    public static final String EQUITY_RPCPASSWORD = "equityRpcPassword";
+    public static final String EQUITY_DAEMON = "equityDaemon";
+    public static final String EQUITY_RPCUSER = "equityRpcser";
+    public static final String EQUITY_SERVER = "equityServer";
+    public static final String EQUITY_RPCPORT = "equityRpcport";
+    public static final String EQUITY_LISTEN = "equityListen";
+    public static final String EQUITY_ADDNODE = "equityAddnode";
+    public static final String JUMPRE_WARDLIMIT = "jumpRewardLimit";
+    public static final String PAY_RPCALLOWIP = "payRpcallowip";
+    public static final String PAY_RPCUSER = "payRpcuser";
+    public static final String PAY_RPCPORT = "payRpcport";
+    public static final String PAY_SERVER = "payServer";
+    public static final String PAY_LISTEN = "payListen";
+    public static final String PAY_ADDNODE = "payAddnode";
+    public static final String PAY_RPCPASSWORD = "payRpcpassword";
+    public static final String TRADE_ADDNODE = "tradeAddnode";
+    public static final String PAY_DAEMON = "payDaemon";
+    public static final String TRADE_RPCALLOWIP = "tradeRpcallowip";
+    public static final String TRADE_RPCUSER = "tradeRpcuser";
+    public static final String TRADE_RPCPORT = "tradeRpcport";
+    public static final String TRADE_SERVER = "tradeServer";
+    public static final String TRADE_LISTEN = "tradeListen";
+    public static final String TRADE_RPCPASSWORD = "tradeRpcpassword";
+    public static final Integer  WALLET_PAGE_SIZE = 20;
 
 
     /**

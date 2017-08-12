@@ -52,7 +52,7 @@ public class WalletTransaction extends BaseModel {
     /**
      * 确认个数
      */
-    private Integer confirmations;
+    private Long confirmations;
     /**
      * 交易状态
      */
@@ -65,6 +65,10 @@ public class WalletTransaction extends BaseModel {
      * 交易描述
      */
     private Map<String, Object> details;
+    /**
+     币种类型 1：交易币  2 支付币   3 股权币
+     **/
+    private Integer currencyType;
 
 
     public String getUserId() {
@@ -139,11 +143,11 @@ public class WalletTransaction extends BaseModel {
         this.fee = fee;
     }
 
-    public Integer getConfirmations() {
+    public Long getConfirmations() {
         return confirmations;
     }
 
-    public void setConfirmations(Integer confirmations) {
+    public void setConfirmations(Long confirmations) {
         this.confirmations = confirmations;
     }
 
@@ -169,5 +173,13 @@ public class WalletTransaction extends BaseModel {
 
     public void setDetails(Map<String, Object> details) {
         this.details = details;
+    }
+
+    public Integer getCurrencyType() {
+        return currencyType;
+    }
+
+    public void setCurrencyType(Integer currencyType) {
+        this.currencyType = currencyType;
     }
 }

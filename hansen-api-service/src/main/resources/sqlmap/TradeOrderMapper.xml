@@ -3,7 +3,7 @@
 
 <mapper namespace="com.hansen.mapper.TradeOrderMapper">
 	<sql id="fields">
-		orderNo,sendUserId,receviceUserId,amt,confirmAmt,poundage,source,firstReferrerScale,secondReferrerScale,equityAmtScale,payAmtScale,tradeAmtScale,createTime,updateTime,status,remark
+		orderNo,sendUserId,receviceUserId,amt,confirmAmt,poundage,source,pushFirstReferrerScale,pushSecondReferrerScale,equityAmtScale,payAmtScale,tradeAmtScale,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">

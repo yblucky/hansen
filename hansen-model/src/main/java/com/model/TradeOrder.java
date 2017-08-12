@@ -41,11 +41,11 @@ public class TradeOrder extends BaseModel {
     /**
      * 一级分销
      */
-    private Double firstReferrerScale;
+    private Double pushFirstReferrerScale;
     /**
      * 二级分销
      */
-    private Double secondReferrerScale;
+    private Double pushSecondReferrerScale;
     /**
      * 股权币比例
      */
@@ -125,20 +125,20 @@ public class TradeOrder extends BaseModel {
         this.source = source;
     }
 
-    public Double getFirstReferrerScale() {
-        return firstReferrerScale;
+    public Double getPushFirstReferrerScale() {
+        return pushFirstReferrerScale;
     }
 
-    public void setFirstReferrerScale(Double firstReferrerScale) {
-        this.firstReferrerScale = firstReferrerScale;
+    public void setPushFirstReferrerScale(Double pushFirstReferrerScale) {
+        this.pushFirstReferrerScale = pushFirstReferrerScale;
     }
 
-    public Double getSecondReferrerScale() {
-        return secondReferrerScale;
+    public Double getPushSecondReferrerScale() {
+        return pushSecondReferrerScale;
     }
 
-    public void setSecondReferrerScale(Double secondReferrerScale) {
-        this.secondReferrerScale = secondReferrerScale;
+    public void setPushSecondReferrerScale(Double pushSecondReferrerScale) {
+        this.pushSecondReferrerScale = pushSecondReferrerScale;
     }
 
     public Double getEquityAmtScale() {

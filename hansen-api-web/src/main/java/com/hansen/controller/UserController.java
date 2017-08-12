@@ -232,12 +232,12 @@ public class UserController {
             return new JsonResult(ResultCode.ERROR.getCode(), "激活账号密码有误");
         }
         /**校验虚拟币**/
-        if (activeUser.getPayAmt() < cardGrade.getInsuranceAmt() * 50 / 100) {
+      /*  if (activeUser.getPayAmt() < cardGrade.getInsuranceAmt() * 50 / 100) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付币不足，无法激活");
         }
         if (activeUser.getTradeAmt() < cardGrade.getInsuranceAmt() * 50 / 100) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");
-        }
+        }*/
         userService.innerActicveUser(loginUser, activeUser,cardGrade);
 
         return new JsonResult();

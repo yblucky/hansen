@@ -10,7 +10,7 @@ import com.model.User;
  */
 public interface TradeOrderService extends CommonService<TradeOrder> {
 
-   TradeOrder  createInsuranceTradeOrder(User activeUser, CardGrade cardGrade);
+    TradeOrder createInsuranceTradeOrder(User activeUser, CardGrade cardGrade) throws Exception;
 
-   Boolean  handleInsuranceTradeOrder(String orderNo) throws  Exception;
+    Boolean handleInsuranceTradeOrder(String orderNo) throws Exception;
 }

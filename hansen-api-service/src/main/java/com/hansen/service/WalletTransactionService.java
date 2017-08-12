@@ -2,6 +2,7 @@ package com.hansen.service;
 
 import com.base.service.CommonService;
 import com.model.WalletTransaction;
+import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import java.util.List;
 
@@ -10,7 +11,15 @@ import java.util.List;
  */
 public interface WalletTransactionService extends CommonService<WalletTransaction> {
 
+    public  Boolean createTransaction(String userId,Integer currencyType,BitcoinClient client);
+
     public List<WalletTransaction> listByStartToEnd(Long start, Long end);
 
     public List<WalletTransaction> listByTransactionTime(Long start, Long end, Integer account);
+
+    public    void  listTransactionsByTag(String userId, Integer currencyType) throws  Exception;
+
+    public    void  checkTransactionListStatus(String userId,Integer currencyType) throws  Exception;
+
+    public    void  checkTransactionStatus(WalletTransaction transaction ) throws  Exception;
 }

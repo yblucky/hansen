@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface UserDepartmentService extends CommonService<UserDepartment> {
 
+    Boolean createUserDepartment(UserDepartment userDepartment);
+
     List<UserDepartment> getAll(String parentUserId);
 
     Double getSumAmt(String parentUserId);
