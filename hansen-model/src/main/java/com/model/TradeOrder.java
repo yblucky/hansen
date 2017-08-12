@@ -59,6 +59,16 @@ public class TradeOrder extends BaseModel {
      */
     private Double tradeAmtScale;
 
+    private Integer cardGrade;
+
+    public Integer getCardGrade() {
+        return cardGrade;
+    }
+
+    public void setCardGrade(Integer cardGrade) {
+        this.cardGrade = cardGrade;
+    }
+
     public String getOrderNo() {
         return orderNo;
     }
