@@ -175,37 +175,11 @@ public class UserController {
         if (inviterUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "邀请人信息有误");
         }
-        /**扣注册码**/
-        User updateUser = new User();
-        updateUser.setId(loginUser.getId());
-        updateUser.setRegisterCodeNo(loginUser.getRegisterCodeNo() - cardGrade.getRegisterCodeNo());
-        userService.updateById(updateUser.getId(), updateUser);
-        User user = new User();
-        user.setGrade(cardGrade.getGrade());
-        BeanUtils.copyProperties(user, vo);
-        user.setStatus(UserStatusType.REGISTER.getCode());
-        BitcoinClient payBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
-        BitcoinClient equityBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
-        BitcoinClient tradeBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
-        /**生成钱包地址**/
-        String payAddress = WalletUtil.getAccountAddress(payBitcoinClient, vo.getLoginName());
-        String equityAddress = WalletUtil.getAccountAddress(equityBitcoinClient, vo.getLoginName());
-        String tradeAddress = WalletUtil.getAccountAddress(tradeBitcoinClient, vo.getLoginName());
-        user.setFirstReferrer(inviterUser.getId());
-        user.setSecondReferrer(inviterUser.getSecondReferrer());
-        user.setContactUserId(null);
-        user.setPassword(Md5Util.MD5Encode(vo.getPassword(), DateUtils.currentDateToggeter()));
-        user.setSalt(DateUtils.currentDateToggeter());
-        user.setStatus(UserStatusType.REGISTERSUCCESSED.getCode());
-        userService.create(user);
-        UserDetail userDetail = new UserDetail();
-        userDetail.setUserId(user.getId());
-        userDetail.setInEquityAddress(equityAddress);
-        userDetail.setInTradeAddress(tradeAddress);
-        userDetail.setInPayAddress(payAddress);
-        userDetail.setLevles(0);
-        userDetailService.create(userDetail);
-        return new JsonResult(user);
+
+        User model = new User();
+        BeanUtils.copyProperties(model, vo);
+        userService.innerRegister(loginUser, inviterUser, model, cardGrade);
+        return new JsonResult(model);
     }
 
 
@@ -264,50 +238,11 @@ public class UserController {
         if (activeUser.getTradeAmt() < cardGrade.getInsuranceAmt() * 50 / 100) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");
         }
-        /**扣激活码**/
-        User updateUser = new User();
-        updateUser.setId(loginUser.getId());
-        updateUser.setActiveCodeNo(loginUser.getActiveCodeNo() - cardGrade.getActiveCodeNo());
-        updateUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-        userService.updateById(updateUser.getId(), updateUser);
-        //冻结账号虚拟币 激活账号
-        User updateActiveUser = new User();
-        updateActiveUser.setId(activeUser.getId());
-        updateActiveUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
-        //TODO 扣减账号币数量 对应人民币市值换算
-        updateActiveUser.setTradeAmt(activeUser.getTradeAmt() - cardGrade.getInsuranceAmt() * 50 / 100);
-        updateActiveUser.setPayAmt(activeUser.getPayAmt() - cardGrade.getInsuranceAmt() * 50 / 100);
-        updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-        //写入最大收益
-        updateActiveUser.setMaxProfits(cardGrade.getOutMultiple()*cardGrade.getInsuranceAmt());
-        updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-        userService.updateById(updateActiveUser.getId(), updateActiveUser);
-        UserDetail activeUserDetailContion = new UserDetail();
-        activeUserDetailContion.setUserId(activeUser.getId());
-        UserDetail activeUserDetail = userDetailService.readOne(activeUserDetailContion);
-        //写入冻结
-        UserDetail updateActiveUserDetailContion = new UserDetail();
-        updateActiveUserDetailContion.setId(activeUserDetail.getId());
-        updateActiveUserDetailContion.setForzenPayAmt(cardGrade.getInsuranceAmt() * 50 / 100);
-        updateActiveUserDetailContion.setForzenTradeAmt(cardGrade.getInsuranceAmt() * 50 / 100);
-        userDetailService.updateById(updateActiveUserDetailContion.getId(), updateActiveUserDetailContion);
-        //生成保单
-        TradeOrder tradeOrder = new TradeOrder();
-        tradeOrder.setOrderNo(OrderNoUtil.get());
-        tradeOrder.setAmt(cardGrade.getInsuranceAmt());
-        tradeOrder.setSendUserId(activeUser.getId());
-        tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
-        tradeOrder.setSource(OrderType.INSURANCE.getCode());
-        tradeOrder.setRemark(OrderType.INSURANCE.getMsg());
-        tradeOrder.setFirstReferrerScale(0d);
-        tradeOrder.setSecondReferrerScale(0d);
-        tradeOrder.setPayAmtScale(0.5);
-        tradeOrder.setTradeAmtScale(0.5);
-        tradeOrder.setEquityAmtScale(0d);
-        tradeOrder.setConfirmAmt(0d);
-        tradeOrder.setPoundage(0d);
-        tradeOrder.setStatus(OrderStatus.PENDING.getCode());
-        tradeOrderService.create(tradeOrder);
+        userService.innerActicveUser(loginUser, activeUser,cardGrade);
+
         return new JsonResult();
     }
+
+
+
 }

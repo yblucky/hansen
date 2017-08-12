@@ -2,8 +2,11 @@ package com.common.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.common.constant.ENumCode;
+import com.common.utils.toolutils.ToolUtil;
+import com.model.Parameter;
 import com.model.WalletTransaction;
 import net.sf.json.JSONObject;
+import org.springframework.stereotype.Component;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
@@ -12,16 +15,34 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class WalletUtil {
+
+    public static BitcoinClient getBitCoinClient(String type) throws Exception {
+        BitcoinClient bitcoinClient = null;
+        if (ToolUtil.isEmpty(type)) {
+            return null;
+        } else if ("pay".equals(type)) {
+            bitcoinClient = new BitcoinClient(ParamUtil.getIstance().get(Parameter.PAYRPCALLOWIP), ParamUtil.getIstance().get(Parameter.PAYRPCUSER), ParamUtil.getIstance().get(Parameter.PAYRPCPASSWORD, ParamUtil.getIstance().get(Parameter.PAYRPCPORT)));
+        } else if ("trade".equals(type)) {
+            bitcoinClient = new BitcoinClient(ParamUtil.getIstance().get(Parameter.TRADERPCALLOWIP), ParamUtil.getIstance().get(Parameter.TRADERPCUSER), ParamUtil.getIstance().get(Parameter.TRADERPCPASSWORD, ParamUtil.getIstance().get(Parameter.TRADERPCPORT)));
+        } else if ("equity".equals(type)) {
+            bitcoinClient = new BitcoinClient(ParamUtil.getIstance().get(Parameter.EQUITYRPCALLOWIP), ParamUtil.getIstance().get(Parameter.EQUITYRPCUSER), ParamUtil.getIstance().get(Parameter.EQUITYRPCPASSWORD, ParamUtil.getIstance().get(Parameter.EQUITYRPCPORT)));
+        }
+
+        System.out.println(bitcoinClient);
+        return bitcoinClient;
+    }
+
+
     public static BitcoinClient getBitCoinClient(String rpcallowip, String rpcuser, String rpcpassword, int rpcport) {
         BitcoinClient bitcoinClient = null;
         if (bitcoinClient == null) {
-            bitcoinClient = new BitcoinClient(rpcallowip, rpcuser, rpcpassword,rpcport);
+            bitcoinClient = new BitcoinClient(rpcallowip, rpcuser, rpcpassword, rpcport);
             System.out.println(bitcoinClient);
         }
         return bitcoinClient;
     }
-
 
 
     // 生成钱包地址
