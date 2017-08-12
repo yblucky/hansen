@@ -25,4 +25,18 @@ public class BaseUserDetailServiceImpl extends CommonServiceImpl<UserDetail> imp
         return UserDetail.class;
     }
 
+    @Override
+    public Integer updateForzenEquityAmtByUserId(String userId, Double amt) {
+        return baseUserDetailMapper.updateForzenEquityAmtByUserId(userId,amt);
+    }
+
+    @Override
+    public Integer updateForzenPayAmtByUserId(String userId, Double amt) {
+        return baseUserDetailMapper.updateForzenPayAmtByUserId(userId,amt);
+    }
+
+    @Override
+    public Integer updateForzenTradeAmtByUserId(String userId, Double amt) {
+        return baseUserDetailMapper.updateForzenTradeAmtByUserId(userId,amt);
+    }
 }

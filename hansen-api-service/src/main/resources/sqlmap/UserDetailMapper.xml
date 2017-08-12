@@ -197,6 +197,18 @@
         set status = 0,updateTime=now() where id = #{id}
     </update>
 
+    <update id="updateForzenEquityAmtByUserId">
+        update <include refid="table_name"/> set forzenEquityAmt = forzenEquityAmt + #{forzenEquityAmt},updateTime=now() where userId = #{userId} and (forzenEquityAmt + #{forzenEquityAmt})>0
+    </update>
+
+    <update id="updateForzenTradeAmtByUserId">
+        update <include refid="table_name"/> set forzeTtradeAmt = forzeTtradeAmt + #{forzeTtradeAmt},updateTime=now() where userId = #{userId} and (forzeTtradeAmt + #{forzeTtradeAmt})>0
+    </update>
+
+    <update id="updateForzenPayAmtByUserId">
+        update <include refid="table_name"/> set forzenPayAmt = forzenPayAmt + #{forzenPayAmt},updateTime=now() where userId = #{userId} and (forzenPayAmt + #{forzenPayAmt})>0
+    </update>
+
 </mapper>
 
 

@@ -329,6 +329,19 @@
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
 
+	<update id="updateEquityAmtByUserId">
+		update <include refid="table_name"/> set equityAmt = equityAmt + #{equityAmt},updateTime=now() where id = #{id} and (equityAmt + #{equityAmt})>0
+	</update>
+
+	<update id="updateTradeAmtByUserId">
+		update <include refid="table_name"/> set tradeAmt = tradeAmt + #{tradeAmt},updateTime=now() where id = #{id} and (tradeAmt + #{tradeAmt})>0
+	</update>
+
+	<update id="updatePayAmtByUserId">
+		update <include refid="table_name"/> set payAmt = payAmt + #{payAmt},updateTime=now() where id = #{id} and (payAmt + #{payAmt})>0
+	</update>
+
+
 </mapper>
 
 

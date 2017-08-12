@@ -8,5 +8,11 @@ import com.model.UserDetail;
  */
 public interface UserDetailService extends CommonService<UserDetail> {
 
+    Integer updateForzenEquityAmtByUserId(String userId,Double amt);
+
+    Integer updateForzenPayAmtByUserId(String userId,Double amt);
+
+    Integer updateForzenTradeAmtByUserId(String userId,Double amt);
+
 
 }

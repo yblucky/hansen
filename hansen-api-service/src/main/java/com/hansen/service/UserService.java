@@ -1,7 +1,9 @@
 package com.hansen.service;
 
+import com.base.page.JsonResult;
 import com.base.service.CommonService;
 import com.common.constant.RecordType;
+import com.model.CardGrade;
 import com.model.User;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,4 +31,22 @@ public interface UserService extends CommonService<User> {
     void originUpgrade(String userId, Integer cardGrade);
 
     void coverageUpgrade(String userId, Integer cardGrade);
+
+    void updateUserRegisterCode(User loginUser, CardGrade cardGrade);
+
+    void updateUserActiveCode(User loginUser, CardGrade cardGrade);
+
+    void updateUserStatus(String userId,Integer status);
+
+    Integer updateEquityAmtByUserId(String userId,Double amt);
+
+    Integer updatePayAmtByUserId(String userId,Double amt);
+
+    Integer updateTradeAmtByUserId(String userId,Double amt);
+
+    User createRegisterUser(User user, CardGrade cardGrade, User inviterUser) throws Exception;
+
+    User innerRegister(User innerUser, User inviterUser,User createUser, CardGrade cardGrade) throws Exception;
+
+     JsonResult innerActicveUser(User innerUser, User activeUser, CardGrade cardGrade) throws Exception;
 }
