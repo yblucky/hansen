@@ -27,6 +27,19 @@ public class UserGradeRecord extends BaseModel {
      */
     private Integer currencyGrade;
 
+    /**
+     * 订单号
+     * */
+    private String orderNo;
+    /**
+     * 交易金额 此处是人民币 精确到分
+     * */
+    private double amt;
+    /**
+     * 1：原点升级 2 覆盖升级
+     * */
+    private Integer upGradeType;
+
     public String getUserId() {
         return userId;
     }
@@ -57,5 +70,29 @@ public class UserGradeRecord extends BaseModel {
 
     public void setCurrencyGrade(Integer currencyGrade) {
         this.currencyGrade = currencyGrade;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public double getAmt() {
+        return amt;
+    }
+
+    public void setAmt(double amt) {
+        this.amt = amt;
+    }
+
+    public Integer getUpGradeType() {
+        return upGradeType;
+    }
+
+    public void setUpGradeType(Integer upGradeType) {
+        this.upGradeType = upGradeType;
     }
 }
