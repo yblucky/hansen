@@ -4,7 +4,7 @@
 <mapper namespace="com.hansen.mapper.UserGradeRecordMapper">
 
 	<sql id="fields">
-		userId,recordType,historyGrade,currencyGrade,createTime,updateTime,status,remark
+		userId,recordType,historyGrade,currencyGrade,createTime,updateTime,status,remark,orderNo,amt,upGradeType
 	</sql>
 
 	<sql id="fields_id">
@@ -25,6 +25,9 @@
 			<if test="model.currencyGrade != null">and currencyGrade=#{model.currencyGrade}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+			<if test="model.orderNo != null and model.orderNo != ''">and remark=#{model.orderNo}</if>
+			<if test="model.amt != null">and amt=#{model.amt}</if>
+			<if test="model.upGradeType != null and model.upGradeType != ''">and remark=#{model.upGradeType}</if>
 		</where>
 	</sql>
 
@@ -58,6 +61,15 @@
 			<if test="model.remark!= null  and model.remark!=''">
 				remark,
 			</if>
+			<if test="model.orderNo!= null  and model.orderNo!=''">
+				orderNo,
+			</if>
+			<if test="model.amt!= null  and model.amt!=''">
+				amt,
+			</if>
+			<if test="model.upGradeType!= null  and model.upGradeType!=''">
+				upGradeType,
+			</if>
 		</trim>
 		)
 		values(
@@ -90,6 +102,15 @@
 			<if test="model.remark!= null  and model.remark!=''">
 				#{model.remark},
 			</if>
+			<if test="model.orderNo!= null  and model.orderNo!=''">
+				#{model.orderNo},
+			</if>
+			<if test="model.amt!= null  and model.amt!=''">
+				#{model.amt},
+			</if>
+			<if test="model.upGradeType!= null  and model.upGradeType!=''">
+				#{model.upGradeType},
+			</if>
 		</trim>
 		);
 	</insert>
@@ -119,6 +140,9 @@
 			<if test="model.currencyGrade != null">currencyGrade= #{model.currencyGrade},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			<if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+			<if test="model.amt != null and model.amt !=''">amt= #{model.amt},</if>
+			<if test="model.upGradeType != null and model.upGradeType !=''">upGradeType= #{model.upGradeType},</if>
 			updateTime=now()
 		</set>
 		where id=#{id}

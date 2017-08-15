@@ -39,7 +39,7 @@ public class Page implements Serializable {
 
 	public void setPageSize(Integer pageSize) {
 		if (pageSize == null || pageSize < 1) {
-			pageNo = 10;
+			pageSize = 10;
 		}
 		this.pageSize = pageSize;
 	}
