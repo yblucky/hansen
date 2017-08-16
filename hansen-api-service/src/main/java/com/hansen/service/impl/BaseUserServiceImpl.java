@@ -448,6 +448,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     }
 
     @Override
+    @Transactional
     public User createRegisterUser(User user, CardGrade cardGrade, User inviterUser) throws Exception {
         user.setFirstReferrer(inviterUser.getId());
         user.setSecondReferrer(inviterUser.getFirstReferrer());
