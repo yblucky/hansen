@@ -4,7 +4,7 @@
 <mapper namespace="com.hansen.mapper.UserDepartmentMapper">
 
 	<sql id="fields">
-		userId,uid,performance,createTime,updateTime,status,remark,parentUserId
+		userId,uid,performance,grade,createTime,updateTime,status,remark,parentUserId
 	</sql>
 
 	<sql id="fields_id">
@@ -24,6 +24,8 @@
 			<if test="model.performance != null">and performance=#{model.performance}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+			<if test="model.grade != null and model.grade != ''">and grade=#{model.grade}</if>
+
 		</where>
 	</sql>
 
@@ -57,6 +59,9 @@
 			<if test="model.remark!= null  and model.remark!=''">
 				remark,
 			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				grade,
+			</if>
 		</trim>
 		)
 		values(
@@ -89,6 +94,9 @@
 			<if test="model.remark!= null  and model.remark!=''">
 				#{model.remark},
 			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				#{model.grade},
+			</if>
 		</trim>
 		);
 	</insert>
@@ -117,6 +125,7 @@
 			<if test="model.performance != null">performance= #{model.performance},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			<if test="model.grade != null and model.grade !=''">grade= #{model.grade},</if>
 			updateTime=now()
 		</set>
 		where id=#{id}

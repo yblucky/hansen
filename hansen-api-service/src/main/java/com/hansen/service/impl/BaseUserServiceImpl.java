@@ -272,7 +272,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             // TODO: 2017/7/17 记录会员等级升级记录
             Integer historyGrade = user.getGrade();
             user = this.readById(user.getId());
-            userGradeRecordService.addGradeRecord(user, GradeRecordType.GRADEUPDATE, historyGrade);
+            userGradeRecordService.addGradeRecord(user, GradeRecordType.GRADEUPDATE, historyGrade,null,OrderNoUtil.get());
         }
     }
 
@@ -371,12 +371,11 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
 
     /**
      * 点位升级
-     *
-     * @param userId    用户ID
+     * @param userId 用户ID
      * @param cardGrade 升级等级
-     */
+     * */
     @Override
-    public void originUpgrade(String userId, Integer cardGrade) {
+    public void originUpgrade(String userId,Integer cardGrade){
         User user = this.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
@@ -389,25 +388,42 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         CardGrade model = new CardGrade();
         model.setGrade(cardGrade);
         CardGrade grade = cardGradeService.readOne(model);
-        if (user.getCardGrade() >= grade.getGrade()) {
+        if(user.getCardGrade() >= grade.getGrade()){
             System.out.println("点位升级只能从低往高升级！！！");
             return;
         }
         User updateModel = new User();
         updateModel.setGrade(grade.getGrade());
-        updateModel.setMaxProfits(grade.getInsuranceAmt());
-        this.updateById(userId, updateModel);
+        updateModel.setInsuranceAmt(grade.getInsuranceAmt());
+        updateModel.setMaxProfits(CurrencyUtil.multiply(grade.getOutMultiple(),grade.getInsuranceAmt(),4));
+        this.updateById(userId,updateModel);
+
+        //生成保单
+        TradeOrder tradeOrder = new TradeOrder();
+        tradeOrder.setOrderNo(OrderNoUtil.get());
+        tradeOrder.setAmt(grade.getInsuranceAmt());
+        tradeOrder.setSendUserId(userId);
+        tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
+        tradeOrder.setSource(OrderType.INSURANCE.getCode());
+        tradeOrder.setRemark(OrderType.INSURANCE.getMsg());
+        tradeOrder.setPayAmtScale(0.5);
+        tradeOrder.setTradeAmtScale(0.5);
+        tradeOrder.setEquityAmtScale(0d);
+        tradeOrder.setConfirmAmt(0d);
+        tradeOrder.setPoundage(0d);
+        tradeOrder.setStatus(OrderStatus.PENDING.getCode());
+        tradeOrderService.create(tradeOrder);
         // TODO: 2017/8/3 点位升级成功后的记录
+        userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getGrade(),UpGradeType.ORIGINUPGRADE.getCode(),tradeOrder.getOrderNo());
     }
 
     /**
      * 覆盖升级
-     *
-     * @param userId    用户ID
+     * @param userId 用户ID
      * @param cardGrade 升级等级
-     */
+     * */
     @Override
-    public void coverageUpgrade(String userId, Integer cardGrade) {
+    public void coverageUpgrade(String userId, Integer cardGrade){
         User user = this.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
@@ -420,15 +436,32 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         CardGrade model = new CardGrade();
         model.setGrade(cardGrade);
         CardGrade grade = cardGradeService.readOne(model);
-        if (user.getCardGrade() >= grade.getGrade()) {
+        if(user.getCardGrade() >= grade.getGrade()){
             System.out.println("覆盖升级只能从低往高升级！！！");
             return;
         }
         User updateModel = new User();
         updateModel.setGrade(grade.getGrade());
-        updateModel.setMaxProfits(CurrencyUtil.getPoundage(grade.getInsuranceAmt() + user.getMaxProfits(), 1d));
-        this.updateById(userId, updateModel);
+        updateModel.setInsuranceAmt(grade.getInsuranceAmt());
+        updateModel.setMaxProfits(CurrencyUtil.getPoundage(CurrencyUtil.multiply(grade.getOutMultiple(),grade.getInsuranceAmt(),4)+user.getMaxProfits(),1d));
+        this.updateById(userId,updateModel);
         // TODO: 2017/8/3 覆盖升级成功后的记录
+        //生成保单
+        TradeOrder tradeOrder = new TradeOrder();
+        tradeOrder.setOrderNo(OrderNoUtil.get());
+        tradeOrder.setAmt(grade.getInsuranceAmt());
+        tradeOrder.setSendUserId(userId);
+        tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
+        tradeOrder.setSource(OrderType.INSURANCE.getCode());
+        tradeOrder.setRemark(OrderType.INSURANCE.getMsg());
+        tradeOrder.setPayAmtScale(0.5);
+        tradeOrder.setTradeAmtScale(0.5);
+        tradeOrder.setEquityAmtScale(0d);
+        tradeOrder.setConfirmAmt(0d);
+        tradeOrder.setPoundage(0d);
+        tradeOrder.setStatus(OrderStatus.PENDING.getCode());
+        tradeOrderService.create(tradeOrder);
+        userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getGrade(),UpGradeType.COVERAGEUPGRADE.getCode(),tradeOrder.getOrderNo());
     }
 
     @Override

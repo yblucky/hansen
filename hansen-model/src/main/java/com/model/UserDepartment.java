@@ -16,6 +16,8 @@ public class UserDepartment extends BaseModel {
 	private Integer uid;
 	/** 业绩 */
 	private Double performance;
+	/** grade */
+	private Integer grade;
 	/** 此部门所属用户Id */
 	private String parentUserId;
 
@@ -49,5 +51,13 @@ public class UserDepartment extends BaseModel {
 
 	public void setParentUserId(String parentUserId) {
 		this.parentUserId = parentUserId;
+	}
+
+	public Integer getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Integer grade) {
+		this.grade = grade;
 	}
 }
