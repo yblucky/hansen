@@ -479,11 +479,8 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     }
 
     @Override
-    public void updateUserActiveCode(User loginUser, CardGrade cardGrade) {
-        User updateUser = new User();
-        updateUser.setId(loginUser.getId());
-        updateUser.setActiveCodeNo(loginUser.getActiveCodeNo() - cardGrade.getActiveCodeNo());
-        this.updateById(updateUser.getId(), updateUser);
+    public void updateUserActiveCode(String userId,Integer activeNo) {
+        baseUserDao.updateUserActiveCode(userId, activeNo);
     }
 
     @Override
@@ -547,7 +544,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Transactional
     public JsonResult innerActicveUser(User innerUser, User activeUser, CardGrade cardGrade) throws Exception {
         /**扣激活码**/
-        this.updateUserActiveCode(innerUser, cardGrade);
+        this.updateUserActiveCode(innerUser.getId(), cardGrade.getActiveCodeNo());
         //冻结账号虚拟币 激活账号
         double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
         if (activeUser.getPayAmt() < payRmbAmt) {
@@ -592,5 +589,15 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Override
     public Integer updateCardGradeByUserId(String userId, Integer cardGrade) {
         return baseUserDao.updateCardGradeByUserId(userId, cardGrade);
+    }
+
+    @Override
+    public Integer updateRemainTaskNoByUserId(String userId, Integer remainTaskNo) {
+        return baseUserDao.updateUserRemainTaskNo(userId, remainTaskNo);
+    }
+
+    @Override
+    public Integer updateUserStatusByUserId(String userId, Integer status) {
+        return baseUserDao.updateUserStatusByUserId(userId, status);
     }
 }

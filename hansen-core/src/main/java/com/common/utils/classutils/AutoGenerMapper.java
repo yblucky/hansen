@@ -1,6 +1,6 @@
 package com.common.utils.classutils;
 
-import com.model.User;
+import com.model.*;
 import org.apache.commons.lang.ArrayUtils;
 
 import java.lang.reflect.Field;
@@ -13,6 +13,7 @@ import java.lang.reflect.Modifier;
 public class AutoGenerMapper {
 
     public static void main(String[] args) {
+        genMapperXml(TransferCode.class);
         genMapperXml(User.class);
     }
 

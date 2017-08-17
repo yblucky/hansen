@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserTaskMapper extends CommonDao<UserTask> {
-
-
+    UserTask  readLastOne(String userId);
 }

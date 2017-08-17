@@ -4,7 +4,7 @@
 <mapper namespace="com.hansen.mapper.UserMapper">
 
 	<sql id="fields">
-		uid,unionId,phone,loginName,email,nickName,sex,salt,headImgUrl,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardGrade
+		uid,unionId,phone,loginName,email,nickName,sex,salt,headImgUrl,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardGrade,remainTaskNo
 		,releaseTime,equityAmt,payAmt,tradeAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,createTime,updateTime,status,remark,insuranceAmt
 	</sql>
 
@@ -20,6 +20,7 @@
 
 	<sql id="condition">
 		<where>
+			<if test="model.remainTaskNo != null">remainTaskNo=#{model.remainTaskNo}</if>
 			<if test="model.uid != null">uid=#{model.uid}</if>
 			<if test="model.unionId != null and model.unionId != ''">and unionId=#{model.unionId}</if>
 			<if test="model.phone != null and model.phone != ''">and phone=#{model.phone}</if>
@@ -107,6 +108,9 @@
 			</if>
 			<if test="model.secondReferrer!= null  and model.secondReferrer!=''">
 				secondReferrer,
+			</if>
+			<if test="model.remainTaskNo!= null  and model.remainTaskNo!=''">
+				remainTaskNo,
 			</if>
 			<if test="model.grade!= null  and model.grade!=''">
 				grade,
@@ -215,6 +219,9 @@
 			<if test="model.secondReferrer!= null  and model.secondReferrer!=''">
 				#{model.secondReferrer},
 			</if>
+			<if test="model.remainTaskNo!= null  and model.remainTaskNo!=''">
+				#{model.remainTaskNo},
+			</if>
 			<if test="model.grade!= null  and model.grade!=''">
 				#{model.grade},
 			</if>
@@ -290,6 +297,7 @@
 		update <include refid="table_name"/>
 		<set>
 			<if test="model.uid != null">uid= #{model.uid},</if>
+			<if test="model.remainTaskNo != null and model.remainTaskNo !=''">remainTaskNo= #{model.remainTaskNo},</if>
 			<if test="model.unionId != null and model.unionId !=''">unionId= #{model.unionId},</if>
 			<if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
 			<if test="model.loginName != null and model.loginName !=''">loginName= #{model.loginName},</if>
@@ -334,20 +342,32 @@
 	</update>
 
 	<update id="updateTradeAmtByUserId">
-		update <include refid="table_name"/> set tradeAmt = tradeAmt + #{tradeAmt},updateTime=now() where id = #{id} and (tradeAmt + #{tradeAmt})>0
+		update <include refid="table_name"/> set tradeAmt = tradeAmt + #{tradeAmt},updateTime=now() where id = #{id} and (tradeAmt + #{tradeAmt})>=0
 	</update>
 
 	<update id="updatePayAmtByUserId">
-		update <include refid="table_name"/> set payAmt = payAmt + #{payAmt},updateTime=now() where id = #{id} and (payAmt + #{payAmt})>0
+		update <include refid="table_name"/> set payAmt = payAmt + #{payAmt},updateTime=now() where id = #{id} and (payAmt + #{payAmt})>=0
 	</update>
 
 
 	<update id="updateMaxProfitsByUserId">
-		update <include refid="table_name"/> set maxProfits = maxProfits + #{maxProfits},updateTime=now() where id = #{id} and (maxProfits + #{maxProfits})>0
+		update <include refid="table_name"/> set maxProfits = maxProfits + #{maxProfits},updateTime=now() where id = #{id} and (maxProfits + #{maxProfits})>=0
 	</update>
 
 	<update id="updateCardGradeByUserId">
 		update <include refid="table_name"/> set cardGrade = cardGrade ,updateTime=now() where id = #{id}
+	</update>
+
+	<update id="updateUserActiveCode">
+		update <include refid="table_name"/> set activeCodeNo = activeCodeNo+#{activeCodeNo} ,updateTime=now() where id = #{id} and (activeCodeNo + #{activeCodeNo})>=0
+	</update>
+
+	<update id="updateUserRemainTaskNo">
+		update <include refid="table_name"/> set remainTaskNo = remainTaskNo+#{remainTaskNo} ,updateTime=now() where id = #{id} and (remainTaskNo + #{remainTaskNo})>=0
+	</update>
+
+	<update id="updateUserStatusByUserId">
+		update <include refid="table_name"/> set status = status ,updateTime=now() where id = #{id}
 	</update>
 
 

@@ -1,6 +1,7 @@
 package com.common.utils.numberutils;
 
 import java.util.Random;
+import java.util.Set;
 
 public final class RandomUtil {
 
@@ -73,4 +74,21 @@ public final class RandomUtil {
 		return sb.toString();
 	}
 
+
+	/**
+	 * 从set中随机取得一个元素
+	 * @param set
+	 * @return
+	 */
+	public static <E> E getRandomElement(Set<E> set){
+		int rn = randomInt(0,set.size());
+		int i = 0;
+		for (E e : set) {
+			if(i==rn){
+				return e;
+			}
+			i++;
+		}
+		return null;
+	}
 }

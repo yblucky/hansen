@@ -6,6 +6,7 @@ import com.common.constant.RecordType;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -35,7 +36,7 @@ public interface UserService extends CommonService<User> {
 
     void updateUserRegisterCode(User loginUser, CardGrade cardGrade);
 
-    void updateUserActiveCode(User loginUser, CardGrade cardGrade);
+    void updateUserActiveCode(String userId,  Integer activeNo);
 
     void updateUserStatus(String userId, Integer status);
 
@@ -48,6 +49,10 @@ public interface UserService extends CommonService<User> {
     Integer updateMaxProfitsByUserId(String userId, Double maxProfits);
 
     Integer updateCardGradeByUserId(String userId, Integer cardGrade);
+
+    Integer updateRemainTaskNoByUserId(String userId, Integer remainTaskNo);
+
+    Integer updateUserStatusByUserId(String userId, Integer status);
 
     User createRegisterUser(User user, CardGrade cardGrade, User inviterUser) throws Exception;
 

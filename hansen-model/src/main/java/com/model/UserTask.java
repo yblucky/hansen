@@ -2,6 +2,8 @@ package com.model;
 
 import com.common.BaseModel;
 
+import java.util.Date;
+
 /**
  * 用户任务清单表
  *
@@ -39,6 +41,10 @@ public class UserTask extends BaseModel {
      * 任务类型
      */
     private Integer taskType;
+    /**
+     * 任务分配时间
+     */
+    private Date assignTaskTime;
 
     public String getTitle() {
         return title;
@@ -94,5 +100,13 @@ public class UserTask extends BaseModel {
 
     public void setTaskId(String taskId) {
         this.taskId = taskId;
+    }
+
+    public Date getAssignTaskTime() {
+        return assignTaskTime;
+    }
+
+    public void setAssignTaskTime(Date assignTaskTime) {
+        this.assignTaskTime = assignTaskTime;
     }
 }

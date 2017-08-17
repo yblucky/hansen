@@ -23,10 +23,6 @@ public class TransferCode extends BaseModel {
      */
     private Integer type;
     /**
-     * 订单号
-     */
-    private String orderNo;
-    /**
      * 转账数量
      */
     private Integer transferNo;
@@ -59,12 +55,12 @@ public class TransferCode extends BaseModel {
         this.type = type;
     }
 
-    public String getOrderNo() {
-        return orderNo;
+    public Integer getTransferNo() {
+        return transferNo;
     }
 
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
+    public void setTransferNo(Integer transferNo) {
+        this.transferNo = transferNo;
     }
 }
 

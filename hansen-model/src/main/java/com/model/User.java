@@ -122,6 +122,11 @@ public class User extends BaseModel {
      * 注册码个数
      */
     private Integer registerCodeNo;
+    /**
+     * 用户剩余可做任务次数
+     */
+    private Integer remainTaskNo;
+
 
     public Integer getUid() {
         return uid;
@@ -348,5 +353,13 @@ public class User extends BaseModel {
 
     public void setInsuranceAmt(Double insuranceAmt) {
         this.insuranceAmt = insuranceAmt;
+    }
+
+    public Integer getRemainTaskNo() {
+        return remainTaskNo;
+    }
+
+    public void setRemainTaskNo(Integer remainTaskNo) {
+        this.remainTaskNo = remainTaskNo;
     }
 }

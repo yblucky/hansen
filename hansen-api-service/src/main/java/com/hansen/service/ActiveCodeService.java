@@ -8,5 +8,7 @@ import com.model.ActiveCode;
  */
 public interface ActiveCodeService extends CommonService<ActiveCode> {
 
+    Boolean codeTransfer(String fromUserId,String toUserId,Integer toUid,Integer transferNo);
 
+    Boolean useActiveCode(String userId,Integer activeNo);
 }
