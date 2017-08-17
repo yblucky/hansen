@@ -129,7 +129,30 @@ public class Parameter extends BaseModel {
      * 收益累计完成任务次数
      **/
     public static final String TASKINTERVAL = "taskInterval";
-
+    /**
+     * 股权币内部币转账手续费
+     */
+    public  static  final  String EQUITYCOINTRANSFERSCALE="equityCoinTransferScale";
+    /**
+     * 支付币内部币转账手续费
+     */
+    public  static  final  String PAYCOINTRANSFERSCALE="payCoinTransferScale";
+    /**
+     * 交易币内部币转账手续费
+     */
+    public  static  final  String TRADECOINTRANSFERSCALE="tradeCoinTransferScale";
+    /**
+     * 股权币提币手续费
+     */
+    public  static  final  String EQUITYCOINOUTSCALE="equityCoinOutScale";
+    /**
+     * 支付币提币手续费
+     */
+    public  static  final  String PAYCOINOUTSCALE="payCoinOutScale";
+    /**
+     * 交易币提币手续费
+     */
+    public  static  final  String TRADECOINOUTSCALE="tradeCoinOutScale";
 
 
     private String name;

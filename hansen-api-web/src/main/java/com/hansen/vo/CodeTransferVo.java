@@ -9,6 +9,7 @@ public class CodeTransferVo {
     private String toId;
     private Integer transferNo;
 
+
     public Integer getToUid() {
         return toUid;
     }
