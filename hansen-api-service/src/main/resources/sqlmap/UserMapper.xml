@@ -4,8 +4,8 @@
 <mapper namespace="com.hansen.mapper.UserMapper">
 
 	<sql id="fields">
-		uid,unionId,phone,loginName,email,nickName,sex,salt,headImgUrl,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardGrade,remainTaskNo
-		,releaseTime,equityAmt,payAmt,tradeAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,createTime,updateTime,status,remark,insuranceAmt
+		uid,unionId,phone,loginName,email,nickName,sex,salt,headImgUrl,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardGrade,remainTaskNo,createType ,
+		releaseTime,equityAmt,payAmt,tradeAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,createTime,updateTime,status,remark,insuranceAmt
 	</sql>
 
 	<sql id="fields_id">
@@ -20,6 +20,7 @@
 
 	<sql id="condition">
 		<where>
+			<if test="model.createType != null">createType=#{model.createType}</if>
 			<if test="model.remainTaskNo != null">remainTaskNo=#{model.remainTaskNo}</if>
 			<if test="model.uid != null">uid=#{model.uid}</if>
 			<if test="model.unionId != null and model.unionId != ''">and unionId=#{model.unionId}</if>
@@ -108,6 +109,9 @@
 			</if>
 			<if test="model.secondReferrer!= null  and model.secondReferrer!=''">
 				secondReferrer,
+			</if>
+			<if test="model.createType!= null  and model.createType!=''">
+				createType,
 			</if>
 			<if test="model.remainTaskNo!= null  and model.remainTaskNo!=''">
 				remainTaskNo,
@@ -219,6 +223,9 @@
 			<if test="model.secondReferrer!= null  and model.secondReferrer!=''">
 				#{model.secondReferrer},
 			</if>
+			<if test="model.createType!= null  and model.createType!=''">
+				#{model.createType},
+			</if>
 			<if test="model.remainTaskNo!= null  and model.remainTaskNo!=''">
 				#{model.remainTaskNo},
 			</if>
@@ -297,6 +304,7 @@
 		update <include refid="table_name"/>
 		<set>
 			<if test="model.uid != null">uid= #{model.uid},</if>
+			<if test="model.createType != null and model.createType !=''">remainTaskNo= #{model.createType},</if>
 			<if test="model.remainTaskNo != null and model.remainTaskNo !=''">remainTaskNo= #{model.remainTaskNo},</if>
 			<if test="model.unionId != null and model.unionId !=''">unionId= #{model.unionId},</if>
 			<if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>

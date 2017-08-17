@@ -45,7 +45,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Autowired
     private UserDepartmentService userDepartmentService;
     @Autowired
-    private  WalletTransactionService walletTransactionService;
+    private  ActiveCodeService activeCodeService  ;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -486,10 +486,12 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Override
     @Transactional
     public User createRegisterUser(User user, CardGrade cardGrade, User inviterUser) throws Exception {
+        UserDetail inviterUserDetail = userDetailService.readById(inviterUser.getId());
         user.setFirstReferrer(inviterUser.getId());
+        user.setCreateType(UserType.INNER.getCode());
         user.setSecondReferrer(inviterUser.getFirstReferrer());
         user.setGrade(cardGrade.getGrade());
-        user.setStatus(UserStatusType.REGISTER.getCode());
+        user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
         BitcoinClient payBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
         BitcoinClient equityBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP),Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
         BitcoinClient tradeBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
@@ -503,32 +505,35 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         user.setContactUserId(null);
         user.setPassword(Md5Util.MD5Encode(user.getPassword(), DateUtils.currentDateToggeter()));
         user.setSalt(DateUtils.currentDateToggeter());
-        user.setStatus(UserStatusType.REGISTERSUCCESSED.getCode());
+        user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
         this.create(user);
         UserDetail userDetail = new UserDetail();
-        userDetail.setUserId(user.getId());
+        userDetail.setId(user.getId());
         userDetail.setInEquityAddress(equityAddress);
         userDetail.setInTradeAddress(tradeAddress);
         userDetail.setInPayAddress(payAddress);
-        userDetail.setLevles(0);
+        userDetail.setLevles(inviterUserDetail.getLevles()+1);
         userDetailService.create(userDetail);
         return user;
     }
 
     @Override
     @Transactional
-    public User innerRegister(User innerUser, User user, User inviterUser, CardGrade cardGrade) throws Exception {
-        /**扣注册码**/
-        this.updateUserRegisterCode(innerUser, cardGrade);
+    public User innerRegister(User innerUser,User inviterUser, User createUser, CardGrade cardGrade) throws Exception {
         /**创建用户账号**/
-        this.createRegisterUser(user, cardGrade, inviterUser);
+        createUser=  this.createRegisterUser(createUser, cardGrade, inviterUser);
         /**建立部门关系**/
         UserDepartment userDepartment = new UserDepartment();
         userDepartment.setParentUserId(innerUser.getId());
-        userDepartment.setUid(user.getUid());
-        userDepartment.setUserId(user.getId());
+        userDepartment.setUid(createUser.getUid());
+        userDepartment.setUserId(createUser.getId());
         userDepartmentService.createUserDepartment(userDepartment);
-        return user;
+
+        /**扣注册码**/
+        activeCodeService.useRegisterCode(innerUser.getId(),-cardGrade.getRegisterCodeNo(),"内部注册，推荐会员"+createUser.getUid()+"，使用"+cardGrade.getRegisterCodeNo()+"个注册码");
+        /**扣激活码**/
+        activeCodeService.useActiveCode(innerUser.getId(),-cardGrade.getActiveCodeNo(),"内部注册，推荐会员"+createUser.getUid()+"，使用"+cardGrade.getActiveCodeNo()+"个激活码");
+        return createUser;
     }
 
     @Override

@@ -140,7 +140,7 @@ public class UserController {
         }
         User user = new User();
         BeanUtils.copyProperties(user, vo);
-        user.setStatus(UserStatusType.REGISTER.getCode());
+        user.setStatus(UserStatusType.OUTREGISTER_SUCCESSED.getCode());
         BitcoinClient payBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
         BitcoinClient equityBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
         BitcoinClient tradeBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
@@ -152,7 +152,7 @@ public class UserController {
         user.setSalt(DateUtils.currentDateToggeter());
         userService.create(user);
         UserDetail userDetail = new UserDetail();
-        userDetail.setUserId(user.getId());
+        userDetail.setId(user.getId());
         userDetail.setInEquityAddress(equityAddress);
         userDetail.setInTradeAddress(tradeAddress);
         userDetail.setInPayAddress(payAddress);
@@ -173,7 +173,7 @@ public class UserController {
 
 
     /**
-     * 市场人员内部注册账号
+     * 市场人员内部注册账号，扣除市场人员的注册码，一并扣除激活码
      *
      * @param request
      * @param vo
@@ -181,8 +181,8 @@ public class UserController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/createuser", method = RequestMethod.POST)
-    public JsonResult createUser(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
+    @RequestMapping(value = "/innercreateuser", method = RequestMethod.POST)
+    public JsonResult innerCreateUser(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         User loginUser = userService.readById(token.getId());
 
@@ -212,6 +212,9 @@ public class UserController {
         CardGrade cardGrade = cardGradeService.readOne(condition);
         if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
+        }
+        if (loginUser.getActiveCodeNo() < cardGrade.getRegisterCodeNo()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
         }
         if (loginUser.getActiveCodeNo() < cardGrade.getRegisterCodeNo()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
@@ -301,12 +304,11 @@ public class UserController {
         updateActiveUser.setPayAmt(activeUser.getPayAmt() - cardGrade.getInsuranceAmt() * 50 / 100);
         updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
         //写入最大收益
-        updateActiveUser.setMaxProfits(cardGrade.getOutMultiple()*cardGrade.getInsuranceAmt());
+        updateActiveUser.setMaxProfits(cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
         updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
         userService.updateById(updateActiveUser.getId(), updateActiveUser);
-        UserDetail activeUserDetailContion = new UserDetail();
-        activeUserDetailContion.setUserId(activeUser.getId());
-        UserDetail activeUserDetail = userDetailService.readOne(activeUserDetailContion);
+
+        UserDetail activeUserDetail = userDetailService.readById(activeUser.getId());
         //写入冻结
         UserDetail updateActiveUserDetailContion = new UserDetail();
         updateActiveUserDetailContion.setId(activeUserDetail.getId());
@@ -378,9 +380,7 @@ public class UserController {
         updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
         userService.updateById(updateActiveUser.getId(), updateActiveUser);
 
-        UserDetail activeUserDetailContion = new UserDetail();
-        activeUserDetailContion.setUserId(loginUser.getId());
-        UserDetail activeUserDetail = userDetailService.readOne(activeUserDetailContion);
+        UserDetail activeUserDetail = userDetailService.readById(loginUser.getId());
         //写入冻结
         UserDetail updateActiveUserDetailContion = new UserDetail();
         updateActiveUserDetailContion.setId(activeUserDetail.getId());

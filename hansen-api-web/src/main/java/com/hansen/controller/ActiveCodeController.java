@@ -173,7 +173,7 @@ public class ActiveCodeController {
         if (user.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "冲洗激活需要"+cardGrade.getActiveCodeNo()+"个激活码，激活码数量不足");
         }
-        activeCodeService.useActiveCode(user.getId(),cardGrade.getActiveCodeNo());
+        activeCodeService.useActiveCode(user.getId(),cardGrade.getActiveCodeNo(),"");
         return new JsonResult(ResultCode.SUCCESS.getCode(), "激活账户成功");
     }
 }
