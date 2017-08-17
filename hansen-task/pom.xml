@@ -17,6 +17,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.yanbao</groupId>
+			<artifactId>hansen-common-service</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.yanbao</groupId>
 			<artifactId>hansen-api-service</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>

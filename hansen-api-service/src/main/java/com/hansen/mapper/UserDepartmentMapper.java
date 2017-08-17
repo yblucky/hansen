@@ -13,4 +13,6 @@ public interface UserDepartmentMapper extends CommonDao<UserDepartment> {
     List<UserDepartment> getAll(@Param("parentUserId") String parentUserId);
 
     Double getSumAmt(@Param("parentUserId") String parentUserId);
+
+    Integer updatePerformanceByUserId(String userId,Double amt);
 }

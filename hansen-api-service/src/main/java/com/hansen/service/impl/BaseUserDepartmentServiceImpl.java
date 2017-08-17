@@ -46,6 +46,10 @@ public class BaseUserDepartmentServiceImpl extends CommonServiceImpl<UserDepartm
         userDepartment.setPerformance(0d);
         baseUserDepartmentMapper.create(userDepartment);
         return  true;
+    }
 
+    @Override
+    public Boolean updatePerformance(String id, Double performance) {
+        return null;
     }
 }

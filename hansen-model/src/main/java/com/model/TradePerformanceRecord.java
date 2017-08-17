@@ -21,7 +21,7 @@ public class TradePerformanceRecord extends BaseModel {
     /**
      * 来源： 1：保单
      */
-    private Double source;
+    private Integer source;
 
     public String getOrderNo() {
         return orderNo;
@@ -39,11 +39,11 @@ public class TradePerformanceRecord extends BaseModel {
         this.amt = amt;
     }
 
-    public Double getSource() {
+    public Integer getSource() {
         return source;
     }
 
-    public void setSource(Double source) {
+    public void setSource(Integer source) {
         this.source = source;
     }
 }
