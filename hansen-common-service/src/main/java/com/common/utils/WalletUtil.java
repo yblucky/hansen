@@ -1,8 +1,8 @@
 package com.common.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.common.constant.ENumCode;
-import com.common.utils.toolutils.ToolUtil;
 import com.model.Parameter;
 import com.model.WalletTransaction;
 import net.sf.json.JSONObject;
@@ -61,6 +61,11 @@ public class WalletUtil {
     // 发送币给指定地址
     public static String sendToAddress(BitcoinClient bitcoinClient, String bitcoinAddress, BigDecimal amount, String comment, String commentTo) {
         return bitcoinClient.sendToAddress(bitcoinAddress, amount, comment, commentTo);
+    }
+
+    // 从指定账户发送币给指定地址
+    public static String sendFrom(BitcoinClient bitcoinClient,String fromAcount, String bitcoinAddress, BigDecimal amount, String comment, String commentTo) {
+        return bitcoinClient.sendFrom(fromAcount,bitcoinAddress, amount,3, comment, commentTo);
     }
 
     // 根据交易编号查询交易信息
@@ -133,7 +138,10 @@ public class WalletUtil {
         // WalletUtil.getAccountAddress("000001");
         BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
         System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
-
+        System.out.println(JSON.toJSONString(WalletUtil.listTransactions(bitcoinClient,"",100)));
+//        System.out.println(JSON.toJSONString(WalletUtil.sendFrom(bitcoinClient,"000","rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y",new BigDecimal("2"),"test01","test001")));
+//                System.out.println(JSON.toJSONString(WalletUtil.sendToAddress(bitcoinClient,"rfciwDvRrHS6DFjM3nxriU9XmAMbaXMRaP",new BigDecimal("2"),"test01","test001")));
     }
+
 
 }
