@@ -9,19 +9,18 @@ import com.common.utils.DateUtils.DateUtils;
 import com.common.utils.numberutils.RandomUtil;
 import com.hansen.mapper.UserTaskMapper;
 import com.hansen.service.TaskService;
+import com.hansen.service.TradeOrderService;
 import com.hansen.service.UserService;
 import com.hansen.service.UserTaskService;
 import com.model.Task;
+import com.model.TradeOrder;
 import com.model.User;
 import com.model.UserTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @date 2016年11月27日
@@ -34,6 +33,8 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
     private TaskService taskService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TradeOrderService tradeOrderService;
 
     @Override
     protected CommonDao<UserTask> getDao() {
@@ -126,7 +127,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
 
     @Override
     @Transactional
-    public Boolean doTask(String userId, String taskId) {
+    public Boolean doTask(String userId, String taskId) throws Exception {
         User user = userService.readById(userId);
         if (user == null) {
             return false;
@@ -153,10 +154,21 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         updteModel.setRemark("用户于" + DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_LONG) + "完成任务");
         this.updateById(userTask.getId(), updteModel);
         userService.updateRemainTaskNoByUserId(userId, -1);
-        if (user.getRemainTaskNo()==1){
+        if (user.getRemainTaskNo() == 1) {
             //冻结用户账号，等待下次激活
             userService.updateUserStatus(userId, UserStatusType.OUT.getCode());
         }
+        List<TradeOrder> orderList = tradeOrderService.readRewardList(new Date(), 1, 100);
+        List<String> orderIdList1 = new ArrayList<>();
+        List<String> orderIdList2 = new ArrayList<>();
+        for (TradeOrder order : orderList) {
+            orderIdList1.add(order.getId());
+            if (order.getTaskCycle() == 1) {
+                orderIdList2.add(order.getId());
+            }
+        }
+        tradeOrderService.batchUpdateSignCycle(orderIdList1);
+        tradeOrderService.batchUpdateTaskCycle(orderIdList2);
         return true;
     }
 }

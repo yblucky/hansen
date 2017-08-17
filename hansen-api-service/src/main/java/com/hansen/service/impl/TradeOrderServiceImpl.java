@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * @date 2016年11月27日
  */
@@ -152,5 +155,26 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         //重新计算用户星级
 
         return true;
+    }
+
+    @Override
+    public List<TradeOrder> readRewardList(Date taskTime, Integer startRow, Integer pageSize) throws Exception {
+        return tradeOrderMapper.readRewardList(taskTime,startRow,pageSize);
+    }
+
+    @Override
+    public Integer batchUpdateSignCycle(List<String> idList) throws Exception {
+        if (ToolUtil.isEmpty(idList)){
+            return 0;
+        }
+        return tradeOrderMapper.batchUpdateSignCycle(idList);
+    }
+
+    @Override
+    public Integer batchUpdateTaskCycle(List<String> idList) throws Exception {
+        if (ToolUtil.isEmpty(idList)){
+            return 0;
+        }
+        return tradeOrderMapper.batchUpdateTaskCycle(idList);
     }
 }
