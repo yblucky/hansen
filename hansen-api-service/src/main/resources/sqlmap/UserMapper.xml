@@ -342,6 +342,18 @@
 	</update>
 
 
+	<update id="updateMaxProfitsByUserId">
+		update <include refid="table_name"/> set maxProfits = maxProfits + #{maxProfits},updateTime=now() where id = #{id} and (maxProfits + #{maxProfits})>0
+	</update>
+
+	<update id="updateCardGradeByUserId">
+		update <include refid="table_name"/> set cardGrade = cardGrade ,updateTime=now() where id = #{id}
+	</update>
+
+
+
+
+
 </mapper>
 
 

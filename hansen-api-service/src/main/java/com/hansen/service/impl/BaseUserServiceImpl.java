@@ -134,40 +134,44 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         }
         this.updateById(user.getId(), model);
         // TODO: 2017/7/14 记录用户释放信息
-        this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE);
+        this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE,0,0);
     }
 
     /**
      * 用户动态收益-直推奖
      *
-     * @param pushUserId 推荐人id
+     * @param pushUserId   新推荐的用户id
      */
     @Override
     @Transactional
-    public void pushBonus(String pushUserId) {
+    public void pushBonus(String pushUserId,TradeOrder order)  throws  Exception{
         User pushUser = this.readById(pushUserId);
         if (pushUser == null) {
             System.out.println("找不到用户....");
             return;
         }
-        if (pushUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
+     /*
+      处于一个事务，用户状态可能未来及更新提交，查出来的状态还是待激活
+      if (pushUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
             System.out.println("用户未激活保单");
             return;
-        }
+        }*/
         //一代直推奖
         User parentUser = this.readById(pushUser.getFirstReferrer());
         //一代推荐人必须也是激活状态
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
-            String orderNo = OrderNoUtil.get();
+            String orderNo = order.getOrderNo();
             //保单等级以最小为准
             Integer cardLevel = parentUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : parentUser.getCardGrade();
             CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
             //直推收益按两者最小保单金额*6%
-            double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.06, 1d);
-            //存入一代推荐人的三种钱包中
-            userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);
+            double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf( ParamUtil.getIstance().get(Parameter.PUSHFIRSTREFERRERSCALE)), 1d);
+     /*       //存入一代推荐人的三种钱包中
+            需要做完7次任务才可以分4次领取
+            userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);*/
             // TODO: 2017/7/14 记录一代直推奖记录
-            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH);
+
+            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH,Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)),Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
         }
         //二代直推奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
@@ -179,16 +183,16 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             selModel.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
             Integer count = this.readCount(selModel);
             if (count >= 3) {
-                String orderNo = OrderNoUtil.get();
+                String orderNo = order.getOrderNo();
                 //保单等级以最小为准
                 Integer cardLevel = grandfatherUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : grandfatherUser.getCardGrade();
                 CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
                 //直推收益按两者最小保单金额*4%
-                double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.04, 1d);
+                double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf( ParamUtil.getIstance().get(Parameter.PUSHSECONDREFERRERSCALE)), 1d);
                 //存入二代推荐人的三种钱包中
-                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);
+//                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);
                 // TODO: 2017/7/14 记录二代直推奖记录
-                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH);
+                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH,Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)),Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
             }
         }
     }
@@ -223,7 +227,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             //存入一代推荐人的三种钱包中
             userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
             // TODO: 2017/7/14 记录一代管理奖记录
-            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE);
+            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE,0,0);
         }
         //二代管理奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
@@ -243,8 +247,8 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
                 double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.01, 1d);
                 //存入二代推荐人的三种钱包中
                 userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
-                // TODO: 2017/7/14 记录二代直推奖记录
-                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.MANAGE);
+                // TODO: 2017/7/14 记录二代管理奖记录
+                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.MANAGE,0,0);
             }
         }
     }
@@ -329,7 +333,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
                 double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * 0.01, 1d);
                 this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.EQUALITY, orderNo);
                 //领取平级奖记录
-                this.addTradeOrder(userId, parentUser.getId(), orderNo, incomeAmt, RecordType.EQUALITY);
+                this.addTradeOrder(userId, parentUser.getId(), orderNo, incomeAmt, RecordType.EQUALITY,0,0);
                 //中断级差
                 return;
             }
@@ -349,14 +353,14 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
                 this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.DIFFERENT, orderNo);
                 bonusScale = parentGrade.getRewardScale();
                 //领取级差奖
-                this.addTradeOrder(userId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT);
+                this.addTradeOrder(userId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT,0,0);
             }
             childUser = parentUser;
         }
     }
 
     //新增用户收入记录
-    private void addTradeOrder(String sendUserId, String receviceUserId, String order, Double amt, RecordType recordType) {
+    private void addTradeOrder(String sendUserId, String receviceUserId, String order, Double amt, RecordType recordType,Integer rewardInterval,Integer taskInterval) {
         TradeOrder model = new TradeOrder();
         model.setSendUserId(sendUserId);
         model.setReceviceUserId(receviceUserId);
@@ -364,6 +368,8 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         model.setAmt(amt);
         model.setConfirmAmt(amt);
         model.setPoundage(0d);
+        model.setTaskCycle(taskInterval);
+        model.setSignCycle(rewardInterval);
         model.setSource(recordType.getCode());
         model.setRemark(recordType.getMsg());
         tradeOrderService.create(model);
@@ -576,5 +582,15 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     @Override
     public Integer updateTradeAmtByUserId(String userId, Double amt) {
         return baseUserDao.updateTradeAmtByUserId(userId, amt);
+    }
+
+    @Override
+    public Integer updateMaxProfitsByUserId(String userId, Double maxProfits) {
+        return baseUserDao.updateMaxProfitsByUserId(userId, maxProfits);
+    }
+
+    @Override
+    public Integer updateCardGradeByUserId(String userId, Integer cardGrade) {
+        return baseUserDao.updateCardGradeByUserId(userId, cardGrade);
     }
 }

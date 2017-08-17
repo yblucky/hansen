@@ -146,6 +146,9 @@
 		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and b.contactUserId = a.id and a.status = 1
 	</select>
 
+	<update id="updatePerformanceByUserId">
+		update <include refid="table_name"/> set performance = performance + #{performance},updateTime=now() where userId = #{userId} and (performance + #{performance})>0
+	</update>
 </mapper>
 
 

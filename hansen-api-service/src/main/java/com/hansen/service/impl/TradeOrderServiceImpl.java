@@ -2,19 +2,14 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.common.constant.Constant;
-import com.common.constant.OrderStatus;
-import com.common.constant.OrderType;
-import com.common.constant.UserStatusType;
+import com.common.constant.*;
 import com.common.utils.ParamUtil;
 import com.common.utils.numberutils.CurrencyUtil;
 import com.common.utils.toolutils.OrderNoUtil;
 import com.common.utils.toolutils.ToolUtil;
+import com.google.zxing.oned.UPCAReader;
 import com.hansen.mapper.TradeOrderMapper;
-import com.hansen.service.CardGradeService;
-import com.hansen.service.TradeOrderService;
-import com.hansen.service.UserDetailService;
-import com.hansen.service.UserService;
+import com.hansen.service.*;
 import com.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +28,10 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     private UserDetailService userDetailService;
     @Autowired
     private CardGradeService cardGradeService;
+    @Autowired
+    private UserDepartmentService userDepartmentService;
+    @Autowired
+    private UserGradeRecordService userGradeRecordService;
 
     @Override
     protected CommonDao<TradeOrder> getDao() {
@@ -45,7 +44,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     }
 
     @Override
-    public TradeOrder createInsuranceTradeOrder(User activeUser, CardGrade cardGrade)  throws Exception{
+    public TradeOrder createInsuranceTradeOrder(User activeUser, CardGrade cardGrade) throws Exception {
         TradeOrder tradeOrder = new TradeOrder();
         tradeOrder.setOrderNo(OrderNoUtil.get());
         tradeOrder.setAmt(cardGrade.getInsuranceAmt());
@@ -80,35 +79,78 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         cardGradeMdel.setGrade(tradeOrder.getCardGrade());
         CardGrade cardGrade = cardGradeService.readOne(cardGradeMdel);
 
-        double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
-        if (activeUser.getPayAmt() < payRmbAmt) {
-            msg = "支付币数量不足，无法激活账号";
-        }
-
-        double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
-        if (activeUser.getTradeAmt() < tradeRmbAmt) {
-            msg = "交易币数量不足，无法激活账号";
-        }
-        double payAmt = CurrencyUtil.multiply(payRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
-        double tradeAmt = CurrencyUtil.multiply(tradeRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
-        userService.updatePayAmtByUserId(activeUser.getId(), -payAmt);
-        userService.updatePayAmtByUserId(activeUser.getId(), -tradeAmt);
-
+        Integer upGradeType=0;
         //写入最大收益
-        User updateActiveUser = new User();
-        updateActiveUser.setId(activeUser.getId());
-        updateActiveUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
-        updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-        updateActiveUser.setMaxProfits(cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
-        userService.updateById(updateActiveUser.getId(), updateActiveUser);
-        UserDetail activeUserDetailContion = new UserDetail();
-        activeUserDetailContion.setUserId(activeUser.getId());
-        UserDetail activeUserDetail = userDetailService.readOne(activeUserDetailContion);
-        //写入冻结
-        userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
-        userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
-        userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(), 0d);
-        //TODO  更改订单的结算状态
+        if (OrderType.INSURANCE_ORIGIN.getCode()==tradeOrder.getSource()){
+            upGradeType=UpGradeType.INSURANCE.getCode();
+            double payRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
+            if (activeUser.getPayAmt() < payRmbAmt) {
+                msg = "支付币数量不足，无法激活账号";
+            }
+
+
+            double tradeRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
+            if (activeUser.getTradeAmt() < tradeRmbAmt) {
+                msg = "交易币数量不足，无法激活账号";
+            }
+            double payAmt = CurrencyUtil.multiply(payRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
+            double tradeAmt = CurrencyUtil.multiply(tradeRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
+            userService.updatePayAmtByUserId(activeUser.getId(), -payAmt);
+            userService.updatePayAmtByUserId(activeUser.getId(), -tradeAmt);
+            User updateActiveUser = new User();
+            updateActiveUser.setId(activeUser.getId());
+            updateActiveUser.setInsuranceAmt(tradeOrder.getAmt());
+            updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
+            updateActiveUser.setMaxProfits(cardGrade.getOutMultiple() * tradeOrder.getAmt());
+            userService.updateById(updateActiveUser.getId(), updateActiveUser);
+            UserDetail activeUserDetailContion = new UserDetail();
+            activeUserDetailContion.setUserId(activeUser.getId());
+            //写入冻结
+            userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
+            userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
+            userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(), 0d);
+        }else if (OrderType.INSURANCE_COVER.getCode()==tradeOrder.getSource()){
+            upGradeType= UpGradeType.COVERAGEUPGRADE.getCode();
+            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(),cardGrade.getOutMultiple()*tradeOrder.getAmt());
+        }else if (OrderType.INSURANCE_ORIGIN.getCode()==tradeOrder.getSource()){
+            upGradeType=UpGradeType.ORIGINUPGRADE.getCode();
+            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(),tradeOrder.getAmt()+activeUser.getInsuranceAmt());
+        }
+        //更新用户开卡级别
+        userService.updateCardGradeByUserId(tradeOrder.getSendUserId(),tradeOrder.getCardGrade());
+        //向上累加业绩
+        int i;
+        User refferUser = null;
+        String referId = activeUser.getFirstReferrer();
+        for (i = 0; i < 10000; i++) {
+            if (Constant.SYSTEM_USER_ID.equals(referId)) {
+                break;
+            }
+            User conditon = new User();
+            conditon.setId(referId);
+            refferUser = userService.readOne(conditon);
+            if (refferUser == null || UserStatusType.OUT.getCode() == refferUser.getStatus()) {
+                continue;
+            }
+            userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
+            referId = refferUser.getFirstReferrer();
+        }
+        //写入结算记录
+        TradePerformanceRecord performanceRecord = new TradePerformanceRecord();
+        performanceRecord.setAmt(tradeOrder.getAmt());
+        performanceRecord.setOrderNo(tradeOrder.getOrderNo());
+        performanceRecord.setSource(OrderType.fromCode(tradeOrder.getSource()).getCode());
+        performanceRecord.setRemark(OrderType.fromCode(tradeOrder.getSource()).getMsg());
+        //写入直推奖待做任务领取奖励记录
+        userService.pushBonus(activeUser.getId(),tradeOrder);
+        //写入用户升级记录
+        userGradeRecordService.addGradeRecord(activeUser,GradeRecordType.CARDUPDATE,activeUser.getGrade(),tradeOrder.getCardGrade(),tradeOrder.getOrderNo());
+        // 更改订单的结算状态
+        TradeOrder  updateOrder = new TradeOrder();
+        updateOrder.setStatus(OrderStatus.HANDLED.getCode());
+        this.updateById(tradeOrder.getId(),updateOrder);
+        //重新计算用户星级
+
         return true;
     }
 }

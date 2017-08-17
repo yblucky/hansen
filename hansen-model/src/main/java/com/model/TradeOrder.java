@@ -58,8 +58,18 @@ public class TradeOrder extends BaseModel {
      * 交易币比例
      */
     private Double tradeAmtScale;
-
+    /**
+     * 本次保单用户可升级到的等级
+     */
     private Integer cardGrade;
+    /**
+     * 需要累计完成任务次数  默认为7  依次递减  为0表示完成一个周期  可领取一次奖励
+     **/
+    private Integer taskCycle;
+    /**
+     * 一笔奖励划分多少次领取  默认为4  依次递减    可领取一次奖励  为0表示这笔分成奖励全部领完了
+     **/
+    private Integer signCycle;
 
     public Integer getCardGrade() {
         return cardGrade;
@@ -163,5 +173,21 @@ public class TradeOrder extends BaseModel {
 
     public void setTradeAmtScale(Double tradeAmtScale) {
         this.tradeAmtScale = tradeAmtScale;
+    }
+
+    public Integer getTaskCycle() {
+        return taskCycle;
+    }
+
+    public void setTaskCycle(Integer taskCycle) {
+        this.taskCycle = taskCycle;
+    }
+
+    public Integer getSignCycle() {
+        return signCycle;
+    }
+
+    public void setSignCycle(Integer signCycle) {
+        this.signCycle = signCycle;
     }
 }

@@ -29,7 +29,15 @@ public enum OrderType {
     /**
      * 平级奖
      **/
-    RELASE(6, "每周收益");
+    RELASE(6, "每周收益"),
+    /**
+     * 原点升级保单
+     **/
+    INSURANCE_ORIGIN(1, "原点升级保单"),
+    /**
+     * 覆盖升级保单
+     **/
+    INSURANCE_COVER(1, "覆盖升级保单");
 
     private final Integer code;
 

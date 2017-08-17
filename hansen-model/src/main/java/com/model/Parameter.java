@@ -90,9 +90,9 @@ public class Parameter extends BaseModel {
     public static final String RMBCONVERTEQUITYSCALE = "rmbConvertEquityScale";
 
     /**
-     * 收益间隔时间
+     * 奖励到账拆分周期
      **/
-    public static final String INTERVAL = "interval";
+    public static final String REWARDINTERVAL = "rewardInterval";
     /**
      * 收益转化成支付币数量比例
      **/
@@ -125,6 +125,11 @@ public class Parameter extends BaseModel {
      * 管理奖烧伤（1开  2关）
      **/
     public static final String BURNSMANAGE = "burnsManage";
+    /**
+     * 收益累计完成任务次数
+     **/
+    public static final String TASKINTERVAL = "taskInterval";
+
 
 
     private String name;
