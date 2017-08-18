@@ -3,7 +3,6 @@ package com.common.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.common.constant.CurrencyType;
-import com.common.constant.ENumCode;
 import com.common.constant.TransactionStatusType;
 import com.model.Parameter;
 import com.model.WalletTransaction;
@@ -22,11 +21,11 @@ public class WalletUtil {
 
     public static BitcoinClient getBitCoinClient(CurrencyType currencyType) throws Exception {
         BitcoinClient bitcoinClient = null;
-        if (currencyType.getCode()==2) {
+        if (currencyType.getCode() == 2) {
             bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
-        } else if (currencyType.getCode()==1) {
+        } else if (currencyType.getCode() == 1) {
             bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
-        } else if (currencyType.getCode()==3) {
+        } else if (currencyType.getCode() == 3) {
             bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
         }
 
@@ -36,11 +35,11 @@ public class WalletUtil {
 
     public static BitcoinClient getBitCoinClient(Integer currencyType) throws Exception {
         BitcoinClient bitcoinClient = null;
-        if (currencyType==1) {
+        if (currencyType == 1) {
             bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
-        } else if (currencyType==2) {
+        } else if (currencyType == 2) {
             bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
-        } else if (currencyType==3) {
+        } else if (currencyType == 3) {
             bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
         }
 
@@ -80,8 +79,8 @@ public class WalletUtil {
     }
 
     // 从指定账户发送币给指定地址
-    public static String sendFrom(BitcoinClient bitcoinClient,String fromAcount, String bitcoinAddress, BigDecimal amount, String comment, String commentTo) {
-        return bitcoinClient.sendFrom(fromAcount,bitcoinAddress, amount,3, comment, commentTo);
+    public static String sendFrom(BitcoinClient bitcoinClient, String fromAcount, String bitcoinAddress, BigDecimal amount, String comment, String commentTo) {
+        return bitcoinClient.sendFrom(fromAcount, bitcoinAddress, amount, 3, comment, commentTo);
     }
 
     // 根据交易编号查询交易信息
@@ -152,10 +151,16 @@ public class WalletUtil {
         // WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new
         // BigDecimal(0.02), "a", "b");
         // WalletUtil.getAccountAddress("000001");
+
         BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
-        System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
+        System.out.println(JSON.toJSONString(bitcoinClient.getTransaction("bfb2b451184259940c8b23dffb5af4e2d6e9a2db44a702e9efc1c0ecbe7a2451")));
+        System.out.println(bitcoinClient.getBalance("00"));
+//        bitcoinClient.sendToAddress("rhrgi626nKKSFFqD63KUhHQ3tggbEMYaMt", new BigDecimal("2"), "", "");
+//        bitcoinClient.sendFrom("00", "rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y", new BigDecimal("2.0"), 3, "", "");
+
+//        System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
 //        System.out.println(JSON.toJSONString(WalletUtil.listTransactions(bitcoinClient,"",100)));
-        System.out.println(JSON.toJSONString(WalletUtil.sendFrom(bitcoinClient,"","rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y",new BigDecimal("2"),"test01","test001")));
+//        System.out.println(JSON.toJSONString(WalletUtil.sendFrom(bitcoinClient, "", "rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y", new BigDecimal("2"), "test01", "test001")));
 //                System.out.println(JSON.toJSONString(WalletUtil.sendToAddress(bitcoinClient,"rfciwDvRrHS6DFjM3nxriU9XmAMbaXMRaP",new BigDecimal("2"),"test01","test001")));
     }
 
