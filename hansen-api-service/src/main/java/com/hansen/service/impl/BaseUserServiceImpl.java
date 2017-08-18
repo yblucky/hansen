@@ -547,7 +547,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
 
     @Override
     @Transactional
-    public JsonResult innerActicveUser(User innerUser, User activeUser, CardGrade cardGrade) throws Exception {
+    public JsonResult innerActicveUser(User activeUser, CardGrade cardGrade) throws Exception {
         //冻结账号虚拟币 激活账号
         double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
         if (activeUser.getPayAmt() < payRmbAmt) {

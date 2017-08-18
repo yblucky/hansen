@@ -58,7 +58,7 @@ public interface UserService extends CommonService<User> {
 
     User innerRegister(User innerUser, User inviterUser, User createUser, CardGrade cardGrade) throws Exception;
 
-    JsonResult innerActicveUser(User innerUser, User activeUser, CardGrade cardGrade) throws Exception;
+    JsonResult innerActicveUser(User activeUser, CardGrade cardGrade) throws Exception;
 
 
 }

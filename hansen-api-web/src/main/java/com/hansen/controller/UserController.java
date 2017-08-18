@@ -13,9 +13,7 @@ import com.common.utils.numberutils.CurrencyUtil;
 import com.common.utils.toolutils.OrderNoUtil;
 import com.common.utils.toolutils.ToolUtil;
 import com.hansen.service.*;
-import com.hansen.vo.LoginUserVo;
-import com.hansen.vo.UpgradeUserVo;
-import com.hansen.vo.UserVo;
+import com.hansen.vo.*;
 import com.model.*;
 import com.redis.Strings;
 import org.apache.commons.beanutils.BeanUtils;
@@ -71,6 +69,9 @@ public class UserController {
 
     /**
      * 账号密码登录
+     *
+     * 包含激活账号流程
+     *
      */
     @ResponseBody
     @RequestMapping(value = "/login/loginIn", method = RequestMethod.POST)
@@ -87,20 +88,29 @@ public class UserController {
         if (null == loginUser) {
             return new JsonResult(-1, "用户不存在");
         } else {
-            if (loginUser.getStatus() != StatusType.TRUE.getCode()) {
-                return new JsonResult(10002, "您的帐号已被禁用");
+            if (loginUser.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && loginUser.getStatus()!=UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
+                    return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
             }
             String password = loginUser.getPassword();
             if (org.springframework.util.StringUtils.isEmpty(password)) {
-                return new JsonResult(-1, "没有设置登录密码");
+                return new JsonResult(ResultCode.ERROR.getCode(), "没有设置登录密码");
             }
             if (!password.equals(Md5Util.MD5Encode(vo.getPassword(), loginUser.getSalt()))) {
-                return new JsonResult(-1, "用户名或密码错误");
+                return new JsonResult(ResultCode.ERROR.getCode(), "用户名或密码错误");
             }
+        }
+        if (loginUser.getStatus()==UserStatusType.INNER_REGISTER_SUCCESSED.getCode()){
+            CardGrade cardGradeCondition = new CardGrade();
+            cardGradeCondition.setGrade(vo.getCardGrade());
+            CardGrade cardGrade = cardGradeService.readOne(cardGradeCondition);
+            if (cardGrade == null) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
+            }
+            //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
+            userService.innerActicveUser(loginUser,cardGrade);
         }
         User updateUser = new User();
         updateUser.setLoginTime(new Date());
-        updateUser.setUpdateTime(new Date());
         userService.updateById(loginUser.getId(), updateUser);
         // 登录
         String token = TokenUtil.generateToken(loginUser.getId(), loginUser.getNickName());
@@ -116,7 +126,7 @@ public class UserController {
     }
 
     /**
-     * 注册默认账号
+     * 外部用户注册默认账号  等待完善
      *
      * @param request
      * @param vo
@@ -182,7 +192,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "/innercreateuser", method = RequestMethod.POST)
-    public JsonResult innerCreateUser(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
+    public JsonResult innerCreateUser(HttpServletRequest request, @RequestBody InnerRegisterUserVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         User loginUser = userService.readById(token.getId());
 
@@ -194,6 +204,21 @@ public class UserController {
         }
         if (ToolUtil.isEmpty(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新建用户登录密码不能为空");
+        }
+        if (ToolUtil.isEmpty(vo.getPayWord())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "新建用户支付密码不能为空");
+        }
+        if (ToolUtil.isEmpty(vo.getConfirmPassword())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "新建用户确认登录密码不能为空");
+        }
+        if (ToolUtil.isEmpty(vo.getConfirmpayWord())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "新建用户确认支付密码不能为空");
+        }
+        if (vo.getConfirmPassword().equals(vo.getPassword())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "新建用户确认两次登录密码不一致");
+        }
+        if (vo.getConfirmpayWord().equals(vo.getPayWord())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "新建用户确认两次支付密码不一致");
         }
         if (vo.getCardGrade() == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请选择开卡级别");
@@ -234,6 +259,11 @@ public class UserController {
     }
 
 
+
+
+
+
+
     /**
      * 市场人员内部激活账号
      *
@@ -255,9 +285,6 @@ public class UserController {
         }
         if (ToolUtil.isEmpty(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户登录密码不能为空");
-        }
-        if (vo.getCardGrade() == null) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "请填写开卡级别");
         }
         CardGrade condition = new CardGrade();
         condition.setGrade(vo.getCardGrade());
