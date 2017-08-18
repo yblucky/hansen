@@ -7,12 +7,12 @@ package com.common.constant;
 public enum UserStatusType {
 
     /** 注册 */
-    REGISTER(1, "注册"),
+    OUTREGISTER_SUCCESSED(1, "用户自主注册"),
 
     /** 注册成功 */
-    REGISTERSUCCESSED(2, "注册成功"),
+    INNER_REGISTER_SUCCESSED(2, "市场内部注册成功"),
 
-    /** 激活成功 */
+    /** 激活成功  市场内部注册账号，用户登录时默认激活 */
     ACTIVATESUCCESSED(3, "激活成功"),
 
     /** 待激活（正在保单中） */

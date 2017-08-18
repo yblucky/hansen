@@ -2,7 +2,9 @@ package com.common.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.common.constant.CurrencyType;
 import com.common.constant.ENumCode;
+import com.common.constant.TransactionStatusType;
 import com.model.Parameter;
 import com.model.WalletTransaction;
 import net.sf.json.JSONObject;
@@ -18,12 +20,26 @@ import java.util.Map;
 @Component
 public class WalletUtil {
 
+    public static BitcoinClient getBitCoinClient(CurrencyType currencyType) throws Exception {
+        BitcoinClient bitcoinClient = null;
+        if (currencyType.getCode()==2) {
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
+        } else if (currencyType.getCode()==1) {
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+        } else if (currencyType.getCode()==3) {
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
+        }
+
+        System.out.println(bitcoinClient);
+        return bitcoinClient;
+    }
+
     public static BitcoinClient getBitCoinClient(Integer currencyType) throws Exception {
         BitcoinClient bitcoinClient = null;
         if (currencyType==1) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
-        } else if (currencyType==2) {
             bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+        } else if (currencyType==2) {
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
         } else if (currencyType==3) {
             bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
         }
@@ -79,15 +95,15 @@ public class WalletUtil {
     }
 
     // 查询单个账户的交易记录
-    public static ENumCode checkTransactionStatus( long confirmations) {
+    public static TransactionStatusType checkTransactionStatus(long confirmations) {
         if (confirmations == 0) {
-            return ENumCode.UNCHECKED;
+            return TransactionStatusType.UNCHECKED;
         } else if (confirmations > 0 && confirmations < 3) {
-            return ENumCode.CHECKING;
+            return TransactionStatusType.CHECKING;
         } else if (confirmations > 3) {
-            return ENumCode.UNCHECKED;
+            return TransactionStatusType.UNCHECKED;
         }
-        return ENumCode.ERROR;
+        return TransactionStatusType.ERROR;
     }
 
     public static WalletTransaction parseTransactionInfo(BitcoinClient bitcoinClient, JSONObject transactionInfo) {

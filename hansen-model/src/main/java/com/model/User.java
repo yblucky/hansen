@@ -126,6 +126,13 @@ public class User extends BaseModel {
      * 用户剩余可做任务次数
      */
     private Integer remainTaskNo;
+    /**
+     * 1:市场人员内部注册   2：用户自己注册
+     */
+    private Integer createType;
+
+
+
 
 
     public Integer getUid() {
@@ -361,5 +368,13 @@ public class User extends BaseModel {
 
     public void setRemainTaskNo(Integer remainTaskNo) {
         this.remainTaskNo = remainTaskNo;
+    }
+
+    public Integer getCreateType() {
+        return createType;
+    }
+
+    public void setCreateType(Integer createType) {
+        this.createType = createType;
     }
 }

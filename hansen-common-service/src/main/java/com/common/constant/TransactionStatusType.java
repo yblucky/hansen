@@ -1,16 +1,15 @@
 package com.common.constant;
 
-public enum ENumCode {
-    SUCCESS(0, "成功"),
-    ERROR(10000, "请求异常"),
-    UNCHECKED(10000, "未确认"),
-    CHECKING(10001, "确认中"),
-    CHECKED(10002, "已确认");
+public enum TransactionStatusType {
+    UNCHECKED(1, "未确认"),
+    CHECKING(2, "确认中"),
+    CHECKED(3, "已确认"),
+    ERROR(4, "请求异常"),;
 
     public int code;
     public String message;
 
-    private ENumCode(int code, String message) {
+    private TransactionStatusType(int code, String message) {
         this.code = code;
         this.message = message;
     }

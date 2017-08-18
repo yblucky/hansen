@@ -44,7 +44,7 @@ public class OperationController {
             transaction.setTransactionStatus(ENumCode.UNCHECKED.toString());
             transaction.setFee(0d);
             transaction.setTxtId(res);
-            transaction.setConfirmations(0);
+            transaction.setConfirmations(0l);
             transaction.setTransactionLongTime(new Date().getTime());
             transaction.setMessage("");
             transactionService.create(transaction);

@@ -9,6 +9,7 @@ public enum CurrencyType {
 	TRADE(1, "交易币"),
 	/** 支付币 */
 	PAY(2, "支付币"),
+	/** 股权币 */
 	EQUITY(3, "股权币");
 
 

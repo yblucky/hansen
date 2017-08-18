@@ -2,6 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
+import com.common.constant.WalletOrderType;
 import com.common.utils.WalletUtil;
 import com.hansen.mapper.WalletTransactionMapper;
 import com.hansen.service.UserService;
@@ -139,5 +140,17 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
                 userService.updateEquityAmtByUserId(transaction.getUserId(), transaction.getAmount());
             }
         }
+    }
+
+    @Override
+    public Integer addWalletOrderTransaction(String userId, String address, WalletOrderType walletOrderType, String txtId, String orderNo, Double amount) {
+        WalletTransaction transaction = new WalletTransaction();
+        transaction.setCurrencyType(walletOrderType.getCode());
+        transaction.setUserId(userId);
+        transaction.setAmount(amount);
+        transaction.setPrepayId(orderNo);
+        transaction.setTxtId(txtId);
+        this.create(transaction);
+        return 1;
     }
 }

@@ -11,10 +11,6 @@ public class UserDetail extends BaseModel {
 
     private static final long serialVersionUID = 241453373209830052L;
     /**
-     * 用户ID
-     */
-    private String userId;
-    /**
      * 冻结支付币的数量
      */
     private Double forzenPayAmt;
@@ -58,14 +54,7 @@ public class UserDetail extends BaseModel {
      * 详细地址
      */
     private String addr;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+ 
 
     public Double getForzenPayAmt() {
         return forzenPayAmt;
