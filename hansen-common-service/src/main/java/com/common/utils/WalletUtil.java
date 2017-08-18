@@ -138,8 +138,8 @@ public class WalletUtil {
         // WalletUtil.getAccountAddress("000001");
         BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
         System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
-        System.out.println(JSON.toJSONString(WalletUtil.listTransactions(bitcoinClient,"",100)));
-//        System.out.println(JSON.toJSONString(WalletUtil.sendFrom(bitcoinClient,"000","rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y",new BigDecimal("2"),"test01","test001")));
+//        System.out.println(JSON.toJSONString(WalletUtil.listTransactions(bitcoinClient,"",100)));
+        System.out.println(JSON.toJSONString(WalletUtil.sendFrom(bitcoinClient,"","rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y",new BigDecimal("2"),"test01","test001")));
 //                System.out.println(JSON.toJSONString(WalletUtil.sendToAddress(bitcoinClient,"rfciwDvRrHS6DFjM3nxriU9XmAMbaXMRaP",new BigDecimal("2"),"test01","test001")));
     }
 
