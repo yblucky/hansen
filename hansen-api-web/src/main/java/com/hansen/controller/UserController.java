@@ -13,11 +13,13 @@ import com.common.utils.numberutils.CurrencyUtil;
 import com.common.utils.toolutils.OrderNoUtil;
 import com.common.utils.toolutils.ToolUtil;
 import com.hansen.service.*;
-import com.hansen.vo.*;
+import com.hansen.vo.InnerRegisterUserVo;
+import com.hansen.vo.LoginUserVo;
+import com.hansen.vo.UpgradeUserVo;
+import com.hansen.vo.UserVo;
 import com.model.*;
 import com.redis.Strings;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
 
 import static com.common.utils.WalletUtil.getBitCoinClient;
@@ -50,80 +51,6 @@ public class UserController {
     @Autowired
     private UserGradeRecordService userGradeRecordService;
 
-    @ResponseBody
-    @RequestMapping(value = "/token", method = RequestMethod.GET)
-    public JsonResult loginByWeixin(HttpServletRequest request, String id) throws Exception {
-        if (StringUtils.isBlank(id)) {
-            return new JsonResult(-1, "id不能為空");
-        }
-        User user = userService.readById(id);
-        // 登录
-        String token = TokenUtil.generateToken(user.getId(), user.getNickName());
-        Strings.setEx(RedisKey.TOKEN_API.getKey() + user.getId(), RedisKey.TOKEN_API.getSeconds(), token);
-        if (logger.isInfoEnabled()) {
-            logger.info(String.format("user login[%s]", TokenUtil.getTokenObject(token)));
-        }
-        user.setRemark(token);
-        return new JsonResult(user);
-    }
-
-    /**
-     * 账号密码登录
-     *
-     * 包含激活账号流程
-     *
-     */
-    @ResponseBody
-    @RequestMapping(value = "/login/loginIn", method = RequestMethod.POST)
-    public JsonResult loginByUserName(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
-        if (ToolUtil.isEmpty(vo.getLoginName())) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录名称不能为空");
-        }
-        if (ToolUtil.isEmpty(vo.getPassword())) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录密码不能为空");
-        }
-        User condition = new User();
-        condition.setLoginName(vo.getLoginName());
-        User loginUser = userService.readOne(condition);
-        if (null == loginUser) {
-            return new JsonResult(-1, "用户不存在");
-        } else {
-            if (loginUser.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && loginUser.getStatus()!=UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
-                    return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
-            }
-            String password = loginUser.getPassword();
-            if (org.springframework.util.StringUtils.isEmpty(password)) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "没有设置登录密码");
-            }
-            if (!password.equals(Md5Util.MD5Encode(vo.getPassword(), loginUser.getSalt()))) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "用户名或密码错误");
-            }
-        }
-        if (loginUser.getStatus()==UserStatusType.INNER_REGISTER_SUCCESSED.getCode()){
-            CardGrade cardGradeCondition = new CardGrade();
-            cardGradeCondition.setGrade(vo.getCardGrade());
-            CardGrade cardGrade = cardGradeService.readOne(cardGradeCondition);
-            if (cardGrade == null) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
-            }
-            //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
-            userService.innerActicveUser(loginUser,cardGrade);
-        }
-        User updateUser = new User();
-        updateUser.setLoginTime(new Date());
-        userService.updateById(loginUser.getId(), updateUser);
-        // 登录
-        String token = TokenUtil.generateToken(loginUser.getId(), loginUser.getNickName());
-        Strings.setEx(RedisKey.TOKEN_API.getKey() + loginUser.getId(), RedisKey.TOKEN_API.getSeconds(), token);
-        if (logger.isInfoEnabled()) {
-            logger.info(String.format("user login[%s]", TokenUtil.getTokenObject(token)));
-        }
-        UserVo u = new UserVo();
-        BeanUtils.copyProperties(u, loginUser);
-        u.setToken(token);
-
-        return new JsonResult(u);
-    }
 
     /**
      * 外部用户注册默认账号  等待完善
@@ -257,11 +184,6 @@ public class UserController {
         userService.innerRegister(loginUser, inviterUser, model, cardGrade);
         return new JsonResult(model);
     }
-
-
-
-
-
 
 
     /**
