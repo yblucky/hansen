@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @date 2016年11月27日
@@ -107,7 +109,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             updateActiveUser.setMaxProfits(cardGrade.getOutMultiple() * tradeOrder.getAmt());
             userService.updateById(updateActiveUser.getId(), updateActiveUser);
             UserDetail activeUserDetailContion = new UserDetail();
-            activeUserDetailContion.setUserId(activeUser.getId());
+            activeUserDetailContion.setId(activeUser.getId());
             //写入冻结
             userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
             userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
@@ -136,6 +138,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
                 continue;
             }
             userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
+            //重新计算用户星级
+
             referId = refferUser.getFirstReferrer();
         }
         //写入结算记录
@@ -152,7 +156,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         TradeOrder  updateOrder = new TradeOrder();
         updateOrder.setStatus(OrderStatus.HANDLED.getCode());
         this.updateById(tradeOrder.getId(),updateOrder);
-        //重新计算用户星级
+
 
         return true;
     }
@@ -176,5 +180,17 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             return 0;
         }
         return tradeOrderMapper.batchUpdateTaskCycle(idList);
+    }
+
+    @Override
+    public Map<String, Double> getCoinNoFromRmb(Double rmbAmt) throws Exception {
+        Map<String, Double> map= new HashMap<>();
+        Double payAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
+        Double tradeAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
+        Double equityAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE)), 2);
+        map.put("payAmt",payAmt);
+        map.put("tradeAmt",tradeAmt);
+        map.put("equityAmt",equityAmt);
+        return map;
     }
 }

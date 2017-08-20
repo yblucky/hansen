@@ -42,7 +42,7 @@
 	</select>
 
 	<select id="readOne" resultType="com.model.Task">
-		<include refid="selector"/> <include refid="condition"/> limit 1;
+		<include refid="selector"/> <include refid="condition"/> ORDER   BY   createTime DESC  limit 1;
 	</select>
 
 	<select id="readCount" resultType="int">

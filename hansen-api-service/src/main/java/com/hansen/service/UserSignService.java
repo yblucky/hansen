@@ -10,4 +10,6 @@ import com.model.UserTask;
 public interface UserSignService extends CommonService<UserSign> {
 
 
+    public Boolean sign(String signId) throws  Exception;
+
 }

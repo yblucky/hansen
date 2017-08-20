@@ -7,6 +7,7 @@ import com.model.User;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @date 2016年11月27日
@@ -22,5 +23,7 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
     Integer batchUpdateSignCycle(List<String> idList) throws Exception;
 
     Integer batchUpdateTaskCycle(List<String> idList) throws Exception;
+
+    Map<String,Double> getCoinNoFromRmb(Double rmbAmt) throws  Exception;
 
 }
