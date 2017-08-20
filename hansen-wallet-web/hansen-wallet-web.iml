@@ -35,7 +35,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Maven: com.yanbao:com.bitcoin-client:0.4.0" level="project" />
     <orderEntry type="module" module-name="hansen-core" />
     <orderEntry type="module" module-name="hansen-model" />
     <orderEntry type="library" name="Maven: org.jdom:jdom:1.1" level="project" />

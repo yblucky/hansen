@@ -179,6 +179,20 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         return tradeOrderMapper.batchUpdateSignCycle(idList);
     }
 
+
+
+    @Override
+    public Map<String, Double> getCoinNoFromRmb(Double rmbAmt) throws Exception {
+        Map<String, Double> map= new HashMap<>();
+        Double payAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
+        Double tradeAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
+        Double equityAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE)), 2);
+        map.put("payAmt",payAmt);
+        map.put("tradeAmt",tradeAmt);
+        map.put("equityAmt",equityAmt);
+        return map;
+    }
+
     @Override
     public Integer batchUpdateTaskCycle(List<String> idList) throws Exception {
         if (ToolUtil.isEmpty(idList)){
@@ -186,6 +200,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         }
         return tradeOrderMapper.batchUpdateTaskCycle(idList);
     }
+
 
     @Override
     public Integer batchUpdateTaskCycleDefault(List<String> idList, Integer taskCycle) throws Exception {

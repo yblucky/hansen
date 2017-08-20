@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @date 2016年11月27日
@@ -27,4 +28,7 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
     Integer batchUpdateTaskCycleDefault(List<String> idList,Integer taskCycle) throws Exception;
 
     Integer batchUpdateOrderStatus(List<String> idList);
+
+    Map<String,Double> getCoinNoFromRmb(Double rmbAmt) throws  Exception;
+
 }

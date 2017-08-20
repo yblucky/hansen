@@ -48,6 +48,8 @@ public interface UserService extends CommonService<User> {
 
     Integer updateMaxProfitsByUserId(String userId, Double maxProfits);
 
+    Integer updateSumProfitsByUserId(String userId, Double maxProfits);
+
     Integer updateCardGradeByUserId(String userId, Integer cardGrade);
 
     Integer updateRemainTaskNoByUserId(String userId, Integer remainTaskNo);

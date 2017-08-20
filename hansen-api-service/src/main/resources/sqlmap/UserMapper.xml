@@ -357,6 +357,9 @@
 		update <include refid="table_name"/> set payAmt = payAmt + #{payAmt},updateTime=now() where id = #{id} and (payAmt + #{payAmt})>=0
 	</update>
 
+	<update id="updateSumProfitsByUserId">
+		update <include refid="table_name"/> set sumProfits = sumProfits + #{sumProfits},updateTime=now() where id = #{id} and (sumProfits + #{sumProfits})>=0
+	</update>
 
 	<update id="updateMaxProfitsByUserId">
 		update <include refid="table_name"/> set maxProfits = maxProfits + #{maxProfits},updateTime=now() where id = #{id} and (maxProfits + #{maxProfits})>=0

@@ -49,7 +49,7 @@ public class BaseUserDepartmentServiceImpl extends CommonServiceImpl<UserDepartm
     }
 
     @Override
-    public Boolean updatePerformance(String id, Double performance) {
-        return null;
+    public Integer updatePerformance(String userId, Double performance) {
+        return baseUserDepartmentMapper.updatePerformanceByUserId(userId,performance);
     }
 }

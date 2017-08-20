@@ -12,4 +12,6 @@ public interface UserSignService extends CommonService<UserSign> {
 
     addUserSign(String userId, Double amt,String signType,String status);
 
+    public Boolean sign(String signId) throws  Exception;
+
 }

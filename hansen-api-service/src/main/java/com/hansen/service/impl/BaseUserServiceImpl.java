@@ -590,6 +590,12 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     }
 
     @Override
+    public Integer updateSumProfitsByUserId(String userId, Double sumProfits) {
+        return baseUserDao.updateSumProfitsByUserId(userId, sumProfits);
+    }
+
+
+    @Override
     public Integer updateCardGradeByUserId(String userId, Integer cardGrade) {
         return baseUserDao.updateCardGradeByUserId(userId, cardGrade);
     }

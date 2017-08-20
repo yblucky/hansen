@@ -1,6 +1,5 @@
 package com.common.utils;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.common.constant.CurrencyType;
 import com.common.constant.TransactionStatusType;
@@ -153,11 +152,13 @@ public class WalletUtil {
         // WalletUtil.getAccountAddress("000001");
 
         BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
-        System.out.println(JSON.toJSONString(bitcoinClient.getTransaction("bfb2b451184259940c8b23dffb5af4e2d6e9a2db44a702e9efc1c0ecbe7a2451")));
-        System.out.println(bitcoinClient.getBalance("00"));
+//        System.out.println(JSON.toJSONString(bitcoinClient.getTransaction("bfb2b451184259940c8b23dffb5af4e2d6e9a2db44a702e9efc1c0ecbe7a2451")));
+        System.out.println(bitcoinClient.getBalance());
+        System.out.println(bitcoinClient.getBalance("000001"));
+        System.out.println(bitcoinClient.getBalance("01"));
+        System.out.println(bitcoinClient.getBalance("02"));
 //        bitcoinClient.sendToAddress("rhrgi626nKKSFFqD63KUhHQ3tggbEMYaMt", new BigDecimal("2"), "", "");
-//        bitcoinClient.sendFrom("00", "rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y", new BigDecimal("2.0"), 3, "", "");
-
+        System.out.println(bitcoinClient.sendFrom("02", "rirwjvfXXAMi1ZUHEEq6QwVcMTKSTovdmb", new BigDecimal("2.1"), 3, "", ""));;
 //        System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
 //        System.out.println(JSON.toJSONString(WalletUtil.listTransactions(bitcoinClient,"",100)));
 //        System.out.println(JSON.toJSONString(WalletUtil.sendFrom(bitcoinClient, "", "rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y", new BigDecimal("2"), "test01", "test001")));

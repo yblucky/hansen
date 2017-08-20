@@ -16,5 +16,5 @@ public interface UserDepartmentService extends CommonService<UserDepartment> {
 
     Double getSumAmt(String parentUserId);
 
-    Boolean updatePerformance(String id,Double performance);
+    Integer updatePerformance(String userId,Double performance);
 }
