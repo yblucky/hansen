@@ -74,15 +74,6 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             System.out.println("找不到用户....");
             return;
         }
-       /* Double equityAmt = CurrencyUtil.getPoundage(incomAmt * 0.07, 1d);
-        Double payAmt = CurrencyUtil.getPoundage(incomAmt * 0.02, 1d);
-        Double tradeAmt = CurrencyUtil.getPoundage(incomAmt * 0.01, 1d);
-        User model = new User();
-        model.setId(user.getId());
-        model.setEquityAmt(equityAmt);
-        model.setPayAmt(payAmt);
-        model.setTradeAmt(tradeAmt);
-        this.updateById(user.getId(), model);*/
         Map<String, Double> map = tradeOrderService.getCoinNoFromRmb(incomAmt);
         Double payAmt = map.get("payAmt");
         Double tradeAmt = map.get("tradeAmt");
@@ -96,7 +87,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     }
 
     /**
-     * 用户每周收益
+     * 用户每周收益   此方法作废，现在改为做完7次任务后获取奖励(后台参数维护)
      */
     @Override
     @Transactional
@@ -207,34 +198,35 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     /**
      * 用户动态收益-管理奖
      *
-     * @param pushUserId 推荐人id
+     * @param pushUserId 新推荐的用户id
      */
     @Override
     @Transactional
-    public void manageBonus(String pushUserId) throws Exception {
+    public void manageBonus(String pushUserId, TradeOrder order) throws Exception {
         User pushUser = this.readById(pushUserId);
         if (pushUser == null) {
             System.out.println("找不到用户....");
             return;
         }
-        if (pushUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
+     /*   if (pushUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
             System.out.println("用户未激活保单");
             return;
-        }
+        }*/
         //一代管理奖
         User parentUser = this.readById(pushUser.getFirstReferrer());
         //一代推荐人必须也是激活状态并且一代推荐人的保单等级大于或等于推荐人
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode() && parentUser.getCardGrade().intValue() >= pushUser.getCardGrade()) {
-            String orderNo = OrderNoUtil.get();
+            String orderNo = order.getOrderNo();
             //保单等级以最小为准
             Integer cardLevel = pushUser.getCardGrade();
             CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
             //管理收益按两者最小保单金额*2%
-            double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.02, 1d);
+            Double manageFirstScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.MANAGEFIRSTREFERRERSCALE));
+            double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * manageFirstScale, 1d);
             //存入一代推荐人的三种钱包中
-            userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
+//            userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
             // TODO: 2017/7/14 记录一代管理奖记录
-            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 0, 0);
+            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
         }
         //二代管理奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
@@ -251,50 +243,26 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
                 Integer cardLevel = pushUser.getCardGrade();
                 CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
                 //管理收益按两者最小保单金额*4%
-                double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * 0.01, 1d);
+                Double manageFirstScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.MANAGESECONDREFERRERSCALE));
+                double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * manageFirstScale, 1d);
                 //存入二代推荐人的三种钱包中
-                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
+//                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
                 // TODO: 2017/7/14 记录二代管理奖记录
-                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 0, 0);
+//                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 0, 0);
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
             }
         }
     }
 
-    /**
-     * 更新用户等级
-     *
-     * @param user
-     */
-    @Override
-    @Transactional
-    public void reloadUserGrade(User user) throws Exception {
-        if (user == null) {
-            System.out.println("找不到用户....");
-            return;
-        }
-        if (user.getGrade() == null || "".equals(user.getGrade())) {
-            user.setGrade(0);
-        }
-        Grade userGrade = gradeService.getUserGrade(user.getId());
-        if (userGrade != null && userGrade.getGrade().intValue() > user.getGrade().intValue()) {
-            User model = new User();
-            model.setGrade(userGrade.getGrade());
-            this.updateById(user.getId(), model);
-            // TODO: 2017/7/17 记录会员等级升级记录
-            Integer historyGrade = user.getGrade();
-            user = this.readById(user.getId());
-            userGradeRecordService.addGradeRecord(user, GradeRecordType.GRADEUPDATE, historyGrade, null, OrderNoUtil.get());
-        }
-    }
 
     /**
      * 用户动态收益-级差奖
      *
-     * @param userId 推荐人id
+     * @param pushUserId 新推荐的用户id
      */
     @Override
-    public void differnceBonus(String userId) throws Exception {
-        User user = this.readById(userId);
+    public void differnceBonus(String pushUserId, TradeOrder order) throws Exception {
+        User user = this.readById(pushUserId);
         if (user == null) {
             System.out.println("找不到用户....");
             return;
@@ -336,11 +304,11 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             //上下级平级且等级都超过二星
             if (parentUser.getGrade().intValue() > GradeType.GRADE1.getCode().intValue() && parentUser.getGrade().intValue() == user.getGrade().intValue()) {
                 // TODO: 2017/7/17 领取平级奖  保单金额*1%
-                String orderNo = OrderNoUtil.get();
+                String orderNo = order.getOrderNo();
                 double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * 0.01, 1d);
                 this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.EQUALITY, orderNo);
                 //领取平级奖记录
-                this.addTradeOrder(userId, parentUser.getId(), orderNo, incomeAmt, RecordType.EQUALITY, 0, 0);
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.EQUALITY, 0, 0);
                 //中断级差
                 return;
             }
@@ -360,11 +328,41 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
                 this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.DIFFERENT, orderNo);
                 bonusScale = parentGrade.getRewardScale();
                 //领取级差奖
-                this.addTradeOrder(userId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
+//                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
             }
             childUser = parentUser;
         }
     }
+
+
+    /**
+     * 更新用户等级
+     *
+     * @param user
+     */
+    @Override
+    @Transactional
+    public void reloadUserGrade(User user) throws Exception {
+        if (user == null) {
+            System.out.println("找不到用户....");
+            return;
+        }
+        if (user.getGrade() == null || "".equals(user.getGrade())) {
+            user.setGrade(0);
+        }
+        Grade userGrade = gradeService.getUserGrade(user.getId());
+        if (userGrade != null && userGrade.getGrade().intValue() > user.getGrade().intValue()) {
+            User model = new User();
+            model.setGrade(userGrade.getGrade());
+            this.updateById(user.getId(), model);
+            // TODO: 2017/7/17 记录会员等级升级记录
+            Integer historyGrade = user.getGrade();
+            user = this.readById(user.getId());
+            userGradeRecordService.addGradeRecord(user, GradeRecordType.GRADEUPDATE, historyGrade, null, OrderNoUtil.get());
+        }
+    }
+
 
     //新增用户收入记录
     private void addTradeOrder(String sendUserId, String receviceUserId, String order, Double amt, RecordType recordType, Integer rewardInterval, Integer taskInterval) {

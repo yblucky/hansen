@@ -73,7 +73,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     @Override
     @Transactional
     public Boolean handleInsuranceTradeOrder(String orderNo) throws Exception {
-        String msg = "";
         if (ToolUtil.isEmpty(orderNo)) {
             return false;
         }
@@ -91,13 +90,13 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             upGradeType = UpGradeType.INSURANCE.getCode();
             double payRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
             if (activeUser.getPayAmt() < payRmbAmt) {
-                msg = "支付币数量不足，无法激活账号";
+                logger.error("支付币数量不足，无法激活账号");
             }
 
 
             double tradeRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
             if (activeUser.getTradeAmt() < tradeRmbAmt) {
-                msg = "交易币数量不足，无法激活账号";
+                logger.error("交易币数量不足，无法激活账号");
             }
             double payAmt = CurrencyUtil.multiply(payRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
             double tradeAmt = CurrencyUtil.multiply(tradeRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
@@ -156,8 +155,12 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         performanceRecord.setOrderNo(tradeOrder.getOrderNo());
         performanceRecord.setSource(OrderType.fromCode(tradeOrder.getSource()).getCode());
         performanceRecord.setRemark(OrderType.fromCode(tradeOrder.getSource()).getMsg());
-        //写入直推奖待做任务领取奖励记录
+        //写入直推奖待做任务领取奖励记录，有则写
         userService.pushBonus(activeUser.getId(), tradeOrder);
+        //写入管理奖待做任务领取奖励记录，有则写
+        userService.manageBonus(activeUser.getId(), tradeOrder);
+        //写入极差奖待做任务领取奖励记录，有则写
+        userService.differnceBonus(activeUser.getId(), tradeOrder);
         //写入用户升级记录
         userGradeRecordService.addGradeRecord(activeUser, GradeRecordType.CARDUPDATE, activeUser.getGrade(), tradeOrder.getCardGrade(), tradeOrder.getOrderNo());
         // 更改订单的结算状态

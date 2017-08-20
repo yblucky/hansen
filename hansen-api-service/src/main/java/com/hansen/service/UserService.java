@@ -24,11 +24,11 @@ public interface UserService extends CommonService<User> {
     @Transactional
     void pushBonus(String pushUserId, TradeOrder order) throws Exception;
 
-    void manageBonus(String pushUserId) throws Exception;
+    void manageBonus(String pushUserId, TradeOrder order) throws Exception;
 
     void reloadUserGrade(User user) throws Exception;
 
-    void differnceBonus(String userId) throws Exception;
+    void differnceBonus(String userId,TradeOrder order) throws Exception;
 
     void originUpgrade(String userId, Integer cardGrade);
 
