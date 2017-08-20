@@ -16,19 +16,19 @@ public interface UserService extends CommonService<User> {
 
 
     @Transactional
-    void userIncomeAmt(Double incomAmt, String userId, RecordType type, String orderNo);
+    void userIncomeAmt(Double incomAmt, String userId, RecordType type, String orderNo)  throws Exception;
 
     @Transactional
-    void weeklyIncomeAmt(User user);
+    void weeklyIncomeAmt(User user)throws Exception;
 
     @Transactional
     void pushBonus(String pushUserId, TradeOrder order) throws Exception;
 
-    void manageBonus(String pushUserId);
+    void manageBonus(String pushUserId) throws Exception;
 
     void reloadUserGrade(User user) throws Exception;
 
-    void differnceBonus(String userId);
+    void differnceBonus(String userId) throws Exception;
 
     void originUpgrade(String userId, Integer cardGrade);
 

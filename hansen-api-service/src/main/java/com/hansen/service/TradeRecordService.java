@@ -10,5 +10,5 @@ import com.model.TradeRecord;
 public interface TradeRecordService extends CommonService<TradeRecord> {
 
 
-    void addRecord(String userId, Double amout, Double equityAmt, Double payAmt, Double tradeAmt, String orderNo, RecordType recordType);
+    void addRecord(String userId, Double amout, Double equityAmt, Double payAmt, Double tradeAmt, String orderNo, RecordType recordType) throws Exception;
 }

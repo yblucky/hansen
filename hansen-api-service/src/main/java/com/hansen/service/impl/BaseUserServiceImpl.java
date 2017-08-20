@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import java.util.Date;
+import java.util.Map;
 
 import static com.common.utils.WalletUtil.getBitCoinClient;
 
@@ -67,13 +68,13 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
      */
     @Override
     @Transactional
-    public void userIncomeAmt(Double incomAmt, String userId, RecordType type, String orderNo) {
+    public void userIncomeAmt(Double incomAmt, String userId, RecordType type, String orderNo) throws Exception {
         User user = this.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
             return;
         }
-        Double equityAmt = CurrencyUtil.getPoundage(incomAmt * 0.07, 1d);
+       /* Double equityAmt = CurrencyUtil.getPoundage(incomAmt * 0.07, 1d);
         Double payAmt = CurrencyUtil.getPoundage(incomAmt * 0.02, 1d);
         Double tradeAmt = CurrencyUtil.getPoundage(incomAmt * 0.01, 1d);
         User model = new User();
@@ -81,7 +82,15 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
         model.setEquityAmt(equityAmt);
         model.setPayAmt(payAmt);
         model.setTradeAmt(tradeAmt);
-        this.updateById(user.getId(), model);
+        this.updateById(user.getId(), model);*/
+        Map<String, Double> map = tradeOrderService.getCoinNoFromRmb(incomAmt);
+        Double payAmt = map.get("payAmt");
+        Double tradeAmt = map.get("tradeAmt");
+        Double equityAmt = map.get("equityAmt");
+        this.updatePayAmtByUserId(userId, payAmt);
+        this.updateTradeAmtByUserId(userId, tradeAmt);
+        this.updateEquityAmtByUserId(userId, equityAmt);
+        this.updateSumProfitsByUserId(userId, incomAmt);
         // TODO: 2017/7/14 记录收货三种币收入信息
         tradeRecordService.addRecord(userId, incomAmt, equityAmt, payAmt, tradeAmt, orderNo, type);
     }
@@ -91,7 +100,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
      */
     @Override
     @Transactional
-    public void weeklyIncomeAmt(User user) {
+    public void weeklyIncomeAmt(User user) throws Exception {
         if (user == null) {
             System.out.println("找不到用户....");
             return;
@@ -166,11 +175,9 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
             //直推收益按两者最小保单金额*6%
             double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHFIRSTREFERRERSCALE)), 1d);
-     /*       //存入一代推荐人的三种钱包中
-            需要做完7次任务才可以分4次领取
+           /*存入一代推荐人的三种钱包中  需要做完7次任务才可以分4次领取
             userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);*/
             // TODO: 2017/7/14 记录一代直推奖记录
-
             this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
         }
         //二代直推奖
@@ -204,7 +211,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
      */
     @Override
     @Transactional
-    public void manageBonus(String pushUserId) {
+    public void manageBonus(String pushUserId) throws Exception {
         User pushUser = this.readById(pushUserId);
         if (pushUser == null) {
             System.out.println("找不到用户....");
@@ -286,7 +293,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
      * @param userId 推荐人id
      */
     @Override
-    public void differnceBonus(String userId) {
+    public void differnceBonus(String userId) throws Exception {
         User user = this.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
