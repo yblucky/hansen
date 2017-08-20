@@ -3,9 +3,11 @@ package hansen.service.impl;
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.common.utils.ParamUtil;
+import com.common.utils.httputils.HttpUtil;
 import com.model.Parameter;
 import hansen.mapper.ParameterMapper;
 import hansen.service.ParameterService;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +42,28 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
      */
     public void processCacheAfterUpdateById(String id, Parameter model) {
         ParamUtil.getIstance().reloadParam();
+    }
+
+    @Override
+    public Double getRmbConvertCoinRate(String id, String name) {
+        try {
+            String url = ParamUtil.getIstance().get(Parameter.RMBCONVERTCOINSCALEBASEURL) + "";
+            JSONObject jsonObject = HttpUtil.doGetRequest(url);
+            if (jsonObject == null) {
+                return 0d;
+            }
+            if (jsonObject.containsKey("24H_Last_price")) {
+                Double last24Price = jsonObject.getDouble("24H_Last_price");
+                if (last24Price == null) {
+                    last24Price = 0d;
+                }
+                return last24Price;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("获取交易平台" + name + "汇率失败");
+        }
+        return 0d;
     }
 }

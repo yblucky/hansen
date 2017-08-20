@@ -30,7 +30,11 @@ public enum RedisKey {
     /**
      * 短信验证码，保存10分钟
      */
-    SMS_CODE("sms_code_", 10 * 60),;
+    SMS_CODE("sms_code_", 10 * 60),
+    /**
+     * 保单正在结算,定时任务正在执行
+     */
+    TRADE_ORDER_IS_HANDING("sms_code_", 60 * 60*24);
 
     private final String key;
 

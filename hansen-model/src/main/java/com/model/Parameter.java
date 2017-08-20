@@ -74,8 +74,10 @@ public class Parameter extends BaseModel {
      * 星级奖最大分销比例限制
      **/
     public static final String MAXGRADESCALE = "maxGradeScale";
-
-
+    /**
+     * 人民币兑换虚拟币的请求地址
+     **/
+    public static final String RMBCONVERTCOINSCALEBASEURL = "rmbConvertCoinScaleBaseUrl";
     /**
      * 人民币兑换支付币汇率
      **/
