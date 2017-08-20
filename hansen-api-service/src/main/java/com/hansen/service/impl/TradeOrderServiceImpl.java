@@ -164,8 +164,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         TradeOrder updateOrder = new TradeOrder();
         updateOrder.setStatus(OrderStatus.HANDLED.getCode());
         this.updateById(tradeOrder.getId(), updateOrder);
-
-
         return true;
     }
 
@@ -200,5 +198,27 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         map.put("tradeAmt", tradeAmt);
         map.put("equityAmt", equityAmt);
         return map;
+    }
+
+    @Override
+    public Integer batchUpdateTaskCycle(List<String> idList) throws Exception {
+        if (ToolUtil.isEmpty(idList)) {
+            return 0;
+        }
+        return tradeOrderMapper.batchUpdateTaskCycle(idList);
+    }
+
+
+    @Override
+    public Integer batchUpdateTaskCycleDefault(List<String> idList, Integer taskCycle) throws Exception {
+        if (ToolUtil.isEmpty(idList)) {
+            return 0;
+        }
+        return tradeOrderMapper.batchUpdateTaskCycleDefault(idList, taskCycle);
+    }
+
+    @Override
+    public Integer batchUpdateOrderStatus(List<String> idList) {
+        return tradeOrderMapper.batchUpdateOrderStatus(idList);
     }
 }

@@ -15,4 +15,10 @@ public interface TradeOrderMapper extends CommonDao<TradeOrder> {
     Integer batchUpdateSignCycle(@Param("list") List<String> idList);
 
     Integer batchUpdateTaskCycle(@Param("list") List<String> idList);
+
+    Integer batchUpdateTaskCycleDefault(@Param("list") List<String> idList,@Param("taskCycle") Integer taskCycle);
+
+    Integer batchUpdateOrderStatus(@Param("list") List<String> idList);
+
+
 }

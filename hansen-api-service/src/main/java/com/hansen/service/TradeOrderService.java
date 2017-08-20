@@ -24,6 +24,10 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Integer batchUpdateTaskCycle(List<String> idList) throws Exception;
 
-    Map<String,Double> getCoinNoFromRmb(Double rmbAmt) throws  Exception;
+    Integer batchUpdateTaskCycleDefault(List<String> idList, Integer taskCycle) throws Exception;
+
+    Integer batchUpdateOrderStatus(List<String> idList);
+
+    Map<String, Double> getCoinNoFromRmb(Double rmbAmt) throws Exception;
 
 }

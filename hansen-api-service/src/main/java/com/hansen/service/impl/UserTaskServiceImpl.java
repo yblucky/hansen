@@ -2,20 +2,17 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
+import com.common.constant.SignType;
 import com.common.constant.TaskStatusType;
 import com.common.constant.UserStatusType;
 import com.common.utils.DateUtils.DateTimeUtil;
 import com.common.utils.DateUtils.DateUtils;
+import com.common.utils.ParamUtil;
 import com.common.utils.numberutils.RandomUtil;
+import com.common.utils.toolutils.ToolUtil;
 import com.hansen.mapper.UserTaskMapper;
-import com.hansen.service.TaskService;
-import com.hansen.service.TradeOrderService;
-import com.hansen.service.UserService;
-import com.hansen.service.UserTaskService;
-import com.model.Task;
-import com.model.TradeOrder;
-import com.model.User;
-import com.model.UserTask;
+import com.hansen.service.*;
+import com.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +32,8 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
     private UserService userService;
     @Autowired
     private TradeOrderService tradeOrderService;
+    @Autowired
+    private UserSignService userSignService;
 
     @Override
     protected CommonDao<UserTask> getDao() {
@@ -159,16 +158,41 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             userService.updateUserStatus(userId, UserStatusType.OUT.getCode());
         }
         List<TradeOrder> orderList = tradeOrderService.readRewardList(new Date(), 1, 100);
+        //需要更新任务次数的id集合
         List<String> orderIdList1 = new ArrayList<>();
+        //需要更新领取奖励次数的id集合
         List<String> orderIdList2 = new ArrayList<>();
+        List<TradeOrder> orderIdList21 = new ArrayList<>();
+        //如果是最后一个周期，更新奖金订单状态为完成发放
+        List<String> orderIdList3 = new ArrayList<>();
+
         for (TradeOrder order : orderList) {
             orderIdList1.add(order.getId());
             if (order.getTaskCycle() == 1) {
+                orderIdList21.add(order);
                 orderIdList2.add(order.getId());
             }
+            if (order.getSignCycle()==1){
+                orderIdList3.add(order.getId());
+            }
         }
-        tradeOrderService.batchUpdateSignCycle(orderIdList1);
-        tradeOrderService.batchUpdateTaskCycle(orderIdList2);
+        if (ToolUtil.isNotEmpty(orderIdList1)){
+            tradeOrderService.batchUpdateTaskCycle(orderIdList1);
+        }
+        if (ToolUtil.isNotEmpty(orderIdList2)){
+            //完成7次奖励，一次奖励发放，任务周期归为系统设置默认值
+            Integer taskCycle = Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL));
+            tradeOrderService.batchUpdateTaskCycleDefault(orderIdList2,taskCycle);
+            //逐条写入奖励发放记录
+            for (TradeOrder order :orderIdList21){
+                //TODO 一天若有奖金 需要合并，待完善
+                userSignService.addUserSign(order.getReceviceUserId(),order.getAmt()/order.getSignCycle(), SignType.WAITING_SIGN,"完成一个任务周期，新增奖励发放记录");
+            }
+        }
+        //如果是最后一个周期，更新奖金订单状态为完成发放
+        if (ToolUtil.isNotEmpty(orderIdList3)){
+            tradeOrderService.batchUpdateOrderStatus(orderIdList3);
+        }
         return true;
     }
 }
