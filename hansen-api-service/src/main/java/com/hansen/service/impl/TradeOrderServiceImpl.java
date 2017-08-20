@@ -35,6 +35,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     private UserDepartmentService userDepartmentService;
     @Autowired
     private UserGradeRecordService userGradeRecordService;
+    @Autowired
+    private GradeService gradeService;
 
     @Override
     protected CommonDao<TradeOrder> getDao() {
@@ -107,7 +109,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             updateActiveUser.setMaxProfits(cardGrade.getOutMultiple() * tradeOrder.getAmt());
             userService.updateById(updateActiveUser.getId(), updateActiveUser);
             UserDetail activeUserDetailContion = new UserDetail();
-            activeUserDetailContion.setUserId(activeUser.getId());
+            activeUserDetailContion.setId(activeUser.getId());
             //写入冻结
             userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
             userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
@@ -136,6 +138,15 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
                 continue;
             }
             userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
+            Integer historyGrade =refferUser.getGrade();
+            //重新计算用户星级
+           Grade grade = gradeService.getUserGrade(refferUser.getId());
+            if (grade!=null && grade.getGrade()!=refferUser.getGrade()){
+                //更新用户星级
+                userService.updateUserGradeByUserId(referId,grade.getGrade());
+                //写入用户升级记录
+                userGradeRecordService.addGradeRecord(refferUser,GradeRecordType.GRADEUPDATE,historyGrade, UpGradeType.COVERAGEUPGRADE.getCode(),orderNo);
+            }
             referId = refferUser.getFirstReferrer();
         }
         //写入结算记录
@@ -152,8 +163,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         TradeOrder  updateOrder = new TradeOrder();
         updateOrder.setStatus(OrderStatus.HANDLED.getCode());
         this.updateById(tradeOrder.getId(),updateOrder);
-        //重新计算用户星级
-
         return true;
     }
 
