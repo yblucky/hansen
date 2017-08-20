@@ -52,4 +52,9 @@ public class BaseUserDepartmentServiceImpl extends CommonServiceImpl<UserDepartm
     public Integer updatePerformance(String userId, Double performance) {
         return baseUserDepartmentMapper.updatePerformanceByUserId(userId,performance);
     }
+
+    @Override
+    public List<UserDepartment> getDirectTeamList(String parentUserId) {
+        return baseUserDepartmentMapper.getDirectTeamList(parentUserId);
+    }
 }

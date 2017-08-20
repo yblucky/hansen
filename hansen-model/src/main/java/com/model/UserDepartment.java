@@ -20,6 +20,8 @@ public class UserDepartment extends BaseModel {
 	private Integer grade;
 	/** 此部门所属用户Id */
 	private String parentUserId;
+	/** nickName*/
+	private String nickName;
 
 	public String getUserId() {
 		return userId;
@@ -59,5 +61,13 @@ public class UserDepartment extends BaseModel {
 
 	public void setGrade(Integer grade) {
 		this.grade = grade;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
 	}
 }

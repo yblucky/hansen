@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface UserDepartmentMapper extends CommonDao<UserDepartment> {
 
-    List<UserDepartment> getAll(@Param("parentUserId") String parentUserId);
+    List<UserDepartment> getDirectTeamList(@Param("parentUserId") String parentUserId);
 
     Double getSumAmt(@Param("parentUserId") String parentUserId);
 

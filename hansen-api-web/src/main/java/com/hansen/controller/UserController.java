@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 
 import static com.common.utils.WalletUtil.getBitCoinClient;
@@ -50,6 +51,8 @@ public class UserController {
     private TradeOrderService tradeOrderService;
     @Autowired
     private UserGradeRecordService userGradeRecordService;
+    @Autowired
+    private UserDepartmentService userDepartmentService;
 
 
     /**
@@ -369,6 +372,29 @@ public class UserController {
         int count = userGradeRecordService.readCount(model);
         List<UserGradeRecord> list = userGradeRecordService.readList(model, page.getPageNo(), page.getPageSize(), count);
         PageResult pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, list);
+        return new JsonResult(pageResult);
+    }
+
+    /**
+     * 我的团队
+     *
+     * @param page 分页查询
+     * @param
+     */
+    @ResponseBody
+    @RequestMapping(value = "/myteam", method = RequestMethod.GET)
+    public JsonResult myteam(HttpServletRequest request, Page page, String parentUserId) {
+        Token token = TokenUtil.getSessionUser(request);
+        User loginUser = userService.readById(token.getId());
+        if (loginUser == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
+        }
+        List<UserDepartment> userDepartments = userDepartmentService.getDirectTeamList(parentUserId);
+        if (userDepartments == null) {
+            userDepartments = Collections.emptyList();
+        }
+        int count = userDepartments.size();
+        PageResult<UserDepartment> pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, userDepartments);
         return new JsonResult(pageResult);
     }
 }
