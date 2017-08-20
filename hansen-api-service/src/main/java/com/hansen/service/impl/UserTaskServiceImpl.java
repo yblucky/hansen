@@ -2,6 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
+import com.common.constant.SignType;
 import com.common.constant.TaskStatusType;
 import com.common.constant.UserStatusType;
 import com.common.utils.DateUtils.DateTimeUtil;
@@ -161,11 +162,14 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         List<String> orderIdList1 = new ArrayList<>();
         //需要更新领取奖励次数的id集合
         List<String> orderIdList2 = new ArrayList<>();
+        List<TradeOrder> orderIdList21 = new ArrayList<>();
         //如果是最后一个周期，更新奖金订单状态为完成发放
         List<String> orderIdList3 = new ArrayList<>();
+
         for (TradeOrder order : orderList) {
             orderIdList1.add(order.getId());
             if (order.getTaskCycle() == 1) {
+                orderIdList21.add(order);
                 orderIdList2.add(order.getId());
             }
             if (order.getSignCycle()==1){
@@ -179,10 +183,11 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             //完成7次奖励，一次奖励发放，任务周期归为系统设置默认值
             Integer taskCycle = Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL));
             tradeOrderService.batchUpdateTaskCycleDefault(orderIdList2,taskCycle);
-            //写入奖励发放记录
-            userSignService.a
-            //TODO 一天若有奖金 需要合并，待完善
-
+            //逐条写入奖励发放记录
+            for (TradeOrder order :orderIdList21){
+                //TODO 一天若有奖金 需要合并，待完善
+                userSignService.addUserSign(order.getReceviceUserId(),order.getAmt()/order.getSignCycle(), SignType.WAITING_SIGN,"完成一个任务周期，新增奖励发放记录");
+            }
         }
         //如果是最后一个周期，更新奖金订单状态为完成发放
         if (ToolUtil.isNotEmpty(orderIdList3)){

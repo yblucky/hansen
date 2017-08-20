@@ -4,7 +4,6 @@ import com.base.service.CommonService;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
@@ -25,10 +24,10 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Integer batchUpdateTaskCycle(List<String> idList) throws Exception;
 
-    Integer batchUpdateTaskCycleDefault(List<String> idList,Integer taskCycle) throws Exception;
+    Integer batchUpdateTaskCycleDefault(List<String> idList, Integer taskCycle) throws Exception;
 
     Integer batchUpdateOrderStatus(List<String> idList);
 
-    Map<String,Double> getCoinNoFromRmb(Double rmbAmt) throws  Exception;
+    Map<String, Double> getCoinNoFromRmb(Double rmbAmt) throws Exception;
 
 }

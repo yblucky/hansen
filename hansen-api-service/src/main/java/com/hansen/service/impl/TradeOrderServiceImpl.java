@@ -7,7 +7,6 @@ import com.common.utils.ParamUtil;
 import com.common.utils.numberutils.CurrencyUtil;
 import com.common.utils.toolutils.OrderNoUtil;
 import com.common.utils.toolutils.ToolUtil;
-import com.google.zxing.oned.UPCAReader;
 import com.hansen.mapper.TradeOrderMapper;
 import com.hansen.service.*;
 import com.model.*;
@@ -16,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @date 2016年11月27日
@@ -84,10 +85,10 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         cardGradeMdel.setGrade(tradeOrder.getCardGrade());
         CardGrade cardGrade = cardGradeService.readOne(cardGradeMdel);
 
-        Integer upGradeType=0;
+        Integer upGradeType = 0;
         //写入最大收益
-        if (OrderType.INSURANCE_ORIGIN.getCode()==tradeOrder.getSource()){
-            upGradeType=UpGradeType.INSURANCE.getCode();
+        if (OrderType.INSURANCE_ORIGIN.getCode() == tradeOrder.getSource()) {
+            upGradeType = UpGradeType.INSURANCE.getCode();
             double payRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
             if (activeUser.getPayAmt() < payRmbAmt) {
                 msg = "支付币数量不足，无法激活账号";
@@ -114,15 +115,15 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
             userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
             userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(), 0d);
-        }else if (OrderType.INSURANCE_COVER.getCode()==tradeOrder.getSource()){
-            upGradeType= UpGradeType.COVERAGEUPGRADE.getCode();
-            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(),cardGrade.getOutMultiple()*tradeOrder.getAmt());
-        }else if (OrderType.INSURANCE_ORIGIN.getCode()==tradeOrder.getSource()){
-            upGradeType=UpGradeType.ORIGINUPGRADE.getCode();
-            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(),tradeOrder.getAmt()+activeUser.getInsuranceAmt());
+        } else if (OrderType.INSURANCE_COVER.getCode() == tradeOrder.getSource()) {
+            upGradeType = UpGradeType.COVERAGEUPGRADE.getCode();
+            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * tradeOrder.getAmt());
+        } else if (OrderType.INSURANCE_ORIGIN.getCode() == tradeOrder.getSource()) {
+            upGradeType = UpGradeType.ORIGINUPGRADE.getCode();
+            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), tradeOrder.getAmt() + activeUser.getInsuranceAmt());
         }
         //更新用户开卡级别
-        userService.updateCardGradeByUserId(tradeOrder.getSendUserId(),tradeOrder.getCardGrade());
+        userService.updateCardGradeByUserId(tradeOrder.getSendUserId(), tradeOrder.getCardGrade());
         //向上累加业绩
         int i;
         User refferUser = null;
@@ -138,14 +139,14 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
                 continue;
             }
             userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
-            Integer historyGrade =refferUser.getGrade();
+            Integer historyGrade = refferUser.getGrade();
             //重新计算用户星级
-           Grade grade = gradeService.getUserGrade(refferUser.getId());
-            if (grade!=null && grade.getGrade()!=refferUser.getGrade()){
+            Grade grade = gradeService.getUserGrade(refferUser.getId());
+            if (grade != null && grade.getGrade() != refferUser.getGrade()) {
                 //更新用户星级
-                userService.updateUserGradeByUserId(referId,grade.getGrade());
+                userService.updateUserGradeByUserId(referId, grade.getGrade());
                 //写入用户升级记录
-                userGradeRecordService.addGradeRecord(refferUser,GradeRecordType.GRADEUPDATE,historyGrade, UpGradeType.COVERAGEUPGRADE.getCode(),orderNo);
+                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade, UpGradeType.COVERAGEUPGRADE.getCode(), orderNo);
             }
             referId = refferUser.getFirstReferrer();
         }
@@ -156,46 +157,45 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         performanceRecord.setSource(OrderType.fromCode(tradeOrder.getSource()).getCode());
         performanceRecord.setRemark(OrderType.fromCode(tradeOrder.getSource()).getMsg());
         //写入直推奖待做任务领取奖励记录
-        userService.pushBonus(activeUser.getId(),tradeOrder);
+        userService.pushBonus(activeUser.getId(), tradeOrder);
         //写入用户升级记录
-        userGradeRecordService.addGradeRecord(activeUser,GradeRecordType.CARDUPDATE,activeUser.getGrade(),tradeOrder.getCardGrade(),tradeOrder.getOrderNo());
+        userGradeRecordService.addGradeRecord(activeUser, GradeRecordType.CARDUPDATE, activeUser.getGrade(), tradeOrder.getCardGrade(), tradeOrder.getOrderNo());
         // 更改订单的结算状态
-        TradeOrder  updateOrder = new TradeOrder();
+        TradeOrder updateOrder = new TradeOrder();
         updateOrder.setStatus(OrderStatus.HANDLED.getCode());
-        this.updateById(tradeOrder.getId(),updateOrder);
+        this.updateById(tradeOrder.getId(), updateOrder);
         return true;
     }
 
     @Override
     public List<TradeOrder> readRewardList(Date taskTime, Integer startRow, Integer pageSize) throws Exception {
-        return tradeOrderMapper.readRewardList(taskTime,startRow,pageSize);
+        return tradeOrderMapper.readRewardList(taskTime, startRow, pageSize);
     }
 
     @Override
     public Integer batchUpdateSignCycle(List<String> idList) throws Exception {
-        if (ToolUtil.isEmpty(idList)){
+        if (ToolUtil.isEmpty(idList)) {
             return 0;
         }
         return tradeOrderMapper.batchUpdateSignCycle(idList);
     }
 
 
-
     @Override
     public Map<String, Double> getCoinNoFromRmb(Double rmbAmt) throws Exception {
-        Map<String, Double> map= new HashMap<>();
+        Map<String, Double> map = new HashMap<>();
         Double payAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
         Double tradeAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
         Double equityAmt = CurrencyUtil.multiply(rmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE)), 2);
-        map.put("payAmt",payAmt);
-        map.put("tradeAmt",tradeAmt);
-        map.put("equityAmt",equityAmt);
+        map.put("payAmt", payAmt);
+        map.put("tradeAmt", tradeAmt);
+        map.put("equityAmt", equityAmt);
         return map;
     }
 
     @Override
     public Integer batchUpdateTaskCycle(List<String> idList) throws Exception {
-        if (ToolUtil.isEmpty(idList)){
+        if (ToolUtil.isEmpty(idList)) {
             return 0;
         }
         return tradeOrderMapper.batchUpdateTaskCycle(idList);
@@ -204,10 +204,10 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
 
     @Override
     public Integer batchUpdateTaskCycleDefault(List<String> idList, Integer taskCycle) throws Exception {
-        if (ToolUtil.isEmpty(idList)){
+        if (ToolUtil.isEmpty(idList)) {
             return 0;
         }
-        return tradeOrderMapper.batchUpdateTaskCycleDefault(idList,taskCycle);
+        return tradeOrderMapper.batchUpdateTaskCycleDefault(idList, taskCycle);
     }
 
     @Override

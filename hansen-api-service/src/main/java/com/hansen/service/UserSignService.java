@@ -1,6 +1,7 @@
 package com.hansen.service;
 
 import com.base.service.CommonService;
+import com.common.constant.SignType;
 import com.model.UserSign;
 
 /**
@@ -8,10 +9,8 @@ import com.model.UserSign;
  */
 public interface UserSignService extends CommonService<UserSign> {
 
-    Boolean UserSign
+    UserSign  addUserSign(String userId, Double amt, SignType signType,String remark);
 
-    addUserSign(String userId, Double amt,String signType,String status);
-
-    public Boolean sign(String signId) throws  Exception;
+    public Boolean sign(String signId) throws Exception;
 
 }
