@@ -1,7 +1,7 @@
 package com.common.service.impl;
 
 import com.common.service.RedisService;
-import com.common.utils.LogUtils;
+import com.common.utils.toolutils.LogUtils;
 import com.common.utils.toolutils.SerializeUtil;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
