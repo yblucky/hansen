@@ -7,6 +7,7 @@ import com.common.utils.codeutils.PinYinUtil;
 import com.common.utils.numberutils.CurrencyUtil;
 import com.redis.Sets;
 import com.redis.Strings;
+import org.codehaus.jackson.map.ObjectMapper;
 import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
@@ -497,6 +498,7 @@ public class ToolUtil {
         }
         return ss;
     }
+
     /**
      * 比较两个日期之间相差天数
      *
@@ -522,5 +524,20 @@ public class ToolUtil {
 
         return Integer.parseInt(String.valueOf(between_days));
     }
-}
 
+    /**
+     * 对象序列化成json字符串
+     *
+     * @param obj 目标对象
+     * @return json字符串
+     */
+    public static String toJson(Object obj) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (IOException e) {
+            LogUtils.error("序列化json对象失败", e);
+        }
+        return "";
+    }
+}
