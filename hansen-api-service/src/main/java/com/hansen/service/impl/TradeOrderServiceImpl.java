@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @date 2016年11月27日
@@ -37,6 +35,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     private UserDepartmentService userDepartmentService;
     @Autowired
     private UserGradeRecordService userGradeRecordService;
+    @Autowired
+    private GradeService gradeService;
 
     @Override
     protected CommonDao<TradeOrder> getDao() {
@@ -138,8 +138,15 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
                 continue;
             }
             userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
+            Integer historyGrade =refferUser.getGrade();
             //重新计算用户星级
-
+           Grade grade = gradeService.getUserGrade(refferUser.getId());
+            if (grade!=null && grade.getGrade()!=refferUser.getGrade()){
+                //更新用户星级
+                userService.updateUserGradeByUserId(referId,grade.getGrade());
+                //写入用户升级记录
+                userGradeRecordService.addGradeRecord(refferUser,GradeRecordType.GRADEUPDATE,historyGrade, UpGradeType.COVERAGEUPGRADE.getCode(),orderNo);
+            }
             referId = refferUser.getFirstReferrer();
         }
         //写入结算记录

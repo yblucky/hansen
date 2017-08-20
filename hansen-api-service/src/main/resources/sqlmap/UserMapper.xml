@@ -381,10 +381,13 @@
 		update <include refid="table_name"/> set status = status ,updateTime=now() where id = #{id}
 	</update>
 
+	<update id="updateUserCardGradeByUserId">
+		update <include refid="table_name"/> set cardGrade = cardGrade ,updateTime=now() where id = #{id}
+	</update>
 
-
-
-
+	<update id="updateUserGradeByUserId">
+		update <include refid="table_name"/> set grade = grade ,updateTime=now() where id = #{id}
+	</update>
 </mapper>
 
 

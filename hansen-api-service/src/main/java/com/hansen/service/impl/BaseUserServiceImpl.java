@@ -609,4 +609,14 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
     public Integer updateUserStatusByUserId(String userId, Integer status) {
         return baseUserDao.updateUserStatusByUserId(userId, status);
     }
+
+    @Override
+    public Integer updateUserGradeByUserId(String userId, Integer grade) {
+        return baseUserDao.updateUserGradeByUserId(userId, grade);
+    }
+
+    @Override
+    public Integer updateUserCardGradeByUserId(String userId, Integer cardGrade) {
+        return baseUserDao.updateUserCardGradeByUserId(userId, cardGrade);
+    }
 }

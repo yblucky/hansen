@@ -26,6 +26,8 @@ public interface UserMapper extends CommonDao<User> {
 
     Integer updateUserStatusByUserId(@Param("id")String userId,@Param("status")Integer status);
 
+    Integer updateUserCardGradeByUserId(@Param("id")String userId,@Param("cardGrade")Integer cardGrade);
 
+    Integer updateUserGradeByUserId(@Param("id")String userId,@Param("grade")Integer grade);
 
 }
