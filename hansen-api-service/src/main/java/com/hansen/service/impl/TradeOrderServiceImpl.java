@@ -186,4 +186,17 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         }
         return tradeOrderMapper.batchUpdateTaskCycle(idList);
     }
+
+    @Override
+    public Integer batchUpdateTaskCycleDefault(List<String> idList, Integer taskCycle) throws Exception {
+        if (ToolUtil.isEmpty(idList)){
+            return 0;
+        }
+        return tradeOrderMapper.batchUpdateTaskCycleDefault(idList,taskCycle);
+    }
+
+    @Override
+    public Integer batchUpdateOrderStatus(List<String> idList) {
+        return tradeOrderMapper.batchUpdateOrderStatus(idList);
+    }
 }

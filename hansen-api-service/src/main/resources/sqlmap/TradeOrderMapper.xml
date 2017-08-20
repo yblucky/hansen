@@ -220,7 +220,7 @@
     <update id="batchUpdateTaskCycle">
         UPDATE
         <include refid="table" />
-        SET taskCycle = taskCycle-1;
+        SET taskCycle = taskCycle-1
         where id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
     </update>
@@ -228,7 +228,24 @@
     <update id="batchUpdateSignCycle">
         UPDATE
         <include refid="table" />
-        SET signCycle = signCycle-1;
+        SET signCycle = signCycle-1
+        where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+    </update>
+
+    <update id="batchUpdateTaskCycleDefault">
+        UPDATE
+        <include refid="table" />
+        SET taskCycle = #{taskCycle},signCycle = signCycle-1
+        where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+    </update>
+
+
+    <update id="batchUpdateOrderStatus">
+        UPDATE
+        <include refid="table" />
+        SET status = 2
         where id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
     </update>
