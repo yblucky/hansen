@@ -200,13 +200,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         return map;
     }
 
-    @Override
-    public Integer batchUpdateTaskCycle(List<String> idList) throws Exception {
-        if (ToolUtil.isEmpty(idList)) {
-            return 0;
-        }
-        return tradeOrderMapper.batchUpdateTaskCycle(idList);
-    }
+
 
 
     @Override
