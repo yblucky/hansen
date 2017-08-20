@@ -22,7 +22,4 @@
     <task:scheduled-tasks>
         <task:scheduled ref="orderHandleTask" method="doTask" cron="0 0/5 * * * ?"/>
     </task:scheduled-tasks>
-
-
-
 </beans>

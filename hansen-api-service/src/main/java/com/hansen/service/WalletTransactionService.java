@@ -12,17 +12,17 @@ import java.util.List;
  */
 public interface WalletTransactionService extends CommonService<WalletTransaction> {
 
-     public  Integer  addWalletOrderTransaction(String userId,String address, WalletOrderType walletOrderType,String txtId,String orderNo,Double amount);
+    public Integer addWalletOrderTransaction(String userId, String address, WalletOrderType walletOrderType, String txtId, String orderNo, Double amount);
 
-    public  Boolean createTransaction(String userId,Integer currencyType,BitcoinClient client);
+    public Boolean createTransaction(String userId, Integer currencyType, BitcoinClient client);
 
     public List<WalletTransaction> listByStartToEnd(Long start, Long end);
 
     public List<WalletTransaction> listByTransactionTime(Long start, Long end, Integer account);
 
-    public    void  listTransactionsByTag(String userId, Integer currencyType) throws  Exception;
+    public void listTransactionsByTag(String userId, Integer currencyType) throws Exception;
 
-    public    void  checkTransactionListStatus(String userId,Integer currencyType) throws  Exception;
+    public void checkTransactionListStatus(String userId, Integer currencyType) throws Exception;
 
-    public    void  checkTransactionStatus(WalletTransaction transaction ) throws  Exception;
+    public void checkTransactionStatus(WalletTransaction transaction) throws Exception;
 }

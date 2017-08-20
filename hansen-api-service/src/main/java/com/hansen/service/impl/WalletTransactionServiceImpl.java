@@ -66,7 +66,6 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     public Boolean createTransaction(String userId, Integer currencyType, BitcoinClient client) {
         List<TransactionInfo> infolist = WalletUtil.listTransactions(client, userId, Parameter.WALLET_PAGE_SIZE);
         for (TransactionInfo info : infolist) {
-//				Config.LAST_WALLET_INSERT_TIME=info.getTime();
             WalletTransaction conditon = new WalletTransaction();
             conditon.setTxtId(info.getTxId());
             int count = this.readCount(conditon);
@@ -76,7 +75,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             }
             WalletTransaction transaction = new WalletTransaction();
             transaction.setCurrencyType(currencyType);
-            transaction.setUserId(info.getAccount());
+            transaction.setUserId(info.getOtherAccount());
             transaction.setAmount(info.getAmount().doubleValue());
             transaction.setCategory(info.getCategory());
             transaction.setConfirmations(Long.valueOf(info.getConfirmations() + ""));
@@ -92,7 +91,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             } else {
                 transaction.setAddress(info.getOtherAccount());
             }
-            transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(  info.getConfirmations() ).toString());
+            transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(info.getConfirmations()).toString());
             this.create(transaction);
         }
         return true;
@@ -130,8 +129,8 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             }
         }
         if (isUpdate) {
-            updateModel.setTransactionStatus( WalletUtil.checkTransactionStatus(confirmations).getMessage());
-            this.updateById(transaction.getId(),updateModel);
+            updateModel.setTransactionStatus(WalletUtil.checkTransactionStatus(confirmations).getMessage());
+            this.updateById(transaction.getId(), updateModel);
             if (transaction.getCurrencyType() == 1) {
                 userService.updatePayAmtByUserId(transaction.getUserId(), transaction.getAmount());
             } else if (transaction.getCurrencyType() == 2) {
