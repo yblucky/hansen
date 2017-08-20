@@ -5,21 +5,44 @@ package com.common.constant;
  * @date 2017/7/12
  */
 public enum GradeType {
+    /**
+     * 专员
+     */
+    GRADE1(1, "专员"),
 
-    /** 一星 */
-    GRADE1(1, "一星"),
+    /**
+     * 主任
+     */
+    GRADE2(2, "主任"),
 
-    /** 二星 */
-    GRADE2(2, "二星"),
+    /**
+     * 经理
+     */
+    GRADE3(3, "经理"),
+    /**
+     * 区代
+     */
+    GRADE4(5, "区代"),
 
-    /** 三星 */
-    GRADE3(3, "三星"),
+    /**
+     * 县代
+     */
+    GRADE5(5, "县代"),
 
-    /** 四星 */
-    GRADE4(4, "四星"),
+    /**
+     * 市代
+     */
+    GRADE6(6, "市代"),
 
-    /** 五星 */
-    GRADE5(5, "五星");
+    /**
+     * 省代
+     */
+    GRADE7(7, "省代"),
+
+    /**
+     * 董事
+     */
+    GRADE8(8, "董事");
 
 
     private final Integer code;

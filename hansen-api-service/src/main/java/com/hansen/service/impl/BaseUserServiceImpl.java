@@ -267,27 +267,30 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             System.out.println("找不到用户....");
             return;
         }
-        if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
-            System.out.println("用户未激活保单");
-            return;
-        }
         //用户激活的保单等级
         CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
         double insuranceAmt = cardGrade.getInsuranceAmt();
+        //用户所处的等级所能拿到奖金的比例
         double bonusScale = 0d;
-        //用户所处的等级
-        Grade grade = gradeService.getGradeDetail(user.getGrade());
+       /* Grade grade = gradeService.getGradeDetail(user.getGrade());
         if (grade != null) {
             bonusScale = grade.getRewardScale();
         } else {
             user.setGrade(0);
-        }
+        }*/
         User childUser = user;
-        //1星到5星的奖励比率为 3% < 5% < 10% < 15% < 20% 平级奖 1% 最多领取21%
-        for (int i = 0; i < 5; i++) {
+        //1星到5星的奖励比率为 2% < 4% < 6% < 8% < 12% < 16% < 20% 平级奖 2% 最多领取22%
+        for (int i = 0; i < 7; i++) {
             User parentUser = this.readById(childUser.getId());
+            Grade parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
+            if (parentGrade != null) {
+                bonusScale = parentGrade.getRewardScale();
+            } else {
+                parentUser.setGrade(0);
+            }
+            bonusScale = parentGrade.getRewardScale();
             if (parentUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
-                System.out.println("用户未激活保单");
+                logger.error("用户未激活保单");
                 return;
             }
             if (parentUser.getGrade() == null || parentUser.getGrade().intValue() < 1) {
@@ -305,23 +308,25 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
             if (parentUser.getGrade().intValue() > GradeType.GRADE1.getCode().intValue() && parentUser.getGrade().intValue() == user.getGrade().intValue()) {
                 // TODO: 2017/7/17 领取平级奖  保单金额*1%
                 String orderNo = order.getOrderNo();
-                double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * 0.01, 1d);
-                this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.EQUALITY, orderNo);
+                Double sameRewradScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.SAMEREWARDSCALESCALE));
+                double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * sameRewradScale, 1d);
+//                this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.SAME, orderNo);
                 //领取平级奖记录
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.EQUALITY, 0, 0);
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
                 //中断级差
                 return;
             }
             //上下级形成级差
             if (parentUser.getGrade().intValue() > user.getGrade().intValue()) {
-                String orderNo = OrderNoUtil.get();
+                String orderNo = order.getOrderNo();
                 //第一级由激活保单的用户自己领取
                 if (bonusScale > 0 && i == 0) {
                     double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * bonusScale, 1d);
                     this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT, orderNo);
+                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
                 }
                 // TODO: 2017/7/17 领取级差奖  保单金额*1%
-                Grade parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
+                parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
                 //当前可领取的比率减去上一级的比率
                 double scale = CurrencyUtil.getPoundage(parentGrade.getRewardScale() - bonusScale, 1d);
                 double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * scale, 1d);
@@ -329,7 +334,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
                 bonusScale = parentGrade.getRewardScale();
                 //领取级差奖
 //                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
             }
             childUser = parentUser;
         }

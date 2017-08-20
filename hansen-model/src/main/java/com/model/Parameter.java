@@ -153,6 +153,11 @@ public class Parameter extends BaseModel {
      * 交易币提币手续费
      */
     public  static  final  String TRADECOINOUTSCALE="tradeCoinOutScale";
+    /**
+     * 平级奖
+     */
+    public  static  final  String SAMEREWARDSCALESCALE="sameRewardScaleScale";
+
 
 
     private String name;

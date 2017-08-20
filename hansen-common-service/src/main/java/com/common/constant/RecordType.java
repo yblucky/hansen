@@ -20,7 +20,7 @@ public enum RecordType {
     DIFFERENT(4, "级差奖"),
 
     /** 平级奖 */
-    EQUALITY(5, "平级奖");
+    SAME(5, "平级奖");
 
 
     private final Integer code;
