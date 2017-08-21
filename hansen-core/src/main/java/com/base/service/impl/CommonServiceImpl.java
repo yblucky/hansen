@@ -74,6 +74,7 @@ public abstract class CommonServiceImpl<M extends BaseModel> {
     // R
     public M readById(String id) {
         try {
+            System.out.println(getDao().getClass().getName());
             return getDao().readById(id);
         } catch (Exception e) {
             if (logger.isErrorEnabled()) {
@@ -86,6 +87,8 @@ public abstract class CommonServiceImpl<M extends BaseModel> {
 
     public M readOne(M model) {
         try {
+            System.out.println("-====================="+model.toString());
+            System.out.println("getDao()"+getDao());
 //            defaultStatus(model);
             return getDao().readOne(model);
         } catch (Exception e) {

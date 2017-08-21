@@ -23,10 +23,11 @@ import java.util.List;
  */
 @Service
 public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransaction> implements WalletTransactionService {
+
+    @Autowired
+    private WalletTransactionMapper walletTransactionMapper;
     @Autowired
     private UserService userService;
-
-
     @Override
     protected CommonDao<WalletTransaction> getDao() {
         return walletTransactionMapper;
@@ -36,10 +37,6 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     protected Class<WalletTransaction> getModelClass() {
         return WalletTransaction.class;
     }
-
-
-    @Autowired
-    private WalletTransactionMapper walletTransactionMapper;
 
 
     @Override

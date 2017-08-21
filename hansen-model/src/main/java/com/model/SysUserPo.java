@@ -1,5 +1,7 @@
 package com.model;
 
+import com.common.BaseModel;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
@@ -8,7 +10,7 @@ import java.util.Date;
  * 管理员用户
  */
 @Table(name = "sys_user")
-public class SysUserPo {
+public class SysUserPo  extends BaseModel {
     /**
      * 主键编号
      */

@@ -2,6 +2,7 @@ package com.hansen.sysmapper;
 
 
 import com.base.dao.BaseMapper;
+import com.base.dao.CommonDao;
 import com.hansen.vo.SysUserVo;
 import com.model.SysUserPo;
 import org.apache.ibatis.annotations.Param;
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * 用户信息DAO
  */
-public interface SysUserMapper extends BaseMapper<SysUserPo> {
+public interface SysUserMapper extends BaseMapper<SysUserPo>{
 
     /**
      * 用户登录

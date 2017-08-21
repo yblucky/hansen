@@ -1,5 +1,7 @@
 package com.model;
 
+import com.common.BaseModel;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -7,7 +9,7 @@ import javax.persistence.Table;
  * 角色权限Po类
  */
 @Table(name = "sys_role_permission")
-public class SysRolePermissionPo {
+public class SysRolePermissionPo extends BaseModel {
 	/**
 	 * 角色编号
 	 */

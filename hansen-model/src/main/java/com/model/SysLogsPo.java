@@ -1,5 +1,7 @@
 package com.model;
 
+import com.common.BaseModel;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
@@ -8,7 +10,7 @@ import java.util.Date;
  * 系统日志记录持久类
  */
 @Table(name="sys_logs")
-public class SysLogsPo {
+public class SysLogsPo  extends BaseModel{
 	/**
 	 * 主键编号
 	 */

@@ -1,14 +1,17 @@
 package com.base.dao;
 
 import com.common.BaseModel;
+import com.sun.xml.internal.rngom.parse.host.Base;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * 通用mapper
  */
-public interface CommonDao<D extends  BaseModel> {
+@Repository
+public interface CommonDao<D extends  BaseModel> extends BaseMapper<D>{
     // C
     void create(D model);
 

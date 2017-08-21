@@ -2,6 +2,7 @@ package com.hansen.sysmapper;
 
 
 import com.base.dao.BaseMapper;
+import com.base.dao.CommonDao;
 import com.hansen.vo.SysParameterVo;
 import com.model.SysParameterPo;
 import org.apache.ibatis.annotations.Select;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * 参数设置DAO
  */
-public interface SysParameterMapper extends BaseMapper<SysParameterPo> {
+public interface SysParameterMapper extends BaseMapper<SysParameterPo>  {
 
     /**
      * @param rwoBounds

@@ -1,5 +1,7 @@
 package com.model;
 
+import com.common.BaseModel;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -7,7 +9,7 @@ import javax.persistence.Table;
  * 资源持久类
  */
 @Table(name="sys_resource")
-public class SysResourcePo {
+public class SysResourcePo   extends BaseModel {
 	
 	/**
 	 * 主键编号	

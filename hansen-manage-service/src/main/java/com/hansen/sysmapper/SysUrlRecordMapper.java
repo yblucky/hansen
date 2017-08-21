@@ -2,6 +2,7 @@ package com.hansen.sysmapper;
 
 
 import com.base.dao.BaseMapper;
+import com.base.dao.CommonDao;
 import com.model.SysUrlRecordPo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

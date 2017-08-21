@@ -1,5 +1,7 @@
 package com.model;
 
+import com.common.BaseModel;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -8,7 +10,7 @@ import java.io.Serializable;
  * URL记录Po类
  */
 @Table(name="sys_url_record")
-public class SysUrlRecordPo implements Serializable {
+public class SysUrlRecordPo extends BaseModel implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

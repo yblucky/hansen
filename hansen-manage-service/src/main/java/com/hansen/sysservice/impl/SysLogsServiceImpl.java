@@ -23,7 +23,7 @@ import java.util.Date;
 @Service
 public class SysLogsServiceImpl implements SysLogsService   {
     @Resource
-    private  SysLogsMapper mapper;
+    private SysLogsMapper mapper;
 
     /**
      * 保存数据

@@ -1,5 +1,7 @@
 package com.model;
 
+import com.common.BaseModel;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -7,7 +9,7 @@ import javax.persistence.Table;
  * 角色Po类
  */
 @Table(name="sys_role")
-public class SysRolePo {
+public class SysRolePo  extends BaseModel {
 	/**
 	 * 主键编号
 	 */
