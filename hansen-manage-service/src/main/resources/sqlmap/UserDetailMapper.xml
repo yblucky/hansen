@@ -4,7 +4,7 @@
 <mapper namespace="com.hansen.mapper.UserDetailMapper">
 
     <sql id="fields">
-		userId,uid,levles,province,city,county,addr,num,forzenNum,currencyType,inAddress,outAddress,createTime,updateTime,status,remark
+		 uid,levles,province,city,county,addr,num,forzenNum,currencyType,inAddress,outAddress,createTime,updateTime,status,remark
 	</sql>
 
     <sql id="fields_id">
@@ -23,7 +23,6 @@
 
     <sql id="condition">
         <where>
-            <if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
             <if test="model.performance != null">and performance=#{model.performance}</if>
             <if test="model.status != null">and status=#{model.status}</if>
             <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
@@ -35,9 +34,6 @@
         <trim suffixOverrides=",">
             <if test="model.id!= null  and model.id!=''">
                 id,
-            </if>
-            <if test="model.userId!= null  and model.userId!=''">
-                userId,
             </if>
             <if test="model.province!= null  and model.province!=''">
                 province
@@ -88,9 +84,6 @@
 
             <if test="model.id!= null  and model.id!=''">
                 #{model.id},
-            </if>
-            <if test="model.userId!= null  and model.userId!=''">
-                #{model.userId},
             </if>
             <if test="model.addressType!= null  and model.addressType!=''">
                 #{model.addressType},
@@ -171,7 +164,6 @@
         update
         <include refid="table_name"/>
         <set>
-            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
             <if test="model.uid != null">uid= #{model.uid},</if>
             <if test="model.performance != null">performance= #{model.performance},</if>
             <if test="model.status != null">status= #{model.status},</if>
@@ -195,6 +187,18 @@
         update
         <include refid="table_name"/>
         set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <update id="updateForzenEquityAmtByUserId">
+        update <include refid="table_name"/> set forzenEquityAmt = forzenEquityAmt + #{forzenEquityAmt},updateTime=now() where id = #{userId} and (forzenEquityAmt + #{forzenEquityAmt})>0
+    </update>
+
+    <update id="updateForzenTradeAmtByUserId">
+        update <include refid="table_name"/> set forzeTtradeAmt = forzeTtradeAmt + #{forzeTtradeAmt},updateTime=now() where id = #{userId} and (forzeTtradeAmt + #{forzeTtradeAmt})>0
+    </update>
+
+    <update id="updateForzenPayAmtByUserId">
+        update <include refid="table_name"/> set forzenPayAmt = forzenPayAmt + #{forzenPayAmt},updateTime=now() where id = #{userId} and (forzenPayAmt + #{forzenPayAmt})>0
     </update>
 
 </mapper>

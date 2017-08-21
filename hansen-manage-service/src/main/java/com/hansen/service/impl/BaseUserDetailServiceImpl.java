@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @date 2016年11月27日
  */
 @Service
-public class UserDetailServiceImpl extends CommonServiceImpl<UserDetail> implements UserDetailService {
+public class BaseUserDetailServiceImpl extends CommonServiceImpl<UserDetail> implements UserDetailService {
     @Autowired
     private UserDetailMapper baseUserDetailMapper;
     @Override
@@ -25,4 +25,18 @@ public class UserDetailServiceImpl extends CommonServiceImpl<UserDetail> impleme
         return UserDetail.class;
     }
 
+    @Override
+    public Integer updateForzenEquityAmtByUserId(String userId, Double amt) {
+        return baseUserDetailMapper.updateForzenEquityAmtByUserId(userId,amt);
+    }
+
+    @Override
+    public Integer updateForzenPayAmtByUserId(String userId, Double amt) {
+        return baseUserDetailMapper.updateForzenPayAmtByUserId(userId,amt);
+    }
+
+    @Override
+    public Integer updateForzenTradeAmtByUserId(String userId, Double amt) {
+        return baseUserDetailMapper.updateForzenTradeAmtByUserId(userId,amt);
+    }
 }

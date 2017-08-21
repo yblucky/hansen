@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hansen.mapper.UserTaskMapper">
+	<sql id="fields">
+		userId,taskId,title,discription,rewardNo,link,taskType,assignTaskTime,createTime,updateTime,status,remark
+	</sql>
+
+	<sql id="fields_id">
+		id,<include refid="fields"/>
+	</sql>
+
+	<sql id="table_name">base_user_task</sql>
+
+	<sql id="selector">
+		select <include refid="fields_id"/> from <include refid="table_name"/>
+	</sql>
+
+	<sql id="condition">
+		<where>
+			<if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
+			<if test="model.taskId != null and model.taskId != ''">and taskId=#{model.taskId}</if>
+			<if test="model.title != null and model.title != ''">and title=#{model.title}</if>
+			<if test="model.discription != null and model.discription != ''">and discription=#{model.discription}</if>
+			<if test="model.rewardNo != null">and rewardNo=#{model.rewardNo}</if>
+			<if test="model.link != null and model.link != ''">and link=#{model.link}</if>
+			<if test="model.taskType != null">and taskType=#{model.taskType}</if>
+			<if test="model.status != null">and status=#{model.status}</if>
+			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+			<if test="model.assignTaskTime != null and model.assignTaskTime != ''">and assignTaskTime=#{model.assignTaskTime}</if>
+
+		</where>
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{userId},#{taskId},#{title},#{discription},#{rewardNo},#{link},#{taskType},#{assignTaskTime},now(),now(),#{status},#{remark});
+	</insert>
+
+	<select id="readById" resultType="com.model.UserTask">
+		<include refid="selector"/> where id=#{id}  limit 1;
+	</select>
+
+	<select id="readList" resultType="com.model.UserTask">
+		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+	</select>
+
+	<select id="readOne" resultType="com.model.UserTask">
+		<include refid="selector"/><include refid="condition"/> limit 1;
+	</select>
+
+	<select id="readLastOne" resultType="com.model.UserTask">
+		<include refid="selector"/> WHERE  userId=#{userId} order by  createTime DESC limit 1;
+	</select>
+
+	<select id="readCount" resultType="int">
+		select count(1) from <include refid="table_name"/> <include refid="condition"/>
+	</select>
+
+	<update id="updateById">
+		update <include refid="table_name"/>
+		<set>
+			<if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+			<if test="model.taskId != null and model.taskId !=''">taskId= #{model.taskId},</if>
+			<if test="model.title != null and model.title !=''">title= #{model.title},</if>
+			<if test="model.discription != null and model.discription !=''">discription= #{model.discription},</if>
+			<if test="model.rewardNo != null">rewardNo= #{model.rewardNo},</if>
+			<if test="model.link != null and model.link !=''">link= #{model.link},</if>
+			<if test="model.taskType != null">taskType= #{model.taskType},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			<if test="model.assignTaskTime != null and model.assignTaskTime !=''">assignTaskTime= #{model.assignTaskTime},</if>
+			updateTime=now()
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="deleteById">
+		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+	</update>
+</mapper>
+</mapper>
+
+
+

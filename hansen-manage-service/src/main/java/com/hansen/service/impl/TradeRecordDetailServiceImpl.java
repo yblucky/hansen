@@ -2,11 +2,13 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
+import com.common.constant.RecordType;
 import com.hansen.mapper.TradeRecordDetailMapper;
 import com.hansen.service.TradeRecordDetailService;
 import com.model.TradeRecordDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @date 2016年11月27日
@@ -25,4 +27,16 @@ public class TradeRecordDetailServiceImpl extends CommonServiceImpl<TradeRecordD
         return TradeRecordDetail.class;
     }
 
+    @Override
+    @Transactional
+    public void addRecordDetail(String userId, Double amout, String orderNo,Double scale, RecordType recordType){
+        TradeRecordDetail model = new TradeRecordDetail();
+        model.setUserId(userId);
+        model.setAmount(amout);
+        model.setOrderNo(orderNo);
+        model.setScale(scale);
+        model.setRecordType(recordType.getCode());
+        model.setRemark(recordType.getMsg());
+        this.create(model);
+    }
 }

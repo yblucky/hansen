@@ -34,7 +34,6 @@ public class UserDetail extends BaseModel {
      */
     private String outPayAddress;
     private String outEquityAddress;
-
     private String outTradeAddress;
 
     private Integer levles;

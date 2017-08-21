@@ -1,11 +1,11 @@
 package com.hansen.service;
 
-
 import com.base.service.CommonService;
-import com.model.BaseAdmin;
+import com.model.Image;
 
 /**
  * @date 2016年11月27日
  */
-public interface BaseAdminService extends CommonService<BaseAdmin> {
+public interface ImageService extends CommonService<Image> {
+
 }

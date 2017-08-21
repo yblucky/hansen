@@ -75,4 +75,15 @@ public enum WalletOrderType {
             return null;
         }
     }
+
+    public static  CurrencyType getCoinTypeFromWalletOrderTypeCode(Integer code) {
+           if (code==2){
+               return CurrencyType.TRADE;
+           }else if (code==5){
+               return CurrencyType.PAY;
+           }else if (code==8){
+               return CurrencyType.EQUITY;
+           }
+            return null;
+    }
 }

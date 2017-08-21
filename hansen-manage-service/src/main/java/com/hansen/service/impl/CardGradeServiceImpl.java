@@ -25,4 +25,14 @@ public class CardGradeServiceImpl extends CommonServiceImpl<CardGrade> implement
         return CardGrade.class;
     }
 
+    /**
+     * 获取用户保单级别
+     * @param cardLevel 会员卡级别
+     * */
+    @Override
+    public CardGrade getUserCardGrade(Integer cardLevel){
+        CardGrade card = new CardGrade();
+        card.setGrade(cardLevel);
+        return cardGradeMapper.readOne(card);
+    }
 }

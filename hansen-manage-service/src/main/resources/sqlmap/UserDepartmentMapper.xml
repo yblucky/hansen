@@ -4,7 +4,7 @@
 <mapper namespace="com.hansen.mapper.UserDepartmentMapper">
 
 	<sql id="fields">
-		userId,uid,performance,createTime,updateTime,status,remark,parentUserId
+		userId,uid,performance,grade,createTime,updateTime,status,remark,parentUserId,nickName
 	</sql>
 
 	<sql id="fields_id">
@@ -24,6 +24,8 @@
 			<if test="model.performance != null">and performance=#{model.performance}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+			<if test="model.grade != null and model.grade != ''">and grade=#{model.grade}</if>
+
 		</where>
 	</sql>
 
@@ -57,6 +59,12 @@
 			<if test="model.remark!= null  and model.remark!=''">
 				remark,
 			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				grade,
+			</if>
+			<if test="model.nickName!= null  and model.nickName!=''">
+				nickName,
+			</if>
 		</trim>
 		)
 		values(
@@ -89,6 +97,12 @@
 			<if test="model.remark!= null  and model.remark!=''">
 				#{model.remark},
 			</if>
+			<if test="model.grade!= null  and model.grade!=''">
+				#{model.grade},
+			</if>
+			<if test="model.nickName!= null  and model.nickName!=''">
+				#{model.nickName},
+			</if>
 		</trim>
 		);
 	</insert>
@@ -117,6 +131,7 @@
 			<if test="model.performance != null">performance= #{model.performance},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			<if test="model.grade != null and model.grade !=''">grade= #{model.grade},</if>
 			updateTime=now()
 		</set>
 		where id=#{id}
@@ -126,9 +141,9 @@
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
 
-	<select id="getAll" resultType="UserDepartment">
+	<select id="getDirectTeamList" resultType="UserDepartment">
 		select <include refid="fields_id"/> from <include refid="table_name"/> as a
-		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and b.contactUserId = a.id and a.status = 1
+		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId}  and   a.parentUserId=#{parentUserId} and a.status = 1
 		order by a.performance desc
 	</select>
 
@@ -137,6 +152,13 @@
 		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and b.contactUserId = a.id and a.status = 1
 	</select>
 
+	<update id="updatePerformanceByUserId">
+		update <include refid="table_name"/> set performance = performance + #{performance},updateTime=now() where userId = #{userId} and (performance + #{performance})>0
+	</update>
+
+	<update id="updatePerformanceByUserId">
+		update <include refid="table_name"/> set performance = performance + #{performance},updateTime=now() where userId = #{userId} and (performance + #{performance})>0
+	</update>
 </mapper>
 
 

@@ -1,6 +1,8 @@
 package com.hansen.service;
 
 import com.base.service.CommonService;
+import com.common.constant.GradeRecordType;
+import com.model.User;
 import com.model.UserGradeRecord;
 
 /**
@@ -8,5 +10,5 @@ import com.model.UserGradeRecord;
  */
 public interface UserGradeRecordService extends CommonService<UserGradeRecord> {
 
-
+    void addGradeRecord(User user, GradeRecordType recordType, Integer historyGrade, Integer upGradeType, String orderNo);
 }
