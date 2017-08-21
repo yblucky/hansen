@@ -6,7 +6,7 @@ import com.hansen.enums.RespCodeEnum;
 import com.hansen.resp.Paging;
 import com.hansen.resp.RespBody;
 import com.hansen.vo.SysParameterVo;
-import com.hansen.sysservice.ParameterService;
+import com.hansen.sysservice.ManageParameterService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 @RequestMapping("/parameter")
 public class ParameterController {
 	@Resource
-	private  ParameterService parameterService;
+	private ManageParameterService parameterService;
 	
 	/**
 	 * 查找列表数据

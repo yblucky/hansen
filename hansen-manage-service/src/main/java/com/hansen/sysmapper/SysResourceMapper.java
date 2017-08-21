@@ -1,6 +1,7 @@
 package com.hansen.sysmapper;
 
-import com.hansen.base.BaseMapper;
+
+import com.base.dao.BaseMapper;
 import com.hansen.vo.SysResourceVo;
 import com.model.SysResourcePo;
 import org.apache.ibatis.annotations.Param;

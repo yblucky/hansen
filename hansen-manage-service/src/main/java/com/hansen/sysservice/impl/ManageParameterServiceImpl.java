@@ -5,7 +5,7 @@ import com.common.utils.classutils.MyBeanUtils;
 import com.common.utils.toolutils.ToolUtil;
 import com.hansen.resp.Paging;
 import com.hansen.sysmapper.SysParameterMapper;
-import com.hansen.sysservice.ParameterService;
+import com.hansen.sysservice.ManageParameterService;
 import com.hansen.vo.SysParameterVo;
 import com.model.SysParameterPo;
 import org.apache.ibatis.session.RowBounds;
@@ -19,14 +19,14 @@ import java.util.List;
  * 参数设置业务层实现类
  */
 @Service
-public class ParameterServiceImpl implements ParameterService{
+public class ManageParameterServiceImpl implements ManageParameterService {
 	@Resource
-	private SysParameterMapper parameterMapper;
+	private SysParameterMapper sysParameterMapper;
 
 	@Override
 	public List<SysParameterVo> findAll(Paging paging) throws Exception {
 		RowBounds rwoBounds = new RowBounds(paging.getPageNumber(),paging.getPageSize());
-		return parameterMapper.findAll(rwoBounds);
+		return sysParameterMapper.findAll(rwoBounds);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class ParameterServiceImpl implements ParameterService{
 		parameterPo.setId(ToolUtil.getUUID());
 		parameterPo.setUpdateTime(new Date());
 		//调用dao保存数据
-		parameterMapper.insert(parameterPo);
+		sysParameterMapper.insert(parameterPo);
 	}
 
 	@Override
@@ -46,18 +46,18 @@ public class ParameterServiceImpl implements ParameterService{
 		SysParameterPo parameterPo = MyBeanUtils.copyProperties(parameterVo, SysParameterPo.class);
 		parameterPo.setUpdateTime(new Date());
 		//调用dao修改数据
-		parameterMapper.updateByPrimaryKey(parameterPo);
+		sysParameterMapper.updateByPrimaryKey(parameterPo);
 	}
 
 	@Override
 	public void delete(SysParameterVo parameterVo) {
 		//调用dao删除数据
-		parameterMapper.deleteByPrimaryKey(parameterVo.getId());
+		sysParameterMapper.deleteByPrimaryKey(parameterVo.getId());
 	}
 
 	@Override
 	public long findCount() {
-		return parameterMapper.findCount();
+		return sysParameterMapper.findCount();
 	}
 
 }

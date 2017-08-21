@@ -1,5 +1,6 @@
 package com.hansen.sysservice.impl;
 
+
 import com.common.service.RedisService;
 import com.common.utils.classutils.MyBeanUtils;
 import com.common.utils.codeutils.CryptUtils;
@@ -7,7 +8,7 @@ import com.common.utils.toolutils.ToolUtil;
 import com.hansen.resp.Paging;
 import com.hansen.sysmapper.SysRoleMapper;
 import com.hansen.sysmapper.SysUserMapper;
-import com.hansen.sysservice.UserService;
+import com.hansen.sysservice.ManageUserService;
 import com.hansen.vo.SysRoleVo;
 import com.hansen.vo.SysUserVo;
 import com.model.SysUserPo;
@@ -22,11 +23,11 @@ import java.util.List;
  * 用户业务层实现类
  */
 @Service
-public class UserServiceImpl implements UserService   {
+public class ManageUserServiceImpl implements ManageUserService {
 	@Resource
 	private RedisService redisService;
 	@Resource
-	private SysUserMapper userMapper;
+	private SysUserMapper sysUserMapper;
 	@Resource
 	private SysRoleMapper roleMapper;
 
@@ -43,12 +44,12 @@ public class UserServiceImpl implements UserService   {
 	@Override
 	public List<SysUserVo> findAll(Paging paging) {
 		RowBounds rwoBounds = new RowBounds(paging.getPageNumber(),paging.getPageSize());
-		return userMapper.findAll(rwoBounds);
+		return sysUserMapper.findAll(rwoBounds);
 	}
 
 	@Override
 	public long findCount() {
-		return userMapper.findCount();
+		return sysUserMapper.findCount();
 	}
 
 	@Override
@@ -60,24 +61,24 @@ public class UserServiceImpl implements UserService   {
 		userPo.setSalt(salt);
 		userPo.setId(ToolUtil.getUUID());
 		userPo.setCreateTime(new Date());
-		userMapper.insert(userPo);
+		sysUserMapper.insert(userPo);
 	}
 
 	@Override
 	public void update(SysUserVo userVo) throws Exception {
-		SysUserPo userPo = userMapper.selectByPrimaryKey(userVo.getId());
+		SysUserPo userPo = sysUserMapper.selectByPrimaryKey(userVo.getId());
 		userPo.setUserName(userVo.getUserName());
 		userPo.setMobile(userVo.getMobile());
 		userPo.setRoleId(userVo.getRoleId());
 		userPo.setRoleName(userVo.getRoleName());
 		userPo.setState(userVo.getState());
-		userMapper.updateByPrimaryKey(userPo);
+		sysUserMapper.updateByPrimaryKey(userPo);
 	}
 
 
 	@Override
 	public void delete(SysUserVo userVo) {
-		userMapper.deleteByPrimaryKey(userVo.getId());
+		sysUserMapper.deleteByPrimaryKey(userVo.getId());
 	}
 
 	@Override
@@ -87,14 +88,14 @@ public class UserServiceImpl implements UserService   {
 
 	@Override
 	public SysUserVo findByLoginName(String loginName) {
-		return userMapper.findByloginName(loginName);
+		return sysUserMapper.findByloginName(loginName);
 	}
 
 	@Override
 	public void updatePw(String newPw,String id) {
-		SysUserPo userPo = userMapper.selectByPrimaryKey(id);
+		SysUserPo userPo = sysUserMapper.selectByPrimaryKey(id);
 		userPo.setPassword(newPw);
-		userMapper.updateByPrimaryKey(userPo);
+		sysUserMapper.updateByPrimaryKey(userPo);
 	}
 
 }

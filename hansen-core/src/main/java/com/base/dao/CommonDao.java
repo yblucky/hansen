@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 通用mapper
  */
-public interface CommonDao<D extends BaseModel> {
+public interface CommonDao<D extends  BaseModel> {
     // C
     void create(D model);
 

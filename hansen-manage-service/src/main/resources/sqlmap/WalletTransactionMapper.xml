@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.hansen.hansen.mapper.WalletTransactionMapper">
+<mapper namespace="com.hansen.mapper.WalletTransactionMapper">
+
+
 
 	<sql id="fields">
-		userId,txtId,prepayId,transactionLongTime,transactionTime,address,amount,category,fee,confirmations,transactionStatus,message,createTime,updateTime,status,remark
+		userId,txtId,prepayId,transactionLongTime,transactionTime,address,amount,category,fee,confirmations,transactionStatus,message,details,currencyType,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -31,123 +33,16 @@
 			<if test="model.confirmations != null">and confirmations=#{model.confirmations}</if>
 			<if test="model.transactionStatus != null and model.transactionStatus != ''">and transactionStatus=#{model.transactionStatus}</if>
 			<if test="model.message != null and model.message != ''">and message=#{model.message}</if>
+			<if test="model.details != null">and details=#{model.details}</if>
+			<if test="model.currencyType != null">and currencyType=#{model.currencyType}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
 		</where>
 	</sql>
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
-		insert into <include refid="table_name"/>(
-		<trim  suffixOverrides="," >
-			<if test="model.id!= null  and model.id!=''">
-				id,
-			</if>
-			<if test="model.userId!= null  and model.userId!=''">
-				userId,
-			</if>
-			<if test="model.txtId!= null  and model.txtId!=''">
-				txtId,
-			</if>
-			<if test="model.prepayId!= null  and model.prepayId!=''">
-				prepayId,
-			</if>
-			<if test="model.transactionLongTime!= null  and model.transactionLongTime!=''">
-				transactionLongTime,
-			</if>
-			<if test="model.transactionTime!= null  and model.transactionTime!=''">
-				transactionTime,
-			</if>
-			<if test="model.address!= null  and model.address!=''">
-				address,
-			</if>
-			<if test="model.amount!= null  and model.amount!=''">
-				amount,
-			</if>
-			<if test="model.category!= null  and model.category!=''">
-				category,
-			</if>
-			<if test="model.fee!= null  and model.fee!=''">
-				fee,
-			</if>
-			<if test="model.confirmations!= null  and model.confirmations!=''">
-				confirmations,
-			</if>
-			<if test="model.transactionStatus!= null  and model.transactionStatus!=''">
-				transactionStatus,
-			</if>
-			<if test="model.message!= null  and model.message!=''">
-				message,
-			</if>
-			<if test="model.createTime!= null  and model.createTime!=''">
-				createTime,
-			</if>
-			<if test="model.updateTime!= null  and model.updateTime!=''">
-				updateTime,
-			</if>
-			<if test="model.status!= null  and model.status!=''">
-				status,
-			</if>
-			<if test="model.remark!= null  and model.remark!=''">
-				remark,
-			</if>
-		</trim>
-		)
-		values(
-		<trim  suffixOverrides="," >
-
-			<if test="model.id!= null  and model.id!=''">
-				#{model.id},
-			</if>
-			<if test="model.userId!= null  and model.userId!=''">
-				#{model.userId},
-			</if>
-			<if test="model.txtId!= null  and model.txtId!=''">
-				#{model.txtId},
-			</if>
-			<if test="model.prepayId!= null  and model.prepayId!=''">
-				#{model.prepayId},
-			</if>
-			<if test="model.transactionLongTime!= null  and model.transactionLongTime!=''">
-				#{model.transactionLongTime},
-			</if>
-			<if test="model.transactionTime!= null  and model.transactionTime!=''">
-				#{model.transactionTime},
-			</if>
-			<if test="model.address!= null  and model.address!=''">
-				#{model.address},
-			</if>
-			<if test="model.amount!= null  and model.amount!=''">
-				#{model.amount},
-			</if>
-			<if test="model.category!= null  and model.category!=''">
-				#{model.category},
-			</if>
-			<if test="model.fee!= null  and model.fee!=''">
-				#{model.fee},
-			</if>
-			<if test="model.confirmations!= null  and model.confirmations!=''">
-				#{model.confirmations},
-			</if>
-			<if test="model.transactionStatus!= null  and model.transactionStatus!=''">
-				#{model.transactionStatus},
-			</if>
-			<if test="model.message!= null  and model.message!=''">
-				#{model.message},
-			</if>
-			<if test="model.createTime!= null  and model.createTime!=''">
-				#{model.createTime},
-			</if>
-			<if test="model.updateTime!= null  and model.updateTime!=''">
-				#{model.updateTime},
-			</if>
-			<if test="model.status!= null  and model.status!=''">
-				#{model.status},
-			</if>
-			<if test="model.remark!= null  and model.remark!=''">
-				#{model.remark},
-			</if>
-		</trim>
-		);
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{userId},#{txtId},#{prepayId},#{transactionLongTime},#{transactionTime},#{address},#{amount},#{category},#{fee},#{confirmations},#{transactionStatus},#{message},#{details},#{currencyType},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="WalletTransaction">
@@ -181,6 +76,8 @@
 			<if test="model.confirmations != null">confirmations= #{model.confirmations},</if>
 			<if test="model.transactionStatus != null and model.transactionStatus !=''">transactionStatus= #{model.transactionStatus},</if>
 			<if test="model.message != null and model.message !=''">message= #{model.message},</if>
+			<if test="model.details != null">details= #{model.details},</if>
+			<if test="model.currencyType != null">currencyType= #{model.currencyType},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
 			updateTime=now()
@@ -191,12 +88,10 @@
 	<update id="deleteById">
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
+<!--
+	<select id="listByTransactionTime" resultType="WalletTransaction">
 
-
-
-	<select id="listByTransactionTime" resultType="hansen.wallet.trade.model.Transaction">
-
-		SELECT * FROM rtb_transaction
+		SELECT * FROM wallet_transaction
 		<where>
 			1=1
 			<if test="start!=null">
@@ -211,9 +106,11 @@
 		</where>
 	</select>
 
-	<select id="listByStartToEnd" resultType="hansen.wallet.trade.model.Transaction">
-		SELECT * FROM rtb_transaction where transactionLongTime <![CDATA[ > ]]> #{start}  and transactionLongTime <![CDATA[ < ]]> #{end} and confirmations  <![CDATA[ < ]]>  4
+	<select id="listByStartToEnd" resultType="WalletTransaction">
+		SELECT * FROM wallet_transaction where transactionLongTime <![CDATA[ > ]]> #{start}  and transactionLongTime <![CDATA[ < ]]> #{end} and confirmations  <![CDATA[ < ]]>  4
 	</select>
+-->
+
 
 </mapper>
 

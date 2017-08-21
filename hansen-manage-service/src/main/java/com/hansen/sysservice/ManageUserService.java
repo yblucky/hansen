@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * 用户业务层接口
  */
-public interface UserService {
+public interface ManageUserService {
 
     /**
      * 获取用户信息

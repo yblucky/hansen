@@ -19,10 +19,10 @@ import javax.annotation.Resource;
 /**
  * 用户登录业务层实现类
  */
-@Service("webLogin")
+@Service
 public class LoginServiceImpl implements LoginService {
     @Resource
-    private SysUserMapper userMapper;
+    private SysUserMapper sysUserMapper;
     @Resource
     private RedisService redisService;
     @Resource
@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
         String picCode = redisService.getString(loginVo.getImgKey());
         if (picCode != null && picCode.equals(loginVo.getPicCode())) {
             //验证码正确,查询用户信息
-            SysUserVo userVo = userMapper.findByloginName(loginVo.getLoginName());
+            SysUserVo userVo = sysUserMapper.findByloginName(loginVo.getLoginName());
             // 是否查找到用户信息
             if (userVo == null) {
                 // 不存在

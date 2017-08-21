@@ -1,6 +1,7 @@
 package com.hansen.sysmapper;
 
-import com.hansen.base.BaseMapper;
+
+import com.base.dao.BaseMapper;
 import com.hansen.vo.SysParameterVo;
 import com.model.SysParameterPo;
 import org.apache.ibatis.annotations.Select;

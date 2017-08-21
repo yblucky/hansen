@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 @Controller
 @RequestMapping(value = "/login")
 public class LoginController {
-    @Resource(name = "webLogin")
+    @Resource
     private LoginService loginService;
     @Resource
     private KaptchaService kaptchaService;

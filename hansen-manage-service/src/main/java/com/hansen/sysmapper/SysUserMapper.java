@@ -1,6 +1,7 @@
 package com.hansen.sysmapper;
 
-import com.hansen.base.BaseMapper;
+
+import com.base.dao.BaseMapper;
 import com.hansen.vo.SysUserVo;
 import com.model.SysUserPo;
 import org.apache.ibatis.annotations.Param;

@@ -7,7 +7,7 @@ import com.common.utils.toolutils.LogUtils;
 import com.hansen.enums.RespCodeEnum;
 import com.hansen.resp.Paging;
 import com.hansen.resp.RespBody;
-import com.hansen.sysservice.UserService;
+import com.hansen.sysservice.ManageUserService;
 import com.hansen.vo.SysUserVo;
 import com.hansen.vo.UpdatePwVo;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(value = "/user")
 public class UserController {
     @Resource
-    private UserService userService;//用户业务层
+    private ManageUserService userService;//用户业务层
     @Resource
     private HttpServletRequest request;
     @Resource

@@ -12,7 +12,7 @@
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
-	<context:component-scan base-package="com.hansen" />
+	<context:component-scan base-package="com.hansen,com.common" />
 	
 	<mvc:annotation-driven/> 
 	
@@ -21,15 +21,17 @@
 		<property name="locations">
 			<array>
 				<value>classpath:config/jdbc.properties</value>
+				<value>classpath:config/api.properties</value>
 				<value>classpath:config/system.properties</value>
 			</array>
 		</property>
 	</bean>
 
 	<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
-		<property name="url" value="${jdbc_url}" />
-		<property name="username" value="${jdbc_username}" />
-		<property name="password" value="${jdbc_password}" />
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
 		<!-- 配置初始化大小、最小、最大 -->
 		<property name="initialSize" value="1" />
 		<property name="minIdle" value="1" /> 
@@ -48,16 +50,69 @@
 		<property name="filters" value="stat" /> 
 	</bean>
 
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+<!--	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="mapperLocations" value="classpath:sqlmap/*Mapper.xml" />
 		<property name="configLocation" value="classpath:config/spring-mybatis.xml" />
+	</bean>-->
+
+	<!--	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+            <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+            <property name="basePackage" value="com.hansen.mapper" />
+        </bean>-->
+
+
+
+	<!-- 配置sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" name="commonSqlSessionFactory">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:config/spring-mybatis.xml" />
+		<property name="mapperLocations" value="classpath:sqlmap/*Mapper.xml" />
+		<property name="plugins">
+			<list>
+				<ref bean="paginationInterceptor" />
+			</list>
+		</property>
 	</bean>
-	
+
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-		<property name="basePackage" value="com.hansen.mapper" />
+	<property name="sqlSessionFactoryBeanName" value="commonSqlSessionFactory" />
+	<property name="basePackage" value="com.hansen.mapper" />
 	</bean>
+
+
+	<!-- 配置sqlSessionFactory -->
+	<bean id="stkMapperSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" name="tkMapperSqlSessionFactory">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:config/spring-mybatis.xml" />
+		<property name="mapperLocations" value="classpath:sqlmap/*Mapper.xml" />
+		<property name="plugins">
+			<list>
+				<ref bean="paginationInterceptor" />
+			</list>
+		</property>
+	</bean>
+
+
+	<!-- mapper -->
+	<bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="tkMapperSqlSessionFactory"></property>
+		<property name="basePackage" value="com.hansen.sysmapper" />
+		<property name="markerInterface" value="com.base.dao.BaseMapper" />
+		<property name="properties">
+<!--			<value>
+				style=uppercase
+			</value>-->
+			<value>
+				mappers=tk.mybatis.mapper.common.Mapper,com.base.dao.BaseMapper
+				IDENTITY=MYSQL
+				style=uppercase
+			</value>
+		</property>
+	</bean>
+
+	<!-- 分页拦截器 -->
+	<bean name="paginationInterceptor" class="com.hansen.interceptor.PageInterceptor"></bean>
 
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
@@ -72,7 +127,7 @@
 	</bean>
 	<mvc:default-servlet-handler />
 	<!--<mvc:resources mapping="/image/**" location="${mappingDirPath}" />-->
-	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<!--<mvc:resources mapping="/resources/**" location="/resources/" />-->
 
 	<!-- 配置文件上传解析器 -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
@@ -82,8 +137,32 @@
     </bean>
     
     <mvc:interceptors>
-		<bean class="com.interceptor.ActionInterceptor"></bean>
+		<bean class="com.hansen.interceptor.ActionInterceptor"></bean>
 	</mvc:interceptors>	
 
 	<import resource="classpath*:config/spring-redis.xml" />
+
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<constructor-arg>
+					<props>
+						<prop key="kaptcha.border">no</prop>
+						<prop key="kaptcha.border.color">105,179,90</prop>
+						<prop key="kaptcha.textproducer.font.color">44,86,100</prop>
+						<prop key="kaptcha.image.width">80</prop>
+						<prop key="kaptcha.image.height">30</prop>
+						<prop key="kaptcha.textproducer.char.string">0123456789</prop>
+						<prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.NoNoise</prop>
+						<prop key="kaptcha.textproducer.font.size">24</prop>
+						<prop key="kaptcha.session.key">code</prop>
+						<prop key="kaptcha.textproducer.char.length">4</prop>
+						<prop key="kaptcha.textproducer.char.space">4</prop>
+						<prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop>
+						<prop key="kaptcha.obscurificator.impl">com.google.code.kaptcha.impl.ShadowGimpy</prop>
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
 </beans>

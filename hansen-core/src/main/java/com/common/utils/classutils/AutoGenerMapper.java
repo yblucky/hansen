@@ -13,8 +13,8 @@ import java.lang.reflect.Modifier;
 public class AutoGenerMapper {
 
     public static void main(String[] args) {
-        genMapperXml(TransferCode.class);
-        genMapperXml(User.class);
+        genMapperXml(WalletTransaction.class);
+//        genMapperXml(User.class);
     }
 
     public static void genMapperXml(Class clz) {

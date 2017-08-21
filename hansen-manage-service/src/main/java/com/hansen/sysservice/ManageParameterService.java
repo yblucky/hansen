@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 参数设置业务层接口
  */
-public interface ParameterService {
+public interface ManageParameterService {
 
     /**
      * 查找所有数据
