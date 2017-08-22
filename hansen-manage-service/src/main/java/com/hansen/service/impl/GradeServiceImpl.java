@@ -27,7 +27,7 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
     @Autowired
     private UserService userService;
     @Autowired
-    private UserDepartmentService departmentService;
+    private UserDepartmentService userDepartmentService;
 
     @Override
     protected CommonDao<Grade> getDao() {
@@ -64,9 +64,9 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
             return null;
         }
         //获取用户的所有部门（不包含设有接点人的部门）
-        List<UserDepartment> list = departmentService.getAll(userId);
+        List<UserDepartment> list = userDepartmentService.getAll(userId);
         //获取用户的所有部门的总业绩（不包含设有接点人的部门）
-        Double sumAmt = departmentService.getSumAmt(userId);
+        Double sumAmt = userDepartmentService.getSumAmt(userId);
         //部门数量小于2个或所有部门总业绩不达标则不计算
         if (list == null || list.size() < 2 || sumAmt < 300000) {
             System.out.println("用户未达到升级条件");

@@ -31,7 +31,7 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
     @Autowired
     private UserService userService;
     @Autowired
-    private WalletTransactionService transactionService;
+    private WalletTransactionService   transactionService;
 
     @Override
     protected CommonDao<WalletOrder> getDao() {

@@ -156,9 +156,6 @@
 		update <include refid="table_name"/> set performance = performance + #{performance},updateTime=now() where userId = #{userId} and (performance + #{performance})>0
 	</update>
 
-	<update id="updatePerformanceByUserId">
-		update <include refid="table_name"/> set performance = performance + #{performance},updateTime=now() where userId = #{userId} and (performance + #{performance})>0
-	</update>
 </mapper>
 
 

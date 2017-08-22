@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * @date 2016年11月27日
  */
-@Service
+@Service("transactionService")
 public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransaction> implements WalletTransactionService {
 
     @Autowired
