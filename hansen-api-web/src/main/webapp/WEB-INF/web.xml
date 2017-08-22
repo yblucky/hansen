@@ -25,7 +25,7 @@
 	</filter-mapping>
 	<filter> 
 		<filter-name>cors</filter-name>
-		<filter-class>com.interceptor.CrossFilter</filter-class>
+		<filter-class>com.hansen.interceptor.CrossFilter</filter-class>
 		<async-supported>true</async-supported> 
 	</filter>
 	<filter-mapping>
