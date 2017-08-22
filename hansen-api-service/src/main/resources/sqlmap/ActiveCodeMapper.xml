@@ -77,10 +77,10 @@
 			<if test="model.usedUserId!= null  and model.usedUserId!=''">
 				#{model.usedUserId},
 			</if>
-			<if test="model.createTime!= null  and model.createTime!=''">
+			<if test="model.createTime!= null">
 				#{model.createTime},
 			</if>
-			<if test="model.updateTime!= null  and model.updateTime!=''">
+			<if test="model.updateTime!= null">
 				#{model.updateTime},
 			</if>
 			<if test="model.status!= null  and model.status!=''">
