@@ -2,7 +2,7 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.mappers.WalletCurrencyMapper;
+import com.mapper.WalletCurrencyMapper;
 import com.service.WalletCurrencyService;
 import com.model.WalletCurrency;
 import org.springframework.beans.factory.annotation.Autowired;

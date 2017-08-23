@@ -4,7 +4,7 @@ import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.GradeType;
 import com.constant.UserStatusType;
-import com.mappers.GradeMapper;
+import com.mapper.GradeMapper;
 import com.service.GradeService;
 import com.service.UserDepartmentService;
 import com.service.UserService;

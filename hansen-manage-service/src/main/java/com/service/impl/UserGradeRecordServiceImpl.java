@@ -3,7 +3,7 @@ package com.service.impl;
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.GradeRecordType;
-import com.mappers.UserGradeRecordMapper;
+import com.mapper.UserGradeRecordMapper;
 import com.service.UserGradeRecordService;
 import com.model.User;
 import com.model.UserGradeRecord;

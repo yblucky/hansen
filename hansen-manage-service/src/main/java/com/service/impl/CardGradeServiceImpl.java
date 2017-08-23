@@ -2,7 +2,7 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.mappers.CardGradeMapper;
+import com.mapper.CardGradeMapper;
 import com.service.CardGradeService;
 import com.model.CardGrade;
 import org.springframework.beans.factory.annotation.Autowired;

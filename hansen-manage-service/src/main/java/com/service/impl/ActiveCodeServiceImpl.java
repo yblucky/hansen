@@ -4,7 +4,7 @@ import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.CodeType;
 import com.constant.Constant;
-import com.mappers.ActiveCodeMapper;
+import com.mapper.ActiveCodeMapper;
 import com.service.ActiveCodeService;
 import com.service.TransferCodeService;
 import com.service.UserService;

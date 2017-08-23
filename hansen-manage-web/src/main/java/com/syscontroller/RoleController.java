@@ -2,7 +2,7 @@ package com.syscontroller;
 
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
-import com.service.RoleService;
+import com.sysservice.RoleService;
 import com.vo.SysRolePermissionVo;
 import com.utils.toolutils.LogUtils;
 import org.springframework.web.bind.annotation.RequestBody;

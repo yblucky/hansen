@@ -4,7 +4,7 @@ import com.annotation.SystemControllerLog;
 import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
-import com.service.ManageParameterService;
+import com.sysservice.ManageParameterService;
 import com.vo.SysParameterVo;
 import com.utils.toolutils.LogUtils;
 import org.springframework.web.bind.annotation.RequestBody;

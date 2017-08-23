@@ -2,7 +2,7 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.mappers.UserDepartmentMapper;
+import com.mapper.UserDepartmentMapper;
 import com.service.UserDepartmentService;
 import com.model.UserDepartment;
 import org.apache.commons.lang.StringUtils;

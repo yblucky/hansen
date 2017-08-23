@@ -2,7 +2,7 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.mappers.WalletParameterMapper;
+import com.mapper.WalletParameterMapper;
 import com.service.WalletParameterService;
 import com.model.WalletParameter;
 import org.springframework.beans.factory.annotation.Autowired;

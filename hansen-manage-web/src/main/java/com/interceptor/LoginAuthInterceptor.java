@@ -3,7 +3,7 @@ package com.interceptor;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
 import com.service.RedisService;
-import com.service.SysUrlRecordService;
+import com.sysservice.SysUrlRecordService;
 import com.vo.SysUserVo;
 import com.utils.ConfUtils;
 import com.utils.toolutils.LogUtils;

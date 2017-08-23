@@ -2,7 +2,7 @@ package com.interceptor;
 
 import com.annotation.SystemControllerLog;
 import com.service.RedisService;
-import com.service.SysLogsService;
+import com.sysservice.SysLogsService;
 import com.vo.SysLogsVo;
 import com.vo.SysUserVo;
 import com.utils.toolutils.LogUtils;

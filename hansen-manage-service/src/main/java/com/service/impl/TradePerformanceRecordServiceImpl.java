@@ -2,7 +2,7 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.mappers.TradePerformanceRecordMapper;
+import com.mapper.TradePerformanceRecordMapper;
 import com.service.TradePerformanceRecordService;
 import com.model.TradePerformanceRecord;
 import org.springframework.beans.factory.annotation.Autowired;

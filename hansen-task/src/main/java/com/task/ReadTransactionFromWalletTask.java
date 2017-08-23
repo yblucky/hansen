@@ -1,7 +1,7 @@
 package com.task;
 
 import com.service.WalletTransactionService;
-import com.utils.WalletUtil;
+import com.service.WalletUtil;
 import com.utils.toolutils.ToolUtil;
 import com.model.WalletTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import ru.paradoxs.bitcoin.client.TransactionInfo;
 import java.util.Date;
 import java.util.List;
 
-import static com.utils.WalletUtil.getBitCoinClient;
+import static com.service.WalletUtil.getBitCoinClient;
 
 public class ReadTransactionFromWalletTask extends BaseScheduleTask {
     @Autowired

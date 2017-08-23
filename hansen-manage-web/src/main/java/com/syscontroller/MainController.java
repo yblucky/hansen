@@ -9,7 +9,7 @@ package com.syscontroller;
 
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
-import com.service.MainService;
+import com.sysservice.MainService;
 import com.utils.toolutils.LogUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

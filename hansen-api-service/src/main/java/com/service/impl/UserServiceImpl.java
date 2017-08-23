@@ -5,12 +5,10 @@ import com.base.page.JsonResult;
 import com.base.page.ResultCode;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.*;
-import com.mappers.UserMapper;
+import com.mapper.UserMapper;
 import com.model.*;
 import com.service.*;
 import com.utils.DateUtils.DateUtils;
-import com.utils.ParamUtil;
-import com.utils.WalletUtil;
 import com.utils.codeutils.Md5Util;
 import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.OrderNoUtil;
@@ -23,7 +21,7 @@ import ru.paradoxs.bitcoin.client.BitcoinClient;
 import java.util.Date;
 import java.util.Map;
 
-import static com.utils.WalletUtil.getBitCoinClient;
+import static com.service.WalletUtil.getBitCoinClient;
 
 /**
  * @date 2016年11月27日

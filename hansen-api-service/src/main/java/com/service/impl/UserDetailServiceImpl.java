@@ -2,7 +2,7 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.mappers.UserDetailMapper;
+import com.mapper.UserDetailMapper;
 import com.service.UserDetailService;
 import com.model.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;

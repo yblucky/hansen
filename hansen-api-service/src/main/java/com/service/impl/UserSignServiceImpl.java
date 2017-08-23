@@ -4,7 +4,7 @@ import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.RecordType;
 import com.constant.SignType;
-import com.mappers.UserSignMapper;
+import com.mapper.UserSignMapper;
 import com.service.TradeOrderService;
 import com.service.TradeRecordService;
 import com.service.UserService;

@@ -15,7 +15,6 @@ import com.vo.UserVo;
 import com.model.*;
 import com.redis.Strings;
 import com.utils.DateUtils.DateUtils;
-import com.utils.WalletUtil;
 import com.utils.codeutils.Md5Util;
 import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.OrderNoUtil;
@@ -35,7 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
-import static com.utils.WalletUtil.getBitCoinClient;
+import static com.service.WalletUtil.getBitCoinClient;
+
 
 @Controller
 @RequestMapping("/user")
