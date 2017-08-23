@@ -17,10 +17,10 @@ import java.util.List;
 @Service
 public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment> implements UserDepartmentService {
     @Autowired
-    private UserDepartmentMapper baseUserDepartmentMapper;
+    private UserDepartmentMapper userDepartmentMapper;
     @Override
     protected CommonDao<UserDepartment> getDao() {
-        return baseUserDepartmentMapper;
+        return userDepartmentMapper;
     }
 
     @Override
@@ -38,23 +38,23 @@ public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment>
 
     @Override
     public Double getSumAmt(String parentUserId) {
-        return baseUserDepartmentMapper.getSumAmt(parentUserId);
+        return userDepartmentMapper.getSumAmt(parentUserId);
     }
 
     @Override
     public Boolean createUserDepartment(UserDepartment userDepartment) {
         userDepartment.setPerformance(0d);
-        baseUserDepartmentMapper.create(userDepartment);
+        userDepartmentMapper.create(userDepartment);
         return  true;
     }
 
     @Override
     public Integer updatePerformance(String userId, Double performance) {
-        return baseUserDepartmentMapper.updatePerformanceByUserId(userId,performance);
+        return userDepartmentMapper.updatePerformanceByUserId(userId,performance);
     }
 
     @Override
     public List<UserDepartment> getDirectTeamList(String parentUserId) {
-        return baseUserDepartmentMapper.getDirectTeamList(parentUserId);
+        return userDepartmentMapper.getDirectTeamList(parentUserId);
     }
 }

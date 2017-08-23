@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailServiceImpl extends CommonServiceImpl<UserDetail> implements UserDetailService {
     @Autowired
-    private UserDetailMapper baseUserDetailMapper;
+    private UserDetailMapper userDetailMapper;
     @Override
     protected CommonDao<UserDetail> getDao() {
-        return baseUserDetailMapper;
+        return userDetailMapper;
     }
 
     @Override
@@ -27,16 +27,16 @@ public class UserDetailServiceImpl extends CommonServiceImpl<UserDetail> impleme
 
     @Override
     public Integer updateForzenEquityAmtByUserId(String userId, Double amt) {
-        return baseUserDetailMapper.updateForzenEquityAmtByUserId(userId,amt);
+        return userDetailMapper.updateForzenEquityAmtByUserId(userId,amt);
     }
 
     @Override
     public Integer updateForzenPayAmtByUserId(String userId, Double amt) {
-        return baseUserDetailMapper.updateForzenPayAmtByUserId(userId,amt);
+        return userDetailMapper.updateForzenPayAmtByUserId(userId,amt);
     }
 
     @Override
     public Integer updateForzenTradeAmtByUserId(String userId, Double amt) {
-        return baseUserDetailMapper.updateForzenTradeAmtByUserId(userId,amt);
+        return userDetailMapper.updateForzenTradeAmtByUserId(userId,amt);
     }
 }

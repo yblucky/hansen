@@ -17,11 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserGradeRecordServiceImpl extends CommonServiceImpl<UserGradeRecord> implements UserGradeRecordService {
     @Autowired
-    private UserGradeRecordMapper baseUserGradeRecordMapper;
+    private UserGradeRecordMapper userGradeRecordMapper;
 
     @Override
     protected CommonDao<UserGradeRecord> getDao() {
-        return baseUserGradeRecordMapper;
+        return userGradeRecordMapper;
     }
 
     @Override
