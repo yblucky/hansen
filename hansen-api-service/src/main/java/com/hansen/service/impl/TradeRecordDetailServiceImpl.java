@@ -3,7 +3,7 @@ package com.hansen.service.impl;
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.RecordType;
-import com.hansen.mapper.TradeRecordDetailMapper;
+import com.hansen.mappers.TradeRecordDetailMapper;
 import com.hansen.service.TradeRecordDetailService;
 import com.model.TradeRecordDetail;
 import org.springframework.beans.factory.annotation.Autowired;

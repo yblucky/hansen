@@ -2,7 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.SysLogsMapper;
+import com.hansen.mappers.SysLogsMapper;
 import com.hansen.service.SysLogsService;
 import com.hansen.vo.SysLogsVo;
 import com.utils.classutils.MyBeanUtils;

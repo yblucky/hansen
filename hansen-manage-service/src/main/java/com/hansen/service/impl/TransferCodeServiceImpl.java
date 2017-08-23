@@ -2,7 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.TransferCodeMapper;
+import com.hansen.mappers.TransferCodeMapper;
 import com.hansen.service.TransferCodeService;
 import com.model.TransferCode;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.UserDetailMapper;
+import com.hansen.mappers.UserDetailMapper;
 import com.hansen.service.UserDetailService;
 import com.model.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;

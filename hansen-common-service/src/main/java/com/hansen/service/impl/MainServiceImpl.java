@@ -1,6 +1,6 @@
 package com.hansen.service.impl;
 
-import com.hansen.mapper.SysResourceMapper;
+import com.hansen.mappers.SysResourceMapper;
 import com.hansen.service.MainService;
 import com.hansen.vo.SysResourceVo;
 import org.springframework.stereotype.Service;

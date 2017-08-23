@@ -4,7 +4,7 @@ import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.WalletOrderType;
 import com.utils.WalletUtil;
-import com.hansen.mapper.WalletTransactionMapper;
+import com.hansen.mappers.WalletTransactionMapper;
 import com.hansen.service.UserService;
 import com.hansen.service.WalletTransactionService;
 import com.model.Parameter;

@@ -2,7 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.ImageMapper;
+import com.hansen.mappers.ImageMapper;
 import com.hansen.service.ImageService;
 import com.model.Image;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,7 +4,7 @@ import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.RecordType;
 import com.utils.ParamUtil;
-import com.hansen.mapper.TradeRecordMapper;
+import com.hansen.mappers.TradeRecordMapper;
 import com.hansen.service.TradeRecordDetailService;
 import com.hansen.service.TradeRecordService;
 import com.model.Parameter;

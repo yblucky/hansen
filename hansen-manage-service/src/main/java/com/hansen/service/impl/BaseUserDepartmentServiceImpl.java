@@ -2,7 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.UserDepartmentMapper;
+import com.hansen.mappers.UserDepartmentMapper;
 import com.hansen.service.UserDepartmentService;
 import com.model.UserDepartment;
 import org.apache.commons.lang.StringUtils;

@@ -5,7 +5,7 @@ import com.base.page.JsonResult;
 import com.base.page.ResultCode;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.*;
-import com.hansen.mapper.UserMapper;
+import com.hansen.mappers.UserMapper;
 import com.hansen.service.*;
 import com.model.*;
 import com.utils.DateUtils.DateUtils;

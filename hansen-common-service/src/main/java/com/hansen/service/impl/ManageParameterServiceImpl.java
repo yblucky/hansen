@@ -4,7 +4,7 @@ package com.hansen.service.impl;
 import com.base.dao.CommonDao;
 import com.base.page.Paging;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.SysParameterMapper;
+import com.hansen.mappers.SysParameterMapper;
 import com.hansen.service.ManageParameterService;
 import com.hansen.vo.SysParameterVo;
 import com.utils.classutils.MyBeanUtils;

@@ -3,7 +3,7 @@ package com.hansen.service.impl;
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.GradeRecordType;
-import com.hansen.mapper.UserGradeRecordMapper;
+import com.hansen.mappers.UserGradeRecordMapper;
 import com.hansen.service.UserGradeRecordService;
 import com.model.User;
 import com.model.UserGradeRecord;

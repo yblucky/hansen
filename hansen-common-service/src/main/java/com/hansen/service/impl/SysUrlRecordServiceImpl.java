@@ -12,7 +12,7 @@ import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.ResultCode;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.SysUrlRecordMapper;
+import com.hansen.mappers.SysUrlRecordMapper;
 import com.hansen.service.SysUrlRecordService;
 import com.hansen.vo.SysUrlRecordVo;
 import com.utils.classutils.MyBeanUtils;

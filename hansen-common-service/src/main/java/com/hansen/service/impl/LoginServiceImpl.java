@@ -4,7 +4,7 @@ package com.hansen.service.impl;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
 import com.base.page.StateEnum;
-import com.hansen.mapper.SysUserMapper;
+import com.hansen.mappers.SysUserMapper;
 import com.hansen.service.LoginService;
 import com.hansen.service.RedisService;
 import com.hansen.vo.LoginVo;

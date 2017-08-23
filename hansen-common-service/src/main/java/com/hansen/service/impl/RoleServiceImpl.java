@@ -3,7 +3,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.SysRoleMapper;
+import com.hansen.mappers.SysRoleMapper;
 import com.hansen.service.RoleService;
 import com.hansen.service.SysResourceService;
 import com.hansen.service.SysRolePermissionService;
