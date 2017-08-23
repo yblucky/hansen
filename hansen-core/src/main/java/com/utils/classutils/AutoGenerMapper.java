@@ -13,43 +13,12 @@ import java.lang.reflect.Modifier;
 public class AutoGenerMapper {
 
     public static void main(String[] args) {
-        System.out.println("=========================SysUrlRecord====================================================");
         System.out.println("\n\n\n\n\n\n");
-        genMapperXml(SysUser.class);
-
-        System.out.println("=========================SysUrlRecord====================================================");
-        System.out.println("\n\n\n\n\n\n");
-        genMapperXml(SysUrlRecord.class);
-
-        System.out.println("\n\n\n\n\n\n");
-        System.out.println("==============================SysLogs===============================================");
+        System.out.println("===============================FeedBack==============================================");
         System.out.println("=============================================================================");
         System.out.println("\n\n\n\n\n\n");
-        genMapperXml(SysLogs.class);
+        genMapperXml(FeedBack.class);
 
-        System.out.println("\n\n\n\n\n\n");
-        System.out.println("============================SysResource=================================================");
-        System.out.println("=============================================================================");
-        System.out.println("\n\n\n\n\n\n");
-        genMapperXml(SysResource.class);
-
-        System.out.println("\n\n\n\n\n\n");
-        System.out.println("===================================SysParameter==========================================");
-        System.out.println("=============================================================================");
-        System.out.println("\n\n\n\n\n\n");
-        genMapperXml(SysParameter.class);
-
-        System.out.println("\n\n\n\n\n\n");
-        System.out.println("===============================SysRolePermission==============================================");
-        System.out.println("=============================================================================");
-        System.out.println("\n\n\n\n\n\n");
-        genMapperXml(SysRolePermission.class);
-
-        System.out.println("\n\n\n\n\n\n");
-        System.out.println("============================SysRole=================================================");
-        System.out.println("=============================================================================");
-        System.out.println("\n\n\n\n\n\n");
-        genMapperXml(SysRole.class);
 
         System.out.println("\n\n\n\n\n\n");
         System.out.println("=============================================================================");
