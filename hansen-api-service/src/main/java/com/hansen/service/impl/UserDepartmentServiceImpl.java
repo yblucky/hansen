@@ -15,7 +15,7 @@ import java.util.List;
  * @date 2016年11月27日
  */
 @Service
-public class BaseUserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment> implements UserDepartmentService {
+public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment> implements UserDepartmentService {
     @Autowired
     private UserDepartmentMapper baseUserDepartmentMapper;
     @Override

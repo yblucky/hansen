@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2016年11月27日
  */
 @Service
-public class BaseUserGradeRecordServiceImpl extends CommonServiceImpl<UserGradeRecord> implements UserGradeRecordService {
+public class UserGradeRecordServiceImpl extends CommonServiceImpl<UserGradeRecord> implements UserGradeRecordService {
     @Autowired
     private UserGradeRecordMapper baseUserGradeRecordMapper;
 
