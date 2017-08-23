@@ -1,9 +1,9 @@
 package com.hansen.task;
 
-import com.common.constant.OrderStatus;
-import com.common.constant.OrderType;
-import com.common.constant.RedisKey;
-import com.common.utils.toolutils.ToolUtil;
+import com.constant.OrderStatus;
+import com.constant.OrderType;
+import com.constant.RedisKey;
+import com.utils.toolutils.ToolUtil;
 import com.hansen.service.TradeOrderService;
 import com.model.TradeOrder;
 import com.redis.Strings;

@@ -1,7 +1,7 @@
 package com.hansen.task;
 
+import com.hansen.service.ParameterService;
 import com.model.Parameter;
-import hansen.service.ParameterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

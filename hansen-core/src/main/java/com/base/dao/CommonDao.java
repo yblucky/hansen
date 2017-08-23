@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 通用mapper
  */
-@Repository
 public interface CommonDao<D extends  BaseModel>{
     // C
     void create(D model);
