@@ -3,7 +3,6 @@ package com.hansen.mappers;
 
 import com.base.dao.CommonDao;
 import com.model.SysUrlRecord;
-import com.model.SysUrlRecordPo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
@@ -38,14 +37,14 @@ public interface SysUrlRecordMapper extends CommonDao<SysUrlRecord> {
      *
      * @param recordPo
      */
-    public void updateRecord(@Param("po") SysUrlRecordPo recordPo);
+    public void updateRecord(@Param("po") SysUrlRecord recordPo);
 
     /**
      * 删除单条URL记录
      *
      * @param recordPo
      */
-    public void deleteRecord(@Param("po") SysUrlRecordPo recordPo);
+    public void deleteRecord(@Param("po") SysUrlRecord recordPo);
 
     /**
      * 删除多条URl记录

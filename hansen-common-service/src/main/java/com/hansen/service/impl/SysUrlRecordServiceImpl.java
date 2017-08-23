@@ -15,10 +15,9 @@ import com.base.service.impl.CommonServiceImpl;
 import com.hansen.mappers.SysUrlRecordMapper;
 import com.hansen.service.SysUrlRecordService;
 import com.hansen.vo.SysUrlRecordVo;
+import com.model.SysUrlRecord;
 import com.utils.classutils.MyBeanUtils;
 import com.utils.toolutils.ToolUtil;
-import com.model.SysUrlRecord;
-import com.model.SysUrlRecordPo;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +83,7 @@ public class SysUrlRecordServiceImpl extends CommonServiceImpl<SysUrlRecord> imp
     @Override
     public void updateRecord(SysUrlRecordVo recordVo, RespBody respBody) throws Exception {
         //将Vo转换成Po
-        SysUrlRecordPo recordPo = MyBeanUtils.copyProperties(recordVo, SysUrlRecordPo.class);
+        SysUrlRecord recordPo = MyBeanUtils.copyProperties(recordVo, SysUrlRecord.class);
         //执行修改URL记录操作
         sysUrlRecordMapper.updateRecord(recordPo);
         respBody.add(ResultCode.SUCCESS.getCode().toString(), "修改URL记录成功");
@@ -96,7 +95,7 @@ public class SysUrlRecordServiceImpl extends CommonServiceImpl<SysUrlRecord> imp
     @Override
     public void deleteRecord(SysUrlRecordVo recordVo, RespBody respBody) throws Exception {
         //将Vo转换成Po
-        SysUrlRecordPo recordPo = MyBeanUtils.copyProperties(recordVo, SysUrlRecordPo.class);
+        SysUrlRecord recordPo = MyBeanUtils.copyProperties(recordVo, SysUrlRecord.class);
         //执行删除URL记录操作
         sysUrlRecordMapper.deleteRecord(recordPo);
         respBody.add(ResultCode.SUCCESS.getCode().toString(), "修改URL记录成功");
