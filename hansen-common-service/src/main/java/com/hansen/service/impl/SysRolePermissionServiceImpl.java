@@ -3,7 +3,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.SysRolePermissionMapper;
+import com.hansen.mappers.SysRolePermissionMapper;
 import com.hansen.service.SysRolePermissionService;
 import com.model.SysRolePermission;
 import org.springframework.beans.factory.annotation.Autowired;

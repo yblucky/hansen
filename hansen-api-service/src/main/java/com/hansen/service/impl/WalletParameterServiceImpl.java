@@ -2,7 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.WalletParameterMapper;
+import com.hansen.mappers.WalletParameterMapper;
 import com.hansen.service.WalletParameterService;
 import com.model.WalletParameter;
 import org.springframework.beans.factory.annotation.Autowired;

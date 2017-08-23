@@ -2,19 +2,15 @@ package com.model;
 
 import com.BaseModel;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 
 /**
  * 管理员用户
  */
-@Table(name = "sys_user")
 public class SysUser extends BaseModel {
     /**
      * 主键编号
      */
-    @Id
     private String id;
     /**
      * 用户名

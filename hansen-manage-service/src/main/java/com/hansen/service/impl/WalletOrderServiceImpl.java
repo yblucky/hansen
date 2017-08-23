@@ -7,7 +7,7 @@ import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
 import com.utils.ParamUtil;
 import com.utils.toolutils.OrderNoUtil;
-import com.hansen.mapper.WalletOrderMapper;
+import com.hansen.mappers.WalletOrderMapper;
 import com.hansen.service.UserService;
 import com.hansen.service.WalletOrderService;
 import com.hansen.service.WalletTransactionService;

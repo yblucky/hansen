@@ -31,7 +31,7 @@ import static com.utils.WalletUtil.getBitCoinClient;
 @Service
 public class BaseUserServiceImpl extends CommonServiceImpl<User> implements UserService {
     @Autowired
-    private UserMapper userMapper;
+    private UserMapper baseUserDao;
     @Autowired
     private CardGradeService cardGradeService;
     @Autowired
@@ -51,7 +51,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
 
     @Override
     protected CommonDao<User> getDao() {
-        return userMapper;
+        return baseUserDao;
     }
 
     @Override
@@ -493,7 +493,7 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
 
     @Override
     public void updateUserActiveCode(String userId, Integer activeNo) {
-        userMapper.updateUserActiveCode(userId, activeNo);
+        baseUserDao.updateUserActiveCode(userId, activeNo);
     }
 
     @Override
@@ -582,52 +582,52 @@ public class BaseUserServiceImpl extends CommonServiceImpl<User> implements User
 
     @Override
     public Integer updateEquityAmtByUserId(String userId, Double amt) {
-        return userMapper.updateEquityAmtByUserId(userId, amt);
+        return baseUserDao.updateEquityAmtByUserId(userId, amt);
     }
 
     @Override
     public Integer updatePayAmtByUserId(String userId, Double amt) {
-        return userMapper.updatePayAmtByUserId(userId, amt);
+        return baseUserDao.updatePayAmtByUserId(userId, amt);
     }
 
     @Override
     public Integer updateTradeAmtByUserId(String userId, Double amt) {
-        return userMapper.updateTradeAmtByUserId(userId, amt);
+        return baseUserDao.updateTradeAmtByUserId(userId, amt);
     }
 
     @Override
     public Integer updateMaxProfitsByUserId(String userId, Double maxProfits) {
-        return userMapper.updateMaxProfitsByUserId(userId, maxProfits);
+        return baseUserDao.updateMaxProfitsByUserId(userId, maxProfits);
     }
 
     @Override
     public Integer updateSumProfitsByUserId(String userId, Double sumProfits) {
-        return userMapper.updateSumProfitsByUserId(userId, sumProfits);
+        return baseUserDao.updateSumProfitsByUserId(userId, sumProfits);
     }
 
 
     @Override
     public Integer updateCardGradeByUserId(String userId, Integer cardGrade) {
-        return userMapper.updateCardGradeByUserId(userId, cardGrade);
+        return baseUserDao.updateCardGradeByUserId(userId, cardGrade);
     }
 
     @Override
     public Integer updateRemainTaskNoByUserId(String userId, Integer remainTaskNo) {
-        return userMapper.updateUserRemainTaskNo(userId, remainTaskNo);
+        return baseUserDao.updateUserRemainTaskNo(userId, remainTaskNo);
     }
 
     @Override
     public Integer updateUserStatusByUserId(String userId, Integer status) {
-        return userMapper.updateUserStatusByUserId(userId, status);
+        return baseUserDao.updateUserStatusByUserId(userId, status);
     }
 
     @Override
     public Integer updateUserGradeByUserId(String userId, Integer grade) {
-        return userMapper.updateUserGradeByUserId(userId, grade);
+        return baseUserDao.updateUserGradeByUserId(userId, grade);
     }
 
     @Override
     public Integer updateUserCardGradeByUserId(String userId, Integer cardGrade) {
-        return userMapper.updateUserCardGradeByUserId(userId, cardGrade);
+        return baseUserDao.updateUserCardGradeByUserId(userId, cardGrade);
     }
 }

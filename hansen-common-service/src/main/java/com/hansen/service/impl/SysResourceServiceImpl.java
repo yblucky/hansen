@@ -3,7 +3,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.SysResourceMapper;
+import com.hansen.mappers.SysResourceMapper;
 import com.hansen.service.SysResourceService;
 import com.hansen.vo.SysResourceVo;
 import com.model.SysResource;

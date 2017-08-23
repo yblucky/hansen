@@ -2,138 +2,133 @@ package com.model;
 
 import com.BaseModel;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 /**
  * 资源持久类
  */
-@Table(name="sys_resource")
 public class SysResource extends BaseModel {
-	
-	/**
-	 * 主键编号	
-	 * */
-	@Id
-	private String id;
-	
-	/**
-	 * 资源名称	
-	 */
-	private String resName;
-	
-	/**
-	 * 资源路径	
-	 */
-	private String resPath;
-	
-	/**
-	 * 上级资源	
-	 */
-	private String parentId;
-	
-	/**
-	 * 资源图标	
-	 */
-	private String resIcon;
-	
-	/**
-	 * 资源描述	
-	 */
-	private String resDesc;
-	
-	/**
-	 * 是否展开
-	 */
-	private String resOpen;
-	
-	/**
-	 * 资源顺序	
-	 */
-	private Integer resSort;
-	
-	/**
-	 * 状态	
-	 */
-	private String state;
 
-	
-	/**
-	 * @return the resOpen
-	 */
-	public String getResOpen() {
-		return resOpen;
-	}
+    /**
+     * 主键编号
+     */
+    private String id;
 
-	/**
-	 * @param resOpen the resOpen to set
-	 */
-	public void setResOpen(String resOpen) {
-		this.resOpen = resOpen;
-	}
+    /**
+     * 资源名称
+     */
+    private String resName;
 
-	public String getId() {
-		return id;
-	}
+    /**
+     * 资源路径
+     */
+    private String resPath;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    /**
+     * 上级资源
+     */
+    private String parentId;
 
-	public String getResName() {
-		return resName;
-	}
+    /**
+     * 资源图标
+     */
+    private String resIcon;
 
-	public void setResName(String resName) {
-		this.resName = resName;
-	}
+    /**
+     * 资源描述
+     */
+    private String resDesc;
 
-	public String getResPath() {
-		return resPath;
-	}
+    /**
+     * 是否展开
+     */
+    private String resOpen;
 
-	public void setResPath(String resPath) {
-		this.resPath = resPath;
-	}
+    /**
+     * 资源顺序
+     */
+    private Integer resSort;
 
-	public String getParentId() {
-		return parentId;
-	}
+    /**
+     * 状态
+     */
+    private String state;
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
 
-	public String getResIcon() {
-		return resIcon;
-	}
+    /**
+     * @return the resOpen
+     */
+    public String getResOpen() {
+        return resOpen;
+    }
 
-	public void setResIcon(String resIcon) {
-		this.resIcon = resIcon;
-	}
+    /**
+     * @param resOpen the resOpen to set
+     */
+    public void setResOpen(String resOpen) {
+        this.resOpen = resOpen;
+    }
 
-	public String getResDesc() {
-		return resDesc;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setResDesc(String resDesc) {
-		this.resDesc = resDesc;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public Integer getResSort() {
-		return resSort;
-	}
+    public String getResName() {
+        return resName;
+    }
 
-	public void setResSort(Integer resSort) {
-		this.resSort = resSort;
-	}
+    public void setResName(String resName) {
+        this.resName = resName;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public String getResPath() {
+        return resPath;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setResPath(String resPath) {
+        this.resPath = resPath;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getResIcon() {
+        return resIcon;
+    }
+
+    public void setResIcon(String resIcon) {
+        this.resIcon = resIcon;
+    }
+
+    public String getResDesc() {
+        return resDesc;
+    }
+
+    public void setResDesc(String resDesc) {
+        this.resDesc = resDesc;
+    }
+
+    public Integer getResSort() {
+        return resSort;
+    }
+
+    public void setResSort(Integer resSort) {
+        this.resSort = resSort;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
 }

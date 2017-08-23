@@ -5,7 +5,7 @@ import com.base.service.impl.CommonServiceImpl;
 import com.constant.GradeType;
 import com.constant.UserStatusType;
 import com.utils.numberutils.CurrencyUtil;
-import com.hansen.mapper.GradeMapper;
+import com.hansen.mappers.GradeMapper;
 import com.hansen.service.GradeService;
 import com.hansen.service.UserDepartmentService;
 import com.hansen.service.UserService;

@@ -2,7 +2,7 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.hansen.mapper.TradePerformanceRecordMapper;
+import com.hansen.mappers.TradePerformanceRecordMapper;
 import com.hansen.service.TradePerformanceRecordService;
 import com.model.TradePerformanceRecord;
 import org.springframework.beans.factory.annotation.Autowired;

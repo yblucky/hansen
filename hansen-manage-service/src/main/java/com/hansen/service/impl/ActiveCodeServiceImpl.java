@@ -5,7 +5,7 @@ import com.base.service.impl.CommonServiceImpl;
 import com.constant.CodeType;
 import com.constant.Constant;
 import com.utils.toolutils.ToolUtil;
-import com.hansen.mapper.ActiveCodeMapper;
+import com.hansen.mappers.ActiveCodeMapper;
 import com.hansen.service.ActiveCodeService;
 import com.hansen.service.TransferCodeService;
 import com.hansen.service.UserService;
