@@ -1,8 +1,8 @@
 package com.hansen.controller;
 
 import com.base.page.JsonResult;
-import com.common.base.TokenUtil;
-import com.common.constant.RedisKey;
+import com.base.TokenUtil;
+import com.constant.RedisKey;
 import com.hansen.service.UserService;
 import com.model.User;
 import com.redis.Strings;

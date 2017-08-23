@@ -1,7 +1,7 @@
 package com.model;
 
 
-import com.common.BaseModel;
+import com.BaseModel;
 
 /**
  * 后台管理员

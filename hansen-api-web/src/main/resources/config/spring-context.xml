@@ -105,7 +105,7 @@
     </bean>
     
     <mvc:interceptors>
-		<bean class="com.interceptor.ApiActionInterceptor"></bean>
+		<bean class="com.hansen.interceptor.ApiActionInterceptor"></bean>
 	</mvc:interceptors>	
 
 	<import resource="classpath*:config/spring-redis.xml" />

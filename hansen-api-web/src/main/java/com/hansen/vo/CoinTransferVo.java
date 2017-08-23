@@ -1,7 +1,5 @@
 package com.hansen.vo;
 
-import com.common.utils.toolutils.ToolUtil;
-
 /**
  * Created by zzwei on 2017/8/3.
  */

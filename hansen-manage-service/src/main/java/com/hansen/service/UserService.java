@@ -2,7 +2,7 @@ package com.hansen.service;
 
 import com.base.page.JsonResult;
 import com.base.service.CommonService;
-import com.common.constant.RecordType;
+import com.constant.RecordType;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;

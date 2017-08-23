@@ -2,8 +2,8 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.common.constant.WalletOrderType;
-import com.common.utils.WalletUtil;
+import com.constant.WalletOrderType;
+import com.utils.WalletUtil;
 import com.hansen.mapper.WalletTransactionMapper;
 import com.hansen.service.UserService;
 import com.hansen.service.WalletTransactionService;

@@ -1,6 +1,6 @@
 package com.base.service;
 
-import com.common.BaseModel;
+import com.BaseModel;
 
 import java.util.List;
 

@@ -13,7 +13,6 @@
 		<module>hansen-api-web</module>
 	 	<module>hansen-manage-service</module>
 		<module>hansen-manage-web</module>
-		<module>hansen-shiro-web</module>
         <!--	<module>hansen-test-web</module>
         <module>hansen-h5</module>-->
 

@@ -1,20 +1,17 @@
 package com.hansen.controller;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.ResultCode;
-import com.common.constant.SignType;
-import com.common.constant.UserStatusType;
-import com.common.utils.WalletUtil;
-import com.common.utils.toolutils.ToolUtil;
+import com.base.page.ResultCode;
+import com.constant.SignType;
+import com.constant.UserStatusType;
 import com.hansen.service.UserService;
 import com.hansen.service.UserSignService;
 import com.model.User;
 import com.model.UserSign;
-import com.model.WalletTransaction;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

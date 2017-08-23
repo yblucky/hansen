@@ -1,12 +1,12 @@
 package com.hansen.interceptor;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.RedisKey;
-import com.common.constant.ResultCode;
-import com.common.utils.FileUtils.FileUtil;
+import com.base.page.ResultCode;
+import com.constant.RedisKey;
 import com.redis.Strings;
+import com.utils.FileUtils.FileUtil;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;

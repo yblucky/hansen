@@ -1,17 +1,17 @@
 package com.hansen.controller;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.ResultCode;
-import com.common.constant.UserStatusType;
-import com.common.utils.toolutils.ToolUtil;
+import com.base.page.ResultCode;
+import com.constant.UserStatusType;
 import com.hansen.service.*;
 import com.hansen.vo.TaskVo;
 import com.model.User;
 import com.model.UserTask;
+import com.utils.toolutils.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -109,10 +108,10 @@ public class TaskController {
             return new JsonResult(ResultCode.ERROR.getCode(), "任务id不能为空");
         }
         UserTask userTask = userTaskService.readById(taskvo.getTaskId());
-        if (userTask==null){
+        if (userTask == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "任务不存在");
         }
-        userTaskService.doTask(user.getId(),taskvo.getTaskId());
+        userTaskService.doTask(user.getId(), taskvo.getTaskId());
         return new JsonResult();
     }
 }

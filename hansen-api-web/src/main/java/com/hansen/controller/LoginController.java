@@ -1,15 +1,21 @@
 package com.hansen.controller;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.*;
-import com.common.utils.codeutils.Md5Util;
-import com.common.utils.toolutils.ToolUtil;
+import com.base.page.ResultCode;
+import com.constant.RedisKey;
+import com.constant.UserStatusType;
 import com.hansen.service.*;
-import com.hansen.vo.*;
-import com.model.*;
+import com.hansen.vo.LoginPasswordVo;
+import com.hansen.vo.LoginUserVo;
+import com.hansen.vo.PayPasswordVo;
+import com.hansen.vo.UserVo;
+import com.model.CardGrade;
+import com.model.User;
 import com.redis.Strings;
+import com.utils.codeutils.Md5Util;
+import com.utils.toolutils.ToolUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,8 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-
-import static com.common.utils.WalletUtil.getBitCoinClient;
 
 @Controller
 @RequestMapping("/login")
@@ -41,6 +45,7 @@ public class LoginController {
     private TradeOrderService tradeOrderService;
     @Autowired
     private UserGradeRecordService userGradeRecordService;
+
 
     @ResponseBody
     @RequestMapping(value = "/token", method = RequestMethod.GET)
@@ -61,9 +66,8 @@ public class LoginController {
 
     /**
      * 账号密码登录
-     *
+     * <p>
      * 包含激活账号流程
-     *
      */
     @ResponseBody
     @RequestMapping(value = "/login/loginIn", method = RequestMethod.POST)
@@ -80,8 +84,8 @@ public class LoginController {
         if (null == loginUser) {
             return new JsonResult(-1, "用户不存在");
         } else {
-            if (loginUser.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && loginUser.getStatus()!=UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
-                    return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
+            if (loginUser.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && loginUser.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
             }
             String password = loginUser.getPassword();
             if (org.springframework.util.StringUtils.isEmpty(password)) {
@@ -91,7 +95,7 @@ public class LoginController {
                 return new JsonResult(ResultCode.ERROR.getCode(), "用户名或密码错误");
             }
         }
-        if (loginUser.getStatus()==UserStatusType.INNER_REGISTER_SUCCESSED.getCode()){
+        if (loginUser.getStatus() == UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
             CardGrade cardGradeCondition = new CardGrade();
             cardGradeCondition.setGrade(vo.getCardGrade());
             CardGrade cardGrade = cardGradeService.readOne(cardGradeCondition);
@@ -99,7 +103,7 @@ public class LoginController {
                 return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
             }
             //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
-            userService.innerActicveUser(loginUser,cardGrade);
+            userService.innerActicveUser(loginUser, cardGrade);
         }
         User updateUser = new User();
         updateUser.setLoginTime(new Date());
@@ -118,6 +122,7 @@ public class LoginController {
 
     /**
      * 根据token获取用户信息
+     *
      * @param request
      * @return
      * @throws Exception
@@ -133,7 +138,7 @@ public class LoginController {
         if (null == user) {
             return new JsonResult(2, "无法找到用户信息");
         }
-        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus()!=UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
+        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
         }
         // Redis获取Token
@@ -146,25 +151,26 @@ public class LoginController {
         vo.setToken(redisToken);
         return new JsonResult(vo);
     }
+
     /**
      * 忘记登录密码
      */
     @ResponseBody
     @RequestMapping(value = "/forget/loginpass", method = RequestMethod.POST)
     public JsonResult forgetLoginPassword(HttpServletRequest request, @RequestBody LoginPasswordVo vo) throws Exception {
-       if (vo.getValidType()==null){
-           return new JsonResult(ResultCode.ERROR.getCode(),"校验类型不合法");
-       }
-       if (vo.getValidType()==2 && ToolUtil.isEmpty(vo.getNewLoginPass())){
-           //兼容分两次校验，第一次只校验手机号和验证码，通过后才输入新密码和确认新密码 此时 validType=2
-           if (StringUtils.isBlank(vo.getPhone())) {
-               return new JsonResult(ResultCode.ERROR.getCode(), "请输入手机号");
-           }
-           if (StringUtils.isBlank(vo.getSmsCode())) {
-               return new JsonResult(ResultCode.ERROR.getCode(), "请输入短信验证码");
-           }
-           return  new JsonResult(ResultCode.SUCCESS.getCode(),"验证码校验通过");
-       }
+        if (vo.getValidType() == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "校验类型不合法");
+        }
+        if (vo.getValidType() == 2 && ToolUtil.isEmpty(vo.getNewLoginPass())) {
+            //兼容分两次校验，第一次只校验手机号和验证码，通过后才输入新密码和确认新密码 此时 validType=2
+            if (StringUtils.isBlank(vo.getPhone())) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "请输入手机号");
+            }
+            if (StringUtils.isBlank(vo.getSmsCode())) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "请输入短信验证码");
+            }
+            return new JsonResult(ResultCode.SUCCESS.getCode(), "验证码校验通过");
+        }
         if (StringUtils.isBlank(vo.getPhone())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请输入手机号");
         }
@@ -203,10 +209,10 @@ public class LoginController {
     @ResponseBody
     @RequestMapping(value = "/forget/paypass", method = RequestMethod.POST)
     public JsonResult forgetPayPassword(HttpServletRequest request, @RequestBody PayPasswordVo vo) throws Exception {
-        if (vo.getValidType()==null){
-            return new JsonResult(ResultCode.ERROR.getCode(),"校验类型不合法");
+        if (vo.getValidType() == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "校验类型不合法");
         }
-        if (vo.getValidType()==2 && ToolUtil.isEmpty(vo.getNewPayPass())){
+        if (vo.getValidType() == 2 && ToolUtil.isEmpty(vo.getNewPayPass())) {
             //兼容分两次校验，第一次只校验手机号和验证码，通过后才输入新支付密码和确认支付新密码 此时 validType=2
             if (StringUtils.isBlank(vo.getPhone())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "请输入手机号");
@@ -214,7 +220,7 @@ public class LoginController {
             if (StringUtils.isBlank(vo.getSmsCode())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "请输入短信验证码");
             }
-            return  new JsonResult(ResultCode.SUCCESS.getCode(),"验证码校验通过");
+            return new JsonResult(ResultCode.SUCCESS.getCode(), "验证码校验通过");
         }
         if (StringUtils.isBlank(vo.getPhone())) {
             return new JsonResult(0, "请输入手机号");
@@ -249,5 +255,4 @@ public class LoginController {
     }
 
 
-    
 }

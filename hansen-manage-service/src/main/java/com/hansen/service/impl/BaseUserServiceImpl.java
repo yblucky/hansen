@@ -2,15 +2,16 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.page.JsonResult;
+import com.base.page.ResultCode;
 import com.base.service.impl.CommonServiceImpl;
-import com.common.constant.*;
-import com.common.utils.DateUtils.DateUtils;
-import com.common.utils.ParamUtil;
-import com.common.utils.WalletUtil;
-import com.common.utils.codeutils.Md5Util;
-import com.common.utils.numberutils.CurrencyUtil;
-import com.common.utils.toolutils.OrderNoUtil;
-import com.common.utils.toolutils.ToolUtil;
+import com.constant.*;
+import com.utils.DateUtils.DateUtils;
+import com.utils.ParamUtil;
+import com.utils.WalletUtil;
+import com.utils.codeutils.Md5Util;
+import com.utils.numberutils.CurrencyUtil;
+import com.utils.toolutils.OrderNoUtil;
+import com.utils.toolutils.ToolUtil;
 import com.hansen.mapper.UserMapper;
 import com.hansen.service.*;
 import com.model.*;
@@ -22,7 +23,7 @@ import ru.paradoxs.bitcoin.client.BitcoinClient;
 import java.util.Date;
 import java.util.Map;
 
-import static com.common.utils.WalletUtil.getBitCoinClient;
+import static com.utils.WalletUtil.getBitCoinClient;
 
 /**
  * @date 2016年11月27日

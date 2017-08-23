@@ -1,6 +1,6 @@
 package com.model;
 
-import com.common.BaseModel;
+import com.BaseModel;
 
 /**
  * 注册码和邀请码表

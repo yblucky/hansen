@@ -2,9 +2,9 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.common.constant.CodeType;
-import com.common.constant.Constant;
-import com.common.utils.toolutils.ToolUtil;
+import com.constant.CodeType;
+import com.constant.Constant;
+import com.utils.toolutils.ToolUtil;
 import com.hansen.mapper.ActiveCodeMapper;
 import com.hansen.service.ActiveCodeService;
 import com.hansen.service.TransferCodeService;

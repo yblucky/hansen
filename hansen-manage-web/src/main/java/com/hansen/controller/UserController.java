@@ -4,10 +4,10 @@ package com.hansen.controller;
 import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.ResultCode;
-import com.common.constant.StatusType;
+import com.Token;
+import com.base.TokenUtil;
+import com.base.page.ResultCode;
+import com.constant.StatusType;
 import com.hansen.service.UserDetailService;
 import com.hansen.service.UserService;
 import com.hansen.vo.UserVo;
@@ -28,7 +28,7 @@ import java.util.List;
  * Created on 2017-08-21;
  */
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/muser")
 public class UserController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -49,7 +49,7 @@ public class UserController extends BaseController {
         Integer count = userService.readCount(condition);
         List<User> users = userService.readList(condition, page.getPageNo(), page.getPageSize(), count);
         PageResult pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, users);
-        return success(pageResult);
+        return success(ResultCode.MANGE_SUCCESS,pageResult);
     }
 
     @ResponseBody
@@ -69,7 +69,7 @@ public class UserController extends BaseController {
         model.setNickName(model.getNickName());
         model.setPhone(model.getPhone());
         userService.updateById(user.getId(), user);
-        return success(ResultCode.SUCCESS);
+        return success(ResultCode.MANGE_SUCCESS);
     }
 
     @ResponseBody
@@ -81,7 +81,7 @@ public class UserController extends BaseController {
             return fail("用户不存在");
         }
         userService.deleteById(userId);
-        return success();
+        return success(ResultCode.MANGE_SUCCESS);
     }
 
     @ResponseBody
@@ -105,7 +105,7 @@ public class UserController extends BaseController {
             e.printStackTrace();
             return fail("用户不存在");
         }
-        return success(userVo);
+        return success(ResultCode.MANGE_SUCCESS,userVo);
     }
 
 

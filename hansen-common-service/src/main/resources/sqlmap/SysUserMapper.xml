@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hansen.mapper.SysUserMapper">
+
+
+    <sql id="fields">
+        userName,loginName,password,salt,mobile,roleId,roleName,userIcon,createTime,lastTime,state,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">sys_user</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.userName != null and model.userName != ''">userName=#{model.userName}</if>
+            <if test="model.loginName != null and model.loginName != ''">and loginName=#{model.loginName}</if>
+            <if test="model.password != null and model.password != ''">and password=#{model.password}</if>
+            <if test="model.salt != null and model.salt != ''">and salt=#{model.salt}</if>
+            <if test="model.mobile != null and model.mobile != ''">and mobile=#{model.mobile}</if>
+            <if test="model.roleId != null and model.roleId != ''">and roleId=#{model.roleId}</if>
+            <if test="model.roleName != null and model.roleName != ''">and roleName=#{model.roleName}</if>
+            <if test="model.userIcon != null and model.userIcon != ''">and userIcon=#{model.userIcon}</if>
+            <if test="model.lastTime != null">and lastTime=#{model.lastTime}</if>
+            <if test="model.state != null and model.state != ''">and state=#{model.state}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{id},#{userName},#{loginName},#{password},#{salt},#{mobile},#{roleId},#{roleName},#{userIcon},now(),#{lastTime},#{state},now(),now(),#{status},#{remark});
+    </insert>
+
+    <select id="readById" resultType="com.model.SysUser">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="findAll" resultType="com.hansen.vo.SysUserVo">
+        select id,userName,loginName,mobile,roleId,roleName,userIcon,createTime,lastTime,state from sys_user order by createTime desc
+    </select>
+
+    <select id="readList" resultType="com.model.SysUser">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.model.SysUser">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+ 
+    <select id="findByloginName" resultType="com.hansen.vo.SysUserVo">
+        select * from sys_user where loginName=#{ln}
+    </select>
+
+    <select id="findCount" resultType="int">
+          select count(1) from sys_user
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.loginName != null and model.loginName !=''">loginName= #{model.loginName},</if>
+            <if test="model.password != null and model.password !=''">password= #{model.password},</if>
+            <if test="model.salt != null and model.salt !=''">salt= #{model.salt},</if>
+            <if test="model.mobile != null and model.mobile !=''">mobile= #{model.mobile},</if>
+            <if test="model.roleId != null and model.roleId !=''">roleId= #{model.roleId},</if>
+            <if test="model.roleName != null and model.roleName !=''">roleName= #{model.roleName},</if>
+            <if test="model.userIcon != null and model.userIcon !=''">userIcon= #{model.userIcon},</if>
+            <if test="model.lastTime != null">lastTime= #{model.lastTime},</if>
+            <if test="model.state != null and model.state !=''">state= #{model.state},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+
+    <select id="findLoginName" resultType="int">
+        select count(1) from sys_user where loginName=#{ln}
+    </select>
+
+</mapper>
+
+
+

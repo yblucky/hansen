@@ -1,6 +1,6 @@
 package com.model;
 
-import com.common.BaseModel;
+import com.BaseModel;
 
 /**
  * 钱包提币转币订单表

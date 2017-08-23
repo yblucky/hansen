@@ -1,6 +1,6 @@
 package com.model;
 
-import com.common.BaseModel;
+import com.BaseModel;
 
 import javax.persistence.Id;
 import javax.persistence.Table;

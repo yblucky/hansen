@@ -10,7 +10,7 @@
 		id,<include refid="fields"/>
 	</sql>
 
-	<sql id="table_name">active_code</sql>
+	<sql id="table_name">base_active_code</sql>
 
 	<sql id="selector">
 		select <include refid="fields_id"/> from <include refid="table_name"/>

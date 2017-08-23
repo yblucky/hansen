@@ -1,24 +1,25 @@
 package com.hansen.controller;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.ResultCode;
-import com.common.constant.UserStatusType;
-import com.common.utils.toolutils.ToolUtil;
-import com.hansen.service.*;
-import com.hansen.vo.TaskVo;
+import com.base.page.ResultCode;
+import com.constant.UserStatusType;
+import com.hansen.service.TaskService;
+import com.hansen.service.UserService;
 import com.model.Task;
 import com.model.User;
-import com.model.UserTask;
-import org.apache.ibatis.annotations.Update;
+import com.utils.toolutils.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +28,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/task")
-public class TaskController extends  BaseController{
+public class TaskController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
     @Autowired
@@ -51,10 +52,10 @@ public class TaskController extends  BaseController{
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.readById(token.getId());
         if (user == null) {
-            return  fail("用户不存在");
+            return fail("用户不存在");
         }
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "账号未激活");
+            return new JsonResult(ResultCode.MANGE_ERROR.getCode(), "账号未激活");
         }
         if (page.getPageNo() == null) {
             page.setPageNo(1);
@@ -75,12 +76,12 @@ public class TaskController extends  BaseController{
         pageResult.setPageSize(page.getPageSize());
         pageResult.setTotalSize(count);
         pageResult.setRows(taskList);
-        return new JsonResult(pageResult);
+        return success(ResultCode.MANGE_SUCCESS,pageResult);
     }
 
 
     /**
-     *新增任务
+     * 新增任务
      *
      * @param request
      * @param response
@@ -94,23 +95,23 @@ public class TaskController extends  BaseController{
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.readById(token.getId());
         if (user == null) {
-            return  fail( "用户不存在");
+            return fail("用户不存在");
         }
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
             return fail("账号未激活");
         }
         if (ToolUtil.isEmpty(vo.getTitle())) {
-            return   fail("任务标题不能为空");
+            return fail("任务标题不能为空");
         }
         if (ToolUtil.isEmpty(vo.getLink())) {
             return fail("任务链接不能为空");
         }
         taskService.create(vo);
-        return new JsonResult("新增成功");
+        return success(ResultCode.MANGE_SUCCESS,"新增成功");
     }
 
     /**
-     *修改任务
+     * 修改任务
      *
      * @param request
      * @param response
@@ -124,21 +125,21 @@ public class TaskController extends  BaseController{
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.readById(token.getId());
         if (user == null) {
-            return  fail( "用户不存在");
+            return fail("用户不存在");
         }
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
             return fail("账号未激活");
         }
         if (ToolUtil.isEmpty(vo.getId())) {
-            return   fail("任务id不能为空");
+            return fail("任务id不能为空");
         }
         if (ToolUtil.isEmpty(vo.getTitle())) {
-            return   fail("任务标题不能为空");
+            return fail("任务标题不能为空");
         }
         if (ToolUtil.isEmpty(vo.getLink())) {
-            return   fail("任务链接不能为空");
+            return fail("任务链接不能为空");
         }
-        taskService.updateById(vo.getId(),vo);
-        return success("新增成功");
+        taskService.updateById(vo.getId(), vo);
+        return success(ResultCode.MANGE_SUCCESS," 更新成功");
     }
 }

@@ -1,6 +1,6 @@
 package com.hansen.vo;
 
-import com.common.BaseModel;
+import com.BaseModel;
 
 import java.io.Serializable;
 import java.util.Date;

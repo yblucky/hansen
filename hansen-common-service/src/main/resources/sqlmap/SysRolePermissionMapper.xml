@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hansen.mapper.SysRolePermissionMapper">
+
+    <sql id="fields">
+        roleId,resourceId,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">sys_role_permission</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.roleId != null and model.roleId != ''">roleId=#{model.roleId}</if>
+            <if test="model.resourceId != null and model.resourceId != ''">and resourceId=#{model.resourceId}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{id},#{roleId},#{resourceId},now(),now(),#{status},#{remark});
+    </insert>
+
+    <select id="readById" resultType="com.model.SysRolePermission">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.model.SysRolePermission">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.model.SysRolePermission">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.roleId != null and model.roleId !=''">roleId= #{model.roleId},</if>
+            <if test="model.resourceId != null and model.resourceId !=''">resourceId= #{model.resourceId},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <update id="deleteByRoleId">
+          delete from sys_role_permission where roleId=#{roleId}
+    </update>
+</mapper>
+
+
+

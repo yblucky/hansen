@@ -1,14 +1,13 @@
 package com.hansen.controller;
 
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.*;
-import com.common.utils.WalletUtil;
-import com.common.utils.toolutils.ToolUtil;
+import com.base.page.ResultCode;
+import com.constant.*;
 import com.hansen.service.UserDetailService;
 import com.hansen.service.UserService;
 import com.hansen.service.WalletOrderService;
@@ -18,6 +17,8 @@ import com.hansen.vo.UserVo;
 import com.model.User;
 import com.model.UserDetail;
 import com.model.WalletOrder;
+import com.utils.WalletUtil;
+import com.utils.toolutils.ToolUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ public class CoinController extends BaseController {
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.readById(token.getId());
         if (user == null) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
+            return new JsonResult(ResultCode.MANGE_ERROR.getCode(), "登录用户不存在");
         }
         WalletOrder condition = new WalletOrder();
         if (currencyType != null) {
@@ -125,7 +126,7 @@ public class CoinController extends BaseController {
                 return fail("订单不是待审核状态");
             }
             WalletOrder updateModel = new WalletOrder();
-            if (vo.getStatus()==WalletOrderStatus.DENIED.getCode()){
+            if (vo.getStatus() == WalletOrderStatus.DENIED.getCode()) {
                 updateModel.setId(vo.getOrderId());
                 updateModel.setStatus(WalletOrderStatus.DENIED.getCode());
                 updateModel.setRemark("审核不通过，审核人：" + user.getUid() + " " + user.getNickName());
@@ -167,10 +168,10 @@ public class CoinController extends BaseController {
 
             BitcoinClient client = WalletUtil.getBitCoinClient(currencyType);
             String txtId = WalletUtil.sendFrom(client, coinUser.getUid().toString(), address, new BigDecimal(order.getAmount().toString()), "用户" + user.getUid() + "提币", "用户" + address + "收币");
-            if(ToolUtil.isNotEmpty(txtId)){
+            if (ToolUtil.isNotEmpty(txtId)) {
                 vo.setStatus(WalletOrderStatus.CONFIRMING.getCode());
                 updateModel.setRemark("提币审核通过，审核人：" + user.getUid() + " " + user.getNickName());
-                transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID, address, WalletOrderType.fromCode(order.getOrderType()),WalletOrderStatus.CONFIRMING, txtId, order.getOrderNo(), order.getAmount());
+                transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID, address, WalletOrderType.fromCode(order.getOrderType()), WalletOrderStatus.CONFIRMING, txtId, order.getOrderNo(), order.getAmount());
             }
             updateModel.setId(vo.getOrderId());
             updateModel.setStatus(vo.getStatus());
@@ -192,7 +193,7 @@ public class CoinController extends BaseController {
             throw new IllegalArgumentException();
         }
         if (user.getStatus() == StatusType.DEL.getCode()) {
-            return fail(ResultCode.ERROR.getCode(), "用户已删除");
+            return fail(ResultCode.MANGE_ERROR.getCode(), "用户已删除");
         }
         model.setStatus(model.getStatus());
         model.setContactUserId(model.getContactUserId());

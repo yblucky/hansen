@@ -13,6 +13,10 @@ public class JsonResult implements Serializable {
 
 	private Object result;
 
+	private Object data;
+
+
+
 	public JsonResult() {
 		super();
 	}
@@ -20,6 +24,7 @@ public class JsonResult implements Serializable {
 	public JsonResult(Object result) {
 		super();
 		this.result = result;
+		this.data = result;
 	}
 
 	public JsonResult(Integer code, String msg) {
@@ -28,11 +33,15 @@ public class JsonResult implements Serializable {
 		this.msg = msg;
 	}
 
+
+
 	public JsonResult(Integer code, String msg, Object result) {
 		this.code = code;
 		this.msg = msg;
 		this.result = result;
+		this.data=result;
 	}
+
 
 	public Integer getCode() {
 		return code;
@@ -56,6 +65,7 @@ public class JsonResult implements Serializable {
 
 	public void setResult(Object result) {
 		this.result = result;
+		this.data = result;
 	}
 
 }

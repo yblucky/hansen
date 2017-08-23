@@ -1,7 +1,7 @@
 package com.hansen.service;
 
 import com.base.service.CommonService;
-import com.common.constant.SignType;
+import com.constant.SignType;
 import com.model.UserSign;
 
 /**

@@ -1,6 +1,6 @@
 package com.hansen.vo;
 
-import com.common.BaseModel;
+import com.BaseModel;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 

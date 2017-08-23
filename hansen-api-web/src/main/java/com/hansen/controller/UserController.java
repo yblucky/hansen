@@ -1,17 +1,12 @@
 package com.hansen.controller;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.*;
-import com.common.utils.DateUtils.DateUtils;
-import com.common.utils.WalletUtil;
-import com.common.utils.codeutils.Md5Util;
-import com.common.utils.numberutils.CurrencyUtil;
-import com.common.utils.toolutils.OrderNoUtil;
-import com.common.utils.toolutils.ToolUtil;
+import com.base.page.ResultCode;
+import com.constant.*;
 import com.hansen.service.*;
 import com.hansen.vo.InnerRegisterUserVo;
 import com.hansen.vo.LoginUserVo;
@@ -19,6 +14,12 @@ import com.hansen.vo.UpgradeUserVo;
 import com.hansen.vo.UserVo;
 import com.model.*;
 import com.redis.Strings;
+import com.utils.DateUtils.DateUtils;
+import com.utils.WalletUtil;
+import com.utils.codeutils.Md5Util;
+import com.utils.numberutils.CurrencyUtil;
+import com.utils.toolutils.OrderNoUtil;
+import com.utils.toolutils.ToolUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
-import static com.common.utils.WalletUtil.getBitCoinClient;
+import static com.utils.WalletUtil.getBitCoinClient;
 
 @Controller
 @RequestMapping("/user")

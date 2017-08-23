@@ -1,27 +1,24 @@
 package com.hansen.controller;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.CurrencyType;
-import com.common.constant.ResultCode;
-import com.common.constant.UserStatusType;
-import com.common.constant.WalletOrderType;
-import com.common.utils.WalletUtil;
-import com.common.utils.codeutils.Md5Util;
-import com.common.utils.toolutils.ToolUtil;
-import com.hansen.service.TradeOrderService;
+import com.base.page.ResultCode;
+import com.constant.CurrencyType;
+import com.constant.UserStatusType;
+import com.constant.WalletOrderType;
 import com.hansen.service.UserService;
 import com.hansen.service.WalletOrderService;
 import com.hansen.service.WalletTransactionService;
 import com.hansen.vo.CoinInOutVo;
 import com.hansen.vo.CoinTransferVo;
-import com.model.TradeOrder;
 import com.model.User;
-import com.model.WalletOrder;
 import com.model.WalletTransaction;
+import com.utils.WalletUtil;
+import com.utils.codeutils.Md5Util;
+import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -149,11 +146,9 @@ public class WalletController {
     }
 
 
-
-
     @ResponseBody
     @RequestMapping(value = "/inoutlist", method = RequestMethod.POST)
-    public JsonResult inList(HttpServletRequest request ,Integer currencyType,Page page) {
+    public JsonResult inList(HttpServletRequest request, Integer currencyType, Page page) {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);
         if (ToolUtil.isEmpty(currencyType)) {
@@ -176,16 +171,16 @@ public class WalletController {
         condition.setUserId(user.getId());
         condition.setCurrencyType(currencyType);
         Integer count = transactionService.readCount(condition);
-        List<WalletTransaction> transactionList=new ArrayList<>();
-        for (WalletTransaction transaction:transactionList){
+        List<WalletTransaction> transactionList = new ArrayList<>();
+        for (WalletTransaction transaction : transactionList) {
             transaction.setMessage(WalletUtil.checkTransactionStatus(transaction.getConfirmations()).getMessage());
         }
-        PageResult<WalletTransaction> pageResult =new PageResult<>();
+        PageResult<WalletTransaction> pageResult = new PageResult<>();
         if (count != null && count > 0) {
-            transactionList= transactionService.readList(condition, page.getPageNo(), page.getPageSize(),count );
+            transactionList = transactionService.readList(condition, page.getPageNo(), page.getPageSize(), count);
             pageResult.setRows(transactionList);
         }
-        BeanUtils.copyProperties(pageResult,page);
+        BeanUtils.copyProperties(pageResult, page);
         return new JsonResult(pageResult);
     }
 }

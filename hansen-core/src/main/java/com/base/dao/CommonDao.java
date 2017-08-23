@@ -1,7 +1,6 @@
 package com.base.dao;
 
-import com.common.BaseModel;
-import com.sun.xml.internal.rngom.parse.host.Base;
+import com.BaseModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

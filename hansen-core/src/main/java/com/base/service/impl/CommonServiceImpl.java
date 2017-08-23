@@ -2,8 +2,8 @@ package com.base.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.page.DBPage;
-import com.common.BaseModel;
-import com.common.utils.toolutils.ToolUtil;
+import com.BaseModel;
+import com.utils.toolutils.ToolUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;

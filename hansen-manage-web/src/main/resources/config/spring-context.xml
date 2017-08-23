@@ -13,15 +13,19 @@
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
-    <context:component-scan base-package="com.hansen,com.common"/>
+    <context:component-scan base-package="com.hansen,com.utils"/>
 
     <mvc:annotation-driven/>
 
 
     <!-- 拦截器 -->
     <mvc:interceptors>
-        <bean class="com.hansen.interceptor.ActionInterceptor"/>
+        <bean class="com.hansen.interceptor.LoginAuthInterceptor"/>
     </mvc:interceptors>
+    <!-- 分页拦截器 -->
+<!--
+    <bean name="paginationInterceptor" class="com.hansen.interceptor.PageInterceptor"></bean>
+-->
 
 
     <!--<mvc:interceptors>
@@ -67,6 +71,11 @@
         <property name="dataSource" ref="dataSource"></property>
         <property name="configLocation" value="classpath:config/mybatis-config.xml"/>
         <property name="mapperLocations" value="classpath:sqlmap/*Mapper.xml"/>
+        <!--<property name="plugins">
+            <list>
+                <ref bean="paginationInterceptor" />
+            </list>
+        </property>-->
     </bean>
 
     <!--    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
@@ -77,7 +86,7 @@
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
-        <property name="basePackage" value="com.hansen"/>
+        <property name="basePackage" value="com.hansen.mapper"/>
     </bean>
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>

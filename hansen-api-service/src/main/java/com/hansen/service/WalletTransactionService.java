@@ -1,7 +1,7 @@
 package com.hansen.service;
 
 import com.base.service.CommonService;
-import com.common.constant.WalletOrderType;
+import com.constant.WalletOrderType;
 import com.model.WalletTransaction;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 

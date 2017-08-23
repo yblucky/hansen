@@ -1,8 +1,6 @@
 package com.model;
 
-import com.common.BaseModel;
-
-import java.util.Date;
+import com.BaseModel;
 
 /**
  * 任务清单表

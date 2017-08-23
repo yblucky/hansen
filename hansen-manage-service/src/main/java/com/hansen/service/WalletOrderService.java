@@ -1,8 +1,8 @@
 package com.hansen.service;
 
 import com.base.service.CommonService;
-import com.common.constant.WalletOrderStatus;
-import com.common.constant.WalletOrderType;
+import com.constant.WalletOrderStatus;
+import com.constant.WalletOrderType;
 import com.model.WalletOrder;
 
 /**

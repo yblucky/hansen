@@ -2,9 +2,9 @@ package com.hansen.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
-import com.common.constant.GradeType;
-import com.common.constant.UserStatusType;
-import com.common.utils.numberutils.CurrencyUtil;
+import com.constant.GradeType;
+import com.constant.UserStatusType;
+import com.utils.numberutils.CurrencyUtil;
 import com.hansen.mapper.GradeMapper;
 import com.hansen.service.GradeService;
 import com.hansen.service.UserDepartmentService;

@@ -296,7 +296,7 @@
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 
-	<select id="readCount" resultType="int">
+	<select id="readCount" resultType="Integer">
 		select count(1) from <include refid="table_name"/> <include refid="condition"/>
 	</select>
 

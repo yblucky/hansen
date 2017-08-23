@@ -1,13 +1,11 @@
 package com.hansen.controller;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.JsonResult;
-import com.common.Token;
-import com.common.base.TokenUtil;
-import com.common.constant.CodeType;
-import com.common.constant.ResultCode;
-import com.common.constant.UserStatusType;
-import com.common.utils.numberutils.UUIDUtil;
-import com.common.utils.toolutils.ToolUtil;
+import com.base.page.ResultCode;
+import com.constant.CodeType;
+import com.constant.UserStatusType;
 import com.hansen.service.ActiveCodeService;
 import com.hansen.service.CardGradeService;
 import com.hansen.service.UserService;
@@ -16,6 +14,8 @@ import com.hansen.vo.CodeVo;
 import com.model.ActiveCode;
 import com.model.CardGrade;
 import com.model.User;
+import com.utils.numberutils.UUIDUtil;
+import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -166,14 +166,14 @@ public class ActiveCodeController {
         if (UserStatusType.OUT.getCode() != user.getStatus()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "账号不是出局状态，暂时不需要使用激活码");
         }
-        CardGrade cardGrade =cardGradeService.getUserCardGrade(user.getCardGrade());
-        if (cardGrade==null){
+        CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
+        if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "无法获取用户开卡等级");
         }
         if (user.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "冲洗激活需要"+cardGrade.getActiveCodeNo()+"个激活码，激活码数量不足");
+            return new JsonResult(ResultCode.ERROR.getCode(), "冲洗激活需要" + cardGrade.getActiveCodeNo() + "个激活码，激活码数量不足");
         }
-        activeCodeService.useActiveCode(user.getId(),cardGrade.getActiveCodeNo(),"");
+        activeCodeService.useActiveCode(user.getId(), cardGrade.getActiveCodeNo(), "");
         return new JsonResult(ResultCode.SUCCESS.getCode(), "激活账户成功");
     }
 }
