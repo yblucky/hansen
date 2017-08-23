@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.mapper.MUserMapper">
+<mapper namespace="com.mapper.UserMapper">
 
 	<sql id="fields">
 		uid,unionId,phone,loginName,email,nickName,sex,salt,headImgUrl,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardGrade,remainTaskNo,createType ,
@@ -27,7 +27,6 @@
 			<if test="model.phone != null and model.phone != ''">and phone=#{model.phone}</if>
 			<if test="model.loginName != null and model.loginName != ''">and loginName=#{model.loginName}</if>
 			<if test="model.email != null and model.email != ''">and email=#{model.email}</if>
-			<if test="model.amount != null">and amount=#{model.amount}</if>
 			<if test="model.nickName != null and model.nickName != ''">and nickName=#{model.nickName}</if>
 			<if test="model.sex != null">and sex=#{model.sex}</if>
 			<if test="model.salt != null and model.salt != ''">and salt=#{model.salt}</if>
@@ -39,7 +38,7 @@
 			<if test="model.firstReferrer != null and model.firstReferrer != ''">and firstReferrer=#{model.firstReferrer}</if>
 			<if test="model.secondReferrer != null and model.secondReferrer != ''">and secondReferrer=#{model.secondReferrer}</if>
 			<if test="model.grade != null">and grade=#{model.grade}</if>
-			<if test="model.cardLevel != null">and cardLevel=#{model.cardLevel}</if>
+			<if test="model.cardGrade != null">and cardGrade=#{model.cardGrade}</if>
 			<if test="model.releaseTime != null and model.releaseTime != ''">and releaseTime=#{model.releaseTime}</if>
 			<if test="model.equityAmt != null">and equityAmt=#{model.equityAmt}</if>
 			<if test="model.payAmt != null">and payAmt=#{model.payAmt}</if>
@@ -76,9 +75,6 @@
 			</if>
 			<if test="model.email!= null  and model.email!=''">
 				email,
-			</if>
-			<if test="model.amount!= null  and model.amount!=''">
-				amount,
 			</if>
 			<if test="model.nickName!= null  and model.nickName!=''">
 				nickName,
@@ -119,8 +115,8 @@
 			<if test="model.grade!= null  and model.grade!=''">
 				grade,
 			</if>
-			<if test="model.cardLevel!= null  and model.cardLevel!=''">
-				cardLevel,
+			<if test="model.cardGrade!= null  and model.cardGrade!=''">
+				cardGrade,
 			</if>
 			<if test="model.releaseTime!= null  and model.releaseTime!=''">
 				releaseTime,
@@ -190,9 +186,6 @@
 			<if test="model.email!= null  and model.email!=''">
 				#{model.email},
 			</if>
-			<if test="model.amount!= null  and model.amount!=''">
-				#{model.amount},
-			</if>
 			<if test="model.nickName!= null  and model.nickName!=''">
 				#{model.nickName},
 			</if>
@@ -232,8 +225,8 @@
 			<if test="model.grade!= null  and model.grade!=''">
 				#{model.grade},
 			</if>
-			<if test="model.cardLevel!= null  and model.cardLevel!=''">
-				#{model.cardLevel},
+			<if test="model.cardGrade!= null  and model.cardGrade!=''">
+				#{model.cardGrade},
 			</if>
 			<if test="model.releaseTime!= null  and model.releaseTime!=''">
 				#{model.releaseTime},
@@ -310,7 +303,6 @@
 			<if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
 			<if test="model.loginName != null and model.loginName !=''">loginName= #{model.loginName},</if>
 			<if test="model.email != null and model.email !=''">email= #{model.email},</if>
-			<if test="model.amount != null">amount= #{model.amount},</if>
 			<if test="model.nickName != null and model.nickName !=''">nickName= #{model.nickName},</if>
 			<if test="model.sex != null">sex= #{model.sex},</if>
 			<if test="model.salt != null and model.salt !=''">salt= #{model.salt},</if>
@@ -322,7 +314,7 @@
 			<if test="model.firstReferrer != null and model.firstReferrer !=''">firstReferrer= #{model.firstReferrer},</if>
 			<if test="model.secondReferrer != null and model.secondReferrer !=''">secondReferrer= #{model.secondReferrer},</if>
 			<if test="model.grade != null">grade= #{model.grade},</if>
-			<if test="model.cardLevel != null">cardLevel= #{model.cardLevel},</if>
+			<if test="model.cardGrade != null">cardGrade= #{model.cardGrade},</if>
 			<if test="model.releaseTime != null and model.releaseTime !=''">releaseTime= #{model.releaseTime},</if>
 			<if test="model.equityAmt != null">equityAmt= #{model.equityAmt},</if>
 			<if test="model.payAmt != null">payAmt= #{model.payAmt},</if>

@@ -79,7 +79,6 @@
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
 </mapper>
-</mapper>
 
 
 

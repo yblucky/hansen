@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MUserMapper extends CommonDao<User> {
+public interface UserMapper extends CommonDao<User> {
 
     Integer updateEquityAmtByUserId(@Param("id") String userId, @Param("equityAmt") Double equityAmt);
 

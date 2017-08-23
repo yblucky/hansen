@@ -59,7 +59,7 @@ public class UserController extends BaseController {
         condition1.setId("3709027e482f489dbf5a79ab17649bd6");
         Integer count1 = manageUserService.readCount(condition1);
         List<SysUser> s = manageUserService.readList(condition1, page.getPageNo(), page.getPageSize(), count);
-        PageResult pageResult1= new PageResult(page.getPageNo(), page.getPageSize(), count1, users);
+        PageResult pageResult1= new PageResult(page.getPageNo(), page.getPageSize(), count1, s);
         return success(ResultCode.MANGE_SUCCESS,pageResult1);
     }
 

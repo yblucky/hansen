@@ -5,7 +5,7 @@ import com.base.page.JsonResult;
 import com.base.page.ResultCode;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.*;
-import com.mapper.MUserMapper;
+import com.mapper.UserMapper;
 import com.model.*;
 import com.service.*;
 import com.utils.DateUtils.DateUtils;
@@ -30,7 +30,7 @@ import static com.service.WalletUtil.getBitCoinClient;
 @Service
 public class UserServiceImpl extends CommonServiceImpl<User> implements UserService {
     @Autowired
-    private MUserMapper userMapper;
+    private UserMapper userMapper;
     @Autowired
     private CardGradeService cardGradeService;
     @Autowired
