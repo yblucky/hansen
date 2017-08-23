@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mapper.SysLogsMapper">
+    <sql id="fields">
+        username,optType,optDate,logDetail,ip,optModule,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">sys_logs</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.username != null and model.username != ''">username=#{model.username}</if>
+            <if test="model.optType != null and model.optType != ''">and optType=#{model.optType}</if>
+            <if test="model.optDate != null">and optDate=#{model.optDate}</if>
+            <if test="model.logDetail != null and model.logDetail != ''">and logDetail=#{model.logDetail}</if>
+            <if test="model.ip != null and model.ip != ''">and ip=#{model.ip}</if>
+            <if test="model.optModule != null and model.optModule != ''">and optModule=#{model.optModule}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{id},#{username},#{optType},#{optDate},#{logDetail},#{ip},#{optModule},now(),now(),#{status},#{remark});
+    </insert>
+
+    <select id="readById" resultType="com.model.SysLogs">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.model.SysLogs">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.model.SysLogs">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.username != null and model.username !=''">username= #{model.username},</if>
+            <if test="model.optType != null and model.optType !=''">optType= #{model.optType},</if>
+            <if test="model.optDate != null">optDate= #{model.optDate},</if>
+            <if test="model.logDetail != null and model.logDetail !=''">logDetail= #{model.logDetail},</if>
+            <if test="model.ip != null and model.ip !=''">ip= #{model.ip},</if>
+            <if test="model.optModule != null and model.optModule !=''">optModule= #{model.optModule},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+</mapper>
+
+
+

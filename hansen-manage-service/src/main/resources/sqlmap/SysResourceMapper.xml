@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mapper.SysResourceMapper">
+    <sql id="fields">
+        resName,resPath,parentId,resIcon,resDesc,resOpen,resSort,state,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">sys_resource</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.resName != null and model.resName != ''">resName=#{model.resName}</if>
+            <if test="model.resPath != null and model.resPath != ''">and resPath=#{model.resPath}</if>
+            <if test="model.parentId != null and model.parentId != ''">and parentId=#{model.parentId}</if>
+            <if test="model.resIcon != null and model.resIcon != ''">and resIcon=#{model.resIcon}</if>
+            <if test="model.resDesc != null and model.resDesc != ''">and resDesc=#{model.resDesc}</if>
+            <if test="model.resOpen != null and model.resOpen != ''">and resOpen=#{model.resOpen}</if>
+            <if test="model.resSort != null">and resSort=#{model.resSort}</if>
+            <if test="model.state != null and model.state != ''">and state=#{model.state}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{id},#{resName},#{resPath},#{parentId},#{resIcon},#{resDesc},#{resOpen},#{resSort},#{state},now(),now(),#{status},#{remark});
+    </insert>
+
+    <select id="readById" resultType="com.model.SysResource">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.model.SysResource">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="findMenus" resultType="com.vo.SysResourceVo">
+       SELECT sr.* from sys_resource sr INNER JOIN sys_role_permission srp on sr.id = srp.resourceId and sr.state = '10' and srp.roleId=#{roleId} order by sr.resSort;
+    </select>
+
+    <select id="findRoleMenus" resultType="com.vo.SysResourceVo">
+       SELECT res.*,srp.resourceId is not NULL selected FROM sys_resource res LEFT JOIN sys_role_permission srp on srp.resourceId=res.id and srp.roleId=#{roleId} and res.state='10' order by res.resSort
+    </select>
+
+    <select id="readOne" resultType="com.model.SysResource">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.resName != null and model.resName !=''">resName= #{model.resName},</if>
+            <if test="model.resPath != null and model.resPath !=''">resPath= #{model.resPath},</if>
+            <if test="model.parentId != null and model.parentId !=''">parentId= #{model.parentId},</if>
+            <if test="model.resIcon != null and model.resIcon !=''">resIcon= #{model.resIcon},</if>
+            <if test="model.resDesc != null and model.resDesc !=''">resDesc= #{model.resDesc},</if>
+            <if test="model.resOpen != null and model.resOpen !=''">resOpen= #{model.resOpen},</if>
+            <if test="model.resSort != null">resSort= #{model.resSort},</if>
+            <if test="model.state != null and model.state !=''">state= #{model.state},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+</mapper>
+
+
+
