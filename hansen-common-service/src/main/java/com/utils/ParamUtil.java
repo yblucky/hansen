@@ -2,7 +2,7 @@ package com.utils;
 
 import com.base.page.Page;
 import com.constant.RedisKey;
-import com.hansen.service.ParameterService;
+import com.service.ParameterService;
 import com.model.Parameter;
 import com.redis.Strings;
 import com.utils.toolutils.ToolUtil;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.hansen.mappers.TradeOrderMapper">
+<mapper namespace="com.mappers.TradeOrderMapper">
     <sql id="fields">
 		orderNo,sendUserId,receviceUserId,amt,confirmAmt,poundage,source,pushFirstReferrerScale,pushSecondReferrerScale,equityAmtScale,payAmtScale,tradeAmtScale,createTime,updateTime,status,remark
 	</sql>

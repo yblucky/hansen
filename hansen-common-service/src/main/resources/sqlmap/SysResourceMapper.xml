@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.hansen.mappers.SysResourceMapper">
+<mapper namespace="com.mappers.SysResourceMapper">
     <sql id="fields">
         resName,resPath,parentId,resIcon,resDesc,resOpen,resSort,state,createTime,updateTime,status,remark
     </sql>
@@ -44,11 +44,11 @@
         <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
     </select>
 
-    <select id="findMenus" resultType="com.hansen.vo.SysResourceVo">
+    <select id="findMenus" resultType="com.vo.SysResourceVo">
        SELECT sr.* from sys_resource sr INNER JOIN sys_role_permission srp on sr.id = srp.resourceId and sr.state = '10' and srp.roleId=#{roleId} order by sr.resSort;
     </select>
 
-    <select id="findRoleMenus" resultType="com.hansen.vo.SysResourceVo">
+    <select id="findRoleMenus" resultType="com.vo.SysResourceVo">
        SELECT res.*,srp.resourceId is not NULL selected FROM sys_resource res LEFT JOIN sys_role_permission srp on srp.resourceId=res.id and srp.roleId=#{roleId} and res.state='10' order by res.resSort
     </select>
 
