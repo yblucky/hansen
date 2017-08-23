@@ -150,7 +150,7 @@ public abstract class CommonServiceImpl<M extends BaseModel> {
         try {
             M dbModel = readById(id);
             if (dbModel == null) return;
-            defaultUpdate(model);
+//            defaultUpdate(model);
             getDao().updateById(id, model);
             processCacheAfterUpdateById(id, dbModel);
         } catch (Exception e) {

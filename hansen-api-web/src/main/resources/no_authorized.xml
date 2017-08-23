@@ -2,6 +2,8 @@
 
 <no_authorized>
 	<url>/login/token</url>
+	<url>/login/loginIn</url>
+	<url>/common/pic64code</url>
 
 	<!-- 静态资源-->
 	<url>/resources</url>

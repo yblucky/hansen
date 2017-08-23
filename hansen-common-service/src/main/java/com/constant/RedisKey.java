@@ -34,7 +34,9 @@ public enum RedisKey {
     /**
      * 保单正在结算,定时任务正在执行
      */
-    TRADE_ORDER_IS_HANDING("sms_code_", 60 * 60*24);
+    TRADE_ORDER_IS_HANDING("sms_code_", 60 * 60*24),
+    /** 图片验证码，保存10分钟 */
+    PIC_CODE("pic_code_", 10 * 60);
 
     private final String key;
 

@@ -46,6 +46,12 @@ public class LoginUserVo {
      */
     private Integer uid;
 
+    /**
+     * 验证码key
+     * @return
+     */
+    private String key;
+
     public String getLoginName() {
         return loginName;
     }
@@ -109,5 +115,13 @@ public class LoginUserVo {
 
     public void setUid(Integer uid) {
         this.uid = uid;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

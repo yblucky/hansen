@@ -14,7 +14,7 @@ public class CrossFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // CORS "pre-flight" request
         response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        response.addHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,FETCH");
         response.addHeader("Access-Control-Max-Age", "1728000");
         response.addHeader("Access-Control-Allow-Credentials", "true");
         response.addHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With,Cache-Control, Expires, Content-Type,token,Content-Disposition,Pragma,token");

@@ -6,16 +6,16 @@ import com.base.page.JsonResult;
 import com.base.page.ResultCode;
 import com.constant.RedisKey;
 import com.constant.UserStatusType;
+import com.model.CardGrade;
+import com.model.User;
+import com.redis.Strings;
 import com.service.*;
+import com.utils.codeutils.Md5Util;
+import com.utils.toolutils.ToolUtil;
 import com.vo.LoginPasswordVo;
 import com.vo.LoginUserVo;
 import com.vo.PayPasswordVo;
 import com.vo.UserVo;
-import com.model.CardGrade;
-import com.model.User;
-import com.redis.Strings;
-import com.utils.codeutils.Md5Util;
-import com.utils.toolutils.ToolUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/login")
@@ -70,7 +72,7 @@ public class LoginController {
      * 包含激活账号流程
      */
     @ResponseBody
-    @RequestMapping(value = "/login/loginIn", method = RequestMethod.POST)
+    @RequestMapping(value = "/loginIn", method = RequestMethod.POST)
     public JsonResult loginByUserName(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
         if (ToolUtil.isEmpty(vo.getLoginName())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录名称不能为空");
@@ -84,9 +86,13 @@ public class LoginController {
         if (null == loginUser) {
             return new JsonResult(-1, "用户不存在");
         } else {
-            if (loginUser.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && loginUser.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
+            Set<Integer> userStatus = new HashSet<>();
+            userStatus.add(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
+            userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
+            if (!userStatus.contains(loginUser.getStatus())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
             }
+
             String password = loginUser.getPassword();
             if (org.springframework.util.StringUtils.isEmpty(password)) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "没有设置登录密码");
@@ -254,5 +260,9 @@ public class LoginController {
         return new JsonResult();
     }
 
-
+    public static void main(String[] args) {
+        String uuid = ToolUtil.getUUID();
+        System.out.println(uuid);
+        System.out.println(Md5Util.MD5Encode("123456", uuid));
+    }
 }
