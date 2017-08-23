@@ -8,8 +8,10 @@ import com.Token;
 import com.base.TokenUtil;
 import com.base.page.ResultCode;
 import com.constant.StatusType;
+import com.model.SysUser;
 import com.service.UserDetailService;
 import com.service.UserService;
+import com.sysservice.ManageUserService;
 import com.vo.UserVo;
 import com.model.User;
 import com.model.UserDetail;
@@ -35,6 +37,8 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ManageUserService manageUserService  ;
 
     @Autowired
     private UserDetailService userDetailService;
@@ -49,7 +53,14 @@ public class UserController extends BaseController {
         Integer count = userService.readCount(condition);
         List<User> users = userService.readList(condition, page.getPageNo(), page.getPageSize(), count);
         PageResult pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, users);
-        return success(ResultCode.MANGE_SUCCESS,pageResult);
+
+        SysUser condition1 = new SysUser();
+        condition1.setId(vo.getPhone());
+        condition1.setId("3709027e482f489dbf5a79ab17649bd6");
+        Integer count1 = manageUserService.readCount(condition1);
+        List<SysUser> s = manageUserService.readList(condition1, page.getPageNo(), page.getPageSize(), count);
+        PageResult pageResult1= new PageResult(page.getPageNo(), page.getPageSize(), count1, users);
+        return success(ResultCode.MANGE_SUCCESS,pageResult1);
     }
 
     @ResponseBody
