@@ -68,7 +68,7 @@ public class WalletTransaction extends BaseModel {
     /**
      币种类型 1：交易币  2 支付币   3 股权币
      **/
-    private Integer currencyType;
+    private Integer orderType;
 
 
     public String getUserId() {
@@ -175,11 +175,11 @@ public class WalletTransaction extends BaseModel {
         this.details = details;
     }
 
-    public Integer getCurrencyType() {
-        return currencyType;
+    public Integer getOrderType() {
+        return orderType;
     }
 
-    public void setCurrencyType(Integer currencyType) {
-        this.currencyType = currencyType;
+    public void setOrderType(Integer orderType) {
+        this.orderType = orderType;
     }
 }
