@@ -27,24 +27,23 @@ public enum WalletOrderType {
      * 支付币提币
      */
     PAY_COIN_DRWA(5, "支付币提币"),
+    /**
+     * 支付币充币
+     */
+    PAY_COIN_RECHARGE (6, "支付币充币"),
 
     /**
      * 股权币充币
      */
-    EQUITY_COIN_RECHARGE (6, "股权币充币"),
+    EQUITY_COIN_RECHARGE (7, "股权币充币"),
     /**
-     *支付币内部转账
+     *股权币内部转账
      */
-    EQUITY_COIN_INNER_TRANSFER(7, "股权币内部转账"),
+    EQUITY_COIN_INNER_TRANSFER(8, "股权币内部转账"),
     /**
-     * 支付币提币
+     * 股权币提币
      */
-    EQUITY_COIN_DRWA(8, "股权币提币"),
-
-    /**
-     * 支付币充币
-     */
-    PAY_COIN_RECHARGE (9, "支付币充币");
+    EQUITY_COIN_DRWA(9, "股权币提币");
 
     private final Integer code;
 
