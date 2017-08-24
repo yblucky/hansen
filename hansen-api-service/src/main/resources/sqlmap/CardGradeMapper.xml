@@ -4,14 +4,14 @@
 <mapper namespace="com.mapper.CardGradeMapper">
 
 	<sql id="fields">
-		grade,insuranceAmt,releaseScale,activeCodeNo,registerCodeNo,outMultiple,createTime,updateTime,status,remark
+		grade,insuranceAmt,releaseScale,activeCodeNo,registerCodeNo,outMultiple,createTime,updateTime,remark
 	</sql>
 
 	<sql id="fields_id">
 		id,<include refid="fields"/>
 	</sql>
 
-	<sql id="table_name">card_grade</sql>
+	<sql id="table_name">base_card_grade</sql>
 
 	<sql id="selector">
 		select <include refid="fields_id"/> from <include refid="table_name"/>

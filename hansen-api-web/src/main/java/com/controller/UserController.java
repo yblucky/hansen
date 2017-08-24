@@ -9,6 +9,8 @@ import com.base.page.ResultCode;
 import com.constant.*;
 import com.service.*;
 import com.vo.*;
+import com.utils.classutils.MyBeanUtils;
+import com.vo.*;
 import com.model.*;
 import com.redis.Strings;
 import com.utils.DateUtils.DateUtils;
@@ -17,7 +19,8 @@ import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.ToolUtil;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +32,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.service.WalletUtil.getBitCoinClient;
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
@@ -299,6 +304,12 @@ public class UserController {
         if (vo.getUpGradeWay() == null || (vo.getUpGradeWay() != UpGradeType.COVERAGEUPGRADE.getCode() && vo.getUpGradeWay() != UpGradeType.ORIGINUPGRADE.getCode())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请选择升级方式");
         }
+        if (org.apache.commons.lang3.StringUtils.isEmpty(vo.getPayWord())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "请选择输入支付密码");
+        }
+        if (loginUser.getPassword().equals(Md5Util.MD5Encode(vo.getPayWord(), loginUser.getSalt()))) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "支付密码错误");
+        }
         CardGrade cardGrade = cardGradeService.getUserCardGrade(vo.getGrade());
         if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "升卡级别有误");
@@ -307,11 +318,17 @@ public class UserController {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户激活码或注册码不足，请先补充激活码或注册码!");
         }
 
+
+        //生成保单时支付币必须有的比例数量
+        double insurancePayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE), 0d);
+        //生成保单时交易币必须有的比例数量
+        double insuranceTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE), 0d);
+
         /**校验虚拟币**/
-        if (loginUser.getPayAmt() < CurrencyUtil.divide(cardGrade.getInsuranceAmt() * 50, 100, 4)) {
+        if (loginUser.getPayAmt() < CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付币不足，无法激活");
         }
-        if (loginUser.getTradeAmt() < CurrencyUtil.divide(cardGrade.getInsuranceAmt() * 50, 100, 4)) {
+        if (loginUser.getTradeAmt() < CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");
         }
 
@@ -327,8 +344,8 @@ public class UserController {
         User updateActiveUser = new User();
         updateActiveUser.setId(loginUser.getId());
         //TODO 扣减账号币数量 对应人民币市值换算
-        updateActiveUser.setTradeAmt(loginUser.getTradeAmt() - cardGrade.getInsuranceAmt() * 50 / 100);
-        updateActiveUser.setPayAmt(loginUser.getPayAmt() - cardGrade.getInsuranceAmt() * 50 / 100);
+        updateActiveUser.setTradeAmt(CurrencyUtil.subtract(loginUser.getTradeAmt(), cardGrade.getInsuranceAmt() * insuranceTradeScale, 4));
+        updateActiveUser.setPayAmt(CurrencyUtil.subtract(loginUser.getPayAmt(), cardGrade.getInsuranceAmt() * insurancePayScale, 4));
         updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
         userService.updateById(updateActiveUser.getId(), updateActiveUser);
 
@@ -336,8 +353,8 @@ public class UserController {
         //写入冻结
         UserDetail updateActiveUserDetailContion = new UserDetail();
         updateActiveUserDetailContion.setId(activeUserDetail.getId());
-        updateActiveUserDetailContion.setForzenPayAmt(cardGrade.getInsuranceAmt() * 50 / 100);
-        updateActiveUserDetailContion.setForzenTradeAmt(cardGrade.getInsuranceAmt() * 50 / 100);
+        updateActiveUserDetailContion.setForzenPayAmt(CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4));
+        updateActiveUserDetailContion.setForzenTradeAmt(CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4));
         userDetailService.updateById(updateActiveUserDetailContion.getId(), updateActiveUserDetailContion);
 
         if (vo.getUpGradeWay().intValue() == UpGradeType.ORIGINUPGRADE.getCode().intValue()) {
@@ -352,27 +369,47 @@ public class UserController {
      * 升级记录
      *
      * @param page       分页查询
-     * @param upGradeWay 升级方式 1 原点升级 2 覆盖升级
      */
     @ResponseBody
-    @RequestMapping(value = "/UpGradeRecord", method = RequestMethod.GET)
-    public JsonResult UpGradeRecord(HttpServletRequest request, Page page, Integer upGradeWay) {
-        Token token = TokenUtil.getSessionUser(request);
-        User loginUser = userService.readById(token.getId());
-        if (loginUser == null) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
+    @RequestMapping(value = "/upGradeRecord", method = RequestMethod.GET)
+    public JsonResult UpGradeRecord(HttpServletRequest request, Page page) {
+        try {
+            Token token = TokenUtil.getSessionUser(request);
+            User loginUser = userService.readById(token.getId());
+            if (loginUser == null) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
+            }
+            /*if (upGradeWay == null || (upGradeWay != UpGradeType.COVERAGEUPGRADE.getCode() && upGradeWay != UpGradeType.ORIGINUPGRADE.getCode())) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "请选择升级方式");
+            }*/
+            UserGradeRecord model = new UserGradeRecord();
+            model.setUserId(token.getId());
+            model.setRecordType(GradeRecordType.CARDUPDATE.getCode());
+            /*if (upGradeWay == null || upGradeWay < 0) {
+                model.setUpGradeType(upGradeWay);
+            }*/
+            int count = userGradeRecordService.readCount(model);
+            List<UserGradeRecordVo> rslist = null;
+            if (count > 0) {
+                List<UserGradeRecord> list = userGradeRecordService.readList(model, page.getPageNo(), page.getPageSize(), count);
+                UserGradeRecordVo po = null;
+                rslist = new ArrayList<UserGradeRecordVo>();
+                for(UserGradeRecord record : list){
+                    po=MyBeanUtils.copyProperties(record,UserGradeRecordVo.class);
+                    if(UpGradeType.COVERAGEUPGRADE.getCode().intValue() == record.getUpGradeType().intValue()){
+                        po.setUpGradeTypeName("覆盖升级");
+                    }else if(UpGradeType.ORIGINUPGRADE.getCode().intValue() ==  record.getUpGradeType().intValue()){
+                        po.setUpGradeTypeName("原点升级");
+                    }
+                    rslist.add(po);
+                }
+            }
+            PageResult pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, rslist);
+            return new JsonResult(pageResult);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (upGradeWay == null || (upGradeWay != UpGradeType.COVERAGEUPGRADE.getCode() && upGradeWay != UpGradeType.ORIGINUPGRADE.getCode())) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "请选择升级方式");
-        }
-        UserGradeRecord model = new UserGradeRecord();
-        model.setUserId(token.getId());
-        model.setRecordType(GradeRecordType.CARDUPDATE.getCode());
-        model.setUpGradeType(upGradeWay);
-        int count = userGradeRecordService.readCount(model);
-        List<UserGradeRecord> list = userGradeRecordService.readList(model, page.getPageNo(), page.getPageSize(), count);
-        PageResult pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, list);
-        return new JsonResult(pageResult);
+        return new JsonResult();
     }
 
     /**
@@ -437,6 +474,61 @@ public class UserController {
         // 更新用户信息
         userService.updateById(loginUser.getId(),updateUser);
         userDetailService.updateById(loginUser.getId(),upateDetail);
+        return new JsonResult();
+    }
+
+
+    /**
+     * 获取等级信息
+     *
+     * @param grade 会员等级
+     */
+    @ResponseBody
+    @RequestMapping(value = "/findUserCardGrade", method = RequestMethod.GET)
+    public JsonResult findUserCardGrade(HttpServletRequest request, Integer grade) {
+        try {
+            Token token = TokenUtil.getSessionUser(request);
+            User loginUser = userService.readById(token.getId());
+            if (loginUser == null) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
+            }
+            if (grade == null || grade < 0) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "请选择升级类别");
+            }
+
+            CardGrade userCard = cardGradeService.getUserCardGrade(grade);
+            //人民币兑换支付币汇率
+            double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
+            //人民币兑换交易币汇率
+            double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+            //生成保单时支付币必须有的比例数量
+            double insurancePayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE), 0d);
+            //生成保单时交易币必须有的比例数量
+            double insuranceTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE), 0d);
+            //需要支付币的总金额
+            double payAmount = payScale * userCard.getInsuranceAmt() * insurancePayScale;
+            //需要交易币的总金额
+            double tradeScaleAmount = tradeScale * userCard.getInsuranceAmt() * insuranceTradeScale;
+            //需要补充激活码数量
+            int needActiveNum = userCard.getActiveCodeNo() - loginUser.getActiveCodeNo();
+            needActiveNum = needActiveNum > 0 ? needActiveNum : 0;
+            //需要补充购物币数量
+            Double needBuyNum = tradeScaleAmount - loginUser.getTradeAmt();
+            needBuyNum = needBuyNum > 0 ? needBuyNum : 0d;
+            //需要补充交易数量
+            Double needChangeNum = payAmount - loginUser.getPayAmt();
+            needChangeNum = needChangeNum > 0 ? needChangeNum : 0d;
+            //最大收益
+            Double cardMaxproft = userCard.getInsuranceAmt() * userCard.getOutMultiple();
+            Map<String, String> rs = new HashedMap();
+            rs.put("needActiveNum", needActiveNum + "");
+            rs.put("needBuyNum", needBuyNum + "");
+            rs.put("needChangeNum", needChangeNum + "");
+            rs.put("cardMaxproft", cardMaxproft + "");
+            return new JsonResult(rs);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return new JsonResult();
     }
 }
