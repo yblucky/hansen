@@ -26,6 +26,10 @@ public class UserVo implements Serializable {
      */
     private String userName;
     /**
+     * phone
+     */
+    private String phone;
+    /**
      * 昵称
      */
     private String nickName;
@@ -104,6 +108,33 @@ public class UserVo implements Serializable {
      * 用户剩余可做任务次数
      */
     private Integer remainTaskNo;
+
+    /**
+     * 冻结支付币的数量
+     */
+    private Double forzenPayAmt;
+    /**
+     * 冻结交易币的数量
+     */
+    private Double forzenTradeAmt;
+    /**
+     * 冻结股权币的数量
+     */
+    private Double forzenEquityAmt;
+    /**
+     * 充币钱包地址
+     */
+
+    private String inPayAddress;
+    private String inTradeAddress;
+    private String inEquityAddress;
+    /**
+     * 提币钱包地址
+     */
+    private String outPayAddress;
+    private String outEquityAddress;
+    private String outTradeAddress;
+
 
 
     public String getId() {
@@ -295,5 +326,85 @@ public class UserVo implements Serializable {
 
     public void setRemainTaskNo(Integer remainTaskNo) {
         this.remainTaskNo = remainTaskNo;
+    }
+
+    public Double getForzenPayAmt() {
+        return forzenPayAmt;
+    }
+
+    public void setForzenPayAmt(Double forzenPayAmt) {
+        this.forzenPayAmt = forzenPayAmt;
+    }
+
+    public Double getForzenTradeAmt() {
+        return forzenTradeAmt;
+    }
+
+    public void setForzenTradeAmt(Double forzenTradeAmt) {
+        this.forzenTradeAmt = forzenTradeAmt;
+    }
+
+    public Double getForzenEquityAmt() {
+        return forzenEquityAmt;
+    }
+
+    public void setForzenEquityAmt(Double forzenEquityAmt) {
+        this.forzenEquityAmt = forzenEquityAmt;
+    }
+
+    public String getInPayAddress() {
+        return inPayAddress;
+    }
+
+    public void setInPayAddress(String inPayAddress) {
+        this.inPayAddress = inPayAddress;
+    }
+
+    public String getInTradeAddress() {
+        return inTradeAddress;
+    }
+
+    public void setInTradeAddress(String inTradeAddress) {
+        this.inTradeAddress = inTradeAddress;
+    }
+
+    public String getInEquityAddress() {
+        return inEquityAddress;
+    }
+
+    public void setInEquityAddress(String inEquityAddress) {
+        this.inEquityAddress = inEquityAddress;
+    }
+
+    public String getOutPayAddress() {
+        return outPayAddress;
+    }
+
+    public void setOutPayAddress(String outPayAddress) {
+        this.outPayAddress = outPayAddress;
+    }
+
+    public String getOutEquityAddress() {
+        return outEquityAddress;
+    }
+
+    public void setOutEquityAddress(String outEquityAddress) {
+        this.outEquityAddress = outEquityAddress;
+    }
+
+    public String getOutTradeAddress() {
+        return outTradeAddress;
+    }
+
+    public void setOutTradeAddress(String outTradeAddress) {
+        this.outTradeAddress = outTradeAddress;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

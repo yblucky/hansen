@@ -8,10 +8,7 @@ import com.base.page.PageResult;
 import com.base.page.ResultCode;
 import com.constant.*;
 import com.service.*;
-import com.vo.InnerRegisterUserVo;
-import com.vo.LoginUserVo;
-import com.vo.UpgradeUserVo;
-import com.vo.UserVo;
+import com.vo.*;
 import com.model.*;
 import com.redis.Strings;
 import com.utils.DateUtils.DateUtils;
@@ -20,6 +17,7 @@ import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.ToolUtil;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.service.WalletUtil.getBitCoinClient;
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 
 @Controller
@@ -397,5 +396,47 @@ public class UserController {
         int count = userDepartments.size();
         PageResult<UserDepartment> pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, userDepartments);
         return new JsonResult(pageResult);
+    }
+
+
+    /**
+     * 修改用户信息
+     */
+    @ResponseBody
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public JsonResult updateUserInfo(HttpServletRequest request, @RequestBody UserVo vo) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
+        User loginUser = userService.readById(token.getId());
+        if (loginUser == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
+        }
+        User updateUser =new User();
+        UserDetail upateDetail=new UserDetail();
+        if (ToolUtil.isNotEmpty(vo.getNickName())) {
+            updateUser.setNickName(vo.getNickName());
+        }
+        if (ToolUtil.isNotEmpty(vo.getUserName())) {
+            updateUser.setUserName(vo.getUserName());
+        }
+        if (ToolUtil.isNotEmpty(vo.getHeadImgUrl())) {
+            updateUser.setHeadImgUrl(vo.getHeadImgUrl());
+        }
+        if (ToolUtil.isNotEmpty(vo.getContactUserId())) {
+            updateUser.setNickName(vo.getContactUserId());
+        }
+        if (ToolUtil.isNotEmpty(vo.getOutEquityAddress())) {
+            upateDetail.setOutEquityAddress(vo.getOutEquityAddress());
+        }
+        if (ToolUtil.isNotEmpty(vo.getOutPayAddress())) {
+            upateDetail.setOutPayAddress(vo.getOutPayAddress());
+        }
+        if (ToolUtil.isNotEmpty(vo.getOutTradeAddress())) {
+            upateDetail.setOutTradeAddress(vo.getOutTradeAddress());
+     }
+
+        // 更新用户信息
+        userService.updateById(loginUser.getId(),updateUser);
+        userDetailService.updateById(loginUser.getId(),upateDetail);
+        return new JsonResult();
     }
 }

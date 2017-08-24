@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.UserDetailMapper">
 
     <sql id="fields">
-		 uid,levles,province,city,county,addr,num,forzenNum,currencyType,inAddress,outAddress,createTime,updateTime,status,remark
+		 levles,province,city,county,addr,num,forzenNum,currencyType,inAddress,outAddress,createTime,updateTime,status,remark
 	</sql>
 
     <sql id="fields_id">
@@ -164,7 +164,6 @@
         update
         <include refid="table_name"/>
         <set>
-            <if test="model.uid != null">uid= #{model.uid},</if>
             <if test="model.performance != null">performance= #{model.performance},</if>
             <if test="model.status != null">status= #{model.status},</if>
             <if test="model.province != null and model.province !=''">province= #{model.province},</if>

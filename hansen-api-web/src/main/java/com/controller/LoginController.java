@@ -8,6 +8,7 @@ import com.constant.RedisKey;
 import com.constant.UserStatusType;
 import com.model.CardGrade;
 import com.model.User;
+import com.model.UserDetail;
 import com.redis.Strings;
 import com.service.*;
 import com.utils.codeutils.Md5Util;
@@ -114,6 +115,7 @@ public class LoginController {
         User updateUser = new User();
         updateUser.setLoginTime(new Date());
         userService.updateById(loginUser.getId(), updateUser);
+        UserDetail detail = userDetailService.readById(loginUser.getId());
         // 登录
         String token = TokenUtil.generateToken(loginUser.getId(), loginUser.getNickName());
         Strings.setEx(RedisKey.TOKEN_API.getKey() + loginUser.getId(), RedisKey.TOKEN_API.getSeconds(), token);
@@ -122,6 +124,9 @@ public class LoginController {
         }
         UserVo u = new UserVo();
         BeanUtils.copyProperties(u, loginUser);
+        if (detail!=null){
+            BeanUtils.copyProperties(u, detail);
+        }
         u.setToken(token);
         return new JsonResult(u);
     }
@@ -152,8 +157,12 @@ public class LoginController {
         if (logger.isInfoEnabled()) {
             logger.info(String.format("user again login[%s]", TokenUtil.getTokenObject(redisToken)));
         }
+        UserDetail detail = userDetailService.readById(user.getId());
         UserVo vo = new UserVo();
         BeanUtils.copyProperties(vo, user);
+        if (detail!=null){
+            BeanUtils.copyProperties(vo, detail);
+        }
         vo.setToken(redisToken);
         return new JsonResult(vo);
     }

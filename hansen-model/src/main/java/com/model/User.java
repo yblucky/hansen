@@ -37,6 +37,10 @@ public class User extends BaseModel {
      */
     private String nickName;
     /**
+     * 帐号
+     */
+    private String userName;
+    /**
      * 性别：0：男，1：女，2：保密
      */
     private Integer sex;
@@ -376,5 +380,13 @@ public class User extends BaseModel {
 
     public void setCreateType(Integer createType) {
         this.createType = createType;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
