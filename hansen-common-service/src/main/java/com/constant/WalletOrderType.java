@@ -11,12 +11,12 @@ public enum WalletOrderType {
      */
     TRADE_COIN_INNER_TRANSFER(1, "交易币内部转账"),
     /**
-     * 支付币提币
+     * 交易币提币
      */
     TRADE_COIN_DRWA(2, "交易币提币"),
 
     /**
-     * 支付币充币
+     * 交易币充币
      */
     TRADE_COIN_RECHARGE (3, "交易币充币"),
     /**
