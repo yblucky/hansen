@@ -365,6 +365,11 @@
 		update <include refid="table_name"/> set activeCodeNo = activeCodeNo+#{activeCodeNo} ,updateTime=now() where id = #{id} and (activeCodeNo + #{activeCodeNo})>=0
 	</update>
 
+	<update id="updateUserRegisterCode">
+		update <include refid="table_name"/> set registerCodeNo = registerCodeNo+#{registerCodeNo} ,updateTime=now() where id = #{id} and (registerCodeNo + #{registerCodeNo})>=0
+	</update>
+
+
 	<update id="updateUserRemainTaskNo">
 		update <include refid="table_name"/> set remainTaskNo = remainTaskNo+#{remainTaskNo} ,updateTime=now() where id = #{id} and (remainTaskNo + #{remainTaskNo})>=0
 	</update>

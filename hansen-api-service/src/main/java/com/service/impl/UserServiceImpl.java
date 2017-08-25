@@ -494,6 +494,14 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         userMapper.updateUserActiveCode(userId, activeNo);
     }
 
+
+    @Override
+    public void updateUserRegisterCode(String userId, Integer activeNo) {
+        userMapper.updateUserRegisterCode(userId, activeNo);
+    }
+
+
+
     @Override
     @Transactional
     public User createRegisterUser(User user, CardGrade cardGrade, User inviterUser) throws Exception {

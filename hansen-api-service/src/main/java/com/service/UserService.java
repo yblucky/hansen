@@ -37,6 +37,8 @@ public interface UserService extends CommonService<User> {
 
     void updateUserActiveCode(String userId, Integer activeNo);
 
+    void updateUserRegisterCode(String userId, Integer activeNo);
+
     void updateUserStatus(String userId, Integer status);
 
     Integer updateEquityAmtByUserId(String userId, Double amt);

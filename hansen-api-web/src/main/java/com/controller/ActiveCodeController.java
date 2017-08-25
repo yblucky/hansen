@@ -9,6 +9,7 @@ import com.constant.UserStatusType;
 import com.service.ActiveCodeService;
 import com.service.CardGradeService;
 import com.service.UserService;
+import com.utils.codeutils.Md5Util;
 import com.vo.CodeTransferVo;
 import com.vo.CodeVo;
 import com.model.ActiveCode;
@@ -31,7 +32,7 @@ import java.util.List;
  * Created by Administrator on 2017/8/6.
  */
 @Controller
-@RequestMapping("/activecode")
+@RequestMapping("/code")
 public class ActiveCodeController {
 
     @Autowired
@@ -123,11 +124,31 @@ public class ActiveCodeController {
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != fromUser.getStatus()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "账号未激活");
         }
-        if (fromUser.getActiveCodeNo() < vo.getTransferNo()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "激活码数量不足");
+        if (vo.getCodeType()==null || (vo.getCodeType()!=1  && vo.getCodeType()!=2)) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "转账类型错误");
         }
+        if (vo.getCodeType()==1){
+            if (fromUser.getActiveCodeNo() < vo.getTransferNo()) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "激活码数量不足");
+            }
+        }else if (vo.getCodeType()==2){
+            if (fromUser.getRegisterCodeNo() < vo.getTransferNo()) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "注册码数量不足");
+            }
+        }
+
         if (ToolUtil.isEmpty(vo.getToId()) && vo.getToUid() == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请选择转账目标用户");
+        }
+
+        if (ToolUtil.isEmpty(vo.getPayword())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "支付密码不能为空");
+        }
+        if (ToolUtil.isEmpty(fromUser.getPassword())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "未设置支付密码");
+        }
+        if (!fromUser.getPassword().equals(Md5Util.MD5Encode(vo.getPayword(),fromUser.getSalt()))){
+            return new JsonResult(ResultCode.ERROR.getCode(), "支付密码错误");
         }
         User toUser = null;
         if (ToolUtil.isEmpty(vo.getToId())) {
@@ -143,7 +164,7 @@ public class ActiveCodeController {
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != toUser.getStatus()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "目标账号未激活");
         }
-        activeCodeService.codeTransfer(fromUser.getId(), vo.getToId(), vo.getToUid(), vo.getTransferNo());
+        activeCodeService.codeTransfer(fromUser.getId(), toUser.getId(), toUser.getUid(), vo.getTransferNo(),vo.getCodeType());
         return new JsonResult(ResultCode.SUCCESS.getCode(), "激活码转账成功");
     }
 

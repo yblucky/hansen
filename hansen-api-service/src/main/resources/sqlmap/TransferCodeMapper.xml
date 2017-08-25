@@ -4,14 +4,14 @@
 <mapper namespace="com.mapper.TransferCodeMapper">
 
 	<sql id="fields">
-		sendUserId,receviceUserId,type,orderNo,transferNo,createTime,updateTime,status,remark
+		sendUserId,receviceUserId,type,transferNo,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
 		id,<include refid="fields"/>
 	</sql>
 
-	<sql id="table_name">transfer_code</sql>
+	<sql id="table_name">base_transfer_code</sql>
 
 	<sql id="selector">
 		select <include refid="fields_id"/> from <include refid="table_name"/>
@@ -22,7 +22,6 @@
 			<if test="model.sendUserId != null and model.sendUserId != ''">sendUserId=#{model.sendUserId}</if>
 			<if test="model.receviceUserId != null and model.receviceUserId != ''">and receviceUserId=#{model.receviceUserId}</if>
 			<if test="model.type != null">and type=#{model.type}</if>
-			<if test="model.orderNo != null and model.orderNo != ''">and orderNo=#{model.orderNo}</if>
 			<if test="model.transferNo != null">and transferNo=#{model.transferNo}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
@@ -31,7 +30,7 @@
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{sendUserId},#{receviceUserId},#{type},#{orderNo},#{transferNo},now(),now(),#{status},#{remark});
+		values(#{id},#{sendUserId},#{receviceUserId},#{type},#{transferNo},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="com.model.TransferCode">
@@ -56,7 +55,6 @@
 			<if test="model.sendUserId != null and model.sendUserId !=''">sendUserId= #{model.sendUserId},</if>
 			<if test="model.receviceUserId != null and model.receviceUserId !=''">receviceUserId= #{model.receviceUserId},</if>
 			<if test="model.type != null">type= #{model.type},</if>
-			<if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
 			<if test="model.transferNo != null">transferNo= #{model.transferNo},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>

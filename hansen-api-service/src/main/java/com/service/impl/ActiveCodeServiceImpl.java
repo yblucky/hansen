@@ -5,6 +5,7 @@ import com.base.service.impl.CommonServiceImpl;
 import com.constant.CodeType;
 import com.constant.Constant;
 import com.mapper.ActiveCodeMapper;
+import com.model.User;
 import com.service.ActiveCodeService;
 import com.service.TransferCodeService;
 import com.service.UserService;
@@ -39,15 +40,28 @@ public class ActiveCodeServiceImpl extends CommonServiceImpl<ActiveCode> impleme
 
     @Override
     @Transactional
-    public Boolean codeTransfer(String fromUserId, String toUserId, Integer toUid, Integer transferNo) {
-        userService.updateUserActiveCode(fromUserId, -transferNo);
-        userService.updateUserActiveCode(toUserId, transferNo);
+    public Boolean codeTransfer(String fromUserId, String toUserId, Integer toUid, Integer transferNo,Integer codeType) {
+        if (codeType==null || codeType==0){
+            return false;
+        }
+        User from=userService.readById(fromUserId);
+        User to=userService.readById(toUserId);
         TransferCode transferCode = new TransferCode();
+        if (codeType==CodeType.ACTIVATECODE.getCode()){
+            userService.updateUserActiveCode(fromUserId, -transferNo);
+            userService.updateUserActiveCode(toUserId, transferNo);
+            transferCode.setType(CodeType.ACTIVATECODE.getCode());
+            transferCode.setRemark("用户转让激活码：" + from.getUid() + "  to  " + to.getUid()+ " "+transferNo+"个");
+        }else if (codeType==CodeType.REGISTERCODE.getCode()){
+            userService.updateUserRegisterCode(fromUserId, -transferNo);
+            userService.updateUserRegisterCode(toUserId, transferNo);
+            transferCode.setType(CodeType.REGISTERCODE.getCode());
+            transferCode.setRemark("用户转让注册码：" + from.getUid() + "  to  " + to.getUid()+ " "+transferNo+"个");
+        }
         transferCode.setSendUserId(fromUserId);
         transferCode.setReceviceUserId(toUserId);
-        transferCode.setType(CodeType.ACTIVATECODE.getCode());
         transferCode.setTransferNo(transferNo);
-        transferCode.setRemark("用户转让激活码：" + fromUserId + "  to  " + toUserId);
+
         transferCodeService.create(transferCode);
         return true;
     }

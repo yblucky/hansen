@@ -1,13 +1,15 @@
 package com.vo;
 
 /**
- * 激活码转赠
+ * 激活码/注册码转赠
  * Created by Administrator on 2018/08/17.
  */
 public class CodeTransferVo {
     private Integer toUid;
     private String toId;
     private Integer transferNo;
+    private Integer codeType;
+    private String payword;
 
 
     public Integer getToUid() {
@@ -32,5 +34,21 @@ public class CodeTransferVo {
 
     public void setTransferNo(Integer transferNo) {
         this.transferNo = transferNo;
+    }
+
+    public Integer getCodeType() {
+        return codeType;
+    }
+
+    public void setCodeType(Integer codeType) {
+        this.codeType = codeType;
+    }
+
+    public String getPayword() {
+        return payword;
+    }
+
+    public void setPayword(String payword) {
+        this.payword = payword;
     }
 }

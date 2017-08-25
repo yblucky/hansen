@@ -7,7 +7,7 @@ import com.model.ActiveCode;
  * @date 2017年08月17日
  */
 public interface ActiveCodeService extends CommonService<ActiveCode> {
-    Boolean codeTransfer(String fromUserId, String toUserId, Integer toUid, Integer transferNo);
+    Boolean codeTransfer(String fromUserId, String toUserId, Integer toUid, Integer transferNo,Integer codeType);
 
     Boolean useActiveCode(String userId, Integer activeNo, String remark);
 
