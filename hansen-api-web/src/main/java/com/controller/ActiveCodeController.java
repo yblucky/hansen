@@ -3,20 +3,22 @@ package com.controller;
 import com.Token;
 import com.base.TokenUtil;
 import com.base.page.JsonResult;
+import com.base.page.Page;
+import com.base.page.PageResult;
 import com.base.page.ResultCode;
 import com.constant.CodeType;
 import com.constant.UserStatusType;
+import com.model.*;
 import com.service.ActiveCodeService;
 import com.service.CardGradeService;
+import com.service.TransferCodeService;
 import com.service.UserService;
 import com.utils.codeutils.Md5Util;
 import com.vo.CodeTransferVo;
 import com.vo.CodeVo;
-import com.model.ActiveCode;
-import com.model.CardGrade;
-import com.model.User;
 import com.utils.numberutils.UUIDUtil;
 import com.utils.toolutils.ToolUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +42,8 @@ public class ActiveCodeController {
     private ActiveCodeService activeCodeService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TransferCodeService transferCodeService;
     @Autowired
     private CardGradeService cardGradeService;
 
@@ -196,5 +201,32 @@ public class ActiveCodeController {
         }
         activeCodeService.useActiveCode(user.getId(), cardGrade.getActiveCodeNo(), "");
         return new JsonResult(ResultCode.SUCCESS.getCode(), "激活账户成功");
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public JsonResult inList(HttpServletRequest request, Page page,Integer type) {
+        JsonResult result = null;
+        Token token = TokenUtil.getSessionUser(request);
+        User user = userService.readById(token.getId());
+        if (user == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
+        }
+        if (page.getPageNo() == null) {
+            page.setPageNo(1);
+        }
+        if (page.getPageSize() == null) {
+            page.setPageSize(10);
+        }
+        List<TransferCode> list = new ArrayList<>();
+        PageResult<TransferCode> pageResult = new PageResult<>();
+        BeanUtils.copyProperties(pageResult, page);
+        Integer count = transferCodeService.readCountByUserId(user.getId());
+        if (count != null && count > 0) {
+            list = transferCodeService.readListByUserId(user.getId(),page);
+            pageResult.setRows(list);
+        }
+        return new JsonResult(pageResult);
     }
 }

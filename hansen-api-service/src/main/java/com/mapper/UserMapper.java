@@ -22,7 +22,7 @@ public interface UserMapper extends CommonDao<User> {
 
     Integer updateUserActiveCode(@Param("id") String userId, @Param("activeCodeNo") Integer activeNo);
 
-    Integer updateUserRegisterCode(@Param("id") String userId, @Param("registerCode") Integer registerNo);
+    Integer updateUserRegisterCode(@Param("id") String userId, @Param("registerCodeNo") Integer registerNo);
 
     Integer updateUserRemainTaskNo(@Param("id") String userId, @Param("remainTaskNo") Integer remainTaskNo);
 

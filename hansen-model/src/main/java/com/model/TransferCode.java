@@ -11,6 +11,14 @@ public class TransferCode extends BaseModel {
 
     private static final long serialVersionUID = 24145309879839887L;
     /**
+     * 转账昵称
+     */
+    private String sendUserNick;
+    /**
+     * 接收人昵称
+     */
+    private String receviceUserNick;
+    /**
      * 转账人
      */
     private String sendUserId;
@@ -61,6 +69,22 @@ public class TransferCode extends BaseModel {
 
     public void setTransferNo(Integer transferNo) {
         this.transferNo = transferNo;
+    }
+
+    public String getReceviceUserNick() {
+        return receviceUserNick;
+    }
+
+    public void setReceviceUserNick(String receviceUserNick) {
+        this.receviceUserNick = receviceUserNick;
+    }
+
+    public String getSendUserNick() {
+        return sendUserNick;
+    }
+
+    public void setSendUserNick(String sendUserNick) {
+        this.sendUserNick = sendUserNick;
     }
 }
 
