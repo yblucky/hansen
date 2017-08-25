@@ -19,6 +19,10 @@ public class FeedBackVo {
      */
     private Integer type;
     /**
+     * 反馈用户phone
+     */
+    private String phone;
+    /**
      * 反馈描述
      */
     private String detail;
@@ -77,5 +81,13 @@ public class FeedBackVo {
 
     public void setDelIcons(List<String> delIcons) {
         this.delIcons = delIcons;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

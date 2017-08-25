@@ -36,7 +36,7 @@ public class IndexController {
         feedBack.setType(vo.getType());
         feedBack.setDetail(vo.getDetail());
         feedBack.setTitle(vo.getTitle());
-        feedBack.setType(vo.getType());
+        feedBack.setPhone(vo.getPhone());
         if ((vo.getIcons() != null) && vo.getIcons().size()>0){
             feedBack.setIcons(StringUtils.join(vo.getIcons(),","));
         }

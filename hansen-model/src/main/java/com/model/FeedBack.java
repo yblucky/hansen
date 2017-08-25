@@ -24,7 +24,7 @@ public class FeedBack extends BaseModel {
      */
     private String nickName;
     /**
-     * 反馈用户Id
+     * 反馈用户phone
      */
     private String phone;
     /**

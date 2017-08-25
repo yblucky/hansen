@@ -9,16 +9,17 @@ import com.base.page.ResultCode;
 import com.constant.CurrencyType;
 import com.constant.UserStatusType;
 import com.constant.WalletOrderType;
+import com.model.User;
+import com.model.WalletOrder;
+import com.model.WalletTransaction;
 import com.service.UserService;
 import com.service.WalletOrderService;
 import com.service.WalletTransactionService;
 import com.service.WalletUtil;
-import com.vo.CoinInOutVo;
-import com.vo.CoinTransferVo;
-import com.model.User;
-import com.model.WalletTransaction;
 import com.utils.codeutils.Md5Util;
 import com.utils.toolutils.ToolUtil;
+import com.vo.CoinInOutVo;
+import com.vo.CoinTransferVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -145,13 +148,25 @@ public class WalletController {
         }
     }
 
-
+    /**
+     * 充币提币记录
+     * @param request
+     * @param page
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/inoutlist", method = RequestMethod.POST)
-    public JsonResult inList(HttpServletRequest request, Integer currencyType, Page page) {
+    @RequestMapping(value = "/outterlist", method = RequestMethod.POST)
+    public JsonResult outterList(HttpServletRequest request, Page page) {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);
-        if (ToolUtil.isEmpty(currencyType)) {
+        String[] orderType = request.getParameterValues("orderType");
+        List<Integer>  orderTypeList =new ArrayList<>();
+        if (orderType.length>0){
+            for (int i=0;i<orderType.length;i++){
+                orderTypeList.add(Integer.valueOf(orderType[i]));
+            }
+        }
+        if (ToolUtil.isEmpty(orderType)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "查询类型不能为空");
         }
         User user = userService.readById(token.getId());
@@ -169,18 +184,71 @@ public class WalletController {
         }
         WalletTransaction condition = new WalletTransaction();
         condition.setUserId(user.getId());
-        condition.setCurrencyType(currencyType);
+        condition.setOrderType(1);
         Integer count = transactionService.readCount(condition);
         List<WalletTransaction> transactionList = new ArrayList<>();
-        for (WalletTransaction transaction : transactionList) {
-            transaction.setMessage(WalletUtil.checkTransactionStatus(transaction.getConfirmations()).getMessage());
-        }
+
         PageResult<WalletTransaction> pageResult = new PageResult<>();
         if (count != null && count > 0) {
             transactionList = transactionService.readList(condition, page.getPageNo(), page.getPageSize(), count);
+            for (WalletTransaction transaction : transactionList) {
+                transaction.setMessage(WalletUtil.checkTransactionStatus(transaction.getConfirmations()).getMessage());
+            }
             pageResult.setRows(transactionList);
         }
         BeanUtils.copyProperties(pageResult, page);
         return new JsonResult(pageResult);
+    }
+
+
+    /**
+     * 内部币种转账交易
+     * @param request
+     * @param page
+     * @return
+     */
+
+    @ResponseBody
+    @RequestMapping(value = "/innerlist", method = RequestMethod.POST)
+    public JsonResult innerList(HttpServletRequest request,  Page page) {
+        JsonResult result = null;
+        Token token = TokenUtil.getSessionUser(request);
+        String[] orderType = request.getParameterValues("orderType");
+        List<Integer>  orderTypeList =new ArrayList<>();
+        if (orderType.length>0){
+            for (int i=0;i<orderType.length;i++){
+                orderTypeList.add(Integer.valueOf(orderType[i]));
+            }
+        }
+        if (ToolUtil.isEmpty(orderType)) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "查询类型不能为空");
+        }
+        User user = userService.readById(token.getId());
+        if (user == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
+        }
+        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
+        }
+        if (page.getPageNo() == null) {
+            page.setPageNo(1);
+        }
+        if (page.getPageSize() == null) {
+            page.setPageSize(10);
+        }
+        WalletOrder  condition = new WalletOrder();
+        condition.setOrderType(1);
+        Integer count = walletOrderService.readCount(condition);
+        List<WalletOrder> orderList = new ArrayList<>();
+        PageResult<WalletOrder> pageResult = null;
+        try {
+            pageResult = walletOrderService.readTransferList(user.getId(),orderTypeList, page);
+            pageResult.setRows(orderList);
+            BeanUtils.copyProperties(pageResult, page);
+            return new JsonResult(pageResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new JsonResult(ResultCode.ERROR.getCode(),"获取转币记录失败");
     }
 }

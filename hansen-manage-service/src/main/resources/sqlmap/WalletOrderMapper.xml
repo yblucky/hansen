@@ -32,68 +32,19 @@
 	</sql>
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
-		insert into <include refid="table_name"/>(
-		<trim  suffixOverrides="," >
-			<if test="model.id!= null  and model.id!=''">
-				id,
-			</if>
-			<if test="model.currencyName!= null  and model.currencyName!=''">
-				currencyName,
-			</if>
-			<if test="model.currencyType!= null  and model.currencyType!=''">
-				currencyType,
-			</if>
-			<if test="model.createTime!= null  and model.createTime!=''">
-				createTime,
-			</if>
-			<if test="model.updateTime!= null  and model.updateTime!=''">
-				updateTime,
-			</if>
-			<if test="model.status!= null  and model.status!=''">
-				status,
-			</if>
-			<if test="model.remark!= null  and model.remark!=''">
-				remark,
-			</if>
-		</trim>
-		)
-		values(
-		<trim  suffixOverrides="," >
-
-			<if test="model.id!= null  and model.id!=''">
-				#{model.id},
-			</if>
-			<if test="model.currencyName!= null  and model.currencyName!=''">
-				#{model.currencyName},
-			</if>
-			<if test="model.currencyType!= null  and model.currencyType!=''">
-				#{model.currencyType},
-			</if>
-			<if test="model.createTime!= null  and model.createTime!=''">
-				#{model.createTime},
-			</if>
-			<if test="model.updateTime!= null  and model.updateTime!=''">
-				#{model.updateTime},
-			</if>
-			<if test="model.status!= null  and model.status!=''">
-				#{model.status},
-			</if>
-			<if test="model.remark!= null  and model.remark!=''">
-				#{model.remark},
-			</if>
-		</trim>
-		);
+		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+		values(#{id},#{orderNo},#{sendUserId},#{receviceUserId},#{amount},#{confirmAmt},#{poundage},#{orderType},now(),now(),#{status},#{remark});
 	</insert>
 
-	<select id="readById" resultType="WalletOrder">
+	<select id="readById" resultType="com.model.WalletOrder">
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
-	<select id="readList" resultType="WalletOrder">
+	<select id="readList" resultType="com.model.WalletOrder">
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
-	<select id="readOne" resultType="WalletOrder">
+	<select id="readOne" resultType="com.model.WalletOrder">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
 	</select>
 

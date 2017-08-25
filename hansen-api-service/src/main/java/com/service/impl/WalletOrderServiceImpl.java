@@ -1,24 +1,30 @@
 package com.service.impl;
 
 import com.base.dao.CommonDao;
+import com.base.page.Page;
+import com.base.page.PageResult;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.CurrencyType;
 import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
 import com.mapper.WalletOrderMapper;
+import com.model.Parameter;
+import com.model.WalletOrder;
 import com.service.ParamUtil;
 import com.service.UserService;
 import com.service.WalletOrderService;
 import com.service.WalletTransactionService;
-import com.model.Parameter;
-import com.model.WalletOrder;
 import com.utils.toolutils.OrderNoUtil;
+import com.utils.toolutils.ToolUtil;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -97,7 +103,7 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         Double poundageScale = 0d;
         Double poundage = 0d;
         Double confirmAmount = 0d;
-        String txtId="";
+        String txtId = "";
         if (!outType.contains(walletOrderType.getCode())) {
             return false;
         }
@@ -123,9 +129,27 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
 //            txtId=  WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         }
         //创建提币订单
-        WalletOrder order=this.addWalletOrder(fromUserId, "", walletOrderType, amt, confirmAmount, poundage, WalletOrderStatus.PENDING);
-       //管理后台审核通过的审核，生成此记录
+        WalletOrder order = this.addWalletOrder(fromUserId, "", walletOrderType, amt, confirmAmount, poundage, WalletOrderStatus.PENDING);
+        //管理后台审核通过的审核，生成此记录
 //        transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID,address,walletOrderType,txtId,order.getOrderNo(),amt);
         return true;
+    }
+
+    @Override
+    public PageResult<WalletOrder> readTransferList(String userId, List<Integer> orderType, Page page) throws Exception {
+        if (StringUtils.isBlank(userId)) {
+            return null;
+        }
+        PageResult<WalletOrder> pageResult = new PageResult<WalletOrder>();
+        BeanUtils.copyProperties(pageResult, page);
+
+        List<WalletOrder> list = walletOrderMapper.readTransferList(userId, orderType, page);
+        if (ToolUtil.isEmpty(list)) {
+            list = Collections.emptyList();
+
+        }
+        pageResult.setTotalSize(list.size());
+        pageResult.setRows(list);
+        return pageResult;
     }
 }

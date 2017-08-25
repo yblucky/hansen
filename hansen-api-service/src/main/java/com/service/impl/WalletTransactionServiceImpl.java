@@ -71,7 +71,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
 //                break;
             }
             WalletTransaction transaction = new WalletTransaction();
-            transaction.setCurrencyType(currencyType);
+            transaction.setOrderType(currencyType);
             transaction.setUserId(info.getOtherAccount());
             transaction.setAmount(info.getAmount().doubleValue());
             transaction.setCategory(info.getCategory());
@@ -97,7 +97,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     @Override
     public void checkTransactionListStatus(String userId, Integer currencyType) throws Exception {
         WalletTransaction condition = new WalletTransaction();
-        condition.setCurrencyType(currencyType);
+        condition.setOrderType(currencyType);
         condition.setUserId(userId);
         List<WalletTransaction> list = this.readAll(condition);
         for (WalletTransaction transaction : list) {
@@ -116,7 +116,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             confirmations = transaction.getConfirmations();
             isUpdate = true;
         } else {
-            info = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(transaction.getCurrencyType()), transaction.getTxtId());
+            info = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(transaction.getOrderType()), transaction.getTxtId());
             updateModel.setUserId(transaction.getUserId());
             updateModel.setTxtId(transaction.getTxtId());
             updateModel.setConfirmations(info.getConfirmations());
@@ -128,11 +128,11 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
         if (isUpdate) {
             updateModel.setTransactionStatus(WalletUtil.checkTransactionStatus(confirmations).getMessage());
             this.updateById(transaction.getId(), updateModel);
-            if (transaction.getCurrencyType() == 1) {
+            if (transaction.getOrderType() == 1) {
                 userService.updatePayAmtByUserId(transaction.getUserId(), transaction.getAmount());
-            } else if (transaction.getCurrencyType() == 2) {
+            } else if (transaction.getOrderType() == 2) {
                 userService.updateTradeAmtByUserId(transaction.getUserId(), transaction.getAmount());
-            } else if (transaction.getCurrencyType() == 3) {
+            } else if (transaction.getOrderType() == 3) {
                 userService.updateEquityAmtByUserId(transaction.getUserId(), transaction.getAmount());
             }
         }
@@ -141,7 +141,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     @Override
     public Integer addWalletOrderTransaction(String userId, String address, WalletOrderType walletOrderType, String txtId, String orderNo, Double amount) {
         WalletTransaction transaction = new WalletTransaction();
-        transaction.setCurrencyType(walletOrderType.getCode());
+        transaction.setOrderType(walletOrderType.getCode());
         transaction.setUserId(userId);
         transaction.setAmount(amount);
         transaction.setPrepayId(orderNo);
