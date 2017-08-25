@@ -10,7 +10,6 @@ import com.constant.*;
 import com.service.*;
 import com.vo.*;
 import com.utils.classutils.MyBeanUtils;
-import com.vo.*;
 import com.model.*;
 import com.redis.Strings;
 import com.utils.DateUtils.DateUtils;
@@ -35,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.service.WalletUtil.getBitCoinClient;
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 
 @Controller
@@ -591,6 +589,44 @@ public class UserController {
             updateUser.setPayWord(Md5Util.MD5Encode(vo.getConfirmPayWord(), loginUser.getSalt()));
             updateUser.setUpdateTime(new Date());
         }
+
+        // 更新用户信息
+        userService.updateById(loginUser.getId(), updateUser);
+        return new JsonResult();
+    }
+
+    /**
+     * 忘记密码
+     */
+    @ResponseBody
+    @RequestMapping(value = "/forgetPwd", method = RequestMethod.POST)
+    public JsonResult updatePwd(HttpServletRequest request, @RequestBody ForgetPwdVo vo) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
+        User loginUser = userService.readById(token.getId());
+        if (loginUser == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
+        }
+        if (StringUtils.isEmpty(vo.getPhoneNumber())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "手机号不能为空");
+        }
+        if(StringUtils.isEmpty(vo.getPhoneCode())){
+            return new JsonResult(ResultCode.ERROR.getCode(), "验证码不能为空");
+        }
+        if(StringUtils.isEmpty(vo.getNewPassWord())){
+            return new JsonResult(ResultCode.ERROR.getCode(), "新密码不能为空");
+        }
+        if(!vo.getNewPassWord().equals(vo.getConfirmPassWord())){
+            return new JsonResult(ResultCode.ERROR.getCode(), "两次密码输入不一致");
+        }
+        String rsCode = Strings.get(RedisKey.SMS_CODE.getKey() +vo.getPhoneNumber());
+        if(!rsCode.equalsIgnoreCase(vo.getPhoneCode())){
+            return new JsonResult(ResultCode.ERROR.getCode(), "验证码错误或者失效了");
+        }
+
+        User updateUser = new User();
+        //修改登录密码
+        updateUser.setPayWord(Md5Util.MD5Encode(vo.getConfirmPassWord(), loginUser.getSalt()));
+        updateUser.setUpdateTime(new Date());
 
         // 更新用户信息
         userService.updateById(loginUser.getId(), updateUser);

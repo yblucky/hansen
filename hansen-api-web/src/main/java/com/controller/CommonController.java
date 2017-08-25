@@ -3,11 +3,16 @@ package com.controller;
 import com.Token;
 import com.base.TokenUtil;
 import com.base.page.JsonResult;
+import com.base.page.ResultCode;
 import com.constant.RedisKey;
 import com.redis.Strings;
 import com.taobao.api.internal.util.Base64;
+import com.utils.numberutils.RandomUtil;
 import com.utils.numberutils.UUIDUtil;
+import com.utils.smsUtils.SmsTemplate;
+import com.utils.smsUtils.SmsUtil;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -102,5 +107,27 @@ public class CommonController {
         ImageIO.write(buffImg, "jpeg", outputStream);
         String str = randomCode.toString();
         return str;
+    }
+
+    /**
+     * 获取手机验证码
+     * @param request
+     * @param response
+     * @param phoneNumber
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping(value = "/sendSms", method = RequestMethod.GET)
+    public JsonResult getPicBase64Code(HttpServletRequest request, HttpServletResponse response,String phoneNumber) throws Exception {
+
+        if(StringUtils.isEmpty(phoneNumber)){
+            return new JsonResult(ResultCode.ERROR.getCode(), "手机号不能为空");
+        }
+        String phoneCode = RandomUtil.getCode();
+        SmsUtil.sendSmsCode("18826214582", SmsTemplate.COMMON, phoneCode);
+        //保存到redis
+        Strings.setEx(RedisKey.SMS_CODE.getKey() + phoneNumber, RedisKey.SMS_CODE.getSeconds(), phoneCode);
+        return new JsonResult(phoneCode);
     }
 }

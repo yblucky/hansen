@@ -91,4 +91,12 @@ public final class RandomUtil {
 		}
 		return null;
 	}
+
+	/**
+	 * 随机产生6位数
+	 * @return 验证码
+	 */
+	public static String getCode(){
+		return String.valueOf(((int)((Math.random()*9+1)*100000)));
+	}
 }

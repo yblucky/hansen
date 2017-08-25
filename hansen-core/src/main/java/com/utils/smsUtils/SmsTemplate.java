@@ -1,4 +1,4 @@
-package com.utils.sms;
+package com.utils.smsUtils;
 
 /**
  * 短信模板类

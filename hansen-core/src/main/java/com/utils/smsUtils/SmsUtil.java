@@ -1,4 +1,4 @@
-package com.utils.sms;
+package com.utils.smsUtils;
 
 import com.taobao.api.ApiException;
 import com.utils.httputils.HttpUtil;
