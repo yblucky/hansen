@@ -1,6 +1,7 @@
 package com.vo;
 
 import com.BaseModel;
+import com.constant.CardLevelType;
 import com.constant.UpGradeType;
 
 import java.util.Date;
@@ -26,9 +27,17 @@ public class UserGradeRecordVo {
      */
     private Integer historyGrade;
     /**
+     * 历史等级
+     */
+    private String historyGradeName;
+    /**
      * 当前等级
      */
     private Integer currencyGrade;
+    /**
+     * 当前等级
+     */
+    private String currencyGradeName;
 
     /**
      * 订单号
@@ -73,6 +82,7 @@ public class UserGradeRecordVo {
 
     public void setHistoryGrade(Integer historyGrade) {
         this.historyGrade = historyGrade;
+        setHistoryGradeName(CardLevelType.getName(this.historyGrade));
     }
 
     public Integer getCurrencyGrade() {
@@ -81,6 +91,7 @@ public class UserGradeRecordVo {
 
     public void setCurrencyGrade(Integer currencyGrade) {
         this.currencyGrade = currencyGrade;
+        setCurrencyGradeName(CardLevelType.getName(this.currencyGrade));
     }
 
     public String getOrderNo() {
@@ -126,5 +137,21 @@ public class UserGradeRecordVo {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getHistoryGradeName() {
+        return historyGradeName;
+    }
+
+    public void setHistoryGradeName(String historyGradeName) {
+        this.historyGradeName = historyGradeName;
+    }
+
+    public String getCurrencyGradeName() {
+        return currencyGradeName;
+    }
+
+    public void setCurrencyGradeName(String currencyGradeName) {
+        this.currencyGradeName = currencyGradeName;
     }
 }
