@@ -81,6 +81,13 @@ public class LoginController {
         if (ToolUtil.isEmpty(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录密码不能为空");
         }
+        if(ToolUtil.isEmpty(vo.getPicCode())){
+            return new JsonResult(ResultCode.ERROR.getCode(), "验证码不能为空");
+        }
+        String rsCode = Strings.get(RedisKey.PIC_CODE.getKey() +vo.getKey());
+        if(!vo.getPicCode().equalsIgnoreCase(rsCode)){
+            return new JsonResult(ResultCode.ERROR.getCode(), "验证码输入错误或者已失效");
+        }
         User condition = new User();
         condition.setLoginName(vo.getLoginName());
         User loginUser = userService.readOne(condition);

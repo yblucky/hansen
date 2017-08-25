@@ -51,6 +51,11 @@ public class LoginUserVo {
      * @return
      */
     private String key;
+    /**
+     * 验证码
+     * @return
+     */
+    private String picCode;
 
     public String getLoginName() {
         return loginName;
@@ -123,5 +128,13 @@ public class LoginUserVo {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getPicCode() {
+        return picCode;
+    }
+
+    public void setPicCode(String picCode) {
+        this.picCode = picCode;
     }
 }
