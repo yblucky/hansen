@@ -5,7 +5,9 @@ import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.ResultCode;
 import com.constant.RedisKey;
+import com.model.User;
 import com.redis.Strings;
+import com.service.UserService;
 import com.taobao.api.internal.util.Base64;
 import com.utils.numberutils.RandomUtil;
 import com.utils.numberutils.UUIDUtil;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +46,9 @@ public class CommonController {
             '3', '4', '5', '6', '7', '8', '9'};
 
     private static String prefix = "data:image/jpeg;base64,";
+
+    @Resource
+    private UserService userService;
 
 
     @ResponseBody
@@ -124,6 +130,15 @@ public class CommonController {
         if(StringUtils.isEmpty(phoneNumber)){
             return new JsonResult(ResultCode.ERROR.getCode(), "手机号不能为空");
         }
+
+        //判断手机号是否存在
+        User model = new User();
+        model.setPhone(phoneNumber);
+        User user = userService.readOne(model);
+        if(user == null){
+            return new JsonResult(ResultCode.ERROR.getCode(), "该手机号尚未绑定");
+        }
+
         String phoneCode = RandomUtil.getCode();
         SmsUtil.sendSmsCode(phoneNumber, SmsTemplate.COMMON, phoneCode);
         //保存到redis

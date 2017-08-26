@@ -4,6 +4,8 @@
 	<url>/login/token</url>
 	<url>/login/loginIn</url>
 	<url>/common/pic64code</url>
+	<url>/common/sendSms</url>
+	<url>/user/forgetPwd</url>
 
 	<!-- 静态资源-->
 	<url>/resources</url>
