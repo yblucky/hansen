@@ -433,7 +433,7 @@ public class UserController {
      * 修改用户信息
      */
     @ResponseBody
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
     public JsonResult updateUserInfo(HttpServletRequest request, @RequestBody UserVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         User loginUser = userService.readById(token.getId());
@@ -453,6 +453,12 @@ public class UserController {
         }
         if (ToolUtil.isNotEmpty(vo.getContactUserId())) {
             updateUser.setNickName(vo.getContactUserId());
+        }
+        if (ToolUtil.isNotEmpty(vo.getPhone())) {
+            updateUser.setPhone(vo.getPhone());
+        }
+        if (ToolUtil.isNotEmpty(vo.getEmail())) {
+            updateUser.setEmail(vo.getEmail());
         }
         if (ToolUtil.isNotEmpty(vo.getOutEquityAddress())) {
             upateDetail.setOutEquityAddress(vo.getOutEquityAddress());
@@ -529,7 +535,7 @@ public class UserController {
 
 
     /**
-     * 修改用户信息
+     * 修改用户密码信息
      */
     @ResponseBody
     @RequestMapping(value = "/updatePwd", method = RequestMethod.POST)
