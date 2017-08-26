@@ -135,25 +135,25 @@ public class UserController {
         if (ToolUtil.isEmpty(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新建用户登录密码不能为空");
         }
-        if (ToolUtil.isEmpty(vo.getPayWord())) {
+        if (ToolUtil.isEmpty(vo.getPayword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新建用户支付密码不能为空");
         }
         if (ToolUtil.isEmpty(vo.getConfirmPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新建用户确认登录密码不能为空");
         }
-        if (ToolUtil.isEmpty(vo.getConfirmpayWord())) {
+        if (ToolUtil.isEmpty(vo.getConfirmPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新建用户确认支付密码不能为空");
         }
         if (vo.getConfirmPassword().equals(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新建用户确认两次登录密码不一致");
         }
-        if (vo.getConfirmpayWord().equals(vo.getPayWord())) {
+        if (vo.getConfirmPayWord().equals(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新建用户确认两次支付密码不一致");
         }
         if (vo.getCardGrade() == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请选择开卡级别");
         }
-        if (vo.getUid() == null) {
+        if (vo.getFirstReferrer() == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "邀请人uid不能为空");
         }
         User regisUserContion = new User();

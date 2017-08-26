@@ -57,17 +57,25 @@ public class SignController {
         conditon.setStatus(SignType.WAITING_SIGN.getCode());
         Integer count = userSignService.readCount(conditon);
         UserSign sign = null;
-        Map<String, Double> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         if (count != null && count > 0) {
             sign = userSignService.readOne(conditon);
+            if (sign==null){
+                map.put("isCanSign",false);
+            }
             try {
                 Boolean flag = userSignService.sign(sign.getId());
                 if (flag) {
                     user = userService.readById(user.getId());
+                    map.put("isCanSign",true);
+                    map.put("amt", sign.getAmt());
+                }else {
+                    map.put("isCanSign",false);
                 }
                 map.put("payAmt", user.getPayAmt());
                 map.put("tradeAmt", user.getTradeAmt());
                 map.put("equityAmt", user.getEquityAmt());
+                map.put("amt",0);
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonResult(ResultCode.ERROR.getCode(), "签到失败", map);

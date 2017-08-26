@@ -29,7 +29,7 @@ public class InnerRegisterUserVo {
     /**
      * 支付密码
      */
-    private String payWord;
+    private String payword;
 
 
     /**
@@ -40,7 +40,7 @@ public class InnerRegisterUserVo {
     /**
      * 支付密码
      */
-    private String confirmpayWord;
+    private String confirmPayWord;
 
 
     /**
@@ -56,6 +56,32 @@ public class InnerRegisterUserVo {
      * 邀请人uid
      */
     private Integer uid;
+
+    /**
+     * 邀请人uid
+     */
+    private Integer firstReferrer;
+
+    /**
+     * 接点人
+     */
+    private Integer contactUserId;
+    /**
+     * email
+     */
+    private String email ;
+    /**
+     * phone
+     */
+    private String phone ;
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public String getLoginName() {
         return loginName;
@@ -89,14 +115,6 @@ public class InnerRegisterUserVo {
         this.headImgUrl = headImgUrl;
     }
 
-    public String getPayWord() {
-        return payWord;
-    }
-
-    public void setPayWord(String payWord) {
-        this.payWord = payWord;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -122,12 +140,20 @@ public class InnerRegisterUserVo {
         this.uid = uid;
     }
 
-    public String getConfirmpayWord() {
-        return confirmpayWord;
+    public String getPayword() {
+        return payword;
     }
 
-    public void setConfirmpayWord(String confirmpayWord) {
-        this.confirmpayWord = confirmpayWord;
+    public void setPayword(String payword) {
+        this.payword = payword;
+    }
+
+    public String getConfirmPayWord() {
+        return confirmPayWord;
+    }
+
+    public void setConfirmPayWord(String confirmPayWord) {
+        this.confirmPayWord = confirmPayWord;
     }
 
     public String getConfirmPassword() {
@@ -136,5 +162,29 @@ public class InnerRegisterUserVo {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getFirstReferrer() {
+        return firstReferrer;
+    }
+
+    public void setFirstReferrer(Integer firstReferrer) {
+        this.firstReferrer = firstReferrer;
+    }
+
+    public Integer getContactUserId() {
+        return contactUserId;
+    }
+
+    public void setContactUserId(Integer contactUserId) {
+        this.contactUserId = contactUserId;
     }
 }
