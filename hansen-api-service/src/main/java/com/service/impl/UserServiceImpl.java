@@ -11,6 +11,7 @@ import com.service.*;
 import com.utils.DateUtils.DateUtils;
 import com.utils.codeutils.Md5Util;
 import com.utils.numberutils.CurrencyUtil;
+import com.utils.numberutils.UUIDUtil;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -511,14 +512,22 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setSecondReferrer(inviterUser.getFirstReferrer());
         user.setGrade(cardGrade.getGrade());
         user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
-        BitcoinClient payBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
-        BitcoinClient equityBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
-        BitcoinClient tradeBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+//        BitcoinClient payBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCUSER), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
+//        BitcoinClient equityBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCUSER), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
+//        BitcoinClient tradeBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCUSER), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
 
         /**生成钱包地址**/
-        String payAddress = WalletUtil.getAccountAddress(payBitcoinClient, user.getLoginName());
-        String equityAddress = WalletUtil.getAccountAddress(equityBitcoinClient, user.getLoginName());
-        String tradeAddress = WalletUtil.getAccountAddress(tradeBitcoinClient, user.getLoginName());
+
+        //TODO  生成钱包地址的暂时去掉
+//        String payAddress = WalletUtil.getAccountAddress(payBitcoinClient, user.getLoginName());
+//        String equityAddress = WalletUtil.getAccountAddress(equityBitcoinClient, user.getLoginName());
+//        String tradeAddress = WalletUtil.getAccountAddress(tradeBitcoinClient, user.getLoginName());
+
+        String payAddress = UUIDUtil.getUUID();
+        String equityAddress = UUIDUtil.getUUID();
+        String tradeAddress = UUIDUtil.getUUID();
+
+
         user.setFirstReferrer(inviterUser.getId());
         user.setSecondReferrer(inviterUser.getSecondReferrer());
         user.setContactUserId(null);
