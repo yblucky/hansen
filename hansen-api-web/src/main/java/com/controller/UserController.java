@@ -619,14 +619,17 @@ public class UserController {
             return new JsonResult(ResultCode.ERROR.getCode(), "两次密码输入不一致");
         }
         String rsCode = Strings.get(RedisKey.SMS_CODE.getKey() +vo.getPhoneNumber());
-        if(!rsCode.equalsIgnoreCase(vo.getPhoneCode())){
+        if(org.springframework.util.StringUtils.isEmpty(rsCode) || !rsCode.equalsIgnoreCase(vo.getPhoneCode())){
             return new JsonResult(ResultCode.ERROR.getCode(), "验证码错误或者失效了");
         }
 
         User updateUser = new User();
         //修改登录密码
-        updateUser.setPayWord(Md5Util.MD5Encode(vo.getConfirmPassWord(), loginUser.getSalt()));
+        updateUser.setPassword(Md5Util.MD5Encode(vo.getConfirmPassWord(), loginUser.getSalt()));
         updateUser.setUpdateTime(new Date());
+
+        //修改成功，删除验证码
+        Strings.del(RedisKey.SMS_CODE.getKey() +vo.getPhoneNumber());
 
         // 更新用户信息
         userService.updateById(loginUser.getId(), updateUser);
