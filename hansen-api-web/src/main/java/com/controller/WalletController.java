@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -150,20 +149,32 @@ public class WalletController {
 
     /**
      * 充币提币记录
+     *
      * @param request
      * @param page
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/outterlist", method = RequestMethod.POST)
-    public JsonResult outterList(HttpServletRequest request, Page page) {
+    @RequestMapping(value = "/coinoutterlist", method = RequestMethod.GET)
+    public JsonResult outterList(HttpServletRequest request, Page page, String orderType) {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);
-        String[] orderType = request.getParameterValues("orderType");
-        List<Integer>  orderTypeList =new ArrayList<>();
-        if (orderType.length>0){
-            for (int i=0;i<orderType.length;i++){
-                orderTypeList.add(Integer.valueOf(orderType[i]));
+        PageResult<WalletTransaction> pageResult = new PageResult<>();
+        if (page.getPageNo() == null) {
+            page.setPageNo(1);
+        }
+        if (page.getPageSize() == null) {
+            page.setPageSize(10);
+        }
+        if (ToolUtil.isEmpty(orderType)) {
+            pageResult.setRows(Collections.emptyList());
+            return new JsonResult(pageResult);
+        }
+        String[] orderTypes = orderType.split(",");
+        List<Integer> orderTypeList = new ArrayList<>();
+        if (orderTypes.length > 0) {
+            for (int i = 0; i < orderTypes.length; i++) {
+                orderTypeList.add(Integer.valueOf(orderTypes[i]));
             }
         }
         if (ToolUtil.isEmpty(orderType)) {
@@ -176,19 +187,12 @@ public class WalletController {
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
         }
-        if (page.getPageNo() == null) {
-            page.setPageNo(1);
-        }
-        if (page.getPageSize() == null) {
-            page.setPageSize(10);
-        }
+
         WalletTransaction condition = new WalletTransaction();
         condition.setUserId(user.getId());
         condition.setOrderType(1);
         Integer count = transactionService.readCount(condition);
         List<WalletTransaction> transactionList = new ArrayList<>();
-
-        PageResult<WalletTransaction> pageResult = new PageResult<>();
         if (count != null && count > 0) {
             transactionList = transactionService.readList(condition, page.getPageNo(), page.getPageSize(), count);
             for (WalletTransaction transaction : transactionList) {
@@ -203,21 +207,33 @@ public class WalletController {
 
     /**
      * 内部币种转账交易
+     *
      * @param request
      * @param page
      * @return
      */
 
     @ResponseBody
-    @RequestMapping(value = "/innerlist", method = RequestMethod.POST)
-    public JsonResult innerList(HttpServletRequest request,  Page page) {
+    @RequestMapping(value = "/coininnerlist", method = RequestMethod.GET)
+    public JsonResult innerList(HttpServletRequest request, Page page, String orderType) {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);
-        String[] orderType = request.getParameterValues("orderType");
-        List<Integer>  orderTypeList =new ArrayList<>();
-        if (orderType.length>0){
-            for (int i=0;i<orderType.length;i++){
-                orderTypeList.add(Integer.valueOf(orderType[i]));
+        PageResult<WalletOrder> pageResult = new PageResult<>();
+        if (page.getPageNo() == null) {
+            page.setPageNo(1);
+        }
+        if (page.getPageSize() == null) {
+            page.setPageSize(10);
+        }
+        if (ToolUtil.isEmpty(orderType)) {
+            pageResult.setRows(Collections.emptyList());
+            return new JsonResult(pageResult);
+        }
+        String[] orderTypes = orderType.split(",");
+        List<Integer> orderTypeList = new ArrayList<>();
+        if (orderTypes.length > 0) {
+            for (int i = 0; i < orderTypes.length; i++) {
+                orderTypeList.add(Integer.valueOf(orderTypes[i]));
             }
         }
         if (ToolUtil.isEmpty(orderType)) {
@@ -230,25 +246,23 @@ public class WalletController {
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
         }
-        if (page.getPageNo() == null) {
-            page.setPageNo(1);
-        }
-        if (page.getPageSize() == null) {
-            page.setPageSize(10);
-        }
-        WalletOrder  condition = new WalletOrder();
+
+        WalletOrder condition = new WalletOrder();
         condition.setOrderType(1);
         Integer count = walletOrderService.readCount(condition);
-        List<WalletOrder> orderList = new ArrayList<>();
-        PageResult<WalletOrder> pageResult = null;
         try {
-            pageResult = walletOrderService.readTransferList(user.getId(),orderTypeList, page);
-            pageResult.setRows(orderList);
-            BeanUtils.copyProperties(pageResult, page);
+            if (count != null && count > 0) {
+                List<WalletOrder> orderList = new ArrayList<>();
+                pageResult = walletOrderService.readTransferList(user.getId(), orderTypeList, page);
+                pageResult.setRows(orderList);
+                BeanUtils.copyProperties(pageResult, page);
+            } else {
+                pageResult.setRows(Collections.emptyList());
+            }
             return new JsonResult(pageResult);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new JsonResult(ResultCode.ERROR.getCode(),"获取转币记录失败");
+        return new JsonResult(ResultCode.ERROR.getCode(), "获取转币记录失败");
     }
 }
