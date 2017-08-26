@@ -410,7 +410,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             return;
         }
         User updateModel = new User();
-        updateModel.setGrade(grade.getGrade());
+        updateModel.setId(userId);
+        updateModel.setCardGrade(grade.getGrade());
         updateModel.setInsuranceAmt(grade.getInsuranceAmt());
         updateModel.setMaxProfits(CurrencyUtil.multiply(grade.getOutMultiple(), grade.getInsuranceAmt(), 4));
         this.updateById(userId, updateModel);
@@ -441,7 +442,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
      * @param cardGrade 升级等级
      */
     @Override
-    public void coverageUpgrade(String userId, Integer cardGrade) {
+    @Transactional(rollbackFor = Exception.class)
+    public void coverageUpgrade(String userId, Integer cardGrade) throws Exception {
         User user = this.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
@@ -472,9 +474,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
         tradeOrder.setSource(OrderType.INSURANCE.getCode());
         tradeOrder.setRemark(OrderType.INSURANCE.getMsg());
-        tradeOrder.setPayAmtScale(0.5);
-        tradeOrder.setTradeAmtScale(0.5);
-        tradeOrder.setEquityAmtScale(0d);
+        double rewardPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE),1d);
+        double rewardTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE),1d);
+        double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE),1d);
+        tradeOrder.setPayAmtScale(rewardPayScale);
+        tradeOrder.setTradeAmtScale(rewardTradeScale);
+        tradeOrder.setEquityAmtScale(rewardEqutyScale);
         tradeOrder.setConfirmAmt(0d);
         tradeOrder.setPoundage(0d);
         tradeOrder.setStatus(OrderStatus.PENDING.getCode());

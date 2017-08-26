@@ -302,12 +302,15 @@ public class UserController {
         if (org.apache.commons.lang3.StringUtils.isEmpty(vo.getPayWord())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请选择输入支付密码");
         }
-        if (loginUser.getPassword().equals(Md5Util.MD5Encode(vo.getPayWord(), loginUser.getSalt()))) {
+        if (!loginUser.getPassword().equals(Md5Util.MD5Encode(vo.getPayWord(), loginUser.getSalt()))) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付密码错误");
         }
         CardGrade cardGrade = cardGradeService.getUserCardGrade(vo.getGrade());
         if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "升卡级别有误");
+        }
+        if (loginUser.getCardGrade().intValue() >= cardGrade.getGrade().intValue()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "升级只能从低往高升级");
         }
         if (loginUser.getRegisterCodeNo() < cardGrade.getRegisterCodeNo() || loginUser.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户激活码或注册码不足，请先补充激活码或注册码!");
