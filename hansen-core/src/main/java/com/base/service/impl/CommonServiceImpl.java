@@ -180,7 +180,7 @@ public abstract class CommonServiceImpl<M extends BaseModel> {
             Integer status = model.getStatus();
             status = status == null ? 1 : status;
             model.setStatus(status);
-            if (StringUtils.isEmpty(model.getId())) {
+            if (ToolUtil.isEmpty(model.getId())) {
                 model.setId(ToolUtil.getUUID());
             }
             if (model.getCreateTime() == null) {

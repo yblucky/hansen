@@ -175,7 +175,6 @@ public class UserController {
             return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
         }
         User inviterCondition = new User();
-        inviterCondition.setUid(vo.getUid());
 
         User inviterUser = userService.readOne(inviterCondition);
         if (inviterUser == null) {
@@ -184,8 +183,9 @@ public class UserController {
 
         User model = new User();
         BeanUtils.copyProperties(model, vo);
+        model.setPayWord(vo.getPayword());
         userService.innerRegister(loginUser, inviterUser, model, cardGrade);
-        return new JsonResult(model);
+        return new JsonResult(ResultCode.SUCCESS.getCode(),"注册成功");
     }
 
 

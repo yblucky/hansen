@@ -532,11 +532,27 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setSecondReferrer(inviterUser.getSecondReferrer());
         user.setContactUserId(null);
         user.setPassword(Md5Util.MD5Encode(user.getPassword(), DateUtils.currentDateToggeter()));
+        user.setPayWord(Md5Util.MD5Encode(user.getPayWord(), DateUtils.currentDateToggeter()));
         user.setSalt(DateUtils.currentDateToggeter());
         user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
+        String creatUserId=ToolUtil.getUUID();
+        user.setId(creatUserId);
+        user.setEquityAmt(0d);
+        user.setTradeAmt(0d);
+        user.setPayAmt(0d);
+        user.setSumProfits(0d);
+        user.setInsuranceAmt(cardGrade.getInsuranceAmt());
+        user.setMaxProfits(cardGrade.getInsuranceAmt()*cardGrade.getOutMultiple());
         this.create(user);
+        user=this.readById(creatUserId);
+        UserDetail innerUserDetail = userDetailService.readById(inviterUser.getId());
         UserDetail userDetail = new UserDetail();
         userDetail.setId(user.getId());
+        userDetail.setForzenEquityAmt(0d);
+        userDetail.setForzenPayAmt(0d);
+        userDetail.setForzenTradeAmt(0d);
+        userDetail.setStatus(user.getStatus());
+        userDetail.setLevles(innerUserDetail.getLevles()+1);
         userDetail.setInEquityAddress(equityAddress);
         userDetail.setInTradeAddress(tradeAddress);
         userDetail.setInPayAddress(payAddress);
@@ -555,6 +571,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         userDepartment.setParentUserId(innerUser.getId());
         userDepartment.setUid(createUser.getUid());
         userDepartment.setUserId(createUser.getId());
+        userDepartment.setId(ToolUtil.getUUID());
         userDepartmentService.createUserDepartment(userDepartment);
         /**扣注册码**/
         activeCodeService.useRegisterCode(innerUser.getId(), -cardGrade.getRegisterCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
