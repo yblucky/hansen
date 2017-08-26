@@ -410,7 +410,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             return;
         }
         User updateModel = new User();
-        updateModel.setGrade(grade.getGrade());
+        updateModel.setId(userId);
+        updateModel.setCardGrade(grade.getGrade());
         updateModel.setInsuranceAmt(grade.getInsuranceAmt());
         updateModel.setMaxProfits(CurrencyUtil.multiply(grade.getOutMultiple(), grade.getInsuranceAmt(), 4));
         this.updateById(userId, updateModel);

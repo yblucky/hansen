@@ -309,6 +309,9 @@ public class UserController {
         if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "升卡级别有误");
         }
+        if (loginUser.getCardGrade().intValue() >= cardGrade.getGrade().intValue()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "升级只能从低往高升级");
+        }
         if (loginUser.getRegisterCodeNo() < cardGrade.getRegisterCodeNo() || loginUser.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户激活码或注册码不足，请先补充激活码或注册码!");
         }
