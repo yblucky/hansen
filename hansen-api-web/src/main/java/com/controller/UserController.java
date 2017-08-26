@@ -531,9 +531,6 @@ public class UserController {
         return new JsonResult();
     }
 
-
-
-
     /**
      * 修改用户密码信息
      */
@@ -548,55 +545,34 @@ public class UserController {
         if (StringUtils.isEmpty(vo.getPwdType())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请选择修改密码方式");
         }
-        if(StringUtils.isEmpty(vo.getPicCode())){
-            return new JsonResult(ResultCode.ERROR.getCode(), "验证码不能为空");
+        if (StringUtils.isEmpty(vo.getOldPassWord())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "旧登录密码不能为空");
         }
-        String rsCode = Strings.get(RedisKey.PIC_CODE.getKey() +vo.getPicKey());
-        if(!rsCode.equalsIgnoreCase(vo.getPicCode())){
-            return new JsonResult(ResultCode.ERROR.getCode(), "验证码错误或者失效了");
+        if (StringUtils.isEmpty(vo.getNewPassWord())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "新登录密码不能为空");
         }
+        if (StringUtils.isEmpty(vo.getConfirmPassWord())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "确认新登录密码不能为空");
+        }
+        if (!loginUser.getPassword().equals(Md5Util.MD5Encode(vo.getOldPassWord(), loginUser.getSalt()))) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "旧登录密码不正确");
+        }
+        if (!vo.getConfirmPassWord().trim().equals(vo.getNewPassWord().trim())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "确认新登录密码和新登录密码不一致");
+        }
+
         User updateUser = new User();
-        //修改登录密码
+
         if ("1".equals(vo.getPwdType())) {
-            if (StringUtils.isEmpty(vo.getOldPassWord())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "旧登录密码不能为空");
-            }
-            if (StringUtils.isEmpty(vo.getNewPassWord())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "新登录密码不能为空");
-            }
-            if (StringUtils.isEmpty(vo.getConfirmPassWord())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "确认新登录密码不能为空");
-            }
-            if (!loginUser.getPassword().equals(Md5Util.MD5Encode(vo.getOldPassWord(), loginUser.getSalt()))) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "旧登录密码不正确");
-            }
-            if (!vo.getConfirmPassWord().trim().equals(vo.getNewPassWord().trim())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "确认新登录密码和新登录密码不一致");
-            }
+            //修改登录密码
             updateUser.setPassword(Md5Util.MD5Encode(vo.getConfirmPassWord(), loginUser.getSalt()));
-            updateUser.setUpdateTime(new Date());
         } else if ("2".equals(vo.getPwdType())) {
             //修改支付密码
-            if (StringUtils.isEmpty(vo.getOldPayWord())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "旧支付密码不能为空");
-            }
-            if (StringUtils.isEmpty(vo.getNewPayWord())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "新支付密码不能为空");
-            }
-            if (StringUtils.isEmpty(vo.getConfirmPayWord())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "确认新支付密码不能为空");
-            }
-            if (!loginUser.getPayWord().equals(Md5Util.MD5Encode(vo.getOldPayWord(), loginUser.getSalt()))) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "旧登录密码不正确");
-            }
-            if (!vo.getConfirmPayWord().trim().equals(vo.getNewPayWord().trim())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "确认新支付密码和新支付密码不一致");
-            }
-            updateUser.setPayWord(Md5Util.MD5Encode(vo.getConfirmPayWord(), loginUser.getSalt()));
-            updateUser.setUpdateTime(new Date());
+            updateUser.setPayWord(Md5Util.MD5Encode(vo.getConfirmPassWord(), loginUser.getSalt()));
         }
 
         // 更新用户信息
+        updateUser.setUpdateTime(new Date());
         userService.updateById(loginUser.getId(), updateUser);
         return new JsonResult();
     }
