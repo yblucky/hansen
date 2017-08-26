@@ -1,201 +1,82 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mapper.TradeOrderMapper">
+
     <sql id="fields">
-		orderNo,sendUserId,receviceUserId,amt,confirmAmt,poundage,source,pushFirstReferrerScale,pushSecondReferrerScale,equityAmtScale,payAmtScale,tradeAmtScale,createTime,updateTime,status,remark
-	</sql>
+        orderNo,sendUserId,receviceUserId,amt,confirmAmt,poundage,source,pushFirstReferrerScale,pushSecondReferrerScale,equityAmtScale,payAmtScale,tradeAmtScale,cardGrade,taskCycle,signCycle,createTime,updateTime,status,remark
+    </sql>
 
     <sql id="fields_id">
-        id,
-        <include refid="fields"/>
+        id,<include refid="fields"/>
     </sql>
 
     <sql id="table_name">trade_order</sql>
 
     <sql id="selector">
-        select
-        <include refid="fields_id"/>
-        from
-        <include refid="table_name"/>
+        select <include refid="fields_id"/> from <include refid="table_name"/>
     </sql>
 
     <sql id="condition">
         <where>
             <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
             <if test="model.sendUserId != null and model.sendUserId != ''">and sendUserId=#{model.sendUserId}</if>
-            <if test="model.receviceUserId != null and model.receviceUserId != ''">and
-                receviceUserId=#{model.receviceUserId}
-            </if>
+            <if test="model.receviceUserId != null and model.receviceUserId != ''">and receviceUserId=#{model.receviceUserId}</if>
             <if test="model.amt != null">and amt=#{model.amt}</if>
             <if test="model.confirmAmt != null">and confirmAmt=#{model.confirmAmt}</if>
             <if test="model.poundage != null">and poundage=#{model.poundage}</if>
             <if test="model.source != null">and source=#{model.source}</if>
-            <if test="model.firstReferrerScale != null">and firstReferrerScale=#{model.firstReferrerScale}</if>
-            <if test="model.secondReferrerScale != null">and secondReferrerScale=#{model.secondReferrerScale}</if>
+            <if test="model.pushFirstReferrerScale != null">and pushFirstReferrerScale=#{model.pushFirstReferrerScale}</if>
+            <if test="model.pushSecondReferrerScale != null">and pushSecondReferrerScale=#{model.pushSecondReferrerScale}</if>
             <if test="model.equityAmtScale != null">and equityAmtScale=#{model.equityAmtScale}</if>
             <if test="model.payAmtScale != null">and payAmtScale=#{model.payAmtScale}</if>
             <if test="model.tradeAmtScale != null">and tradeAmtScale=#{model.tradeAmtScale}</if>
+            <if test="model.cardGrade != null">and cardGrade=#{model.cardGrade}</if>
+            <if test="model.taskCycle != null">and taskCycle=#{model.taskCycle}</if>
+            <if test="model.signCycle != null">and signCycle=#{model.signCycle}</if>
             <if test="model.status != null">and status=#{model.status}</if>
             <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
         </where>
     </sql>
 
     <insert id="create" useGeneratedKeys="true" keyProperty="id">
-        insert into<include refid="table_name"/>(
-        <trim suffixOverrides=",">
-            <if test="model.id!= null  and model.id!=''">
-                id,
-            </if>
-            <if test="model.orderNo!= null  and model.orderNo!=''">
-                orderNo,
-            </if>
-            <if test="model.sendUserId!= null  and model.sendUserId!=''">
-                sendUserId,
-            </if>
-            <if test="model.receviceUserId!= null  and model.receviceUserId!=''">
-                receviceUserId,
-            </if>
-            <if test="model.amt!= null  and model.amt!=''">
-                amt,
-            </if>
-            <if test="model.confirmAmt!= null  and model.confirmAmt!=''">
-                confirmAmt,
-            </if>
-            <if test="model.poundage!= null  and model.poundage!=''">
-                poundage,
-            </if>
-            <if test="model.source!= null  and model.source!=''">
-                source,
-            </if>
-            <if test="model.firstReferrerScale!= null  and model.firstReferrerScale!=''">
-                firstReferrerScale,
-            </if>
-            <if test="model.secondReferrerScale!= null  and model.secondReferrerScale!=''">
-                secondReferrerScale,
-            </if>
-            <if test="model.equityAmtScale!= null  and model.equityAmtScale!=''">
-                equityAmtScale,
-            </if>
-            <if test="model.payAmtScale!= null  and model.payAmtScale!=''">
-                payAmtScale,
-            </if>
-            <if test="model.tradeAmtScale!= null  and model.tradeAmtScale!=''">
-                tradeAmtScale,
-            </if>
-            <if test="model.createTime!= null  and model.createTime!=''">
-                createTime,
-            </if>
-            <if test="model.updateTime!= null  and model.updateTime!=''">
-                updateTime,
-            </if>
-            <if test="model.status!= null  and model.status!=''">
-                status,
-            </if>
-            <if test="model.remark!= null  and model.remark!=''">
-                remark,
-            </if>
-        </trim>
-        )
-        values(
-        <trim suffixOverrides=",">
-
-            <if test="model.id!= null  and model.id!=''">
-                #{model.id},
-            </if>
-            <if test="model.orderNo!= null  and model.orderNo!=''">
-                #{model.orderNo},
-            </if>
-            <if test="model.sendUserId!= null  and model.sendUserId!=''">
-                #{model.sendUserId},
-            </if>
-            <if test="model.receviceUserId!= null  and model.receviceUserId!=''">
-                #{model.receviceUserId},
-            </if>
-            <if test="model.amt!= null  and model.amt!=''">
-                #{model.amt},
-            </if>
-            <if test="model.confirmAmt!= null  and model.confirmAmt!=''">
-                #{model.confirmAmt},
-            </if>
-            <if test="model.poundage!= null  and model.poundage!=''">
-                #{model.poundage},
-            </if>
-            <if test="model.source!= null  and model.source!=''">
-                #{model.source},
-            </if>
-            <if test="model.firstReferrerScale!= null  and model.firstReferrerScale!=''">
-                #{model.firstReferrerScale},
-            </if>
-            <if test="model.secondReferrerScale!= null  and model.secondReferrerScale!=''">
-                #{model.secondReferrerScale},
-            </if>
-            <if test="model.equityAmtScale!= null  and model.equityAmtScale!=''">
-                #{model.equityAmtScale},
-            </if>
-            <if test="model.payAmtScale!= null  and model.payAmtScale!=''">
-                #{model.payAmtScale},
-            </if>
-            <if test="model.tradeAmtScale!= null  and model.tradeAmtScale!=''">
-                #{model.tradeAmtScale},
-            </if>
-            <if test="model.createTime!= null  and model.createTime!=''">
-                #{model.createTime},
-            </if>
-            <if test="model.updateTime!= null  and model.updateTime!=''">
-                #{model.updateTime},
-            </if>
-            <if test="model.status!= null  and model.status!=''">
-                #{model.status},
-            </if>
-            <if test="model.remark!= null  and model.remark!=''">
-                #{model.remark},
-            </if>
-        </trim>
-        );
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{id},#{orderNo},#{sendUserId},#{receviceUserId},#{amt},#{confirmAmt},#{poundage},#{source},#{pushFirstReferrerScale},#{pushSecondReferrerScale},#{equityAmtScale},#{payAmtScale},#{tradeAmtScale},#{cardGrade},#{taskCycle},#{signCycle},now(),now(),#{status},#{remark});
     </insert>
 
-    <select id="readById" resultType="TradeOrder">
-        <include refid="selector"/>
-        where id=#{id} limit 1;
+    <select id="readById" resultType="com.model.TradeOrder">
+        <include refid="selector"/> where id=#{id}  limit 1;
     </select>
 
-    <select id="readList" resultType="TradeOrder">
-        <include refid="selector"/>
-        <include refid="condition"/>
-        limit #{startRow}, #{pageSize};
+    <select id="readList" resultType="com.model.TradeOrder">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
     </select>
 
-    <select id="readOne" resultType="TradeOrder">
-        <include refid="selector"/>
-        <include refid="condition"/>
-        limit 1;
+    <select id="readOne" resultType="com.model.TradeOrder">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
     </select>
 
     <select id="readCount" resultType="int">
-        select count(1) from
-        <include refid="table_name"/>
-        <include refid="condition"/>
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
     </select>
 
     <update id="updateById">
-        update
-        <include refid="table_name"/>
+        update <include refid="table_name"/>
         <set>
             <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
             <if test="model.sendUserId != null and model.sendUserId !=''">sendUserId= #{model.sendUserId},</if>
-            <if test="model.receviceUserId != null and model.receviceUserId !=''">receviceUserId=
-                #{model.receviceUserId},
-            </if>
+            <if test="model.receviceUserId != null and model.receviceUserId !=''">receviceUserId= #{model.receviceUserId},</if>
             <if test="model.amt != null">amt= #{model.amt},</if>
             <if test="model.confirmAmt != null">confirmAmt= #{model.confirmAmt},</if>
             <if test="model.poundage != null">poundage= #{model.poundage},</if>
             <if test="model.source != null">source= #{model.source},</if>
-            <if test="model.firstReferrerScale != null">firstReferrerScale= #{model.firstReferrerScale},</if>
-            <if test="model.secondReferrerScale != null">secondReferrerScale= #{model.secondReferrerScale},</if>
+            <if test="model.pushFirstReferrerScale != null">pushFirstReferrerScale= #{model.pushFirstReferrerScale},</if>
+            <if test="model.pushSecondReferrerScale != null">pushSecondReferrerScale= #{model.pushSecondReferrerScale},</if>
             <if test="model.equityAmtScale != null">equityAmtScale= #{model.equityAmtScale},</if>
             <if test="model.payAmtScale != null">payAmtScale= #{model.payAmtScale},</if>
             <if test="model.tradeAmtScale != null">tradeAmtScale= #{model.tradeAmtScale},</if>
+            <if test="model.cardGrade != null">cardGrade= #{model.cardGrade},</if>
+            <if test="model.taskCycle != null">taskCycle= #{model.taskCycle},</if>
+            <if test="model.signCycle != null">signCycle= #{model.signCycle},</if>
             <if test="model.status != null">status= #{model.status},</if>
             <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
             updateTime=now()
@@ -204,52 +85,6 @@
     </update>
 
     <update id="deleteById">
-        update
-        <include refid="table_name"/>
-        set status = 0,updateTime=now() where id = #{id}
-    </update>
-
-    <select id="readRewardList" resultType="TradeOrder">
-		<![CDATA[
-
-		  <include refid="selector"/> WHERE  createTime< #{taskTime} and signCycle>0 and taskCycle>0 and source not in(1,7,8) and status=1 limit #{startRow}, #{pageSize};
-
-        ]]>
-	</select>
-
-    <update id="batchUpdateTaskCycle">
-        UPDATE
-        <include refid="table_name"/>
-        SET taskCycle = taskCycle-1
-        where id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
-    </update>
-
-    <update id="batchUpdateSignCycle">
-        UPDATE
-        <include refid="table_name"/>
-        SET signCycle = signCycle-1
-        where id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
-    </update>
-
-    <update id="batchUpdateTaskCycleDefault">
-        UPDATE
-        <include refid="table_name"/>
-        SET taskCycle = #{taskCycle},signCycle = signCycle-1
-        where id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
-    </update>
-
-
-    <update id="batchUpdateOrderStatus">
-        UPDATE
-        <include refid="table_name"/>
-        SET status = 2
-        where id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
     </update>
 </mapper>
-
-
-

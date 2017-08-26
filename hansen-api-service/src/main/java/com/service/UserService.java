@@ -31,7 +31,7 @@ public interface UserService extends CommonService<User> {
 
     void originUpgrade(String userId, Integer cardGrade);
 
-    void coverageUpgrade(String userId, Integer cardGrade);
+    void coverageUpgrade(String userId, Integer cardGrade) throws Exception;
 
     void updateUserRegisterCode(User loginUser, CardGrade cardGrade);
 

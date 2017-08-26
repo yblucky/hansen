@@ -302,7 +302,7 @@ public class UserController {
         if (org.apache.commons.lang3.StringUtils.isEmpty(vo.getPayWord())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请选择输入支付密码");
         }
-        if (loginUser.getPassword().equals(Md5Util.MD5Encode(vo.getPayWord(), loginUser.getSalt()))) {
+        if (!loginUser.getPassword().equals(Md5Util.MD5Encode(vo.getPayWord(), loginUser.getSalt()))) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付密码错误");
         }
         CardGrade cardGrade = cardGradeService.getUserCardGrade(vo.getGrade());
