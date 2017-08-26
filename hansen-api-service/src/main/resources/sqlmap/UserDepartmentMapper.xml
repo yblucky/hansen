@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.UserDepartmentMapper">
 
 	<sql id="fields">
-		userId,uid,performance,createTime,updateTime,status,remark,parentUserId,nickName
+		userId,uid,grade,performance,createTime,updateTime,status,remark,parentUserId,nickName
 	</sql>
 
 	<sql id="fields_id">
