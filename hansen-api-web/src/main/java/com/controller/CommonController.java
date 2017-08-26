@@ -125,9 +125,9 @@ public class CommonController {
             return new JsonResult(ResultCode.ERROR.getCode(), "手机号不能为空");
         }
         String phoneCode = RandomUtil.getCode();
-        SmsUtil.sendSmsCode("18826214582", SmsTemplate.COMMON, phoneCode);
+        SmsUtil.sendSmsCode(phoneNumber, SmsTemplate.COMMON, phoneCode);
         //保存到redis
         Strings.setEx(RedisKey.SMS_CODE.getKey() + phoneNumber, RedisKey.SMS_CODE.getSeconds(), phoneCode);
-        return new JsonResult(phoneCode);
+        return new JsonResult();
     }
 }
