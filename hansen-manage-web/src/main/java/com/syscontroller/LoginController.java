@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 
@@ -41,6 +42,7 @@ public class LoginController {
      */
     @RequestMapping("/loginIn")
     @SystemControllerLog(description = "用户登录")
+    @ResponseBody
     public RespBody longIn(@RequestBody LoginVo loginVo) {
         User mode = new User();
         mode.setUid(200016);
@@ -67,6 +69,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping("/loadImgCode")
+    @ResponseBody
     public RespBody loadImgCode() {
         // 创建返回对象
         RespBody respBody = new RespBody();

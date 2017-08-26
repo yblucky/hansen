@@ -5,16 +5,15 @@ import com.base.page.RespCodeEnum;
 import com.sysservice.RoleService;
 import com.vo.SysRolePermissionVo;
 import com.utils.toolutils.LogUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 /**
  * 权限管理控制器
  */
-@RestController
+@Controller
 @RequestMapping("/role")
 public class RoleController {
     @Resource
@@ -26,7 +25,8 @@ public class RoleController {
      * @param roleId
      * @return
      */
-    @RequestMapping("/findMenus")
+    @RequestMapping(value = "/findMenus",method = RequestMethod.GET)
+    @ResponseBody
     public RespBody findMenus(String roleId) {
         RespBody respBody = new RespBody();
         try {
@@ -44,7 +44,8 @@ public class RoleController {
      *
      * @return
      */
-    @RequestMapping("/saveRolePerm")
+    @RequestMapping(value = "/saveRolePerm",method = RequestMethod.POST)
+    @ResponseBody
     public RespBody saveRolePerm(@RequestBody SysRolePermissionVo rolePerm) {
         RespBody respBody = new RespBody();
         try {

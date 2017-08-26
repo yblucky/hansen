@@ -7,16 +7,15 @@ import com.base.page.RespCodeEnum;
 import com.sysservice.ManageParameterService;
 import com.vo.SysParameterVo;
 import com.utils.toolutils.LogUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 /**
  * 参数设置控制器
  */
-@RestController
+@Controller
 @RequestMapping("/parameter")
 public class ParameterController {
     @Resource
@@ -28,7 +27,8 @@ public class ParameterController {
      * @param paging 分页对象
      * @return 响应信息
      */
-    @RequestMapping("/findAll")
+    @RequestMapping(value = "/findAll",method = RequestMethod.GET)
+    @ResponseBody
     public RespBody findAll(Paging paging) {
         RespBody respBody = new RespBody();
         try {
@@ -50,8 +50,9 @@ public class ParameterController {
      * @param parameterVo 新参数Vo
      * @return 响应信息
      */
-    @RequestMapping("/add")
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
     @SystemControllerLog(description = "新增参数设置")
+    @ResponseBody
     public RespBody add(@RequestBody SysParameterVo parameterVo) {
         RespBody respBody = new RespBody();
         try {
@@ -70,8 +71,9 @@ public class ParameterController {
      * @param parameterVo 参数Vo
      * @return 响应信息
      */
-    @RequestMapping("/update")
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
     @SystemControllerLog(description = "修改参数设置")
+    @ResponseBody
     public RespBody update(@RequestBody SysParameterVo parameterVo) {
         RespBody respBody = new RespBody();
         try {
@@ -90,8 +92,9 @@ public class ParameterController {
      * @param parameterVo 参数VO
      * @return 响应信息
      */
-    @RequestMapping("/delete")
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @SystemControllerLog(description = "删除参数设置")
+    @ResponseBody
     public RespBody delete(@RequestBody SysParameterVo parameterVo) {
         RespBody respBody = new RespBody();
         try {

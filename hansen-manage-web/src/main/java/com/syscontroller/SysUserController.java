@@ -11,9 +11,8 @@ import com.utils.ConfUtils;
 import com.utils.codeutils.CryptUtils;
 import com.utils.toolutils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 用户控制器
  */
-@RestController
+
+@Controller
 @RequestMapping(value = "/user")
 public class SysUserController {
     @Resource
@@ -33,8 +33,9 @@ public class SysUserController {
     @Autowired
     private RedisService redisService;
 
-    @RequestMapping("/findUser")
-    private RespBody findUser() {
+    @RequestMapping(value = "/findUser",method = RequestMethod.GET)
+    @ResponseBody
+    public RespBody findUser() {
         RespBody respBody = new RespBody();
         try {
             String token = request.getHeader("token");
@@ -57,7 +58,8 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping("/findAll")
+    @RequestMapping(value = "/findAll",method = RequestMethod.GET)
+    @ResponseBody
     public RespBody findAll(Paging paging) {
         RespBody respBody = new RespBody();
         try {
@@ -73,7 +75,8 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping("/findRoles")
+    @RequestMapping(value = "/findRoles",method = RequestMethod.GET)
+    @ResponseBody
     public RespBody findRoles() {
         RespBody respBody = new RespBody();
         try {
@@ -86,7 +89,8 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping("/add")
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    @ResponseBody
     public RespBody add(@RequestBody SysUserVo userVo) {
         RespBody respBody = new RespBody();
         try {
@@ -106,7 +110,8 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping("/update")
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    @ResponseBody
     public RespBody update(@RequestBody SysUserVo userVo) {
         RespBody respBody = new RespBody();
         try {
@@ -119,7 +124,8 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping("/delete")
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    @ResponseBody
     public RespBody delete(@RequestBody SysUserVo userVo) {
         RespBody respBody = new RespBody();
         try {
@@ -132,7 +138,8 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping("/updatePw")
+    @RequestMapping(value = "/updatePw",method = RequestMethod.POST)
+    @ResponseBody
     public RespBody updatePw(@RequestBody UpdatePwVo updatePwVo) {
         RespBody respBody = new RespBody();
         try {
