@@ -586,11 +586,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/forgetPwd", method = RequestMethod.POST)
     public JsonResult updatePwd(HttpServletRequest request, @RequestBody ForgetPwdVo vo) throws Exception {
-        Token token = TokenUtil.getSessionUser(request);
-        User loginUser = userService.readById(token.getId());
-        if (loginUser == null) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
-        }
+
         if (StringUtils.isEmpty(vo.getPhoneNumber())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "手机号不能为空");
         }
@@ -608,6 +604,12 @@ public class UserController {
             return new JsonResult(ResultCode.ERROR.getCode(), "验证码错误或者失效了");
         }
 
+        User model = new User();
+        model.setPhone(vo.getPhoneNumber());
+        User loginUser = userService.readOne(model);
+        if (loginUser == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "手机号未被绑定");
+        }
         User updateUser = new User();
         //修改登录密码
         updateUser.setPassword(Md5Util.MD5Encode(vo.getConfirmPassWord(), loginUser.getSalt()));

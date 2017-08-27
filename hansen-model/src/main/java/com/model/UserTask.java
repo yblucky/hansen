@@ -42,6 +42,11 @@ public class UserTask extends BaseModel {
      */
     private Integer taskType;
     /**
+     * 任务图片
+     */
+    private String linkImgPath;
+
+    /**
      * 任务分配时间
      */
     private Date assignTaskTime;
@@ -108,5 +113,13 @@ public class UserTask extends BaseModel {
 
     public void setAssignTaskTime(Date assignTaskTime) {
         this.assignTaskTime = assignTaskTime;
+    }
+
+    public String getLinkImgPath() {
+        return linkImgPath;
+    }
+
+    public void setLinkImgPath(String linkImgPath) {
+        this.linkImgPath = linkImgPath;
     }
 }
