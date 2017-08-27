@@ -29,7 +29,7 @@ public enum YNEnum {
 		if (code == null) {
 			return "";
 		}
-		for(StateEnum enums : StateEnum.values()){
+		for(YNEnum enums : YNEnum.values()){
 			if (enums.getCode().equals(code)) {
 				return enums.getName();
 			}
