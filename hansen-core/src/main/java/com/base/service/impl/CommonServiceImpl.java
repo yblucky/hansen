@@ -1,5 +1,6 @@
 package com.base.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.base.dao.CommonDao;
 import com.base.page.DBPage;
 import com.BaseModel;
@@ -47,6 +48,9 @@ public abstract class CommonServiceImpl<M extends BaseModel> {
     public void create(M model) {
         try {
             defaultCreate(model);
+            System.out.println("***********************");
+            System.out.println(JSON.toJSON(model));
+            System.out.println("***********************");
             getDao().create(model);
             processCacheAfterCreate(model);
         } catch (Exception e) {

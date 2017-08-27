@@ -66,7 +66,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         UserTask userTask = new UserTask();
         userTask.setUserId(userId);
         userTask.setTaskId(task.getId());
-        userTask.setTitle(task.getTitle());
+        userTask.setTitle(task.getName());
         userTask.setDiscription(task.getDiscription());
         userTask.setLink(task.getLink());
         userTask.setAssignTaskTime(new Date());
