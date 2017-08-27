@@ -76,7 +76,7 @@
 
 	<select id="readTransferList" resultType="com.model.WalletOrder">
 		<include refid="selector"/>
-		WHERE      ( sendUserId=#{userId} AND  confirmAmt  &lt; 0) OR ( receviceUserId=#{userId} AND  confirmAmt  &gt; 0)
+		WHERE      ( sendUserId=#{userId} ) OR ( receviceUserId=#{userId})
 		<if test="list != null">
 			AND orderType IN
 			<foreach collection="list" index="index" item="item" open="(" separator="," close=")">

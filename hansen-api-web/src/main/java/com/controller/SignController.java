@@ -45,7 +45,7 @@ public class SignController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/rewardsign", method = RequestMethod.POST)
+    @RequestMapping(value = "/rewardsign", method = RequestMethod.GET)
     public JsonResult rewardSign(HttpServletRequest request) {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);

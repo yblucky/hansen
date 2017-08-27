@@ -190,7 +190,7 @@ public class WalletController {
 
         WalletTransaction condition = new WalletTransaction();
         condition.setUserId(user.getId());
-        condition.setOrderType(1);
+        condition.setOrderType(orderTypeList.get(0));
         Integer count = transactionService.readCount(condition);
         List<WalletTransaction> transactionList = new ArrayList<>();
         if (count != null && count > 0) {
@@ -248,13 +248,12 @@ public class WalletController {
         }
 
         WalletOrder condition = new WalletOrder();
-        condition.setOrderType(1);
+        condition.setOrderType(orderTypeList.get(0));
         Integer count = walletOrderService.readCount(condition);
         try {
             if (count != null && count > 0) {
                 List<WalletOrder> orderList = new ArrayList<>();
                 pageResult = walletOrderService.readTransferList(user.getId(), orderTypeList, page);
-                pageResult.setRows(orderList);
                 BeanUtils.copyProperties(pageResult, page);
             } else {
                 pageResult.setRows(Collections.emptyList());

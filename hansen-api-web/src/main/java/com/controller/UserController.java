@@ -476,7 +476,7 @@ public class UserController {
         // 更新用户信息
         userService.updateById(loginUser.getId(),updateUser);
         userDetailService.updateById(loginUser.getId(),upateDetail);
-        return new JsonResult();
+        return new JsonResult(ResultCode.SUCCESS.getCode(),"保存成功");
     }
 
 
@@ -619,5 +619,9 @@ public class UserController {
         // 更新用户信息
         userService.updateById(loginUser.getId(), updateUser);
         return new JsonResult();
+    }
+
+    public static void main(String[] args) {
+        System.out.println("reXFNaaBb4aLrPtDQZyPyfW9uajDvKaxoo".length());
     }
 }
