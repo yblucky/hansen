@@ -14,7 +14,7 @@ public class Task extends BaseModel {
     /**
      * 任务标题
      */
-    private String title;
+    private String name;
     /**
      * 任务描述
      */
@@ -32,12 +32,12 @@ public class Task extends BaseModel {
      */
     private Integer taskType;
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDiscription() {

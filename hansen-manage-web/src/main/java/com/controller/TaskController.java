@@ -1,17 +1,15 @@
 package com.controller;
 
-import com.Token;
-import com.base.TokenUtil;
-import com.base.page.JsonResult;
-import com.base.page.Page;
-import com.base.page.PageResult;
-import com.base.page.ResultCode;
-import com.constant.UserStatusType;
+import com.base.page.Paging;
+import com.base.page.RespBody;
+import com.base.page.RespCodeEnum;
+import com.model.SysUser;
+import com.model.Task;
 import com.service.TaskService;
 import com.service.UserService;
-import com.model.Task;
-import com.model.User;
+import com.sysservice.ManageUserService;
 import com.utils.toolutils.ToolUtil;
+import com.vo.SysUserVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -35,6 +34,8 @@ public class TaskController extends BaseController {
     private UserService userService;
     @Autowired
     private TaskService taskService;
+    @Resource
+    private ManageUserService manageUserService;//用户业务层
 
 
     /**
@@ -47,36 +48,29 @@ public class TaskController extends BaseController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public JsonResult getTask(HttpServletRequest request, HttpServletResponse response, Page page) throws Exception {
-        Token token = TokenUtil.getSessionUser(request);
-        User user = userService.readById(token.getId());
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public RespBody getTask(HttpServletRequest request, HttpServletResponse response, Paging page) throws Exception {
+        // 创建返回对象
+        RespBody respBody = new RespBody();
+        String token = request.getHeader("token");
+        //读取用户信息
+        SysUserVo userVo = manageUserService.SysUserVo(token);
+        SysUser user = manageUserService.readById(userVo.getId());
         if (user == null) {
-            return fail("用户不存在");
-        }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return new JsonResult(ResultCode.MANGE_ERROR.getCode(), "账号未激活");
-        }
-        if (page.getPageNo() == null) {
-            page.setPageNo(1);
-        }
-        if (page.getPageSize() == null) {
-            page.setPageSize(10);
+            respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
+            return respBody;
         }
         List<Task> taskList = null;
         Task condition = new Task();
         Integer count = taskService.readCount(condition);
         if (count != null && count > 0) {
-            taskList = taskService.readList(condition, page.getPageNo(), page.getPageSize(), count);
+            taskList = taskService.readList(condition, page.getPageNumber(), page.getPageSize(), count);
         } else {
             taskList = Collections.emptyList();
         }
-        PageResult<Task> pageResult = new PageResult<>();
-        pageResult.setPageNo(page.getPageNo());
-        pageResult.setPageSize(page.getPageSize());
-        pageResult.setTotalSize(count);
-        pageResult.setRows(taskList);
-        return success(ResultCode.MANGE_SUCCESS,pageResult);
+        page.setTotalCount(count);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(),"成功",page,taskList);
+        return respBody;
     }
 
 
@@ -90,24 +84,29 @@ public class TaskController extends BaseController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/add")
-    public JsonResult addTask(HttpServletRequest request, HttpServletResponse response, @RequestBody Task vo) throws Exception {
-        Token token = TokenUtil.getSessionUser(request);
-        User user = userService.readById(token.getId());
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    public RespBody addTask(HttpServletRequest request, HttpServletResponse response, @RequestBody Task vo) throws Exception {
+        // 创建返回对象
+        RespBody respBody = new RespBody();
+        String token = request.getHeader("token");
+        //读取用户信息
+        SysUserVo userVo = manageUserService.SysUserVo(token);
+        SysUser user = manageUserService.readById(userVo.getId());
         if (user == null) {
-            return fail("用户不存在");
+            respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
+            return respBody;
         }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return fail("账号未激活");
-        }
-        if (ToolUtil.isEmpty(vo.getTitle())) {
-            return fail("任务标题不能为空");
+        if (ToolUtil.isEmpty(vo.getName())) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "任务标题不能为空");
+            return respBody;
         }
         if (ToolUtil.isEmpty(vo.getLink())) {
-            return fail("任务链接不能为空");
+            respBody.add(RespCodeEnum.ERROR.getCode(), "任务链接不能为空");
+            return respBody;
         }
         taskService.create(vo);
-        return success(ResultCode.MANGE_SUCCESS,"新增成功");
+        respBody.add(RespCodeEnum.SUCCESS.getCode(),"新增任务成功");
+        return respBody;
     }
 
     /**
@@ -120,26 +119,32 @@ public class TaskController extends BaseController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/update")
-    public JsonResult doTask(HttpServletRequest request, HttpServletResponse response, @RequestBody Task vo) throws Exception {
-        Token token = TokenUtil.getSessionUser(request);
-        User user = userService.readById(token.getId());
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    public RespBody doTask(HttpServletRequest request, HttpServletResponse response, @RequestBody Task vo) throws Exception {
+        // 创建返回对象
+        RespBody respBody = new RespBody();
+        String token = request.getHeader("token");
+        //读取用户信息
+        SysUserVo userVo = manageUserService.SysUserVo(token);
+        SysUser user = manageUserService.readById(userVo.getId());
         if (user == null) {
-            return fail("用户不存在");
-        }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return fail("账号未激活");
+            respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
+            return respBody;
         }
         if (ToolUtil.isEmpty(vo.getId())) {
-            return fail("任务id不能为空");
+            respBody.add(RespCodeEnum.ERROR.getCode(), "任务id不能为空");
+            return respBody;
         }
-        if (ToolUtil.isEmpty(vo.getTitle())) {
-            return fail("任务标题不能为空");
+        if (ToolUtil.isEmpty(vo.getName())) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "任务标题不能为空");
+            return respBody;
         }
         if (ToolUtil.isEmpty(vo.getLink())) {
-            return fail("任务链接不能为空");
+            respBody.add(RespCodeEnum.ERROR.getCode(), "任务链接不能为空");
+            return respBody;
         }
         taskService.updateById(vo.getId(), vo);
-        return success(ResultCode.MANGE_SUCCESS," 更新成功");
+        respBody.add(RespCodeEnum.SUCCESS.getCode(),"更新成功");
+        return respBody;
     }
 }
