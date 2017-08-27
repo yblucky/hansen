@@ -1,5 +1,6 @@
 package com.vo;
 
+import com.constant.SignType;
 import com.model.UserSign;
 
 /**
@@ -16,6 +17,9 @@ public class UserSignVo extends UserSign{
 	private double payAmtRmb;
 	private double  tradeAmtRmb;
 	private double  equityAmtRmb;
+
+	private Integer status;
+	private String statusName;
 
 	public double getPayAmt() {
 		return payAmt;
@@ -63,5 +67,24 @@ public class UserSignVo extends UserSign{
 
 	public void setEquityAmtRmb(double equityAmtRmb) {
 		this.equityAmtRmb = equityAmtRmb;
+	}
+
+	@Override
+	public Integer getStatus() {
+		return status;
+	}
+
+	@Override
+	public void setStatus(Integer status) {
+		this.status = status;
+		this.setStatusName(SignType.getName(status));
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
 	}
 }

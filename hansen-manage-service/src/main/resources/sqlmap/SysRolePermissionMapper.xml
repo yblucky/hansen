@@ -8,7 +8,7 @@
     </sql>
 
     <sql id="fields_id">
-        id,<include refid="fields"/>
+        <include refid="fields"/>
     </sql>
 
     <sql id="table_name">sys_role_permission</sql>

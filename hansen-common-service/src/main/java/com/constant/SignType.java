@@ -28,6 +28,17 @@ public enum SignType {
 		this.msg = msg;
 	}
 
+	public static String getName(Integer code){
+		if (code == null) {
+			return "";
+		}
+		for(SignType enums : SignType.values()){
+			if (enums.getCode().equals(code)) {
+				return enums.getMsg();
+			}
+		}
+		return "";
+	}
 	public Integer getCode() {
 		return code;
 	}

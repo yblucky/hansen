@@ -37,7 +37,7 @@ public enum UserStatusType {
         if (code == null) {
             return "";
         }
-        for(CardLevelType enums : CardLevelType.values()){
+        for(UserStatusType enums : UserStatusType.values()){
             if (enums.getCode().equals(code)) {
                 return enums.getMsg();
             }
