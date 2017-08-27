@@ -57,7 +57,7 @@ public enum GradeType {
         if (code == null) {
             return "";
         }
-        for(CardLevelType enums : CardLevelType.values()){
+        for(GradeType enums : GradeType.values()){
             if (enums.getCode().equals(code)) {
                 return enums.getMsg();
             }

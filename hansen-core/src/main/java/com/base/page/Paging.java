@@ -17,7 +17,7 @@ public class Paging extends RowBounds {
 	/**
 	 * 总记录数
 	 */
-	protected long	totalCount	= 0;
+	protected int	totalCount	= 0;
 	/**
 	 * 总页数
 	 */
@@ -43,7 +43,7 @@ public class Paging extends RowBounds {
 		return totalCount;
 	}
 
-	public void setTotalCount(long totalCount) {
+	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;
 		long size = (long) pageSize;
 		setPageCount((int) (totalCount / size + (totalCount % size == 0 ? 0 : 1)));

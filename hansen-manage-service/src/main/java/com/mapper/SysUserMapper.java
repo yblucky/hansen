@@ -37,7 +37,7 @@ public interface SysUserMapper extends CommonDao<SysUser> {
      *
      * @return
      */
-    public long findCount();
+    public int findCount();
 
     /**
      * 查找登录名是否存在

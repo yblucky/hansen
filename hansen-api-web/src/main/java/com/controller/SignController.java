@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.Token;
+import com.alibaba.fastjson.JSON;
 import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
@@ -80,11 +81,11 @@ public class SignController {
                     map.put("amt", sign.getAmt());
                 }else {
                     map.put("isCanSign",false);
+                    map.put("amt",0);
                 }
                 map.put("payAmt", user.getPayAmt());
                 map.put("tradeAmt", user.getTradeAmt());
                 map.put("equityAmt", user.getEquityAmt());
-                map.put("amt",0);
             } catch (Exception e) {
                 e.printStackTrace();
                 return new JsonResult(ResultCode.ERROR.getCode(), "签到失败", map);

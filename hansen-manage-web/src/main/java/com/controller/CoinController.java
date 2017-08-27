@@ -3,12 +3,12 @@ package com.controller;
 
 import com.Token;
 import com.base.TokenUtil;
-import com.base.page.JsonResult;
-import com.base.page.Page;
-import com.base.page.PageResult;
-import com.base.page.ResultCode;
+import com.base.page.*;
 import com.constant.*;
+import com.model.SysUser;
 import com.service.*;
+import com.sysservice.ManageUserService;
+import com.vo.SysUserVo;
 import com.vo.UserVo;
 import com.vo.CoinVerfyVo;
 import com.model.User;
@@ -21,9 +21,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -46,6 +48,8 @@ public class CoinController extends BaseController {
     private UserService userService;
     @Autowired
     private WalletTransactionService transactionService;
+    @Resource
+    private ManageUserService manageUserService;//用户业务层
 
     /**
      * @param request
@@ -55,13 +59,18 @@ public class CoinController extends BaseController {
      */
 
     @ResponseBody
-    @RequestMapping(value = "/list")
-    public JsonResult list(HttpServletRequest request, Integer currencyType, Page page, Integer status) {
-        Token token = TokenUtil.getSessionUser(request);
-        User user = userService.readById(token.getId());
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    public RespBody list(HttpServletRequest request, Integer currencyType, Paging page, Integer status) throws Exception  {
+        // 创建返回对象
+        RespBody respBody = new RespBody();
+        String token = request.getHeader("token");
+        SysUserVo userVo = manageUserService.SysUserVo(token);
+        SysUser user = manageUserService.readById(userVo.getId());
         if (user == null) {
-            return new JsonResult(ResultCode.MANGE_ERROR.getCode(), "登录用户不存在");
+            respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
+            return respBody;
         }
+
         WalletOrder condition = new WalletOrder();
         if (currencyType != null) {
             condition.setOrderType(currencyType);
@@ -69,22 +78,18 @@ public class CoinController extends BaseController {
         if (status != null) {
             condition.setStatus(status);
         }
-        if (page.getPageNo() == null) {
-            page.setPageNo(1);
-        }
-        if (page.getPageSize() == null) {
-            page.setPageSize(10);
-        }
         Integer count = walletOrderService.readCount(condition);
         List<WalletOrder> orders = null;
         if (count != null && count > 0) {
-            orders = walletOrderService.readList(condition, page.getPageNo(), page.getPageSize(), count);
+            orders = walletOrderService.readList(condition, page.getPageNumber(), page.getPageSize(), count);
         } else {
             count = 0;
             orders = Collections.emptyList();
         }
-        PageResult pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, orders);
-        return success(pageResult);
+        //返回
+        page.setTotalCount(count);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(),"成功",page,orders);
+        return respBody;
     }
 
     /**

@@ -43,7 +43,7 @@ public interface ManageUserService extends CommonService<SysUser>{
      *
      * @return
      */
-    public long findCount();
+    public int findCount();
 
     /**
      * 新增用户

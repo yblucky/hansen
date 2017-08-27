@@ -62,7 +62,7 @@ public class ManageUserServiceImpl extends CommonServiceImpl<SysUser> implements
     }
 
     @Override
-    public long findCount() {
+    public int findCount() {
         return sysUserMapper.findCount();
     }
 
