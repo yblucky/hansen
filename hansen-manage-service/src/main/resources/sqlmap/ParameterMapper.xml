@@ -57,7 +57,7 @@
 
     <insert id="create" useGeneratedKeys="true" keyProperty="id">
         insert into<include refid="table"/>(<include refid="fields"/>)
-        values(#{model.id},#{model.name},#{model.value},#{model.kind},now(),null,#{model.status},#{model.remark},#{model.title},#{model.groupType});
+        values(#{id},#{name},#{value},#{kind},now(),null,#{status},#{remark},#{title},#{groupType});
     </insert>
 
     <update id="updateById">

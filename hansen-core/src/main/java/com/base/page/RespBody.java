@@ -21,7 +21,7 @@ public class RespBody {
         this.data = data;
     }
 
-    public void add(String code, Paging page, Object data) {
+    public void add(String code, String message, Paging page, Object data) {
         this.code = code;
         this.message = message;
         this.page = page;

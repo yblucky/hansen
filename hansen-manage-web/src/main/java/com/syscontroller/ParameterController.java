@@ -4,6 +4,9 @@ import com.annotation.SystemControllerLog;
 import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
+import com.model.Parameter;
+import com.service.ParamUtil;
+import com.service.ParameterService;
 import com.sysservice.ManageParameterService;
 import com.vo.SysParameterVo;
 import com.utils.toolutils.LogUtils;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 参数设置控制器
@@ -19,7 +23,7 @@ import javax.annotation.Resource;
 @RequestMapping("/parameter")
 public class ParameterController {
     @Resource
-    private ManageParameterService manageParameterService;
+    private ParameterService parameterService;
 
     /**
      * 查找列表数据
@@ -33,9 +37,12 @@ public class ParameterController {
         RespBody respBody = new RespBody();
         try {
             //保存返回数据
-            respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置查找所有数据成功", manageParameterService.findAll(paging));
+            respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置查找所有数据成功", ParamUtil.getIstance().getAllModel(paging));
             //保存分页对象
-            paging.setTotalCount(manageParameterService.findCount());
+            List<Parameter> list = ParamUtil.getIstance().getAllModel();
+            if(list != null){
+                paging.setTotalCount(list.size());
+            }
             respBody.setPage(paging);
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "参数设置查找所有数据失败");
@@ -53,10 +60,10 @@ public class ParameterController {
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @SystemControllerLog(description = "新增参数设置")
     @ResponseBody
-    public RespBody add(@RequestBody SysParameterVo parameterVo) {
+    public RespBody add(@RequestBody Parameter parameterVo) {
         RespBody respBody = new RespBody();
         try {
-            manageParameterService.add(parameterVo);
+            parameterService.create(parameterVo);
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置保存成功");
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "参数设置保存失败");
@@ -74,10 +81,15 @@ public class ParameterController {
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     @SystemControllerLog(description = "修改参数设置")
     @ResponseBody
-    public RespBody update(@RequestBody SysParameterVo parameterVo) {
+    public RespBody update(@RequestBody Parameter parameterVo) {
         RespBody respBody = new RespBody();
         try {
-            manageParameterService.update(parameterVo);
+            Parameter po = new Parameter();
+            po.setValue(parameterVo.getValue());
+            po.setRemark(parameterVo.getRemark());
+            po.setName(parameterVo.getName());
+            po.setTitle(parameterVo.getTitle());
+            parameterService.updateById(parameterVo.getId(),po);
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置保存成功");
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "参数设置保存失败");
@@ -95,10 +107,11 @@ public class ParameterController {
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @SystemControllerLog(description = "删除参数设置")
     @ResponseBody
-    public RespBody delete(@RequestBody SysParameterVo parameterVo) {
+    public RespBody delete(@RequestBody Parameter parameterVo) {
         RespBody respBody = new RespBody();
         try {
-            manageParameterService.delete(parameterVo);
+            parameterService.deleteById(parameterVo.getId());
+            ParamUtil.getIstance().reloadParam();
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置删除成功");
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "参数设置删除失败");

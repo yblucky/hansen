@@ -40,6 +40,20 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
     /**
      * 修改系统参数成功后，重新加载系统参数
      */
+    public void processCacheAfterCreate(Parameter model) {
+        ParamUtil.getIstance().reloadParam();
+    }
+
+    /**
+     * 修改系统参数成功后，重新加载系统参数
+     */
+    public void processCacheAfterDelete(String id) {
+        ParamUtil.getIstance().reloadParam();
+    }
+
+    /**
+     * 修改系统参数成功后，重新加载系统参数
+     */
     public void processCacheAfterUpdateById(String id, Parameter model) {
         ParamUtil.getIstance().reloadParam();
     }
