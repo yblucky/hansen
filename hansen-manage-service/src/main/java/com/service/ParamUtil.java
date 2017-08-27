@@ -1,6 +1,7 @@
 package com.service;
 
 import com.base.page.Page;
+import com.base.page.Paging;
 import com.constant.RedisKey;
 import com.model.Parameter;
 import com.redis.Strings;
@@ -8,6 +9,7 @@ import com.utils.toolutils.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+@Component
 public class ParamUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ParamUtil.class);
@@ -181,7 +183,7 @@ public class ParamUtil {
      * @throws Exception
      */
 
-    public synchronized List<Parameter> getAllModel(Page page) throws Exception {
+    public synchronized List<Parameter> getAllModel(Paging page) throws Exception {
 
         if (isUpdateParam()) {
             reload();
@@ -193,13 +195,13 @@ public class ParamUtil {
         if (hmProperties_ == null || hmProperties_.size() == 0) {
             return null;
         }
-        if (page.getPageNo() == null || page.getPageNo() < 1) {
-            page.setPageNo(1);
+        if (page.getPageNumber() < 1) {
+            page.setPageNumber(1);
         }
-        if (page.getPageSize() == null || page.getPageSize() <= 0) {
+        if (page.getPageSize() <= 0) {
             page.setPageSize(10);
         }
-        int startNo = (page.getPageNo() - 1) * page.getPageSize();
+        int startNo = (page.getPageNumber() - 1) * page.getPageSize();
         int endNo = startNo + page.getPageSize();
         List<Parameter> list = new ArrayList<Parameter>();
         int i = 0;
