@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -103,75 +104,97 @@ public class CoinController extends BaseController {
      */
 
     @ResponseBody
-    @RequestMapping(value = "/coinverfy")
-    public JsonResult coinVerfy(HttpServletRequest request, CoinVerfyVo vo) {
-        JsonResult result = null;
-        try {
-            Token token = TokenUtil.getSessionUser(request);
+    @RequestMapping(value = "/coinverfy",method = RequestMethod.POST)
+    public RespBody coinVerfy(HttpServletRequest request,@RequestBody CoinVerfyVo vo) {
+        // 创建返回对象
+        RespBody respBody = new RespBody();
 
+        try {
+
+            String token = request.getHeader("token");
+            SysUserVo userVo = manageUserService.SysUserVo(token);
+            SysUser sysUser = manageUserService.readById(userVo.getId());
+            if (sysUser == null) {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
+                return respBody;
+            }
+            if (!"10".equals(sysUser.getState())) {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "管理员账号被禁用");
+                return respBody;
+            }
             if (ToolUtil.isEmpty(vo.getOrderId())) {
-                return fail("待审订单编号不能为空");
+                respBody.add(RespCodeEnum.ERROR.getCode(), "待审订单编号不能为空");
+                return respBody;
             }
             if (vo.getStatus() == null) {
-                return fail("待审订单状态不能为空");
+                respBody.add(RespCodeEnum.ERROR.getCode(), "待审订单状态不能为空");
+                return respBody;
             }
-            User user = userService.readById(token.getId());
-            if (user == null) {
-                return fail("登录用户不存在");
+
+            WalletOrder model = new WalletOrder();
+            model.setOrderNo(vo.getOrderId());
+            WalletOrder order = walletOrderService.readOne(model);
+            if (order == null) {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "订单不存在");
+                return respBody;
             }
-            if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-                return fail("登录账号未激活");
-            }
-            WalletOrder order = walletOrderService.readById(token.getId());
             if (WalletOrderStatus.PENDING.getCode() != order.getStatus()) {
-                return fail("订单不是待审核状态");
+                respBody.add(RespCodeEnum.ERROR.getCode(), "订单不是待审核状态");
+                return respBody;
             }
             WalletOrder updateModel = new WalletOrder();
             if (vo.getStatus() == WalletOrderStatus.DENIED.getCode()) {
                 updateModel.setId(vo.getOrderId());
                 updateModel.setStatus(WalletOrderStatus.DENIED.getCode());
-                updateModel.setRemark("审核不通过，审核人：" + user.getUid() + " " + user.getNickName());
+                updateModel.setRemark("审核不通过，审核人：" + sysUser.getUserName());
                 walletOrderService.updateById(order.getId(), updateModel);
             }
             User coinUser = userService.readById(order.getSendUserId());
             UserDetail coinUserDetail = userDetailService.readById(order.getSendUserId());
             Boolean isDeleteFlag = false;
             if (coinUser == null) {
-                return fail("提币用户不存在");
+                respBody.add(RespCodeEnum.ERROR.getCode(), "提币用户不存在");
+                return respBody;
             }
             if (UserStatusType.ACTIVATESUCCESSED.getCode() != coinUser.getStatus()) {
-                return fail("提币账号未激活");
+                respBody.add(RespCodeEnum.ERROR.getCode(), "提币账号未激活");
+                return respBody;
             }
             if (coinUserDetail == null) {
-                return fail("提币用户不存在");
+                respBody.add(RespCodeEnum.ERROR.getCode(), "提币用户信息不存在");
+                return respBody;
             }
             CurrencyType currencyType = WalletOrderType.getCoinTypeFromWalletOrderTypeCode(order.getOrderType());
             String address = "";
             if (currencyType.getCode() == CurrencyType.TRADE.getCode()) {
                 if (ToolUtil.isEmpty(coinUserDetail.getOutTradeAddress())) {
-                    return fail("用户未添加交易币提币地址");
+                    respBody.add(RespCodeEnum.ERROR.getCode(), "用户未添加交易币提币地址");
+                    return respBody;
                 }
                 address = coinUserDetail.getOutTradeAddress();
             } else if (currencyType.getCode() == CurrencyType.PAY.getCode()) {
                 if (ToolUtil.isEmpty(coinUserDetail.getOutPayAddress())) {
-                    return fail("用户未添加支付币提币地址");
+                    respBody.add(RespCodeEnum.ERROR.getCode(), "用户未添加支付币提币地址");
+                    return respBody;
                 }
                 address = coinUserDetail.getOutPayAddress();
             } else if (currencyType.getCode() == CurrencyType.EQUITY.getCode()) {
                 if (ToolUtil.isEmpty(coinUserDetail.getOutEquityAddress())) {
-                    return fail("用户未添加股权币提币地址");
+                    respBody.add(RespCodeEnum.ERROR.getCode(), "用户未添加股权币提币地址");
+                    return respBody;
                 }
                 address = coinUserDetail.getOutEquityAddress();
             }
             if (ToolUtil.isEmpty(address)) {
-                return fail("用户未添加提币地址");
+                respBody.add(RespCodeEnum.ERROR.getCode(), "用户未添加提币地址");
+                return respBody;
             }
 
             BitcoinClient client = WalletUtil.getBitCoinClient(currencyType);
-            String txtId = WalletUtil.sendFrom(client, coinUser.getUid().toString(), address, new BigDecimal(order.getAmount().toString()), "用户" + user.getUid() + "提币", "用户" + address + "收币");
+            String txtId = WalletUtil.sendFrom(client, coinUser.getUid().toString(), address, new BigDecimal(order.getAmount().toString()), "用户" + coinUser.getUid() + "提币", "用户" + address + "收币");
             if (ToolUtil.isNotEmpty(txtId)) {
                 vo.setStatus(WalletOrderStatus.CONFIRMING.getCode());
-                updateModel.setRemark("提币审核通过，审核人：" + user.getUid() + " " + user.getNickName());
+                updateModel.setRemark("提币审核通过，审核人：" + sysUser.getUserName());
                 transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID, address, WalletOrderType.fromCode(order.getOrderType()), WalletOrderStatus.CONFIRMING, txtId, order.getOrderNo(), order.getAmount());
             }
             updateModel.setId(vo.getOrderId());
@@ -179,9 +202,11 @@ public class CoinController extends BaseController {
             walletOrderService.updateById(order.getId(), updateModel);
         } catch (Exception e) {
             e.printStackTrace();
-            return fail("提现审核异常");
+            respBody.add(RespCodeEnum.ERROR.getCode(), "提现审核异常");
+            return respBody;
         }
-        return success("审核成功");
+        respBody.add(RespCodeEnum.ERROR.getCode(), "审核成功");
+        return respBody;
     }
 
     @ResponseBody
