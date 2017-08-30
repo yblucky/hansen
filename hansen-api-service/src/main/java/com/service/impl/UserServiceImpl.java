@@ -577,6 +577,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     public User innerRegister(User innerUser, User inviterUser, User createUser, CardGrade cardGrade) throws Exception {
         /**创建用户账号**/
         createUser = this.createRegisterUser(createUser, cardGrade,   innerUser,inviterUser);
+
         /**建立部门关系**/
         UserDepartment userDepartment = new UserDepartment();
         userDepartment.setParentUserId(inviterUser.getId());
@@ -585,7 +586,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         userDepartment.setId(ToolUtil.getUUID());
         userDepartmentService.createUserDepartment(userDepartment);
         /**扣注册码**/
-        activeCodeService.useRegisterCode(innerUser.getId(), cardGrade.getRegisterCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
+        activeCodeService.useRegisterCode(innerUser.getId(), cardGrade.getRegisterCodeNo(),   "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
         /**扣激活码**/
         activeCodeService.useActiveCode(innerUser.getId(), cardGrade.getActiveCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getActiveCodeNo() + "个激活码");
         return createUser;
