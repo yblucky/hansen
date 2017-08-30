@@ -116,7 +116,7 @@ public class SignController {
         List<UserSign> userSignList = new ArrayList<>();
         List<UserSignVo> list = new ArrayList<>();
         PageResult<UserSignVo> pageResult = new PageResult<>();
-        BeanUtils.copyProperties(pageResult, page);
+        BeanUtils.copyProperties(page,pageResult);
         UserSign condition = new UserSign();
         condition.setUserId(user.getId());
         Integer count = userSignService.readCount(condition);
