@@ -36,6 +36,18 @@ public enum OrderStatus {
         this.msg = msg;
     }
 
+    public static String getName(Integer code){
+        if (code == null) {
+            return "";
+        }
+        for(OrderStatus enums : OrderStatus.values()){
+            if (enums.getCode().equals(code)) {
+                return enums.getMsg();
+            }
+        }
+        return "";
+    }
+
     public Integer getCode() {
         return code;
     }
