@@ -148,6 +148,8 @@ public class CoinController extends BaseController {
                 updateModel.setStatus(WalletOrderStatus.DENIED.getCode());
                 updateModel.setRemark("审核不通过，审核人：" + sysUser.getUserName());
                 walletOrderService.updateById(order.getId(), updateModel);
+                respBody.add(RespCodeEnum.ERROR.getCode(), "审核不通过成功");
+                return respBody;
             }
             User coinUser = userService.readById(order.getSendUserId());
             UserDetail coinUserDetail = userDetailService.readById(order.getSendUserId());
