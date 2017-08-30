@@ -502,19 +502,25 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
 
     @Override
-    public void updateUserRegisterCode(String userId, Integer activeNo) {
-        userMapper.updateUserRegisterCode(userId, activeNo);
+    public void updateUserRegisterCode(String userId, Integer registerNo) {
+        userMapper.updateUserRegisterCode(userId, registerNo);
     }
 
 
-
+    /**
+     *
+     * @param user
+     * @param cardGrade
+     * @param loginUser
+     * @param inviterUser  接点人
+     * @return
+     * @throws Exception
+     */
     @Override
     @Transactional
-    public User createRegisterUser(User user, CardGrade cardGrade, User inviterUser) throws Exception {
+    public User createRegisterUser(User user, CardGrade cardGrade, User loginUser,User inviterUser) throws Exception {
         UserDetail inviterUserDetail = userDetailService.readById(inviterUser.getId());
-        user.setFirstReferrer(inviterUser.getId());
         user.setCreateType(UserType.INNER.getCode());
-        user.setSecondReferrer(inviterUser.getFirstReferrer());
         user.setGrade(cardGrade.getGrade());
         user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
 //        BitcoinClient payBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCUSER), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
@@ -533,9 +539,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         String tradeAddress = UUIDUtil.getUUID();
 
 
-        user.setFirstReferrer(inviterUser.getId());
-        user.setSecondReferrer(inviterUser.getSecondReferrer());
-        user.setContactUserId(null);
+        user.setFirstReferrer(loginUser.getId());
+        user.setSecondReferrer(loginUser.getSecondReferrer());
+        user.setContactUserId(loginUser.getId());
         user.setPassword(Md5Util.MD5Encode(user.getPassword(), DateUtils.currentDateToggeter()));
         user.setPayWord(Md5Util.MD5Encode(user.getPayWord(), DateUtils.currentDateToggeter()));
         user.setSalt(DateUtils.currentDateToggeter());
@@ -550,7 +556,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setMaxProfits(cardGrade.getInsuranceAmt()*cardGrade.getOutMultiple());
         this.create(user);
         user=this.readById(creatUserId);
-        UserDetail innerUserDetail = userDetailService.readById(inviterUser.getId());
+        UserDetail innerUserDetail = userDetailService.readById(loginUser.getId());
         UserDetail userDetail = new UserDetail();
         userDetail.setId(user.getId());
         userDetail.setForzenEquityAmt(0d);
@@ -570,18 +576,18 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Transactional
     public User innerRegister(User innerUser, User inviterUser, User createUser, CardGrade cardGrade) throws Exception {
         /**创建用户账号**/
-        createUser = this.createRegisterUser(createUser, cardGrade, inviterUser);
+        createUser = this.createRegisterUser(createUser, cardGrade,   innerUser,inviterUser);
         /**建立部门关系**/
         UserDepartment userDepartment = new UserDepartment();
-        userDepartment.setParentUserId(innerUser.getId());
+        userDepartment.setParentUserId(inviterUser.getId());
         userDepartment.setUid(createUser.getUid());
         userDepartment.setUserId(createUser.getId());
         userDepartment.setId(ToolUtil.getUUID());
         userDepartmentService.createUserDepartment(userDepartment);
         /**扣注册码**/
-        activeCodeService.useRegisterCode(innerUser.getId(), -cardGrade.getRegisterCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
+        activeCodeService.useRegisterCode(innerUser.getId(), cardGrade.getRegisterCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
         /**扣激活码**/
-        activeCodeService.useActiveCode(innerUser.getId(), -cardGrade.getActiveCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getActiveCodeNo() + "个激活码");
+        activeCodeService.useActiveCode(innerUser.getId(), cardGrade.getActiveCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getActiveCodeNo() + "个激活码");
         return createUser;
     }
 

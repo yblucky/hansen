@@ -86,7 +86,7 @@ public class ActiveCodeServiceImpl extends CommonServiceImpl<ActiveCode> impleme
 
     @Override
     public Boolean useRegisterCode(String userId, Integer registerCodeNo, String remark) {
-        userService.updateUserActiveCode(userId, -registerCodeNo);
+        userService.updateUserRegisterCode(userId,-registerCodeNo);
         TransferCode transferCode = new TransferCode();
         transferCode.setSendUserId(userId);
         transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);

@@ -61,7 +61,7 @@ public interface UserService extends CommonService<User> {
 
     Integer updateUserCardGradeByUserId(String userId, Integer cardGrade);
 
-    User createRegisterUser(User user, CardGrade cardGrade, User inviterUser) throws Exception;
+    User createRegisterUser(User creatUser, CardGrade cardGrade,User loginUser, User inviterUser) throws Exception;
 
     User innerRegister(User innerUser, User inviterUser, User createUser, CardGrade cardGrade) throws Exception;
 

@@ -71,7 +71,7 @@
 	<select id="getDirectTeamList" resultType="UserDepartment">
 		select a.id,a.userId,a.uid,a.performance,a.createTime,a.updateTime,a.status,a.remark,a.parentUserId,a.nickName
 		  from <include refid="table_name"/> as a
-		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId}  and   a.parentUserId=#{parentUserId} and a.status = 1
+		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId}  and   a.parentUserId=#{parentUserId}
 		order by a.performance desc
 	</select>
 

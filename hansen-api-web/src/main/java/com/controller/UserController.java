@@ -174,13 +174,17 @@ public class UserController {
         if (loginUser.getActiveCodeNo() < cardGrade.getRegisterCodeNo()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
         }
-        User inviterCondition = new User();
-
-        User inviterUser = userService.readOne(inviterCondition);
-        if (inviterUser == null) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "邀请人信息有误");
+        User inviterUser=null;
+        if (vo.getContactUserId()!=loginUser.getUid()){
+            User inviterCondition = new User();
+            inviterCondition.setUid(loginUser.getUid());
+            inviterUser = userService.readOne(inviterCondition);
+            if (inviterUser == null) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "接点人信息有误");
+            }
+        }else {
+            inviterUser=loginUser;
         }
-
         User model = new User();
         BeanUtils.copyProperties(model, vo);
         model.setPayWord(vo.getPayword());
