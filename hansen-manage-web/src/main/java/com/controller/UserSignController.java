@@ -4,12 +4,10 @@ import com.base.page.PageResult;
 import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
-import com.model.Parameter;
-import com.model.SysUser;
-import com.model.TradeOrder;
-import com.model.UserSign;
+import com.model.*;
 import com.service.ParamUtil;
 import com.service.TradeOrderService;
+import com.service.UserService;
 import com.service.UserSignService;
 import com.sysservice.ManageUserService;
 import com.utils.classutils.MyBeanUtils;
@@ -40,6 +38,8 @@ public class UserSignController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(UserSignController.class);
     @Autowired
     private UserSignService userSignService;
+    @Autowired
+    private UserService userService;
     @Resource
     private ManageUserService manageUserService;//用户业务层
 
@@ -82,6 +82,8 @@ public class UserSignController extends BaseController {
             double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE),1d);
             for (UserSign sign:userSignList){
                 vo = MyBeanUtils.copyProperties(sign,UserSignVo.class);
+                User userPo =userService.readById(sign.getUserId());
+                vo.setNickName(userPo.getNickName());
                 //三种币的收入
                 Double payAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardPayScale,2);
                 Double tradeAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardTradeScale,2);

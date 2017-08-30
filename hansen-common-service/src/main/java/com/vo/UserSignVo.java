@@ -21,6 +21,12 @@ public class UserSignVo extends UserSign{
 	private Integer status;
 	private String statusName;
 
+	/**
+	 * 用户姓名
+	 */
+	private String nickName;
+
+
 	public double getPayAmt() {
 		return payAmt;
 	}
@@ -86,5 +92,13 @@ public class UserSignVo extends UserSign{
 
 	public void setStatusName(String statusName) {
 		this.statusName = statusName;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
 	}
 }
