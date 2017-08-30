@@ -33,6 +33,8 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
     private TradeOrderService tradeOrderService;
     @Autowired
     private UserSignService userSignService;
+    //保存到内存里
+    public static Set<String> ids = new HashSet<String>();
 
     @Override
     protected CommonDao<UserTask> getDao() {
@@ -99,7 +101,20 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         UserTask lastUserTask = this.readLastOne(userId);
         if (lastUserTask == null) {
             //从来都没有领取过任务，默认第一天
-            Set<String> ids = new HashSet<>();
+            if(ids.size() == 0){
+                //获取所有任务列表
+                List<Task> taskList = taskService.readAll(new Task());
+                //判断是否有任务列表，如果没有，就return
+                if(taskList == null){
+                    return false;
+                }
+                //循环任务列表，保存任务ids
+                for(Task task: taskList){
+                    //将任务id保存到set里
+                    ids.add(task.getId());
+                }
+            }
+            //随机获取任务
             String taskId = RandomUtil.getRandomElement(ids);
             Task firstTask = taskService.readById(taskId);
             this.addUserTask(userId, firstTask, new Date());
@@ -108,8 +123,20 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             if (diffDay > remainTaskNo) {
                 diffDay = remainTaskNo;
             }
+            if(ids.size() == 0){
+                //获取所有任务列表
+                List<Task> taskList = taskService.readAll(new Task());
+                //判断是否有任务列表，如果没有，就return
+                if(taskList == null){
+                    return false;
+                }
+                //循环任务列表，保存任务ids
+                for(Task task: taskList){
+                    //将任务id保存到set里
+                    ids.add(task.getId());
+                }
+            }
             for (int i = 0; i < diffDay; i++) {
-                Set<String> ids = new HashSet<>();
                 String taskId = RandomUtil.getRandomElement(ids);
                 Task task = taskService.readById(taskId);
                 task = taskService.readById(taskId);

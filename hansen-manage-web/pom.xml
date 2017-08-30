@@ -108,6 +108,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>manage</finalName>
+        <finalName>web</finalName>
     </build>
 </project>

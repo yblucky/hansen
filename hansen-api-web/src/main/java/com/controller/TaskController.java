@@ -55,7 +55,7 @@ public class TaskController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/gettask", method = RequestMethod.POST)
+    @RequestMapping(value = "/getTaskInfo", method = RequestMethod.GET)
     public JsonResult getTask(HttpServletRequest request, HttpServletResponse response, Page page) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.readById(token.getId());
