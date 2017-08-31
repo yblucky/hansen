@@ -1,5 +1,7 @@
 package com.controller;
 
+import com.Token;
+import com.base.TokenUtil;
 import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
@@ -145,6 +147,36 @@ public class TaskController extends BaseController {
         }
         taskService.updateById(vo.getId(), vo);
         respBody.add(RespCodeEnum.SUCCESS.getCode(),"更新成功");
+        return respBody;
+    }
+
+    /**
+     * 修改任务
+     *
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    public RespBody doDelTask(HttpServletRequest request, HttpServletResponse response, String taskId) throws Exception {
+        // 创建返回对象
+        RespBody respBody = new RespBody();
+        String token = request.getHeader("token");
+        //读取用户信息
+        SysUserVo userVo = manageUserService.SysUserVo(token);
+        SysUser user = manageUserService.readById(userVo.getId());
+        if (user == null) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
+            return respBody;
+        }
+        if(ToolUtil.isEmpty(taskId)){
+            respBody.add(RespCodeEnum.ERROR.getCode(), "任务不存在,请刷新");
+            return respBody;
+        }
+        taskService.deleteById(taskId);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(), "任务已删除");
         return respBody;
     }
 }
