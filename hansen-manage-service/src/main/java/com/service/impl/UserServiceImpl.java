@@ -504,14 +504,11 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setSecondReferrer(inviterUser.getFirstReferrer());
         user.setGrade(cardGrade.getGrade());
         user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
-        BitcoinClient payBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
-        BitcoinClient equityBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
-        BitcoinClient tradeBitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
 
         /**生成钱包地址**/
-        String payAddress = WalletUtil.getAccountAddress(payBitcoinClient, user.getLoginName());
-        String equityAddress = WalletUtil.getAccountAddress(equityBitcoinClient, user.getLoginName());
-        String tradeAddress = WalletUtil.getAccountAddress(tradeBitcoinClient, user.getLoginName());
+        String payAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY), user.getLoginName());
+        String equityAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.EQUITY), user.getLoginName());
+        String tradeAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE), user.getLoginName());
         user.setFirstReferrer(inviterUser.getId());
         user.setSecondReferrer(inviterUser.getSecondReferrer());
         user.setContactUserId(null);

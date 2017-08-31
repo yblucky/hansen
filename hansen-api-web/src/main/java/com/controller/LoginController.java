@@ -89,12 +89,7 @@ public class LoginController {
             return new JsonResult(ResultCode.ERROR.getCode(), "验证码输入错误或者已失效");
         }
         User condition = new User();
-        if (vo.getLoginName().length()>11){
-            condition.setPhone(vo.getLoginName());
-        }else {
-            condition.setUid(Integer.valueOf(vo.getLoginName()));
-        }
-
+        condition.setPhone(vo.getLoginName());
         User loginUser = userService.readOne(condition);
 
         if (null == loginUser) {

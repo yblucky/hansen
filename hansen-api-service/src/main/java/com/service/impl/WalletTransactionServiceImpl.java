@@ -68,26 +68,24 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             int count = this.readCount(conditon);
             if (count > 0) {
                 continue;
-//                break;
             }
             WalletTransaction transaction = new WalletTransaction();
             transaction.setOrderType(currencyType);
-            transaction.setUserId(info.getOtherAccount());
+            transaction.setUserId(userId);
             transaction.setAmount(info.getAmount().doubleValue());
             transaction.setCategory(info.getCategory());
             transaction.setConfirmations(Long.valueOf(info.getConfirmations() + ""));
             transaction.setCreateTime(new Date());
             transaction.setFee(info.getFee().doubleValue());
-            transaction.setPrepayId(info.getTo());
-            transaction.setMessage(info.getMessage());
-            transaction.setTransactionLongTime(info.getTime() * 1000);
+            transaction.setPrepayId("");
+            transaction.setMessage("");
+            transaction.setTransactionLongTime(0l);
             transaction.setTxtId(info.getTxId());
-            transaction.setTransactionTime(new Date(info.getTime() * 1000));
-            if (info.getCategory().equals("immature") || info.getCategory().equals("generate")) {
-                transaction.setAddress("");
-            } else {
-                transaction.setAddress(info.getOtherAccount());
-            }
+//            if (info.getCategory().equals("immature") || info.getCategory().equals("generate")) {
+//                transaction.setAddress("");
+//            } else {
+//                transaction.setAddress(info.getOtherAccount());
+//            }
             transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(info.getConfirmations()).toString());
             this.create(transaction);
         }

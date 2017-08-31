@@ -21,11 +21,11 @@ public class WalletUtil {
     public static BitcoinClient getBitCoinClient(CurrencyType currencyType) throws Exception {
         BitcoinClient bitcoinClient = null;
         if (currencyType.getCode() == 2) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
         } else if (currencyType.getCode() == 1) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
         } else if (currencyType.getCode() == 3) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
         }
 
         System.out.println(bitcoinClient);
@@ -35,11 +35,11 @@ public class WalletUtil {
     public static BitcoinClient getBitCoinClient(Integer currencyType) throws Exception {
         BitcoinClient bitcoinClient = null;
         if (currencyType == 1) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
         } else if (currencyType == 2) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
         } else if (currencyType == 3) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
+            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
         }
 
         System.out.println(bitcoinClient);

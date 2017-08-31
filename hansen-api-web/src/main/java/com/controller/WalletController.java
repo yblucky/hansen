@@ -28,12 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
+import ru.paradoxs.bitcoin.client.TransactionInfo;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/wallet")
@@ -44,6 +43,8 @@ public class WalletController {
     private WalletTransactionService transactionService;
     @Autowired
     private WalletOrderService walletOrderService;
+    @Autowired
+    private WalletTransactionService walletTransactionService;
 
 
     @ResponseBody
@@ -160,6 +161,20 @@ public class WalletController {
     public JsonResult outterList(HttpServletRequest request, Page page, String orderType) {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);
+        if (token == null) {
+            return new JsonResult(ResultCode.NO_LOGIN);
+        }
+        User user = userService.readById(token.getId());
+        if (user == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "找不到用户");
+        }
+        try {
+            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.TRADE.getCode());
+            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.PAY.getCode());
+        } catch (Exception e) {
+            System.out.println("查询虚拟币充值记录失败。。。。。。。。。。。。。。。。。。。。。。。");
+            e.printStackTrace();
+        }
         PageResult<WalletTransaction> pageResult = new PageResult<>();
         if (page.getPageNo() == null) {
             page.setPageNo(1);
@@ -180,13 +195,6 @@ public class WalletController {
         }
         if (ToolUtil.isEmpty(orderType)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "查询类型不能为空");
-        }
-        User user = userService.readById(token.getId());
-        if (user == null) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
-        }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
         }
 
         WalletTransaction condition = new WalletTransaction();
@@ -274,6 +282,41 @@ public class WalletController {
             return new JsonResult(WalletUtil.getBalance(client));
         } catch (Exception e) {
         }
-        return  null;
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/createAddress", method = RequestMethod.GET)
+    public JsonResult getAddress(HttpServletRequest request, String uid) {
+        try {
+            Map<String, String> map = new HashMap<>();
+            String inpayAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY.getCode()), uid);
+            String inequityAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.EQUITY.getCode()), uid);
+            String intradeAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE.getCode()), uid);
+            map.put("inpayAddress", inpayAddress);
+            map.put("inequityAddress", inequityAddress);
+            map.put("intradeAddress", intradeAddress);
+            return new JsonResult(map);
+        } catch (Exception e) {
+        }
+        return new JsonResult(ResultCode.ERROR);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/rechargelist", method = RequestMethod.GET)
+    public JsonResult rechargeList(HttpServletRequest request, String uid) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            List<TransactionInfo> paylist = WalletUtil.listTransactions(WalletUtil.getBitCoinClient(CurrencyType.PAY), uid, 20);
+            List<TransactionInfo> equitylist = WalletUtil.listTransactions(WalletUtil.getBitCoinClient(CurrencyType.EQUITY), uid, 20);
+            List<TransactionInfo> trradelist = WalletUtil.listTransactions(WalletUtil.getBitCoinClient(CurrencyType.TRADE), uid, 20);
+            map.put("paylist", paylist);
+            map.put("equitylist", equitylist);
+            map.put("trradelist", trradelist);
+            return new JsonResult(map);
+        } catch (Exception e) {
+
+        }
+        return new JsonResult(ResultCode.ERROR);
     }
 }

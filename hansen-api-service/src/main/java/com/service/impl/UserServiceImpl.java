@@ -526,13 +526,16 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         /**生成钱包地址**/
 
         //TODO  生成钱包地址的暂时去掉
-        String payAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY.getCode()),loginUser.getUid()+"");
-        String equityAddress =WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.EQUITY.getCode()),loginUser.getUid()+"");
-        String tradeAddress =WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE.getCode()),loginUser.getUid()+"");
+//        String payAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY.getCode()),loginUser.getUid()+"");
+//        String equityAddress =WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.EQUITY.getCode()),loginUser.getUid()+"");
+//        String tradeAddress =WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE.getCode()),loginUser.getUid()+"");
 
-//        String payAddress = UUIDUtil.getUUID();
-//        String equityAddress = UUIDUtil.getUUID();
-//        String tradeAddress = UUIDUtil.getUUID();
+//        System.out.println("payAddress  "+payAddress);
+//        System.out.println("equityAddress  "+equityAddress);
+//        System.out.println("tradeAddress  "+tradeAddress);
+        String payAddress = "";
+        String equityAddress = "";
+        String tradeAddress = "";
 
 
         user.setFirstReferrer(loginUser.getId());
@@ -670,4 +673,5 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     public Integer updateUserCardGradeByUserId(String userId, Integer cardGrade) {
         return userMapper.updateUserCardGradeByUserId(userId, cardGrade);
     }
+
 }
