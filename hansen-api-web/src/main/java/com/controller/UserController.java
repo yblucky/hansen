@@ -633,8 +633,8 @@ public class UserController {
      * 市场内部注册的账号，用户手动点击激活账号
      */
     @ResponseBody
-    @RequestMapping(value = "/firstActicveUser", method = RequestMethod.POST)
-    public JsonResult firstActicveUser(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
+    @RequestMapping(value = "/firstActicveUser", method = RequestMethod.GET)
+    public JsonResult firstActicveUser(HttpServletRequest request) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         if (token == null) {
             return new JsonResult(ResultCode.NO_LOGIN.getCode(), ResultCode.NO_LOGIN.getMsg());
@@ -644,7 +644,7 @@ public class UserController {
         if (x != null) return x;
         if (loginUser.getStatus() == UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
             CardGrade cardGradeCondition = new CardGrade();
-            cardGradeCondition.setGrade(vo.getCardGrade());
+            cardGradeCondition.setGrade(loginUser.getCardGrade());
             CardGrade cardGrade = cardGradeService.readOne(cardGradeCondition);
             if (cardGrade == null) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
@@ -676,6 +676,10 @@ public class UserController {
             User loginUser = userService.readById(token.getId());
             JsonResult x = checkLoginUser(loginUser);
             if (x != null) return x;
+            UserDetail userDetail = userDetailService.readById(loginUser.getId());
+            if (userDetail==null){
+                return  new JsonResult(ResultCode.ERROR.getCode(),"获取用户信息失败");
+            }
             Map<String, String> rs = new HashedMap();
             if (UserStatusType.INNER_REGISTER_SUCCESSED.getCode()==loginUser.getStatus()){
                 CardGrade userCard = cardGradeService.getUserCardGrade(loginUser.getCardGrade());
@@ -707,6 +711,22 @@ public class UserController {
                 //需要补充购物币数量
                 Double needBuyPayAmt = payAmount - loginUser.getPayAmt();
                 needBuyPayAmt = needBuyPayAmt > 0 ? needBuyPayAmt : 0d;
+                UserDetail updateModel =new UserDetail();
+                Boolean isUpdate =false;
+                if (ToolUtil.isEmpty(userDetail.getInPayAddress())){
+                    userDetail.setInPayAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY.getCode()),loginUser.getUid()+""));
+                    updateModel.setInPayAddress(userDetail.getInPayAddress());
+                    isUpdate=true;
+                }
+                if (ToolUtil.isEmpty(userDetail.getInTradeAddress())){
+                    userDetail.setInTradeAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE.getCode()),loginUser.getUid()+""));
+                    updateModel.setInTradeAddress(userDetail.getInTradeAddress());
+                    isUpdate=true;
+                }
+                if (isUpdate){
+                    userDetailService.updateById(userDetail.getId(),updateModel);
+                }
+
                 //最大收益
                 Double cardMaxproft = userCard.getInsuranceAmt() * userCard.getOutMultiple();
                 rs.put("tradeConverRmbScale", tradeConverRmbScale +"");
@@ -719,6 +739,11 @@ public class UserController {
                 rs.put("needBuyTradeAmt", needBuyTradeAmt + "");
                 rs.put("needBuyPayAmt", needBuyPayAmt + "");
                 rs.put("cardMaxproft", cardMaxproft + "");
+                rs.put("inTradeAddress", userDetail.getInTradeAddress());
+                rs.put("inPayAddress", userDetail.getInPayAddress());
+                rs.put("inEquityAddress", userDetail.getInEquityAddress() );
+                rs.put("payAmt",loginUser.getPayAmt() + "");
+                rs.put("tradeAmt", loginUser.getTradeAmt() + "" );
             }
             rs.put("status", loginUser.getStatus()+"");
             return new JsonResult(rs);

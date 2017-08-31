@@ -103,6 +103,7 @@ public class LoginController {
             Set<Integer> userStatus = new HashSet<>();
             userStatus.add(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
             userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
+            userStatus.add(UserStatusType.WAITACTIVATE.getCode());
             if (!userStatus.contains(loginUser.getStatus())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
             }
@@ -162,7 +163,7 @@ public class LoginController {
         if (null == user) {
             return new JsonResult(2, "无法找到用户信息");
         }
-        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
+        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode() && user.getStatus() != UserStatusType.WAITACTIVATE.getCode()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
         }
         // Redis获取Token
@@ -176,6 +177,7 @@ public class LoginController {
         if (detail!=null){
             BeanUtils.copyProperties(vo, detail);
         }
+        vo.setStatus(user.getStatus());
         vo.setToken(redisToken);
         return new JsonResult(vo);
     }

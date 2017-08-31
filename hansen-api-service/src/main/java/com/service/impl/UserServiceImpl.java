@@ -601,12 +601,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     public JsonResult innerActicveUser(User activeUser, CardGrade cardGrade) throws Exception {
         //冻结账号虚拟币 激活账号
         double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
-        if (activeUser.getPayAmt() < payRmbAmt) {
+        if (activeUser.getPayAmt() <= payRmbAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
         }
 
         double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
-        if (activeUser.getTradeAmt() < tradeRmbAmt) {
+        if (activeUser.getTradeAmt() <= tradeRmbAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足，无法激活账号");
         }
 
@@ -614,10 +614,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         updateActiveUser.setId(activeUser.getId());
         updateActiveUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
         updateActiveUser.setStatus(UserStatusType.WAITACTIVATE.getCode());
+        //修改用户状态
+        this.updateById(updateActiveUser.getId(),updateActiveUser);
+
         //生成保单
         tradeOrderService.createInsuranceTradeOrder(activeUser, cardGrade);
         return new JsonResult(ResultCode.SUCCESS.getCode(), UserStatusType.WAITACTIVATE.getMsg());
-
     }
 
     @Override
