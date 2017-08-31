@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -263,5 +264,16 @@ public class WalletController {
             e.printStackTrace();
         }
         return new JsonResult(ResultCode.ERROR.getCode(), "获取转币记录失败");
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public JsonResult coinOut(HttpServletRequest request, String id, String host, Integer port) {
+        try {
+            BitcoinClient client = new BitcoinClient(host, "user", "password", port);
+            return new JsonResult(WalletUtil.getBalance(client));
+        } catch (Exception e) {
+        }
+        return  null;
     }
 }

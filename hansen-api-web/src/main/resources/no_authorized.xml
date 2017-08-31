@@ -8,6 +8,7 @@
 	<url>/user/forgetPwd</url>
 	<url>/cardgrade/info</url>
 	<url>/cardgrade/list</url>
+	<url>/wallet/test</url>
 
 	<!-- 静态资源-->
 	<url>/resources</url>
