@@ -627,6 +627,126 @@ public class UserController {
         return new JsonResult();
     }
 
+
+
+    /**
+     * 登录的时候，用户手动点击激活账号
+     */
+    @ResponseBody
+    @RequestMapping(value = "/loginActive", method = RequestMethod.POST)
+    public JsonResult loginByUserName(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
+        if (token == null) {
+            return new JsonResult(ResultCode.NO_LOGIN.getCode(), ResultCode.NO_LOGIN.getMsg());
+        }
+        User loginUser = userService.readById(token.getId());
+        JsonResult x = checkLoginUser(loginUser);
+        if (x != null) return x;
+        if (loginUser.getStatus() == UserStatusType.INNER_REGISTER_SUCCESSED.getCode()) {
+            CardGrade cardGradeCondition = new CardGrade();
+            cardGradeCondition.setGrade(vo.getCardGrade());
+            CardGrade cardGrade = cardGradeService.readOne(cardGradeCondition);
+            if (cardGrade == null) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
+            }
+            User updateUser = new User();
+            updateUser.setLoginTime(new Date());
+            updateUser.setUpdateTime(new Date());
+            userService.updateById(loginUser.getId(), updateUser);
+            //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
+           return userService.innerActicveUser(loginUser, cardGrade);
+        }else if (loginUser.getStatus() == UserStatusType.ACTIVATESUCCESSED.getCode()){
+            return new JsonResult(ResultCode.SUCCESS.getCode(),"账号已经是激活状态");
+        }
+        return new JsonResult(ResultCode.ERROR.getCode(),"无法激活");
+    }
+
+
+    /**
+     * 根据用户开卡等级，获取激活详细条件
+     *
+     * @param cardGrade 会员开卡等级
+     */
+    @ResponseBody
+    @RequestMapping(value = "/activeInfoWithCardGrade", method = RequestMethod.GET)
+    public JsonResult activeInfoWithCardGrade(HttpServletRequest request, Integer cardGrade) {
+        try {
+            Token token = TokenUtil.getSessionUser(request);
+            if (token == null) {
+                return new JsonResult(ResultCode.NO_LOGIN.getCode(), ResultCode.NO_LOGIN.getMsg());
+            }
+            User loginUser = userService.readById(token.getId());
+            JsonResult x = checkLoginUser(loginUser);
+            if (x != null) return x;
+            Map<String, String> rs = new HashedMap();
+            if (UserStatusType.INNER_REGISTER_SUCCESSED.getCode()==loginUser.getStatus()){
+                CardGrade userCard = cardGradeService.getUserCardGrade(loginUser.getCardGrade());
+                if (userCard==null){
+                    return new JsonResult(ResultCode.ERROR.getCode(), "无法查询到会员开卡等级");
+                }
+                //人民币兑换支付币汇率
+                Double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
+                //人民币兑换交易币汇率
+                Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+                //支付币兑换人民币汇率
+                Double payConverRmbScale = CurrencyUtil.getPoundage(1/payScale,1d,2);
+                //交易币兑换人民币汇率
+                Double tradeConverRmbScale = CurrencyUtil.getPoundage(1/tradeScale,1d,2);
+                //生成保单时支付币必须有的比例数量
+                Double insurancePayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE), 0d);
+                //生成保单时交易币必须有的比例数量
+                Double insuranceTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE), 0d);
+                //需要支付币的总金额
+                Double payAmount = payScale * userCard.getInsuranceAmt() * insurancePayScale;
+                //需要交易币的总金额
+                Double tradeAmount = tradeScale * userCard.getInsuranceAmt() * insuranceTradeScale;
+                //需要补充激活码数量
+                Integer needActiveNum = userCard.getActiveCodeNo() - loginUser.getActiveCodeNo();
+                needActiveNum = needActiveNum > 0 ? needActiveNum : 0;
+                //需要补充交易币数量
+                Double needBuyTradeAmt = tradeAmount - loginUser.getTradeAmt();
+                needBuyTradeAmt = needBuyTradeAmt > 0 ? needBuyTradeAmt : 0d;
+                //需要补充购物币数量
+                Double needBuyPayAmt = payAmount - loginUser.getPayAmt();
+                needBuyPayAmt = needBuyPayAmt > 0 ? needBuyPayAmt : 0d;
+                //最大收益
+                Double cardMaxproft = userCard.getInsuranceAmt() * userCard.getOutMultiple();
+                rs.put("tradeConverRmbScale", tradeConverRmbScale +"");
+                rs.put("payConverRmbScale", payConverRmbScale + "");
+                rs.put("payAmount", payAmount + "");
+                rs.put("tradeAmount", tradeAmount + "");
+                rs.put("needActiveNum", needActiveNum + "");
+                rs.put("userTradeAmount", loginUser.getTradeAmt() + "");
+                rs.put("userPayAmount", loginUser.getPayAmt() + "");
+                rs.put("needBuyTradeAmt", needBuyTradeAmt + "");
+                rs.put("needBuyPayAmt", needBuyPayAmt + "");
+                rs.put("cardMaxproft", cardMaxproft + "");
+            }
+            rs.put("status", loginUser.getStatus()+"");
+            return new JsonResult(rs);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return new JsonResult();
+    }
+
+    private JsonResult checkLoginUser(User loginUser) {
+        if (null == loginUser) {
+            return new JsonResult(-1, "用户不存在");
+        } else {
+            Set<Integer> userStatus = new HashSet<>();
+            userStatus.add(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
+            userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
+            if (!userStatus.contains(loginUser.getStatus())) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
+            }
+            if (loginUser.getCardGrade()==null || loginUser.getCardGrade()==0){
+                return new JsonResult(ResultCode.ERROR.getCode(), "账号初始化数据有误");
+            }
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         System.out.println("reXFNaaBb4aLrPtDQZyPyfW9uajDvKaxoo".length());
     }

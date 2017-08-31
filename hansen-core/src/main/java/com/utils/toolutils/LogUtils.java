@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * 日志核心工具类 关键业务操作日志记录
  */
 public class LogUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger("com.yanbao.common.util.LogUtils");
+    private static final Logger LOGGER = LoggerFactory.getLogger(" com.utils.toolutils");
 
     static {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
