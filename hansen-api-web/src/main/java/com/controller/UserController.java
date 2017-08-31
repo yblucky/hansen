@@ -630,11 +630,11 @@ public class UserController {
 
 
     /**
-     * 登录的时候，用户手动点击激活账号
+     * 市场内部注册的账号，用户手动点击激活账号
      */
     @ResponseBody
-    @RequestMapping(value = "/loginActive", method = RequestMethod.POST)
-    public JsonResult loginByUserName(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
+    @RequestMapping(value = "/firstActicveUser", method = RequestMethod.POST)
+    public JsonResult firstActicveUser(HttpServletRequest request, @RequestBody LoginUserVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         if (token == null) {
             return new JsonResult(ResultCode.NO_LOGIN.getCode(), ResultCode.NO_LOGIN.getMsg());
