@@ -664,12 +664,10 @@ public class UserController {
 
     /**
      * 根据用户开卡等级，获取激活详细条件
-     *
-     * @param cardGrade 会员开卡等级
      */
     @ResponseBody
-    @RequestMapping(value = "/activeInfoWithCardGrade", method = RequestMethod.GET)
-    public JsonResult activeInfoWithCardGrade(HttpServletRequest request, Integer cardGrade) {
+    @RequestMapping(value = "/activeInfo", method = RequestMethod.GET)
+    public JsonResult activeInfo(HttpServletRequest request) {
         try {
             Token token = TokenUtil.getSessionUser(request);
             if (token == null) {
