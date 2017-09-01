@@ -206,12 +206,23 @@ public class WalletController {
             transactionList = transactionService.readList(condition, page.getPageNo(), page.getPageSize(), count);
             for (WalletTransaction transaction : transactionList) {
                 transaction.setMessage(WalletUtil.checkTransactionStatus(transaction.getConfirmations()).getMessage());
+                if (transaction.getConfirmations() > 3) {
+                    if (transaction.getOrderType() == WalletOrderType.TRADE_COIN_RECHARGE.getCode()) {
+                        userService.updateTradeAmtByUserId(user.getId(), transaction.getAmount());
+                    } else if (transaction.getOrderType() == WalletOrderType.PAY_COIN_RECHARGE.getCode()) {
+                        userService.updatePayAmtByUserId(user.getId(), transaction.getAmount());
+                    } else if (transaction.getOrderType() == WalletOrderType.EQUITY_COIN_RECHARGE.getCode()) {
+                        userService.updateEquityAmtByUserId(user.getId(), transaction.getAmount());
+                    }
+                }
             }
             pageResult.setRows(transactionList);
+            BeanUtils.copyProperties(pageResult, page);
+            return new JsonResult(pageResult);
         }
-        BeanUtils.copyProperties(pageResult, page);
+        pageResult.setRows(Collections.emptyList());
         return new JsonResult(pageResult);
-    }
+}
 
 
     /**

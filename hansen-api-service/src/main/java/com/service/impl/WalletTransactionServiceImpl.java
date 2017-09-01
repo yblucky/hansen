@@ -2,6 +2,8 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
+import com.constant.TransactionStatusType;
+import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
 import com.mapper.WalletTransactionMapper;
 import com.service.UserService;
@@ -81,6 +83,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             transaction.setMessage("");
             transaction.setTransactionLongTime(0l);
             transaction.setTxtId(info.getTxId());
+            transaction.setStatus(TransactionStatusType.CHECKING.getCode());
 //            if (info.getCategory().equals("immature") || info.getCategory().equals("generate")) {
 //                transaction.setAddress("");
 //            } else {
