@@ -30,4 +30,6 @@ public interface UserMapper extends CommonDao<User> {
 
     Integer updateUserGradeByUserId(@Param("id") String userId, @Param("grade") Integer grade);
 
+    Integer updateUserRegisterCode(@Param("id") String userId, @Param("registerCodeNo") Integer registerNo);
+
 }

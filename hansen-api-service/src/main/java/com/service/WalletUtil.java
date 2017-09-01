@@ -20,8 +20,8 @@ import java.util.Map;
 @Component
 public class WalletUtil {
     public static BitcoinClient getBitCoinClient(CurrencyType currencyType) throws Exception {
+        BitcoinClient bitcoinClient = null;
         try {
-            BitcoinClient bitcoinClient = null;
             if (currencyType.getCode() == 2) {
                 bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
             } else if (currencyType.getCode() == 1) {
@@ -32,7 +32,7 @@ public class WalletUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return bitcoinClient;
     }
 
     public static BitcoinClient getBitCoinClient(Integer currencyType) throws Exception {
@@ -52,7 +52,7 @@ public class WalletUtil {
 
     //TODO
     public static BitcoinClient getBitCoinClient(String rpcallowip, String rpcuser, String rpcpassword, int rpcport) {
-//        rpcallowip="127.0.0.1";
+        rpcallowip="127.0.0.1";
 //        rpcuser="user";
 //        rpcpassword="password";
 //        rpcport=29996;
@@ -63,6 +63,7 @@ public class WalletUtil {
         if (bitcoinClient == null) {
             bitcoinClient = new BitcoinClient(rpcallowip, rpcuser, rpcpassword, rpcport);
             System.out.println(bitcoinClient);
+            return bitcoinClient;
         }
         return bitcoinClient;
     }

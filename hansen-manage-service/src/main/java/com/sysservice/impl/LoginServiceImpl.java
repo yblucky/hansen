@@ -81,4 +81,7 @@ public class LoginServiceImpl implements LoginService {
         return respBody;
     }
 
+    public static void main(String[] args) {
+        System.out.println(CryptUtils.hmacSHA1Encrypt("123456", "QWERTYUIOPLKJHGHDFFHSDDG"));
+    }
 }

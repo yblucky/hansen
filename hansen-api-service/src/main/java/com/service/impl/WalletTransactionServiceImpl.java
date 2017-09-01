@@ -4,18 +4,16 @@ import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.CurrencyType;
 import com.constant.TransactionStatusType;
-import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
 import com.mapper.WalletTransactionMapper;
+import com.model.Parameter;
 import com.model.User;
 import com.model.UserDetail;
+import com.model.WalletTransaction;
 import com.service.UserDetailService;
 import com.service.UserService;
 import com.service.WalletTransactionService;
-import com.model.Parameter;
-import com.model.WalletTransaction;
 import com.service.WalletUtil;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +35,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     private UserService userService;
     @Autowired
     private UserDetailService userDetailService;
+
     @Override
     protected CommonDao<WalletTransaction> getDao() {
         return walletTransactionMapper;
@@ -73,13 +72,13 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     public Boolean createTransaction(String uid, Integer currencyType, BitcoinClient client) {
         User condition = new User();
         condition.setUid(Integer.parseInt(uid));
-        User user=userService.readOne(condition);
-        if (user==null){
+        User user = userService.readOne(condition);
+        if (user == null) {
             logger.error("读取钱包记录，根据uid获取用户信息失败");
             return false;
         }
-        UserDetail  userDetail=userDetailService.readById(user.getId());
-        if (userDetail==null){
+        UserDetail userDetail = userDetailService.readById(user.getId());
+        if (userDetail == null) {
             logger.error("读取钱包记录，根据uid获取用户详情信息失败");
             return false;
         }
@@ -93,15 +92,15 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
                 continue;
             }
             WalletTransaction transaction = new WalletTransaction();
-            Integer walletOrderType=0;
-            if (currencyType== CurrencyType.TRADE.getCode().intValue()){
-                walletOrderType=WalletOrderType.TRADE_COIN_RECHARGE.getCode();
+            Integer walletOrderType = 0;
+            if (currencyType == CurrencyType.TRADE.getCode().intValue()) {
+                walletOrderType = WalletOrderType.TRADE_COIN_RECHARGE.getCode();
                 transaction.setAddress(userDetail.getInTradeAddress());
-            }else if (currencyType== CurrencyType.PAY.getCode().intValue()){
-                walletOrderType=WalletOrderType.PAY_COIN_RECHARGE.getCode();
+            } else if (currencyType == CurrencyType.PAY.getCode().intValue()) {
+                walletOrderType = WalletOrderType.PAY_COIN_RECHARGE.getCode();
                 transaction.setAddress(userDetail.getInPayAddress());
-            }else if (currencyType== CurrencyType.EQUITY.getCode().intValue()){
-                walletOrderType=WalletOrderType.EQUITY_COIN_RECHARGE.getCode();
+            } else if (currencyType == CurrencyType.EQUITY.getCode().intValue()) {
+                walletOrderType = WalletOrderType.EQUITY_COIN_RECHARGE.getCode();
                 transaction.setAddress(userDetail.getInEquityAddress());
             }
             transaction.setRemark(WalletOrderType.fromCode(walletOrderType).getMsg());
@@ -113,7 +112,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             transaction.setCreateTime(new Date());
             transaction.setFee(0d);
             transaction.setPrepayId("");
-            transaction.setMessage("");
+            transaction.setMessage("确认中");
             transaction.setTransactionLongTime(new Date().getTime());
             transaction.setTxtId(info.getTxId());
             transaction.setStatus(TransactionStatusType.CHECKING.getCode());
@@ -185,12 +184,16 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     }
 
     @Override
-    public List<WalletTransaction> readCoinOutterListByUid(String uid,List<Integer> list) throws Exception {
-        return walletTransactionMapper.readCoinOutterListByUid(uid,list);
+    public List<WalletTransaction> readCoinOutterListByUid(String uid, List<Integer> list) throws Exception {
+        return walletTransactionMapper.readCoinOutterListByUid(uid, list);
     }
 
     @Override
-    public Integer readCoinOutterCountByUid(String uid,List<Integer> list) {
-        return walletTransactionMapper.readCoinOutterCountByUid(uid,list);
+    public Integer readCoinOutterCountByUid(String uid, List<Integer> list) {
+        return walletTransactionMapper.readCoinOutterCountByUid(uid, list);
+    }
+
+    public static void main(String[] args) {
+        System.out.println();
     }
 }

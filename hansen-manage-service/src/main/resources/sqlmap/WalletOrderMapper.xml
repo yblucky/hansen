@@ -72,6 +72,31 @@
 	<update id="deleteById">
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
+
+	<select id="readOrderCount" resultType="Integer">
+		select count(1) from <include refid="table_name"/>
+		<where>
+			1=1
+			<if test="receviceUserId != null and receviceUserId != ''">AND  receviceUserId=#{receviceUserId}</if>
+			<if test="list!=null">
+				AND 	orderType in
+				<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="readOrderList" resultType="WalletOrder">
+		<include refid="selector" />
+		<where>
+			1=1
+			<if test="receviceUserId != null and receviceUserId != ''">AND  receviceUserId=#{receviceUserId}</if>
+			<if test="list!=null">
+				AND 	orderType in
+				<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+			</if>
+		</where>
+		limit #{page.startRow}, #{page.pageSize};
+	</select>
 </mapper>
 
 

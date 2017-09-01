@@ -6,6 +6,7 @@ import com.constant.RecordType;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -34,6 +35,9 @@ public interface UserService extends CommonService<User> {
     void coverageUpgrade(String userId, Integer cardGrade);
 
     void updateUserRegisterCode(User loginUser, CardGrade cardGrade);
+
+
+    void updateUserRegisterCode(String userId, Integer registerNo);
 
     void updateUserActiveCode(String userId, Integer activeNo);
 

@@ -227,6 +227,7 @@ public class WalletController {
                                 updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
                                 updateModel.setMessage("已确认");
                                 transaction.setMessage("已确认");
+                                transaction.setTransactionStatus(TransactionStatusType.CHECKED.toString());
                                 walletTransactionService.updateById(updateModel.getId(), updateModel);
                                 userService.updateTradeAmtByUserId(user.getId(), transaction.getAmount());
                             }
@@ -239,6 +240,7 @@ public class WalletController {
                                 updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
                                 updateModel.setMessage("已确认");
                                 transaction.setMessage("已确认");
+                                transaction.setTransactionStatus(TransactionStatusType.CHECKED.toString());
                                 walletTransactionService.updateById(updateModel.getId(), updateModel);
                                 userService.updatePayAmtByUserId(user.getId(), transaction.getAmount());
                             }
@@ -370,33 +372,8 @@ public class WalletController {
     }
 
     public static void main(String[] args) {
-        User user1 = new User();
-        user1.setUid(10000);
-        User user2 = new User();
-        user2.setUid(20000);
-        User user3 = new User();
-        user3.setUid(30000);
-        User user4 = new User();
-        user4.setUid(40000);
-        List<User> list = new ArrayList<>();
-        list.add(user1);
-        list.add(user2);
-        list.add(user3);
-        list.add(user4);
-        for (User u:list){
-            System.out.println(u.getUid());;
-        }
-        for (User u:list){
-            u.setUid(u.getUid()+100);
-        }
-        System.out.println("00000000000000000");
-        for (User u:list){
-            System.out.println(u.getUid());;
-        }
-
-Integer a=1;
-        int b=1;
-        System.out.println(a==TransactionStatusType.UNCHECKED.getCode());
+        System.out.println(WalletUtil.getBitCoinClient("127.0.0.1","user","password",20679));
+        System.out.println(JSON.toJSONString(WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient("127.0.0.1","user","password",20679),"8ab7d243db85dce9aecc7a115ba08d8e723636f362488b43a749ef85a96f5771")));
 
     }
 }

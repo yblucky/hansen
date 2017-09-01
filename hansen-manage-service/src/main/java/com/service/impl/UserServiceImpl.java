@@ -626,4 +626,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     public Integer updateUserCardGradeByUserId(String userId, Integer cardGrade) {
         return userMapper.updateUserCardGradeByUserId(userId, cardGrade);
     }
+
+    @Override
+    public void updateUserRegisterCode(String userId, Integer registerNo) {
+        userMapper.updateUserRegisterCode(userId,registerNo);
+    }
 }

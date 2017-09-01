@@ -1,6 +1,7 @@
 package com.service.impl;
 
 import com.base.dao.CommonDao;
+import com.base.page.Page;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.CurrencyType;
 import com.constant.WalletOrderStatus;
@@ -129,5 +130,13 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         return true;
     }
 
+    @Override
+    public List<WalletOrder> readOrderList( String receviceUserId, List<Integer> list, Page page) {
+        return walletOrderMapper.readOrderList(receviceUserId,list,page);
+    }
 
+    @Override
+    public Integer readOrderCount( String receviceUserId, List<Integer> list) {
+        return walletOrderMapper.readOrderCount(receviceUserId,list);
+    }
 }

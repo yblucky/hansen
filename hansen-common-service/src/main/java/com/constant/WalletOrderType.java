@@ -43,7 +43,19 @@ public enum WalletOrderType {
     /**
      * 股权币提币
      */
-    EQUITY_COIN_DRWA(9, "股权币提币");
+    EQUITY_COIN_DRWA(9, "股权币提币"),
+    /**
+     * 交易币管理员充值
+     */
+    TRADE_COIN_BACK_CHARGE(10, "交易币管理员充值"),
+    /**
+     * 支付币管理员充值
+     */
+    PAY_COIN_BACK_CHARGE(11, "支付币管理员充值"),
+    /**
+     * 股权币提币
+     */
+    EQUITY_COIN_BACK_CHARGE(12, "股权币管理员充值");
 
     private final Integer code;
 
