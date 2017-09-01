@@ -152,7 +152,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
 
     @Override
     @Transactional
-    public Boolean doTask(String userId, String taskId) throws Exception {
+    public Boolean doTask(String userId,UserTask userTask) throws Exception {
         User user = userService.readById(userId);
         if (user == null) {
             return false;
@@ -160,13 +160,13 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         if (user.getRemainTaskNo() <= 0) {
             return false;
         }
-        UserTask conditon = new UserTask();
-        conditon.setUserId(userId);
-        conditon.setTaskId(taskId);
-        UserTask userTask = this.readOne(conditon);
-        if (userTask == null) {
-            return false;
-        }
+//        UserTask conditon = new UserTask();
+//        conditon.setUserId(userId);
+//        conditon.setTaskId(taskId);
+//        UserTask userTask = this.readOne(conditon);
+//        if (userTask == null) {
+//            return false;
+//        }
         if (TaskStatusType.PENDING.getCode() != userTask.getStatus()) {
             return false;
         }

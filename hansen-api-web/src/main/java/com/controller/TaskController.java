@@ -107,11 +107,11 @@ public class TaskController {
         if (ToolUtil.isEmpty(taskvo.getTaskId())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "任务id不能为空");
         }
-        UserTask userTask = userTaskService.readById(taskvo.getTaskId());
+        UserTask userTask = userTaskService.readById(taskvo.getUserTaskId());
         if (userTask == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "任务不存在");
         }
-        userTaskService.doTask(user.getId(), taskvo.getTaskId());
+        userTaskService.doTask(user.getId(), userTask);
         return new JsonResult();
     }
 }

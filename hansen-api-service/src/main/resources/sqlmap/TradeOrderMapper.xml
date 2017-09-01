@@ -55,6 +55,17 @@
         <include refid="selector"/> <include refid="condition"/> limit 1;
     </select>
 
+    <select id="readRewardList" resultType="com.model.TradeOrder">
+        SELECT * FROM trade_order
+        <where>
+            1=1
+            <if test="taskTime != null">
+                AND createTime &lt;= #{taskTime}
+            </if>
+            limit #{startRow}, #{pageSize};
+        </where>
+    </select>
+
     <select id="readCount" resultType="int">
         select count(1) from <include refid="table_name"/> <include refid="condition"/>
     </select>
