@@ -225,6 +225,7 @@ public class WalletController {
                             if (transactionInfo.getConfirmations() > 3) {
                                 updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
                                 updateModel.setMessage("已确认");
+                                transaction.setMessage("已确认");
                                 walletTransactionService.updateById(updateModel.getId(), updateModel);
                                 userService.updateTradeAmtByUserId(user.getId(), transaction.getAmount());
                             }
@@ -233,6 +234,7 @@ public class WalletController {
                             if (transactionInfo.getConfirmations() > 3) {
                                 walletTransactionService.updateById(updateModel.getId(), updateModel);
                                 updateModel.setMessage("已确认");
+                                transaction.setMessage("已确认");
                                 userService.updatePayAmtByUserId(user.getId(), transaction.getAmount());
                             }
                         }
