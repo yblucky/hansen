@@ -7,6 +7,7 @@ import com.base.page.Page;
 import com.base.page.PageResult;
 import com.base.page.ResultCode;
 import com.constant.CurrencyType;
+import com.constant.TransactionStatusType;
 import com.constant.UserStatusType;
 import com.constant.WalletOrderType;
 import com.model.User;
@@ -20,6 +21,8 @@ import com.utils.codeutils.Md5Util;
 import com.utils.toolutils.ToolUtil;
 import com.vo.CoinInOutVo;
 import com.vo.CoinTransferVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,6 +40,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/wallet")
 public class WalletController {
+    private Logger logger = LoggerFactory.getLogger(WalletController.class);
     @Resource
     private UserService userService;
     @Resource
@@ -169,10 +173,10 @@ public class WalletController {
             return new JsonResult(ResultCode.ERROR.getCode(), "找不到用户");
         }
         try {
-            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.EQUITY.getCode());
-//            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.PAY.getCode());
+            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.TRADE.getCode());
+            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.PAY.getCode());
         } catch (Exception e) {
-            System.out.println("查询虚拟币充值记录失败。。。。。。。。。。。。。。。。。。。。。。。");
+            logger.error("查询虚拟币充值记录失败。。。。。。。。。。。。。。。。。。。。。。。");
             e.printStackTrace();
         }
         PageResult<WalletTransaction> pageResult = new PageResult<>();
@@ -198,22 +202,49 @@ public class WalletController {
         }
 
         WalletTransaction condition = new WalletTransaction();
-        condition.setUserId(user.getId());
+        condition.setUserId(user.getUid() + "");
         condition.setOrderType(orderTypeList.get(0));
-        Integer count = transactionService.readCount(condition);
+        Integer count = transactionService.readCoinOutterCountByUid(orderTypeList);
         List<WalletTransaction> transactionList = new ArrayList<>();
         if (count != null && count > 0) {
-            transactionList = transactionService.readList(condition, page.getPageNo(), page.getPageSize(), count);
+            try {
+                transactionList = transactionService.readCoinOutterListByUid(orderTypeList);
+            } catch (Exception e) {
+                logger.error("readCoinOutterListByUid sql查询失败");
+                e.printStackTrace();
+            }
             for (WalletTransaction transaction : transactionList) {
-                transaction.setMessage(WalletUtil.checkTransactionStatus(transaction.getConfirmations()).getMessage());
-                if (transaction.getConfirmations() > 3) {
-                    if (transaction.getOrderType() == WalletOrderType.TRADE_COIN_RECHARGE.getCode()) {
-                        userService.updateTradeAmtByUserId(user.getId(), transaction.getAmount());
-                    } else if (transaction.getOrderType() == WalletOrderType.PAY_COIN_RECHARGE.getCode()) {
-                        userService.updatePayAmtByUserId(user.getId(), transaction.getAmount());
-                    } else if (transaction.getOrderType() == WalletOrderType.EQUITY_COIN_RECHARGE.getCode()) {
-                        userService.updateEquityAmtByUserId(user.getId(), transaction.getAmount());
+                WalletTransaction updateModel = new WalletTransaction();
+                updateModel.setId(transaction.getId());
+                TransactionInfo transactionInfo = null;
+                try {
+
+                    if (transaction.getConfirmations() < 3) {
+                        transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.TRADE), transaction.getTxtId());
+                        if (transaction.getOrderType() == WalletOrderType.TRADE_COIN_RECHARGE.getCode()) {
+                            if (transactionInfo.getConfirmations() > 3) {
+                                updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
+                                updateModel.setMessage("已确认");
+                                walletTransactionService.updateById(updateModel.getId(), updateModel);
+                                userService.updateTradeAmtByUserId(user.getId(), transaction.getAmount());
+                            }
+                        } else if (transaction.getOrderType() == WalletOrderType.PAY_COIN_RECHARGE.getCode()) {
+                            transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.PAY), transaction.getTxtId());
+                            if (transactionInfo.getConfirmations() > 3) {
+                                walletTransactionService.updateById(updateModel.getId(), updateModel);
+                                updateModel.setMessage("已确认");
+                                userService.updatePayAmtByUserId(user.getId(), transaction.getAmount());
+                            }
+                        }
                     }
+//                    else if (transaction.getOrderType() == WalletOrderType.EQUITY_COIN_RECHARGE.getCode()) {
+//                    updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
+//                    transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.EQUITY), transaction.getTxtId());
+//                    walletTransactionService.updateById(updateModel.getId(), updateModel);
+//                    userService.updateEquityAmtByUserId(user.getId(), transaction.getAmount());
+//                   }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             pageResult.setRows(transactionList);
@@ -222,7 +253,7 @@ public class WalletController {
         }
         pageResult.setRows(Collections.emptyList());
         return new JsonResult(pageResult);
-}
+    }
 
 
     /**

@@ -150,4 +150,14 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
         this.create(transaction);
         return 1;
     }
+
+    @Override
+    public List<WalletTransaction> readCoinOutterListByUid(List<Integer> list) throws Exception {
+        return walletTransactionMapper.readCoinOutterListByUid(list);
+    }
+
+    @Override
+    public Integer readCoinOutterCountByUid(List<Integer> list) {
+        return walletTransactionMapper.readCoinOutterCountByUid(list);
+    }
 }

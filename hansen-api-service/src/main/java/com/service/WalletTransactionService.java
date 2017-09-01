@@ -25,4 +25,8 @@ public interface WalletTransactionService extends CommonService<WalletTransactio
     public void checkTransactionListStatus(String userId, Integer currencyType) throws Exception;
 
     public void checkTransactionStatus(WalletTransaction transaction) throws Exception;
+
+    List<WalletTransaction> readCoinOutterListByUid(List<Integer> list) throws Exception;
+
+    Integer readCoinOutterCountByUid(List<Integer> list) ;
 }

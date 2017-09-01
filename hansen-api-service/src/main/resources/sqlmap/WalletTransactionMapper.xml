@@ -49,8 +49,25 @@
 		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
 	</select>
 
+	<select id="readCoinOutterListByUid" resultType="WalletTransaction">
+		<include refid="selector" />
+		<if test="list!=null">
+			where orderType in
+			<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+		</if>
+	</select>
+
 	<select id="readOne" resultType="WalletTransaction">
 		<include refid="selector"/> <include refid="condition"/> limit 1;
+	</select>
+
+
+	<select id="readCoinOutterCountByUid" resultType="Integer">
+		select count(1) from <include refid="table_name"/>
+		<if test="list!=null">
+			where orderType in
+			<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+		</if>
 	</select>
 
 	<select id="readCount" resultType="int">
@@ -104,6 +121,8 @@
 	<select id="listByStartToEnd" resultType="WalletTransaction">
 		<include refid="selector"/>  where transactionLongTime <![CDATA[ > ]]> #{start}  and transactionLongTime <![CDATA[ < ]]> #{end} and confirmations  <![CDATA[ < ]]>  4
 	</select>
+
+
 
 </mapper>
 

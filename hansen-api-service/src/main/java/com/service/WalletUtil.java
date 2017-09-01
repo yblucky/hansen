@@ -6,14 +6,12 @@ import com.constant.CurrencyType;
 import com.constant.TransactionStatusType;
 import com.model.Parameter;
 import com.model.WalletTransaction;
-import com.utils.httputils.HttpUtil;
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Component;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,17 +20,19 @@ public class WalletUtil {
 
 
     public static BitcoinClient getBitCoinClient(CurrencyType currencyType) throws Exception {
-        BitcoinClient bitcoinClient = null;
-        if (currencyType.getCode() == 2) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
-        } else if (currencyType.getCode() == 1) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
-        } else if (currencyType.getCode() == 3) {
-            bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
+        try {
+            BitcoinClient bitcoinClient = null;
+            if (currencyType.getCode() == 2) {
+                bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
+            } else if (currencyType.getCode() == 1) {
+                bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+            } else if (currencyType.getCode() == 3) {
+                bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        System.out.println(bitcoinClient);
-        return bitcoinClient;
+        return null;
     }
 
     public static BitcoinClient getBitCoinClient(Integer currencyType) throws Exception {
@@ -151,7 +151,7 @@ public class WalletUtil {
 
     public static void main(String[] args) {
         BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 29996);
-        List<TransactionInfo>  list = bitcoinClient.listTransactions("10000");
+        List<TransactionInfo> list = bitcoinClient.listTransactions("10000");
         System.out.println(JSON.toJSONString(list));
 
         System.out.println("0000000000000000000000000000000000000000000000");
