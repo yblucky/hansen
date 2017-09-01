@@ -52,7 +52,7 @@ public class WalletUtil {
 
     //TODO
     public static BitcoinClient getBitCoinClient(String rpcallowip, String rpcuser, String rpcpassword, int rpcport) {
-        rpcallowip="127.0.0.1";
+//        rpcallowip="127.0.0.1";
 //        rpcuser="user";
 //        rpcpassword="password";
 //        rpcport=29996;
