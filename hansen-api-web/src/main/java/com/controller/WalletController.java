@@ -154,7 +154,7 @@ public class WalletController {
      *
      * @param request
      * @param page
-     * @return
+     * @return orderType  2,3  公用的  交易币  支付币  股权币
      */
     @ResponseBody
     @RequestMapping(value = "/coinoutterlist", method = RequestMethod.GET)

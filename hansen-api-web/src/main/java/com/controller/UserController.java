@@ -760,6 +760,7 @@ public class UserController {
             Set<Integer> userStatus = new HashSet<>();
             userStatus.add(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
             userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
+            userStatus.add(UserStatusType.WAITACTIVATE.getCode());
             if (!userStatus.contains(loginUser.getStatus())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
             }
