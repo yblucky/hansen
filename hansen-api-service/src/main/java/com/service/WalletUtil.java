@@ -50,7 +50,12 @@ public class WalletUtil {
     }
 
 
+    //TODO
     public static BitcoinClient getBitCoinClient(String rpcallowip, String rpcuser, String rpcpassword, int rpcport) {
+//        rpcallowip="127.0.0.1";
+//        rpcuser="user";
+//        rpcpassword="password";
+//        rpcport=29996;
         BitcoinClient bitcoinClient = null;
         System.out.println("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
         System.out.println("获取钱包客户端：" + rpcallowip + "   " + rpcuser + "   " + rpcpassword + "   " + rpcport);

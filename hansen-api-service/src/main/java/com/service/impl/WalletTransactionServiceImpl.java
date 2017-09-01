@@ -76,7 +76,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             transaction.setCategory(info.getCategory());
             transaction.setConfirmations(Long.valueOf(info.getConfirmations() + ""));
             transaction.setCreateTime(new Date());
-            transaction.setFee(info.getFee().doubleValue());
+            transaction.setFee(0d);
             transaction.setPrepayId("");
             transaction.setMessage("");
             transaction.setTransactionLongTime(0l);

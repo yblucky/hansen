@@ -81,16 +81,15 @@ public class LoginController {
         if (ToolUtil.isEmpty(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录密码不能为空");
         }
-        if(ToolUtil.isEmpty(vo.getPicCode())){
+        if (ToolUtil.isEmpty(vo.getPicCode())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "验证码不能为空");
         }
-        String rsCode = Strings.get(RedisKey.PIC_CODE.getKey() +vo.getKey());
-        if(!vo.getPicCode().equalsIgnoreCase(rsCode)){
+        String rsCode = Strings.get(RedisKey.PIC_CODE.getKey() + vo.getKey());
+        if (!vo.getPicCode().equalsIgnoreCase(rsCode)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "验证码输入错误或者已失效");
         }
-        User condition = new User();
-        condition.setPhone(vo.getLoginName());
-        User loginUser = userService.readOne(condition);
+
+        User loginUser = userService.readUserByLoginName(vo.getLoginName());
 
         if (null == loginUser) {
             return new JsonResult(-1, "用户不存在");
@@ -133,7 +132,7 @@ public class LoginController {
         }
         UserVo u = new UserVo();
         BeanUtils.copyProperties(u, loginUser);
-        if (detail!=null){
+        if (detail != null) {
             BeanUtils.copyProperties(u, detail);
         }
         u.setToken(token);
@@ -169,7 +168,7 @@ public class LoginController {
         UserDetail detail = userDetailService.readById(user.getId());
         UserVo vo = new UserVo();
         BeanUtils.copyProperties(vo, user);
-        if (detail!=null){
+        if (detail != null) {
             BeanUtils.copyProperties(vo, detail);
         }
         vo.setStatus(user.getStatus());

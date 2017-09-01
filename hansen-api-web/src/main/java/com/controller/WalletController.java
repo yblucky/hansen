@@ -169,8 +169,8 @@ public class WalletController {
             return new JsonResult(ResultCode.ERROR.getCode(), "找不到用户");
         }
         try {
-            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.TRADE.getCode());
-            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.PAY.getCode());
+            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.EQUITY.getCode());
+//            walletTransactionService.listTransactionsByTag(user.getUid().toString(), CurrencyType.PAY.getCode());
         } catch (Exception e) {
             System.out.println("查询虚拟币充值记录失败。。。。。。。。。。。。。。。。。。。。。。。");
             e.printStackTrace();
