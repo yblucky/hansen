@@ -51,10 +51,14 @@
 
 	<select id="readCoinOutterListByUid" resultType="WalletTransaction">
 		<include refid="selector" />
-		<if test="list!=null">
-			where orderType in
-			<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
-		</if>
+		  <where>
+			  1=1
+			  <if test="uid != null and uid != ''">AND  userId=#{uid}</if>
+			  <if test="list!=null">
+				  AND 	orderType in
+				  <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+			  </if>
+		  </where>
 	</select>
 
 	<select id="readOne" resultType="WalletTransaction">
@@ -64,10 +68,14 @@
 
 	<select id="readCoinOutterCountByUid" resultType="Integer">
 		select count(1) from <include refid="table_name"/>
-		<if test="list!=null">
-			where orderType in
-			<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
-		</if>
+		<where>
+			1=1
+			<if test="uid != null and uid != ''">AND  userId=#{uid}</if>
+			<if test="list!=null">
+			   AND 	orderType in
+				<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+			</if>
+		</where>
 	</select>
 
 	<select id="readCount" resultType="int">

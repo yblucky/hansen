@@ -221,7 +221,7 @@ public class ActiveCodeController {
         }
         List<TransferCode> list = new ArrayList<>();
         PageResult<TransferCode> pageResult = new PageResult<>();
-        BeanUtils.copyProperties(pageResult, page);
+        BeanUtils.copyProperties(page,pageResult);
         Integer count = transferCodeService.readCountByUserId(user.getId());
         if (count != null && count > 0) {
             list = transferCodeService.readListByUserId(user.getId(),page);

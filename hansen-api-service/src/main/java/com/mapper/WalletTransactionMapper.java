@@ -14,9 +14,9 @@ public interface WalletTransactionMapper extends CommonDao<WalletTransaction> {
 
     public List<WalletTransaction> listByStartToEnd(@Param("start") Long start, @Param("end") Long end);
 
-    public Boolean updateTransactionStatusByTxId(String txId, Integer confirmations, String transactionStatus);
+    public Boolean updateTransactionStatusByTxId(@Param("txId")String txId, @Param("confirmations")Integer confirmations,@Param("transactionStatus") String transactionStatus);
 
-    List<WalletTransaction> readCoinOutterListByUid(@Param("list") List<Integer> list);
+    List<WalletTransaction> readCoinOutterListByUid(@Param("uid") String uid ,@Param("list") List<Integer> list);
 
-    Integer  readCoinOutterCountByUid  (@Param("list") List<Integer> list);
+    Integer  readCoinOutterCountByUid  (@Param("uid") String uid,@Param("list") List<Integer> list);
 }

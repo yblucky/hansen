@@ -1,15 +1,13 @@
 package com.controller;
 
 import com.Token;
+import com.alibaba.fastjson.JSON;
 import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
 import com.base.page.ResultCode;
-import com.constant.CurrencyType;
-import com.constant.TransactionStatusType;
-import com.constant.UserStatusType;
-import com.constant.WalletOrderType;
+import com.constant.*;
 import com.model.User;
 import com.model.WalletOrder;
 import com.model.WalletTransaction;
@@ -34,6 +32,7 @@ import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
 import javax.annotation.Resource;
+import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -201,14 +200,11 @@ public class WalletController {
             return new JsonResult(ResultCode.ERROR.getCode(), "查询类型不能为空");
         }
 
-        WalletTransaction condition = new WalletTransaction();
-        condition.setUserId(user.getUid() + "");
-        condition.setOrderType(orderTypeList.get(0));
-        Integer count = transactionService.readCoinOutterCountByUid(orderTypeList);
+        Integer count = transactionService.readCoinOutterCountByUid(String.valueOf(user.getUid()),orderTypeList);
         List<WalletTransaction> transactionList = new ArrayList<>();
-        if (count != null && count > 0) {
+        if (count > 0) {
             try {
-                transactionList = transactionService.readCoinOutterListByUid(orderTypeList);
+                transactionList = transactionService.readCoinOutterListByUid(String.valueOf(user.getUid()),orderTypeList);
             } catch (Exception e) {
                 logger.error("readCoinOutterListByUid sql查询失败");
                 e.printStackTrace();
@@ -218,10 +214,15 @@ public class WalletController {
                 updateModel.setId(transaction.getId());
                 TransactionInfo transactionInfo = null;
                 try {
-
-                    if (transaction.getConfirmations() < 3) {
-                        transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.TRADE), transaction.getTxtId());
+                    logger.error("循环查找确认中的交易记录的比较：transaction.getStatus()："+transaction.getStatus()+"  TransactionStatusType.CHECKING.getCode():"+(TransactionStatusType.CHECKING.getCode()+" == "));
+                    System.out.println(transaction.getStatus().intValue()==TransactionStatusType.CHECKING.getCode());
+                    if (transaction.getStatus().intValue()== TransactionStatusType.CHECKING.getCode()) {
+                        logger.error("循环查找确认中的交易记录："+ JSON.toJSONString(transaction));
                         if (transaction.getOrderType() == WalletOrderType.TRADE_COIN_RECHARGE.getCode()) {
+                            transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.TRADE), transaction.getTxtId());
+                            if (transactionInfo==null){
+                                continue;
+                            }
                             if (transactionInfo.getConfirmations() > 3) {
                                 updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
                                 updateModel.setMessage("已确认");
@@ -231,10 +232,14 @@ public class WalletController {
                             }
                         } else if (transaction.getOrderType() == WalletOrderType.PAY_COIN_RECHARGE.getCode()) {
                             transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.PAY), transaction.getTxtId());
+                            if (transactionInfo==null){
+                                continue;
+                            }
                             if (transactionInfo.getConfirmations() > 3) {
-                                walletTransactionService.updateById(updateModel.getId(), updateModel);
+                                updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
                                 updateModel.setMessage("已确认");
                                 transaction.setMessage("已确认");
+                                walletTransactionService.updateById(updateModel.getId(), updateModel);
                                 userService.updatePayAmtByUserId(user.getId(), transaction.getAmount());
                             }
                         }
@@ -250,7 +255,7 @@ public class WalletController {
                 }
             }
             pageResult.setRows(transactionList);
-            BeanUtils.copyProperties(pageResult, page);
+            BeanUtils.copyProperties(page,pageResult);
             return new JsonResult(pageResult);
         }
         pageResult.setRows(Collections.emptyList());
@@ -307,7 +312,7 @@ public class WalletController {
             if (count != null && count > 0) {
                 List<WalletOrder> orderList = new ArrayList<>();
                 pageResult = walletOrderService.readTransferList(user.getId(), orderTypeList, page);
-                BeanUtils.copyProperties(pageResult, page);
+                BeanUtils.copyProperties(page,pageResult);
             } else {
                 pageResult.setRows(Collections.emptyList());
             }
@@ -362,5 +367,36 @@ public class WalletController {
 
         }
         return new JsonResult(ResultCode.ERROR);
+    }
+
+    public static void main(String[] args) {
+        User user1 = new User();
+        user1.setUid(10000);
+        User user2 = new User();
+        user2.setUid(20000);
+        User user3 = new User();
+        user3.setUid(30000);
+        User user4 = new User();
+        user4.setUid(40000);
+        List<User> list = new ArrayList<>();
+        list.add(user1);
+        list.add(user2);
+        list.add(user3);
+        list.add(user4);
+        for (User u:list){
+            System.out.println(u.getUid());;
+        }
+        for (User u:list){
+            u.setUid(u.getUid()+100);
+        }
+        System.out.println("00000000000000000");
+        for (User u:list){
+            System.out.println(u.getUid());;
+        }
+
+Integer a=1;
+        int b=1;
+        System.out.println(a==TransactionStatusType.UNCHECKED.getCode());
+
     }
 }

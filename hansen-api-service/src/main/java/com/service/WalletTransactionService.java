@@ -14,7 +14,7 @@ public interface WalletTransactionService extends CommonService<WalletTransactio
 
     public Integer addWalletOrderTransaction(String userId, String address, WalletOrderType walletOrderType, String txtId, String orderNo, Double amount);
 
-    public Boolean createTransaction(String userId, Integer currencyType, BitcoinClient client);
+    public Boolean createTransaction(String uid, Integer currencyType, BitcoinClient client);
 
     public List<WalletTransaction> listByStartToEnd(Long start, Long end);
 
@@ -26,7 +26,7 @@ public interface WalletTransactionService extends CommonService<WalletTransactio
 
     public void checkTransactionStatus(WalletTransaction transaction) throws Exception;
 
-    List<WalletTransaction> readCoinOutterListByUid(List<Integer> list) throws Exception;
+    List<WalletTransaction> readCoinOutterListByUid(String uid,List<Integer> list) throws Exception;
 
-    Integer readCoinOutterCountByUid(List<Integer> list) ;
+    Integer readCoinOutterCountByUid(String uid,List<Integer> list) ;
 }

@@ -7,6 +7,8 @@ import com.constant.TransactionStatusType;
 import com.model.Parameter;
 import com.model.WalletTransaction;
 import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
@@ -17,15 +19,13 @@ import java.util.Map;
 
 @Component
 public class WalletUtil {
-
-
     public static BitcoinClient getBitCoinClient(CurrencyType currencyType) throws Exception {
         try {
             BitcoinClient bitcoinClient = null;
             if (currencyType.getCode() == 2) {
-                bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
+                bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.PAY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.PAY_RPCPORT)));
             } else if (currencyType.getCode() == 1) {
-                bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.PAY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
+                bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.TRADE_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.TRADE_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TRADE_RPCPORT)));
             } else if (currencyType.getCode() == 3) {
                 bitcoinClient = getBitCoinClient(ParamUtil.getIstance().get(Parameter.EQUITY_RPCALLOWIP), "user", ParamUtil.getIstance().get(Parameter.EQUITY_RPCPASSWORD), Integer.valueOf(ParamUtil.getIstance().get(Parameter.EQUITY_RPCPORT)));
             }
@@ -95,6 +95,12 @@ public class WalletUtil {
 
     // 根据交易编号查询交易信息
     public static TransactionInfo getTransactionJSON(BitcoinClient bitcoinClient, String txId) {
+        if (bitcoinClient==null){
+            System.out.println(" bitcoinClient :"+bitcoinClient +"  txtId: "+txId);
+            return null;
+
+        }
+        System.out.println(" bitcoinClient :"+bitcoinClient +"  txtId: "+txId);
         return bitcoinClient.getTransaction(txId);
     }
 
