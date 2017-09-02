@@ -632,7 +632,6 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         updateActiveUser.setStatus(UserStatusType.WAITACTIVATE.getCode());
         //修改用户状态
         this.updateById(updateActiveUser.getId(),updateActiveUser);
-
         //生成保单
         tradeOrderService.createInsuranceTradeOrder(activeUser, cardGrade);
         return new JsonResult(ResultCode.SUCCESS.getCode(), UserStatusType.WAITACTIVATE.getMsg());

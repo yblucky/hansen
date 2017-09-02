@@ -10,6 +10,7 @@
 	<url>/cardgrade/list</url>
 	<url>/wallet/test</url>
 	<url>/order/handle</url>
+	<url>/order/add</url>
 
 	<!-- 静态资源-->
 	<url>/resources</url>

@@ -5,8 +5,12 @@ import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.ResultCode;
 import com.constant.OrderStatus;
+import com.model.CardGrade;
 import com.model.TradeOrder;
+import com.model.User;
+import com.service.CardGradeService;
 import com.service.TradeOrderService;
+import com.service.UserService;
 import com.utils.toolutils.RedisLock;
 import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +30,37 @@ import javax.servlet.http.HttpServletResponse;
 public class OrderController {
     @Autowired
     private TradeOrderService tradeOrderService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private CardGradeService cardGradeService;
+
+    @ResponseBody
+    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    public JsonResult handleOrder(String userId, Integer cardGrade) throws Exception {
+        if (ToolUtil.isEmpty(userId)){
+            return new JsonResult(ResultCode.ERROR.getCode(), "userId不能为空");
+        }
+        if (cardGrade==null){
+            return new JsonResult(ResultCode.ERROR.getCode(), "卡等级不能为空");
+        }
+        User user = userService.readById(userId);
+        if (user==null){
+            return new JsonResult(ResultCode.ERROR.getCode(), "找不到用户");
+        }
+        CardGrade cardGradeModel = cardGradeService.getUserCardGrade(cardGrade);
+        if (cardGradeModel==null){
+            return new JsonResult(ResultCode.ERROR.getCode(), "找不到卡等级");
+        }
+        TradeOrder order = tradeOrderService.createInsuranceTradeOrder(user, cardGradeModel);
+        return new JsonResult(order);
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/handle", method = RequestMethod.GET)
     public JsonResult handleOrder(HttpServletRequest request, HttpServletResponse response, String orderNo) throws Exception {
+
         Token token = TokenUtil.getSessionUser(request);
         if (ToolUtil.isEmpty(orderNo)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "保单号不能为空");
