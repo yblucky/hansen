@@ -9,7 +9,7 @@
 	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
 
 
-    <context:component-scan base-package="com.hansen.task"/>
+    <context:component-scan base-package="com"/>
 
     <!-- 获取汇率   每日凌晨触发  -->
     <bean id="convertScaleTask" class="com.task.RmbConverCoinScaleTask"></bean>
@@ -20,6 +20,6 @@
     <!-- 保单结算 -->
     <bean id="orderHandleTask" class="com.task.TradeOrderHandleTask"></bean>
     <task:scheduled-tasks>
-        <task:scheduled ref="orderHandleTask" method="doTask" cron="0 0/5 * * * ?"/>
+        <task:scheduled ref="orderHandleTask" method="doTask" cron="0/20 * * * * ?"/>
     </task:scheduled-tasks>
 </beans>

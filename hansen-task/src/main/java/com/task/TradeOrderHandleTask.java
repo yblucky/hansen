@@ -49,10 +49,12 @@ public class TradeOrderHandleTask extends BaseScheduleTask {
         }
         if (count != null && count > 0) {
             Strings.set(RedisKey.TRADE_ORDER_IS_HANDING.getKey(), RedisKey.TRADE_ORDER_IS_HANDING.getKey());
-            List<TradeOrder> orders = orderService.readList(con, 1, 10, count);
+            List<TradeOrder> orders = orderService.readList(con, 1, 1, count);
             for (TradeOrder model : orders) {
                 try {
-                    orderService.handleInsuranceTradeOrder(model.getOrderNo());
+                    logger.error("保单开始结算："+model.getOrderNo());
+                    Boolean flag  =   orderService.handleInsuranceTradeOrder(model.getOrderNo());
+                    logger.error("保单结束结算："+model.getOrderNo()+" 保单结算结果："+flag);
                 } catch (Exception e) {
                     logger.error("保单结算异常，保单号为：" + model.getOrderNo(), model.getId());
                     e.printStackTrace();
