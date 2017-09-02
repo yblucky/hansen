@@ -68,9 +68,9 @@ public class WalletController {
         if (user == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
         }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
-        }
+//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
+//            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
+//        }
         if (!user.getPayWord().equals(Md5Util.MD5Encode(vo.getPayPassWord(), user.getSalt()))) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付密码不正确");
         }
@@ -93,9 +93,9 @@ public class WalletController {
         if (toUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "收款用户不存在");
         }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != toUser.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "收款账号未激活");
-        }
+//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != toUser.getStatus()) {
+//            return new JsonResult(ResultCode.ERROR.getCode(), "收款账号未激活");
+//        }
 
         try {
             walletOrderService.coinTransfer(user.getId(), toUser.getId(), WalletOrderType.fromCode(vo.getWalletOrderType()), vo.getAmount());

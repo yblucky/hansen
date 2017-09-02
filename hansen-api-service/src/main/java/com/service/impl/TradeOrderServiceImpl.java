@@ -85,22 +85,22 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
 
         Integer upGradeType = 0;
         //写入最大收益
-        if (OrderType.INSURANCE_ORIGIN.getCode() == tradeOrder.getSource()) {
-            upGradeType = UpGradeType.INSURANCE.getCode();
-            double payRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
-            if (activeUser.getPayAmt() < payRmbAmt) {
-                logger.error("支付币数量不足，无法激活账号");
-            }
-
-
-            double tradeRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
-            if (activeUser.getTradeAmt() < tradeRmbAmt) {
-                logger.error("交易币数量不足，无法激活账号");
-            }
-            double payAmt = CurrencyUtil.multiply(payRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
-            double tradeAmt = CurrencyUtil.multiply(tradeRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
-            userService.updatePayAmtByUserId(activeUser.getId(), -payAmt);
-            userService.updatePayAmtByUserId(activeUser.getId(), -tradeAmt);
+        if (OrderType.INSURANCE.getCode() == tradeOrder.getSource()) {
+//            upGradeType = UpGradeType.INSURANCE.getCode();
+//            double payRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
+//            if (activeUser.getPayAmt() < payRmbAmt) {
+//                logger.error("支付币数量不足，无法激活账号");
+//            }
+//
+//
+//            double tradeRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
+//            if (activeUser.getTradeAmt() < tradeRmbAmt) {
+//                logger.error("交易币数量不足，无法激活账号");
+//            }
+//            double payAmt = CurrencyUtil.multiply(payRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
+//            double tradeAmt = CurrencyUtil.multiply(tradeRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
+//            userService.updatePayAmtByUserId(activeUser.getId(), -payAmt);
+//            userService.updatePayAmtByUserId(activeUser.getId(), -tradeAmt);
             User updateActiveUser = new User();
             updateActiveUser.setId(activeUser.getId());
             updateActiveUser.setInsuranceAmt(tradeOrder.getAmt());
@@ -110,9 +110,9 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             UserDetail activeUserDetailContion = new UserDetail();
             activeUserDetailContion.setId(activeUser.getId());
             //写入冻结
-            userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
-            userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
-            userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(), 0d);
+//            userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
+//            userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
+//            userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(), 0d);
         } else if (OrderType.INSURANCE_COVER.getCode() == tradeOrder.getSource()) {
             upGradeType = UpGradeType.COVERAGEUPGRADE.getCode();
             userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * tradeOrder.getAmt());

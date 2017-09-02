@@ -1,5 +1,6 @@
 package com.task;
 
+import com.base.task.BaseScheduleTask;
 import com.constant.TransactionStatusType;
 import com.service.WalletTransactionService;
 import com.service.WalletUtil;
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static com.service.WalletUtil.getBitCoinClient;
 
-public class TransactionStatusTask extends BaseScheduleTask {
+public class TransactionStatusTask extends BaseScheduleTask{
     @Autowired
     private WalletTransactionService transactionService;
 

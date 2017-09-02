@@ -4,6 +4,7 @@ import com.base.page.Page;
 import com.constant.RedisKey;
 import com.model.Parameter;
 import com.redis.Strings;
+import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,8 @@ public class ParamUtil {
         }
         return instance;
     }
+
+
 
     //从数据库中加载最新系统参数
     public synchronized void reload() {
@@ -305,8 +308,6 @@ public class ParamUtil {
             return sDefault;
 
         }
-
         return _sValue;
-
     }
 }

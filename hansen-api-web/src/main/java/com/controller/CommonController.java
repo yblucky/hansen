@@ -1,18 +1,16 @@
 package com.controller;
 
-import com.Token;
-import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.ResultCode;
 import com.constant.RedisKey;
 import com.model.User;
 import com.redis.Strings;
 import com.service.UserService;
-import com.taobao.api.internal.util.Base64;
 import com.utils.numberutils.RandomUtil;
 import com.utils.numberutils.UUIDUtil;
 import com.utils.smsUtils.SmsTemplate;
 import com.utils.smsUtils.SmsUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +57,7 @@ public class CommonController {
         picCode = generateCode(baos);
         String uuid = UUIDUtil.getUUID();
         Strings.setEx(RedisKey.PIC_CODE.getKey() + uuid, RedisKey.PIC_CODE.getSeconds(), picCode);
-        String rstr = "data:image/jpg;base64," + Base64.encodeToString(baos.toByteArray(), false);
+        String rstr = "data:image/jpg;base64," + Base64.encodeBase64String(baos.toByteArray());
         baos.close();
         Map<String, String> resMap = new HashMap<String, String>();
         resMap.put("picCode", rstr);
@@ -117,6 +115,7 @@ public class CommonController {
 
     /**
      * 获取手机验证码
+     *
      * @param request
      * @param response
      * @param phoneNumber
@@ -125,9 +124,9 @@ public class CommonController {
      */
     @ResponseBody
     @RequestMapping(value = "/sendSms", method = RequestMethod.GET)
-    public JsonResult getPicBase64Code(HttpServletRequest request, HttpServletResponse response,String phoneNumber) throws Exception {
+    public JsonResult getPicBase64Code(HttpServletRequest request, HttpServletResponse response, String phoneNumber) throws Exception {
 
-        if(StringUtils.isEmpty(phoneNumber)){
+        if (StringUtils.isEmpty(phoneNumber)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "手机号不能为空");
         }
 
@@ -135,7 +134,7 @@ public class CommonController {
         User model = new User();
         model.setPhone(phoneNumber);
         User user = userService.readOne(model);
-        if(user == null){
+        if (user == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "该手机号尚未绑定");
         }
 

@@ -1,12 +1,13 @@
 package com.task;
 
+import com.base.task.BaseScheduleTask;
 import com.constant.OrderStatus;
 import com.constant.OrderType;
 import com.constant.RedisKey;
-import com.service.TradeOrderService;
-import com.utils.toolutils.ToolUtil;
 import com.model.TradeOrder;
 import com.redis.Strings;
+import com.service.TradeOrderService;
+import com.utils.toolutils.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

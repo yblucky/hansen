@@ -7,11 +7,13 @@ import com.base.page.ResultCode;
 import com.constant.RedisKey;
 import com.constant.UserStatusType;
 import com.model.CardGrade;
+import com.model.Parameter;
 import com.model.User;
 import com.model.UserDetail;
 import com.redis.Strings;
 import com.service.*;
 import com.utils.codeutils.Md5Util;
+import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.ToolUtil;
 import com.vo.LoginPasswordVo;
 import com.vo.LoginUserVo;
@@ -118,7 +120,7 @@ public class LoginController {
                 return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
             }
             //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
-            userService.innerActicveUser(loginUser, cardGrade);
+//            userService.innerActicveUser(loginUser, cardGrade);
         }
         User updateUser = new User();
         updateUser.setLoginTime(new Date());
@@ -136,6 +138,18 @@ public class LoginController {
             BeanUtils.copyProperties(u, detail);
         }
         u.setToken(token);
+        //人民币兑换支付币汇率
+        Double rmbConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
+        //人民币兑换交易币汇率
+        Double rmbConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+        //支付币兑换人民币汇率
+        Double payConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertPayScale,1d,2);
+        //交易币兑换人民币汇率
+        Double tradeConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertTradeScale,1d,2);
+        u.setPayConverRmbScale(payConverRmbScale);
+        u.setTradeConverRmbScale(tradeConverRmbScale);
+        u.setRmbConvertPayScale(rmbConvertPayScale);
+        u.setRmbConvertTradeScale(rmbConvertTradeScale);
         return new JsonResult(u);
     }
 
@@ -173,6 +187,18 @@ public class LoginController {
         }
         vo.setStatus(user.getStatus());
         vo.setToken(redisToken);
+        //人民币兑换支付币汇率
+        Double rmbConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
+        //人民币兑换交易币汇率
+        Double rmbConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+        //支付币兑换人民币汇率
+        Double payConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertPayScale,1d,2);
+        //交易币兑换人民币汇率
+        Double tradeConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertTradeScale,1d,2);
+        vo.setPayConverRmbScale(payConverRmbScale);
+        vo.setTradeConverRmbScale(tradeConverRmbScale);
+        vo.setRmbConvertPayScale(rmbConvertPayScale);
+        vo.setRmbConvertTradeScale(rmbConvertTradeScale);
         return new JsonResult(vo);
     }
 

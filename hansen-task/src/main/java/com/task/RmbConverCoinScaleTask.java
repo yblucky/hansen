@@ -1,5 +1,6 @@
 package com.task;
 
+import com.base.task.BaseScheduleTask;
 import com.service.ParameterService;
 import com.model.Parameter;
 import org.slf4j.Logger;

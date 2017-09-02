@@ -88,15 +88,15 @@
     </update>
 
     <update id="updateForzenEquityAmtByUserId">
-        update <include refid="table_name"/> set forzenEquityAmt = forzenEquityAmt + #{forzenEquityAmt},updateTime=now() where id = #{userId} and (forzenEquityAmt + #{forzenEquityAmt})>0
+        update <include refid="table_name"/> set forzenEquityAmt = forzenEquityAmt + #{amt},updateTime=now() where id = #{userId} and (forzenEquityAmt + #{amt})>0
     </update>
 
     <update id="updateForzenTradeAmtByUserId">
-        update <include refid="table_name"/> set forzeTtradeAmt = forzeTtradeAmt + #{forzeTtradeAmt},updateTime=now() where id = #{userId} and (forzeTtradeAmt + #{forzeTtradeAmt})>0
+        update <include refid="table_name"/> set forzenTradeAmt = forzenTradeAmt  + #{amt},updateTime=now() where id = #{userId} and (forzenTradeAmt + #{amt})>0
     </update>
 
     <update id="updateForzenPayAmtByUserId">
-        update <include refid="table_name"/> set forzenPayAmt = forzenPayAmt + #{forzenPayAmt},updateTime=now() where id = #{userId} and (forzenPayAmt + #{forzenPayAmt})>0
+        update <include refid="table_name"/> set forzenPayAmt = forzenPayAmt + #{amt},updateTime=now() where id = #{userId} and (forzenPayAmt + #{amt})>0
     </update>
 
 </mapper>

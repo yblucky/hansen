@@ -126,9 +126,9 @@ public class ActiveCodeController {
         if (fromUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户不存在");
         }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != fromUser.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "账号未激活");
-        }
+//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != fromUser.getStatus()) {
+//            return new JsonResult(ResultCode.ERROR.getCode(), "账号未激活");
+//        }
         if (vo.getCodeType()==null || (vo.getCodeType()!=1  && vo.getCodeType()!=2)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "转账类型错误");
         }
@@ -166,9 +166,9 @@ public class ActiveCodeController {
         if (toUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "目标用户不存在");
         }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != toUser.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "目标账号未激活");
-        }
+//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != toUser.getStatus()) {
+//            return new JsonResult(ResultCode.ERROR.getCode(), "目标账号未激活");
+//        }
         activeCodeService.codeTransfer(fromUser.getId(), toUser.getId(), toUser.getUid(), vo.getTransferNo(),vo.getCodeType());
         return new JsonResult(ResultCode.SUCCESS.getCode(), "激活码转账成功");
     }

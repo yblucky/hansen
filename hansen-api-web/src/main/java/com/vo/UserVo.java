@@ -136,6 +136,15 @@ public class UserVo implements Serializable {
     private String email;
     private Integer status;
 
+    private Double rmbConvertPayScale;
+    private Double rmbConvertTradeScale;
+    private Double payConverRmbScale;
+    private Double tradeConverRmbScale;
+
+
+
+
+
     public Integer getStatus() {
         return status;
     }
@@ -421,5 +430,37 @@ public class UserVo implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Double getRmbConvertPayScale() {
+        return rmbConvertPayScale;
+    }
+
+    public void setRmbConvertPayScale(Double rmbConvertPayScale) {
+        this.rmbConvertPayScale = rmbConvertPayScale;
+    }
+
+    public Double getRmbConvertTradeScale() {
+        return rmbConvertTradeScale;
+    }
+
+    public void setRmbConvertTradeScale(Double rmbConvertTradeScale) {
+        this.rmbConvertTradeScale = rmbConvertTradeScale;
+    }
+
+    public Double getPayConverRmbScale() {
+        return payConverRmbScale;
+    }
+
+    public void setPayConverRmbScale(Double payConverRmbScale) {
+        this.payConverRmbScale = payConverRmbScale;
+    }
+
+    public Double getTradeConverRmbScale() {
+        return tradeConverRmbScale;
+    }
+
+    public void setTradeConverRmbScale(Double tradeConverRmbScale) {
+        this.tradeConverRmbScale = tradeConverRmbScale;
     }
 }

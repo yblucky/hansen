@@ -539,7 +539,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
 
         user.setFirstReferrer(loginUser.getId());
-        user.setSecondReferrer(loginUser.getSecondReferrer());
+        user.setSecondReferrer(loginUser.getFirstReferrer());
         user.setContactUserId(loginUser.getId());
         user.setPassword(Md5Util.MD5Encode(user.getPassword(), DateUtils.currentDateToggeter()));
         user.setPayWord(Md5Util.MD5Encode(user.getPayWord(), DateUtils.currentDateToggeter()));
@@ -552,6 +552,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setPayAmt(0d);
         user.setSumProfits(0d);
         user.setInsuranceAmt(cardGrade.getInsuranceAmt());
+        user.setCashOutProfits(0d);
+        user.setRegisterCodeNo(0);
+        user.setActiveCodeNo(0);
         user.setMaxProfits(cardGrade.getInsuranceAmt()*cardGrade.getOutMultiple());
         this.create(user);
         user=this.readById(creatUserId);
@@ -602,17 +605,27 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Override
     @Transactional
     public JsonResult innerActicveUser(User activeUser, CardGrade cardGrade) throws Exception {
-        //冻结账号虚拟币 激活账号
-        double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
-        if (activeUser.getPayAmt() <= payRmbAmt) {
+        //人民币兑换支付币汇率
+        Double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
+        //人民币兑换交易币汇率
+        Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+        Double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
+        Double payCoinAmt=payRmbAmt*payScale;
+        if (activeUser.getPayAmt() <= payCoinAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
         }
 
-        double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
-        if (activeUser.getTradeAmt() <= tradeRmbAmt) {
+        Double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
+        Double tradeCoinAmt=tradeRmbAmt*tradeScale;
+        if (activeUser.getTradeAmt() <= tradeCoinAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足，无法激活账号");
         }
-
+        // 扣除虚拟币
+        this.updatePayAmtByUserId(activeUser.getId(),-payCoinAmt);
+        this.updateTradeAmtByUserId(activeUser.getId(),-tradeCoinAmt);
+        //写入冻结
+        userDetailService.updateForzenPayAmtByUserId(activeUser.getId(),payCoinAmt);
+        userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(),tradeCoinAmt);
         User updateActiveUser = new User();
         updateActiveUser.setId(activeUser.getId());
         updateActiveUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
