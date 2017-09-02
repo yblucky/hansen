@@ -21,6 +21,7 @@
 		<property name="locations">
 			<array>
 				<value>classpath:config/jdbc.properties</value>
+				<value>classpath:config/api.properties</value>
 			</array>
 		</property>
 	</bean>
@@ -76,7 +77,31 @@
         <property name="maxUploadSize" value="10485760"/>
 		<property name="maxInMemorySize" value="40960"/>
     </bean>
-    
 	<import resource="classpath*:config/spring-task.xml" />
 	<import resource="classpath*:config/spring-redis.xml" />
+
+
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<constructor-arg>
+					<props>
+						<prop key="kaptcha.border">no</prop>
+						<prop key="kaptcha.border.color">105,179,90</prop>
+						<prop key="kaptcha.textproducer.font.color">44,86,100</prop>
+						<prop key="kaptcha.image.width">80</prop>
+						<prop key="kaptcha.image.height">30</prop>
+						<prop key="kaptcha.textproducer.char.string">0123456789</prop>
+						<prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.NoNoise</prop>
+						<prop key="kaptcha.textproducer.font.size">24</prop>
+						<prop key="kaptcha.session.key">code</prop>
+						<prop key="kaptcha.textproducer.char.length">4</prop>
+						<prop key="kaptcha.textproducer.char.space">4</prop>
+						<prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop>
+						<prop key="kaptcha.obscurificator.impl">com.google.code.kaptcha.impl.ShadowGimpy</prop>
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
 </beans>
