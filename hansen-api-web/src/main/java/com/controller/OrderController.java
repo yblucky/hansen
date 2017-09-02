@@ -38,18 +38,18 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public JsonResult handleOrder(String userId, Integer cardGrade) throws Exception {
-        if (ToolUtil.isEmpty(userId)){
+        if (ToolUtil.isEmpty(userId)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "userId不能为空");
         }
-        if (cardGrade==null){
+        if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "卡等级不能为空");
         }
         User user = userService.readById(userId);
-        if (user==null){
+        if (user == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "找不到用户");
         }
         CardGrade cardGradeModel = cardGradeService.getUserCardGrade(cardGrade);
-        if (cardGradeModel==null){
+        if (cardGradeModel == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "找不到卡等级");
         }
         TradeOrder order = tradeOrderService.createInsuranceTradeOrder(user, cardGradeModel);

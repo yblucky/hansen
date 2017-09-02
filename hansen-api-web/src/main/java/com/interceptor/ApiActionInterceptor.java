@@ -91,4 +91,8 @@ public class ApiActionInterceptor extends HandlerInterceptorAdapter {
 
     }
 
+    public static void main(String[] args) {
+        System.out.println("/api/order/add".indexOf("/order/add")>=0);
+    }
+
 }

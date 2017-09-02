@@ -4,14 +4,14 @@
 <mapper namespace="com.mapper.GradeMapper">
 
 	<sql id="fields">
-		grade,sumPerformance,removeNo,remainScale,rewardScale,createTime,updateTime,status,remark
+		grade,sumPerformance,rewardScale,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
 		id,<include refid="fields"/>
 	</sql>
 
-	<sql id="table_name">grade</sql>
+	<sql id="table_name">base_grade</sql>
 
 	<sql id="selector">
 		select <include refid="fields_id"/> from <include refid="table_name"/>
@@ -21,8 +21,6 @@
 		<where>
 			<if test="model.grade != null">grade=#{model.grade}</if>
 			<if test="model.sumPerformance != null">and sumPerformance=#{model.sumPerformance}</if>
-			<if test="model.removeNo != null">and removeNo=#{model.removeNo}</if>
-			<if test="model.remainScale != null">and remainScale=#{model.remainScale}</if>
 			<if test="model.rewardScale != null">and rewardScale=#{model.rewardScale}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
@@ -40,12 +38,6 @@
 			</if>
 			<if test="model.sumPerformance!= null  and model.sumPerformance!=''">
 				sumPerformance,
-			</if>
-			<if test="model.removeNo!= null  and model.removeNo!=''">
-				removeNo,
-			</if>
-			<if test="model.remainScale!= null  and model.remainScale!=''">
-				remainScale,
 			</if>
 			<if test="model.rewardScale!= null  and model.rewardScale!=''">
 				rewardScale,
@@ -75,12 +67,6 @@
 			</if>
 			<if test="model.sumPerformance!= null  and model.sumPerformance!=''">
 				#{model.sumPerformance},
-			</if>
-			<if test="model.removeNo!= null  and model.removeNo!=''">
-				#{model.removeNo},
-			</if>
-			<if test="model.remainScale!= null  and model.remainScale!=''">
-				#{model.remainScale},
 			</if>
 			<if test="model.rewardScale!= null  and model.rewardScale!=''">
 				#{model.rewardScale},
@@ -122,8 +108,6 @@
 		<set>
 			<if test="model.grade != null">grade= #{model.grade},</if>
 			<if test="model.sumPerformance != null">sumPerformance= #{model.sumPerformance},</if>
-			<if test="model.removeNo != null">removeNo= #{model.removeNo},</if>
-			<if test="model.remainScale != null">remainScale= #{model.remainScale},</if>
 			<if test="model.rewardScale != null">rewardScale= #{model.rewardScale},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>

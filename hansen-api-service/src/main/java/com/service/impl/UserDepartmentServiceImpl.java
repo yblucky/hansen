@@ -33,12 +33,16 @@ public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment>
         if(StringUtils.isEmpty(parentUserId)){
             return null;
         }
-        return this.getAll(parentUserId);
+        return userDepartmentMapper.getAll(parentUserId);
     }
 
     @Override
     public Double getSumAmt(String parentUserId) {
-        return userDepartmentMapper.getSumAmt(parentUserId);
+        Double sumAmt= userDepartmentMapper.getSumAmt(parentUserId);
+        if (sumAmt==null){
+            return 0d;
+        }
+        return sumAmt;
     }
 
     @Override

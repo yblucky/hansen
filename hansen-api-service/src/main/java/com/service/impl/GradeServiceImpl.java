@@ -59,10 +59,10 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
     @Override
     public Grade getUserGrade(String userId) throws Exception {
         User user = userService.readById(userId);
-        if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode().intValue()) {
-            System.out.println("用户不是激活状态");
-            return null;
-        }
+//        if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode().intValue()) {
+//            System.out.println("用户不是激活状态");
+//            return null;
+//        }
         //获取用户的所有部门（不包含设有接点人的部门）
         List<UserDepartment> list = userDepartmentService.getAll(userId);
         //获取用户的所有部门的总业绩（不包含设有接点人的部门）

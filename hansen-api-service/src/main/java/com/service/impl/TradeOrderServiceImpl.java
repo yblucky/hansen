@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.utils.numberutils.RandomUtil.getCode;
+
 /**
  * @date 2016年11月27日
  */
@@ -127,13 +129,14 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         User refferUser = null;
         String referId = activeUser.getFirstReferrer();
         for (i = 0; i < 10000; i++) {
+            if (ToolUtil.isEmpty(referId)){
+                break;
+            }
             if (Constant.SYSTEM_USER_ID.equals(referId)) {
                 break;
             }
-            User conditon = new User();
-            conditon.setId(referId);
-            refferUser = userService.readOne(conditon);
-            if (refferUser == null || UserStatusType.OUT.getCode() == refferUser.getStatus()) {
+            refferUser = userService.readById(referId);
+            if (refferUser == null  && UserStatusType.ACTIVATESUCCESSED.getCode()!=refferUser.getStatus()) {
                 continue;
             }
             userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());

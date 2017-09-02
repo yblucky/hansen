@@ -6,6 +6,10 @@ package com.constant;
  */
 public enum GradeType {
     /**
+     * 普通会员
+     */
+    GRADE0(0, "普通会员"),
+    /**
      * 专员
      */
     GRADE1(1, "专员"),

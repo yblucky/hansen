@@ -19,6 +19,7 @@
 
 	<sql id="condition">
 		<where>
+			<if test="model.id != null">id=#{model.id}</if>
 			<if test="model.createType != null">createType=#{model.createType}</if>
 			<if test="model.remainTaskNo != null">remainTaskNo=#{model.remainTaskNo}</if>
 			<if test="model.uid != null">uid=#{model.uid}</if>

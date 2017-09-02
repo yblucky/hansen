@@ -282,13 +282,16 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         //1星到5星的奖励比率为 2% < 4% < 6% < 8% < 12% < 16% < 20% 平级奖 2% 最多领取22%
         for (int i = 0; i < 7; i++) {
             User parentUser = this.readById(childUser.getId());
+            if (parentUser==null){
+                return;
+            }
             Grade parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
             if (parentGrade != null) {
                 bonusScale = parentGrade.getRewardScale();
             } else {
                 parentUser.setGrade(0);
             }
-            bonusScale = parentGrade.getRewardScale();
+//            bonusScale = parentGrade.getRewardScale();
             if (parentUser.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
                 logger.error("用户未激活保单");
                 return;
@@ -521,7 +524,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     public User createRegisterUser(User user, CardGrade cardGrade, User loginUser,User inviterUser) throws Exception {
         UserDetail inviterUserDetail = userDetailService.readById(inviterUser.getId());
         user.setCreateType(UserType.INNER.getCode());
-        user.setGrade(cardGrade.getGrade());
+        user.setGrade(GradeType.GRADE0.getCode());
+        user.setCardGrade(cardGrade.getGrade());
         user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
         /**生成钱包地址**/
 

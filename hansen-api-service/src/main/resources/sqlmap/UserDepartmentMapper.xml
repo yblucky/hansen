@@ -84,6 +84,9 @@
 		update <include refid="table_name"/> set performance = performance + #{performance},updateTime=now() where userId = #{userId} and (performance + #{performance})>0
 	</update>
 
+	<select id="getAll" resultType="UserDepartment">
+		<include refid="selector"/> WHERE parentUserId=#{parentUserId}  ;
+	</select>
 </mapper>
 
 
