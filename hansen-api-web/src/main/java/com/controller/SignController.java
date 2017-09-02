@@ -41,8 +41,6 @@ public class SignController {
     private UserService userService;
     @Autowired
     private UserSignService userSignService;
-    @Autowired
-    private UserTaskService userTaskService;
 
 
     @ResponseBody
@@ -154,10 +152,7 @@ public class SignController {
             }
             pageResult.setRows(list);
         }
-        Integer compelteTaskCount = userTaskService.readCompeleteUserTaskCount(user.getId());
-        Double signCount = userSignService.readSignCount(user.getId());
-        pageResult.getExtend().put("compelteTaskCount",compelteTaskCount);
-        pageResult.getExtend().put("signCount",signCount);
+
         return new JsonResult(pageResult);
     }
 }

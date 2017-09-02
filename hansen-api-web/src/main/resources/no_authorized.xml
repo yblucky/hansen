@@ -9,6 +9,7 @@
 	<url>/cardgrade/info</url>
 	<url>/cardgrade/list</url>
 	<url>/wallet/test</url>
+	<url>/order/handle</url>
 
 	<!-- 静态资源-->
 	<url>/resources</url>

@@ -34,15 +34,10 @@ public class TaskController {
     @Autowired
     private UserService userService;
     @Autowired
-    private UserDetailService userDetailService;
-    @Autowired
-    private CardGradeService cardGradeService;
-    @Autowired
-    private TradeOrderService tradeOrderService;
-    @Autowired
-    private TaskService taskService;
-    @Autowired
     private UserTaskService userTaskService;
+
+    @Autowired
+    private UserSignService userSignService;
 
 
     /**
@@ -80,6 +75,10 @@ public class TaskController {
         pageResult.setPageSize(page.getPageSize());
         pageResult.setTotalSize(count);
         pageResult.setRows(taskList);
+        Integer compelteTaskCount = userTaskService.readCompeleteUserTaskCount(user.getId());
+        Double signCount = userSignService.readSignCount(user.getId());
+        pageResult.getExtend().put("compelteTaskCount",compelteTaskCount);
+        pageResult.getExtend().put("signCount",signCount);
         return new JsonResult(pageResult);
     }
 
