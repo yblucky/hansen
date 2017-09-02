@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 保单结算定时器
  *
- * @date 2016年12月30日
+ * @date 2017年08月29日
  */
 @Component
 public class TradeOrderHandleTask extends BaseScheduleTask {
@@ -29,6 +29,7 @@ public class TradeOrderHandleTask extends BaseScheduleTask {
 
     @Override
     protected void doScheduleTask() {
+        System.out.println("-----------------------------------TradeOrderHandleTask  start----------------------------------------------------------");
         String redisKey = Strings.get(RedisKey.TRADE_ORDER_IS_HANDING.getKey());
         if (ToolUtil.isNotEmpty(redisKey)) {
             return;
@@ -62,5 +63,6 @@ public class TradeOrderHandleTask extends BaseScheduleTask {
             }
         }
         Strings.del(RedisKey.TRADE_ORDER_IS_HANDING.getKey());
+        System.out.println("-----------------------------------TradeOrderHandleTask  end----------------------------------------------------------");
     }
 }

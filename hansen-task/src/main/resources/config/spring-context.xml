@@ -52,10 +52,10 @@
 		<property name="mapperLocations" value="classpath:sqlmap/*Mapper.xml" />
 		<property name="configLocation" value="classpath:config/spring-mybatis.xml" />
 	</bean>
-	
+
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-		<property name="basePackage" value="com.hansen.mappers" />
+		<property name="basePackage" value="com.mapper" />
 	</bean>
 
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
