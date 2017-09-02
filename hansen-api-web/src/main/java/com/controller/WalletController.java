@@ -303,9 +303,9 @@ public class WalletController {
         if (user == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
         }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
-        }
+//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
+//            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
+//        }
 
         WalletOrder condition = new WalletOrder();
         condition.setOrderType(orderTypeList.get(0));

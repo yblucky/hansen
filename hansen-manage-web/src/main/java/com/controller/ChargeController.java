@@ -138,6 +138,7 @@ public class ChargeController {
             addModel.setAmount(vo.getPayAmt());
             addModel.setConfirmAmt(vo.getPayAmt());
             addModel.setOrderType(WalletOrderType.PAY_COIN_BACK_CHARGE.getCode());
+            addModel.setRemark("管理员后台充值购物币");
             walletOrderService.create(addModel);
             userService.updatePayAmtByUserId(chargeTargerUser.getId(), vo.getPayAmt());
         }
@@ -146,6 +147,7 @@ public class ChargeController {
             addModel.setAmount(vo.getTradeAmt());
             addModel.setConfirmAmt(vo.getTradeAmt());
             addModel.setOrderType(WalletOrderType.TRADE_COIN_BACK_CHARGE.getCode());
+            addModel.setRemark("管理员后台充值交易币");
             walletOrderService.create(addModel);
             userService.updateTradeAmtByUserId(chargeTargerUser.getId(), vo.getTradeAmt());
         }
@@ -154,6 +156,7 @@ public class ChargeController {
             addModel.setAmount(vo.getEquityAmt());
             addModel.setConfirmAmt(vo.getEquityAmt());
             addModel.setOrderType(WalletOrderType.EQUITY_COIN_BACK_CHARGE.getCode());
+            addModel.setRemark("管理员后台充值股权币");
             walletOrderService.create(addModel);
             userService.updateEquityAmtByUserId(chargeTargerUser.getId(), vo.getEquityAmt());
         }
