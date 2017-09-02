@@ -1,5 +1,6 @@
 package com.task;
 
+import com.base.task.BaseScheduleTask;
 import com.service.WalletTransactionService;
 import com.service.WalletUtil;
 import com.utils.toolutils.ToolUtil;
