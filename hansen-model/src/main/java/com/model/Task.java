@@ -28,6 +28,10 @@ public class Task extends BaseModel {
      */
     private String link;
     /**
+     * 任务图片
+     */
+    private String linkImgPath;
+    /**
      * 任务类型
      */
     private Integer taskType;
@@ -70,5 +74,13 @@ public class Task extends BaseModel {
 
     public void setTaskType(Integer taskType) {
         this.taskType = taskType;
+    }
+
+    public String getLinkImgPath() {
+        return linkImgPath;
+    }
+
+    public void setLinkImgPath(String linkImgPath) {
+        this.linkImgPath = linkImgPath;
     }
 }

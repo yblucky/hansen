@@ -237,11 +237,11 @@
             <version>1.4.8</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.yanbao</groupId>
-            <artifactId>taobao-sdk</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.yanbao</groupId>-->
+            <!--<artifactId>taobao-sdk</artifactId>-->
+            <!--<version>1.0.0</version>-->
+        <!--</dependency>-->
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

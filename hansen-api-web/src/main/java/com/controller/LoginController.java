@@ -118,7 +118,7 @@ public class LoginController {
                 return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
             }
             //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
-            userService.innerActicveUser(loginUser, cardGrade);
+//            userService.innerActicveUser(loginUser, cardGrade);
         }
         User updateUser = new User();
         updateUser.setLoginTime(new Date());

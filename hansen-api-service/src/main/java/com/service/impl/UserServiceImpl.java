@@ -539,7 +539,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
 
         user.setFirstReferrer(loginUser.getId());
-        user.setSecondReferrer(loginUser.getSecondReferrer());
+        user.setSecondReferrer(loginUser.getFirstReferrer());
         user.setContactUserId(loginUser.getId());
         user.setPassword(Md5Util.MD5Encode(user.getPassword(), DateUtils.currentDateToggeter()));
         user.setPayWord(Md5Util.MD5Encode(user.getPayWord(), DateUtils.currentDateToggeter()));
@@ -552,6 +552,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setPayAmt(0d);
         user.setSumProfits(0d);
         user.setInsuranceAmt(cardGrade.getInsuranceAmt());
+        user.setCashOutProfits(0d);
+        user.setRegisterCodeNo(0);
+        user.setActiveCodeNo(0);
         user.setMaxProfits(cardGrade.getInsuranceAmt()*cardGrade.getOutMultiple());
         this.create(user);
         user=this.readById(creatUserId);
