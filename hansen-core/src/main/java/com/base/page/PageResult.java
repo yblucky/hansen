@@ -1,8 +1,11 @@
 package com.base.page;
 
+import org.apache.commons.collections.map.HashedMap;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PageResult<T> implements Serializable {
 
@@ -14,6 +17,8 @@ public class PageResult<T> implements Serializable {
 	private Integer pageSize;
 	/** 总共记录条数 */
 	private Integer totalSize;
+	/** 扩展参数 */
+	private Map<String,Object> extend = new HashedMap();
 	/** 结果集 */
 	private List<T> rows = new ArrayList<T>();
 
@@ -68,4 +73,7 @@ public class PageResult<T> implements Serializable {
 		return totalSize%pageSize==0?totalSize/pageSize:totalSize/pageSize+1;
 	}
 
+	public Map<String, Object> getExtend() {
+		return extend;
+	}
 }

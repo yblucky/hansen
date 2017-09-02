@@ -5,12 +5,12 @@ import com.base.service.impl.CommonServiceImpl;
 import com.constant.RecordType;
 import com.constant.SignType;
 import com.mapper.UserSignMapper;
+import com.model.User;
+import com.model.UserSign;
 import com.service.TradeOrderService;
 import com.service.TradeRecordService;
 import com.service.UserService;
 import com.service.UserSignService;
-import com.model.User;
-import com.model.UserSign;
 import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,9 +61,9 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
             return false;
         }
         Map<String, Double> map = tradeOrderService.getCoinNoFromRmb(sign.getAmt());
-        Double payAmt=map.get("payAmt");
-        Double tradeAmt=map.get("tradeAmt");
-        Double equityAmt=map.get("equityAmt");
+        Double payAmt = map.get("payAmt");
+        Double tradeAmt = map.get("tradeAmt");
+        Double equityAmt = map.get("equityAmt");
         userService.updatePayAmtByUserId(sign.getUserId(), payAmt);
         userService.updateTradeAmtByUserId(sign.getUserId(), tradeAmt);
         userService.updateEquityAmtByUserId(sign.getUserId(), equityAmt);
@@ -74,7 +74,7 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         updateModel.setRemark("用户成功领取到" + sign.getAmt() + "红包");
         this.updateById(signId, updateModel);
         //写入币的收益记录
-        tradeRecordService.addRecord(user.getId(),sign.getAmt(),equityAmt,payAmt,tradeAmt,"", RecordType.PUSH);
+        tradeRecordService.addRecord(user.getId(), sign.getAmt(), equityAmt, payAmt, tradeAmt, "", RecordType.PUSH);
         return true;
     }
 
@@ -88,5 +88,14 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         model.setStatus(SignType.WAITING_SIGN.getCode());
         this.create(model);
         return model;
+    }
+
+    @Override
+    public Double readSignCount(String userId) {
+        Double signCount = userSignMapper.readSignCount(userId);
+        if (signCount == null) {
+            return 0d;
+        }
+        return signCount;
     }
 }

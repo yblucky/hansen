@@ -1,7 +1,6 @@
 package com.controller;
 
 import com.Token;
-import com.alibaba.fastjson.JSON;
 import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.Page;
@@ -10,16 +9,17 @@ import com.base.page.ResultCode;
 import com.constant.SignType;
 import com.constant.UserStatusType;
 import com.model.Parameter;
-import com.service.ParamUtil;
-import com.service.TradeOrderService;
-import com.service.UserService;
-import com.service.UserSignService;
 import com.model.User;
 import com.model.UserSign;
+import com.service.ParamUtil;
+import com.service.UserService;
+import com.service.UserSignService;
+import com.service.UserTaskService;
 import com.utils.classutils.MyBeanUtils;
 import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.ToolUtil;
 import com.vo.UserSignVo;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,7 +42,7 @@ public class SignController {
     @Autowired
     private UserSignService userSignService;
     @Autowired
-    private TradeOrderService tradeOrderService;
+    private UserTaskService userTaskService;
 
 
     @ResponseBody
@@ -59,8 +59,8 @@ public class SignController {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
         }
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            if(user.getStatus().intValue() == UserStatusType.WAITACTIVATE.getCode().intValue()){
-                return new JsonResult(ResultCode.ERROR.getCode(),"用户已激活,保单处理中");
+            if (user.getStatus().intValue() == UserStatusType.WAITACTIVATE.getCode().intValue()) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "用户已激活,保单处理中");
             }
             return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
         }
@@ -73,18 +73,18 @@ public class SignController {
         Map<String, Object> map = new HashMap<>();
         if (count != null && count > 0) {
             sign = userSignService.readOne(conditon);
-            if (sign==null){
-                map.put("isCanSign",false);
+            if (sign == null) {
+                map.put("isCanSign", false);
             }
             try {
                 Boolean flag = userSignService.sign(sign.getId());
                 if (flag) {
                     user = userService.readById(user.getId());
-                    map.put("isCanSign",true);
+                    map.put("isCanSign", true);
                     map.put("amt", sign.getAmt());
-                }else {
-                    map.put("isCanSign",false);
-                    map.put("amt",0);
+                } else {
+                    map.put("isCanSign", false);
+                    map.put("amt", 0);
                 }
                 map.put("payAmt", user.getPayAmt());
                 map.put("tradeAmt", user.getTradeAmt());
@@ -107,9 +107,9 @@ public class SignController {
         if (user == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
         }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
-        }
+//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
+//            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
+//        }
         if (page.getPageNo() == null) {
             page.setPageNo(1);
         }
@@ -119,30 +119,30 @@ public class SignController {
         List<UserSign> userSignList = new ArrayList<>();
         List<UserSignVo> list = new ArrayList<>();
         PageResult<UserSignVo> pageResult = new PageResult<>();
-        BeanUtils.copyProperties(page,pageResult);
+        BeanUtils.copyProperties(page, pageResult);
         UserSign condition = new UserSign();
         condition.setUserId(user.getId());
         Integer count = userSignService.readCount(condition);
         if (count != null && count > 0) {
             userSignList = userSignService.readList(condition, page.getPageNo(), page.getPageSize(), count);
             UserSignVo vo = null;
-            double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE),1d);
-            double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE),1d);
-            double equtyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE),1d);
+            double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 1d);
+            double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 1d);
+            double equtyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE), 1d);
 
-            double rewardPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE),1d);
-            double rewardTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE),1d);
-            double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE),1d);
-            for (UserSign sign:userSignList){
-                vo = MyBeanUtils.copyProperties(sign,UserSignVo.class);
+            double rewardPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE), 1d);
+            double rewardTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE), 1d);
+            double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE), 1d);
+            for (UserSign sign : userSignList) {
+                vo = MyBeanUtils.copyProperties(sign, UserSignVo.class);
                 //三种币的收入
-                Double payAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardPayScale,2);
-                Double tradeAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardTradeScale,2);
-                Double equityAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardEqutyScale,2);
+                Double payAmtRmb = CurrencyUtil.multiply(sign.getAmt(), rewardPayScale, 2);
+                Double tradeAmtRmb = CurrencyUtil.multiply(sign.getAmt(), rewardTradeScale, 2);
+                Double equityAmtRmb = CurrencyUtil.multiply(sign.getAmt(), rewardEqutyScale, 2);
 
-                Double payAmt=CurrencyUtil.multiply(payAmtRmb,payScale,2);
-                Double tradeAmt=CurrencyUtil.multiply(tradeAmtRmb,tradeScale,2);
-                Double equityAmt=CurrencyUtil.multiply(equityAmtRmb,equtyScale,2);
+                Double payAmt = CurrencyUtil.multiply(payAmtRmb, payScale, 2);
+                Double tradeAmt = CurrencyUtil.multiply(tradeAmtRmb, tradeScale, 2);
+                Double equityAmt = CurrencyUtil.multiply(equityAmtRmb, equtyScale, 2);
 
                 vo.setPayAmt(payAmt);
                 vo.setTradeAmt(tradeAmt);
@@ -154,6 +154,10 @@ public class SignController {
             }
             pageResult.setRows(list);
         }
+        Integer compelteTaskCount = userTaskService.readCompeleteUserTaskCount(user.getId());
+        Double signCount = userSignService.readSignCount(user.getId());
+        pageResult.getExtend().put("compelteTaskCount",compelteTaskCount);
+        pageResult.getExtend().put("signCount",signCount);
         return new JsonResult(pageResult);
     }
 }

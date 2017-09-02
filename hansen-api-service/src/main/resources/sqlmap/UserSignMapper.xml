@@ -65,4 +65,9 @@
 	<update id="deleteById">
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
+
+	<select id="readSignCount" resultType="Double">
+		select SUM(amt) from <include refid="table_name"/> WHERE `status`=2 AND  userId=#{userId}
+	</select>
+
 </mapper>

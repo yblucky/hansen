@@ -57,6 +57,11 @@
 		select count(1) from <include refid="table_name"/> <include refid="condition"/>
 	</select>
 
+
+	<select id="readCompeleteUserTaskCount" resultType="int">
+		select count(id) from <include refid="table_name"/>  WHERE `status`=2  AND userId=#{userId}
+	</select>
+
 	<update id="updateById">
 		update <include refid="table_name"/>
 		<set>

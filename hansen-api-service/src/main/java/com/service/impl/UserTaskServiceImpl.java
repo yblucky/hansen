@@ -221,4 +221,13 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         }
         return true;
     }
+
+    @Override
+    public Integer readCompeleteUserTaskCount(String userId) {
+        Integer compeleteUserTaskCount =  userTaskMapper.readCompeleteUserTaskCount(userId);
+        if (compeleteUserTaskCount==null){
+            return 0;
+        }
+        return compeleteUserTaskCount;
+    }
 }

@@ -16,7 +16,9 @@ public interface UserTaskService extends CommonService<UserTask> {
 
     UserTask readLastOne(String userId);
 
-    Boolean  assignUserTask(String userId);
+    Boolean assignUserTask(String userId);
 
-    Boolean  doTask(String userId,UserTask userTask) throws  Exception;
+    Boolean doTask(String userId, UserTask userTask) throws Exception;
+
+    Integer readCompeleteUserTaskCount(String userId);
 }
