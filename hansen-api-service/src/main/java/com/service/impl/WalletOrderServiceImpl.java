@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.utils.numberutils.RandomUtil.getCode;
+
 /**
  * @date 2016年11月27日
  */
@@ -55,21 +57,23 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         Double poundageScale = 0d;
         Double poundage = 0d;
         Double confirmAmount = 0d;
-        if (CurrencyType.TRADE.getCode() == walletOrderType.getCode()) {
+        if (WalletOrderType.TRADE_COIN_INNER_TRANSFER.getCode() == walletOrderType.getCode()) {
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.TRADECOINTRANSFERSCALE));
-            poundageScale = amt * poundageScale;
+            poundage = amt * poundageScale;
             confirmAmount = amt - poundage;
-            userService.updateTradeAmtByUserId(fromUserId, -confirmAmount);
+            userService.updateTradeAmtByUserId(fromUserId, -amt);
             userService.updateTradeAmtByUserId(toUserId, confirmAmount);
-        } else if (CurrencyType.PAY.getCode() == walletOrderType.getCode()) {
-            poundageScale = amt * poundageScale;
+        } else if (WalletOrderType.PAY_COIN_INNER_TRANSFER.getCode() == walletOrderType.getCode()) {
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.PAYCOINTRANSFERSCALE));
-            userService.updatePayAmtByUserId(fromUserId, -confirmAmount);
+            poundage = amt * poundageScale;
+            confirmAmount = amt - poundage;
+            userService.updatePayAmtByUserId(fromUserId, -amt);
             userService.updatePayAmtByUserId(toUserId, confirmAmount);
-        } else if (CurrencyType.EQUITY.getCode() == walletOrderType.getCode()) {
-            poundageScale = amt * poundageScale;
+        } else if (WalletOrderType.EQUITY_COIN_INNER_TRANSFER.getCode() == walletOrderType.getCode()) {
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.EQUITYCOINTRANSFERSCALE));
-            userService.updateEquityAmtByUserId(fromUserId, -confirmAmount);
+            poundage = amt * poundageScale;
+            confirmAmount = amt - poundage;
+            userService.updateEquityAmtByUserId(fromUserId, -amt);
             userService.updateEquityAmtByUserId(toUserId, confirmAmount);
         }
         this.addWalletOrder(fromUserId, toUserId, walletOrderType, -amt, -confirmAmount, poundage, WalletOrderStatus.SUCCESS);

@@ -74,15 +74,15 @@ public class WalletController {
         if (!user.getPayWord().equals(Md5Util.MD5Encode(vo.getPayPassWord(), user.getSalt()))) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付密码不正确");
         }
-        if (CurrencyType.TRADE.getCode() == vo.getWalletOrderType()) {
+        if (WalletOrderType.TRADE_COIN_INNER_TRANSFER.getCode()== vo.getWalletOrderType()) {
             if (user.getTradeAmt() < vo.getAmount()) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足");
             }
-        } else if (CurrencyType.PAY.getCode() == vo.getWalletOrderType()) {
+        } else if (WalletOrderType.PAY_COIN_INNER_TRANSFER.getCode() == vo.getWalletOrderType()) {
             if (user.getPayAmt() < vo.getAmount()) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "购物币数量不足");
             }
-        } else if (CurrencyType.EQUITY.getCode() == vo.getWalletOrderType()) {
+        } else if (WalletOrderType.EQUITY_COIN_INNER_TRANSFER.getCode() == vo.getWalletOrderType()) {
             if (user.getEquityAmt() < vo.getAmount()) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "股权币数量不足");
             }
