@@ -173,16 +173,17 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         if (userTask.getCreateTime().getTime() > System.currentTimeMillis()) {
             return false;
         }
+        if (user.getRemainTaskNo() == 1) {
+            //冻结用户账号，等待下次激活
+            userService.updateUserStatus(userId, UserStatusType.OUT.getCode());
+        }
         UserTask updteModel = new UserTask();
         updteModel.setStatus(TaskStatusType.HANDLED.getCode());
         updteModel.setId(userTask.getId());
         updteModel.setRemark("用户于" + DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_LONG) + "完成任务");
         this.updateById(userTask.getId(), updteModel);
         userService.updateRemainTaskNoByUserId(userId, -1);
-        if (user.getRemainTaskNo() == 1) {
-            //冻结用户账号，等待下次激活
-            userService.updateUserStatus(userId, UserStatusType.OUT.getCode());
-        }
+
         List<TradeOrder> orderList = tradeOrderService.readRewardList(userId,new Date(), 1, 100);
         //需要更新任务次数的id集合
         List<String> orderIdList1 = new ArrayList<>();
