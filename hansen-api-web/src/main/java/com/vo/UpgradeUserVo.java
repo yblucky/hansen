@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class UpgradeUserVo implements Serializable {
 
     private static final long serialVersionUID = -826188614119L;
-    //升级的方式
+    //升级的方式  2:补差价升级   3：覆盖升级
     private  Integer upGradeWay;
     //要升级的卡类等级
     private Integer grade;

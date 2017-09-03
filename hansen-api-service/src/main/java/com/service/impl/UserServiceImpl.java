@@ -11,18 +11,14 @@ import com.service.*;
 import com.utils.DateUtils.DateUtils;
 import com.utils.codeutils.Md5Util;
 import com.utils.numberutils.CurrencyUtil;
-import com.utils.numberutils.UUIDUtil;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import java.util.Date;
 import java.util.Map;
-
-import static com.service.WalletUtil.getBitCoinClient;
 
 /**
  * @date 2016年11月27日
@@ -48,7 +44,11 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Autowired
     private ActiveCodeService activeCodeService;
     @Autowired
-    private TransferCodeService transferCodeService  ;
+    private TransferCodeService transferCodeService;
+    @Autowired
+    private ParameterService parameterService;
+    @Autowired
+    private WalletOrderService walletOrderService;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -284,7 +284,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         //1星到5星的奖励比率为 2% < 4% < 6% < 8% < 12% < 16% < 20% 平级奖 2% 最多领取22%
         for (int i = 0; i < 7; i++) {
             User parentUser = this.readById(childUser.getId());
-            if (parentUser==null){
+            if (parentUser == null) {
                 return;
             }
             Grade parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
@@ -369,7 +369,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             // TODO: 2017/7/17 记录会员等级升级记录
             Integer historyGrade = user.getGrade();
             user = this.readById(user.getId());
-            userGradeRecordService.addGradeRecord(user, GradeRecordType.GRADEUPDATE, historyGrade, null, OrderNoUtil.get());
+            userGradeRecordService.addGradeRecord(user, GradeRecordType.GRADEUPDATE, historyGrade,userGrade.getGrade(),UpGradeType.STARGRADE.getCode(), OrderNoUtil.get());
         }
     }
 
@@ -399,46 +399,82 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     }
 
     /**
-     * 点位升级
+     * 点位升级  补差价升级
      *
-     * @param userId    用户ID
-     * @param cardGrade 升级等级
+     * @param userId            用户ID
+     * @param targetCardGradeNo 升级等级
      */
     @Override
-    public void originUpgrade(String userId, Integer cardGrade) {
+    public void originUpgrade(String userId, Integer targetCardGradeNo) throws Exception {
         User user = this.readById(userId);
         if (user == null) {
-            System.out.println("找不到用户....");
+            logger.error("找不到用户....");
             return;
         }
         if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
-            System.out.println("用户未激活保单");
+            logger.error("用户未激活");
             return;
         }
-        CardGrade model = new CardGrade();
-        model.setGrade(cardGrade);
-        CardGrade grade = cardGradeService.readOne(model);
-        if (user.getCardGrade() >= grade.getGrade()) {
-            System.out.println("点位升级只能从低往高升级！！！");
+        if (user.getCardGrade() >= targetCardGradeNo) {
+            logger.error("点位升级只能从低往高升级！！！");
             return;
         }
+        CardGrade targetCardGrade = cardGradeService.getUserCardGrade(targetCardGradeNo);
+        if (targetCardGrade == null) {
+            logger.error("用户补差价升级，目标等级不存在！！！");
+            return;
+        }
+        CardGrade userCurrentCardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
+
+        //计算差价
+        Integer differRegisterNo = targetCardGrade.getRegisterCodeNo() - userCurrentCardGrade.getRegisterCodeNo();
+        Integer differActiceNo = targetCardGrade.getActiveCodeNo() - userCurrentCardGrade.getActiveCodeNo();
+        Double insuranceAmt = targetCardGrade.getInsuranceAmt() - userCurrentCardGrade.getInsuranceAmt();
+        Double differPayRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 4);
+        Double differTradeRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 4);
+        //人民币兑换支付币汇率
+        Double payScale = parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE);
+        //人民币兑换交易币汇率
+        Double tradeScale = parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE);
+        //计算实际需要的币数量
+        Double differPayAmt = CurrencyUtil.getPoundage(differPayRmbAmt, payScale, 4);
+        Double differTradeAmt = CurrencyUtil.getPoundage(differTradeRmbAmt, tradeScale, 4);
+
+
+        //更新用户相关信息
         User updateModel = new User();
         updateModel.setId(userId);
-        updateModel.setCardGrade(grade.getGrade());
-        updateModel.setInsuranceAmt(grade.getInsuranceAmt());
-        updateModel.setMaxProfits(CurrencyUtil.multiply(grade.getOutMultiple(), grade.getInsuranceAmt(), 4));
+        updateModel.setCardGrade(targetCardGradeNo);
+        updateModel.setInsuranceAmt(targetCardGrade.getInsuranceAmt());
+        updateModel.setMaxProfits(CurrencyUtil.multiply(targetCardGrade.getOutMultiple(), targetCardGrade.getInsuranceAmt(), 4));
+        updateModel.setRemark("用户补差价升级，由" + CardLevelType.fromCode(user.getCardGrade()) + "升级到" + CardLevelType.fromCode(targetCardGradeNo));
         this.updateById(userId, updateModel);
+
+        //更新用户详情冻结信息
+        UserDetail userDetail = userDetailService.readById(userId);
+        UserDetail userDetailUpdateModel = new UserDetail();
+        userDetailUpdateModel.setForzenTradeAmt(userDetail.getForzenTradeAmt() + differTradeAmt);
+        userDetailUpdateModel.setForzenPayAmt(userDetail.getForzenPayAmt() + differPayAmt);
+        userDetailService.updateById(userId, userDetailUpdateModel);
+
+        //冻结币
+        this.updateTradeAmtByUserId(userId, -differTradeAmt);
+        this.updatePayAmtByUserId(userId, -differPayAmt);
+        //TODO 写入冻结记录，后面完善，需要新定义枚举 WalletOrderType
+
+        //扣除激活码
+        activeCodeService.useActiveCode(userId, differActiceNo, "用户进行补差价升级使用激活码");
 
         //生成保单
         TradeOrder tradeOrder = new TradeOrder();
         tradeOrder.setOrderNo(OrderNoUtil.get());
-        tradeOrder.setAmt(grade.getInsuranceAmt());
+        tradeOrder.setAmt(targetCardGrade.getInsuranceAmt());
         tradeOrder.setSendUserId(userId);
         tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
-        tradeOrder.setSource(OrderType.INSURANCE.getCode());
-        tradeOrder.setRemark(OrderType.INSURANCE.getMsg());
-        tradeOrder.setPayAmtScale(0.5);
-        tradeOrder.setTradeAmtScale(0.5);
+        tradeOrder.setSource(OrderType.INSURANCE_ORIGIN.getCode());
+        tradeOrder.setRemark(OrderType.INSURANCE_ORIGIN.getMsg());
+        tradeOrder.setPayAmtScale(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)));
+        tradeOrder.setTradeAmtScale(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)));
         tradeOrder.setEquityAmtScale(0d);
         tradeOrder.setConfirmAmt(0d);
         tradeOrder.setPoundage(0d);
@@ -453,51 +489,89 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         tradeOrderService.create(tradeOrder);
         // TODO: 2017/8/3 点位升级成功后的记录
-        userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getGrade(), UpGradeType.ORIGINUPGRADE.getCode(), tradeOrder.getOrderNo());
+        userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getCardGrade(),targetCardGradeNo, UpGradeType.ORIGINUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
 
     /**
      * 覆盖升级
      *
-     * @param userId    用户ID
-     * @param cardGrade 升级等级
+     * @param userId            用户ID
+     * @param targetCardGradeNo 升级等级
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void coverageUpgrade(String userId, Integer cardGrade) throws Exception {
+    public void coverageUpgrade(String userId, Integer targetCardGradeNo) throws Exception {
         User user = this.readById(userId);
         if (user == null) {
             System.out.println("找不到用户....");
             return;
         }
         if (user.getStatus().intValue() != UserStatusType.ACTIVATESUCCESSED.getCode()) {
-            System.out.println("用户未激活保单");
+            System.out.println("用户未激活");
             return;
         }
-        CardGrade model = new CardGrade();
-        model.setGrade(cardGrade);
-        CardGrade grade = cardGradeService.readOne(model);
-        if (user.getCardGrade() >= grade.getGrade()) {
-            System.out.println("覆盖升级只能从低往高升级！！！");
+        CardGrade targetCardGrade = cardGradeService.getUserCardGrade(targetCardGradeNo);
+        CardGrade userCurrentCardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
+
+        if (targetCardGrade == null) {
+            logger.error("覆盖升级升级查询目标等级错误");
             return;
         }
+        if (user.getCardGrade() >= targetCardGradeNo) {
+            logger.error("覆盖升级只能从低往高升级！！！");
+            return;
+        }
+
+        //计算差价
+        Integer differRegisterNo = targetCardGrade.getRegisterCodeNo();
+        Integer differActiceNo = targetCardGrade.getActiveCodeNo();
+        Double insuranceAmt = targetCardGrade.getInsuranceAmt();
+        Double differPayRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 4);
+        Double differTradeRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 4);
+        //人民币兑换支付币汇率
+        Double payScale = parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE);
+        //人民币兑换交易币汇率
+        Double tradeScale = parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE);
+        //计算实际需要的币数量
+        Double differPayAmt = CurrencyUtil.getPoundage(differPayRmbAmt, payScale, 4);
+        Double differTradeAmt = CurrencyUtil.getPoundage(differTradeRmbAmt, tradeScale, 4);
+
+        //更新相关信息
         User updateModel = new User();
-        updateModel.setGrade(grade.getGrade());
-        updateModel.setInsuranceAmt(grade.getInsuranceAmt());
-        updateModel.setMaxProfits(CurrencyUtil.getPoundage(CurrencyUtil.multiply(grade.getOutMultiple(), grade.getInsuranceAmt(), 4) + user.getMaxProfits(), 1d));
+        updateModel.setGrade(targetCardGrade.getGrade());
+        updateModel.setInsuranceAmt(targetCardGrade.getInsuranceAmt());
+        updateModel.setMaxProfits(CurrencyUtil.getPoundage(CurrencyUtil.multiply(targetCardGrade.getOutMultiple(), targetCardGrade.getInsuranceAmt(), 4) + user.getMaxProfits(), 1d));
+        updateModel.setRemark("用户覆盖升级，由" + CardLevelType.fromCode(user.getCardGrade()) + "升级到" + CardLevelType.fromCode(targetCardGradeNo));
         this.updateById(userId, updateModel);
+
+        //冻结币
+        this.updateTradeAmtByUserId(userId, -differTradeAmt);
+        this.updatePayAmtByUserId(userId, -differPayAmt);
+        //TODO 写入冻结记录，后面完善，需要新定义枚举 WalletOrderType
+
+
+        //更新用户详情冻结信息
+        UserDetail userDetail = userDetailService.readById(userId);
+        UserDetail userDetailUpdateModel = new UserDetail();
+        userDetailUpdateModel.setForzenTradeAmt(userDetail.getForzenTradeAmt() + differTradeAmt);
+        userDetailUpdateModel.setForzenPayAmt(userDetail.getForzenPayAmt() + differPayAmt);
+        userDetailService.updateById(userId, userDetailUpdateModel);
+
+        //扣除激活码
+        activeCodeService.useActiveCode(userId, differActiceNo, "用户进行覆盖升级使用激活码");
+
         // TODO: 2017/8/3 覆盖升级成功后的记录
         //生成保单
         TradeOrder tradeOrder = new TradeOrder();
         tradeOrder.setOrderNo(OrderNoUtil.get());
-        tradeOrder.setAmt(grade.getInsuranceAmt());
+        tradeOrder.setAmt(targetCardGrade.getInsuranceAmt());
         tradeOrder.setSendUserId(userId);
         tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
-        tradeOrder.setSource(OrderType.INSURANCE.getCode());
-        tradeOrder.setRemark(OrderType.INSURANCE.getMsg());
-        double rewardPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE),1d);
-        double rewardTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE),1d);
-        double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE),1d);
+        tradeOrder.setSource(OrderType.INSURANCE_COVER.getCode());
+        tradeOrder.setRemark(OrderType.INSURANCE_COVER.getMsg());
+        double rewardPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE), 1d);
+        double rewardTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE), 1d);
+        double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE), 1d);
         tradeOrder.setPayAmtScale(rewardPayScale);
         tradeOrder.setTradeAmtScale(rewardTradeScale);
         tradeOrder.setEquityAmtScale(rewardEqutyScale);
@@ -513,7 +587,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             tradeOrder.setSignCycle(0);
         }
         tradeOrderService.create(tradeOrder);
-        userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getGrade(), UpGradeType.COVERAGEUPGRADE.getCode(), tradeOrder.getOrderNo());
+        userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getCardGrade(),targetCardGradeNo, UpGradeType.COVERAGEUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
 
     @Override
@@ -537,17 +611,16 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
 
     /**
-     *
      * @param user
      * @param cardGrade
      * @param loginUser
-     * @param inviterUser  接点人
+     * @param inviterUser 接点人
      * @return
      * @throws Exception
      */
     @Override
     @Transactional
-    public User createRegisterUser(User user, CardGrade cardGrade, User loginUser,User inviterUser) throws Exception {
+    public User createRegisterUser(User user, CardGrade cardGrade, User loginUser, User inviterUser) throws Exception {
         UserDetail inviterUserDetail = userDetailService.readById(inviterUser.getId());
         user.setCreateType(UserType.INNER.getCode());
         user.setGrade(GradeType.GRADE0.getCode());
@@ -576,7 +649,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setPayWord(Md5Util.MD5Encode(user.getPayWord(), DateUtils.currentDateToggeter()));
         user.setSalt(DateUtils.currentDateToggeter());
         user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
-        String creatUserId=ToolUtil.getUUID();
+        String creatUserId = ToolUtil.getUUID();
         user.setId(creatUserId);
         user.setEquityAmt(0d);
         user.setTradeAmt(0d);
@@ -586,9 +659,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setCashOutProfits(0d);
         user.setRegisterCodeNo(0);
         user.setActiveCodeNo(0);
-        user.setMaxProfits(cardGrade.getInsuranceAmt()*cardGrade.getOutMultiple());
+        user.setMaxProfits(cardGrade.getInsuranceAmt() * cardGrade.getOutMultiple());
         this.create(user);
-        user=this.readById(creatUserId);
+        user = this.readById(creatUserId);
         UserDetail innerUserDetail = userDetailService.readById(loginUser.getId());
         UserDetail userDetail = new UserDetail();
         userDetail.setId(user.getId());
@@ -596,7 +669,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         userDetail.setForzenPayAmt(0d);
         userDetail.setForzenTradeAmt(0d);
         userDetail.setStatus(user.getStatus());
-        userDetail.setLevles(innerUserDetail.getLevles()+1);
+        userDetail.setLevles(innerUserDetail.getLevles() + 1);
         userDetail.setInEquityAddress(equityAddress);
         userDetail.setInTradeAddress(tradeAddress);
         userDetail.setInPayAddress(payAddress);
@@ -609,7 +682,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Transactional
     public User innerRegister(User innerUser, User inviterUser, User createUser, CardGrade cardGrade) throws Exception {
         /**创建用户账号**/
-        createUser = this.createRegisterUser(createUser, cardGrade,   innerUser,inviterUser);
+        createUser = this.createRegisterUser(createUser, cardGrade, innerUser, inviterUser);
 
         /**建立部门关系**/
         UserDepartment userDepartment = new UserDepartment();
@@ -620,7 +693,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         userDepartment.setPerformance(0d);
         userDepartmentService.createUserDepartment(userDepartment);
         /**扣注册码**/
-        activeCodeService.useRegisterCode(innerUser.getId(), cardGrade.getRegisterCodeNo(),   "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
+        activeCodeService.useRegisterCode(innerUser.getId(), cardGrade.getRegisterCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
         /**扣激活码**/
         activeCodeService.useActiveCode(innerUser.getId(), cardGrade.getActiveCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getActiveCodeNo() + "个激活码");
         return createUser;
@@ -642,28 +715,28 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         //人民币兑换交易币汇率
         Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
         Double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
-        Double payCoinAmt=payRmbAmt*payScale;
+        Double payCoinAmt = payRmbAmt * payScale;
         if (activeUser.getPayAmt() < payCoinAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
         }
 
         Double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
-        Double tradeCoinAmt=tradeRmbAmt*tradeScale;
+        Double tradeCoinAmt = tradeRmbAmt * tradeScale;
         if (activeUser.getTradeAmt() < tradeCoinAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足，无法激活账号");
         }
         // 扣除虚拟币
-        this.updatePayAmtByUserId(activeUser.getId(),-payCoinAmt);
-        this.updateTradeAmtByUserId(activeUser.getId(),-tradeCoinAmt);
+        this.updatePayAmtByUserId(activeUser.getId(), -payCoinAmt);
+        this.updateTradeAmtByUserId(activeUser.getId(), -tradeCoinAmt);
         //写入冻结
-        userDetailService.updateForzenPayAmtByUserId(activeUser.getId(),payCoinAmt);
-        userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(),tradeCoinAmt);
+        userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payCoinAmt);
+        userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeCoinAmt);
         User updateActiveUser = new User();
         updateActiveUser.setId(activeUser.getId());
         updateActiveUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
         updateActiveUser.setStatus(UserStatusType.WAITACTIVATE.getCode());
         //修改用户状态
-        this.updateById(updateActiveUser.getId(),updateActiveUser);
+        this.updateById(updateActiveUser.getId(), updateActiveUser);
         //生成保单
         tradeOrderService.createInsuranceTradeOrder(activeUser, cardGrade);
         return new JsonResult(ResultCode.SUCCESS.getCode(), UserStatusType.WAITACTIVATE.getMsg());
@@ -728,16 +801,72 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Override
     public Boolean intervalActice(String userId) {
         TransferCode transferCode = new TransferCode();
-        User user =this.readById(userId);
+        User user = this.readById(userId);
         CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
         this.updateUserActiveCode(userId, -cardGrade.getActiveCodeNo());
         transferCode.setType(CodeType.ACTIVATECODE.getCode());
-        transferCode.setRemark("用户出局后重新激活,使用 "+cardGrade.getActiveCodeNo()+"个激活码");
+        transferCode.setRemark("用户出局后重新激活,使用 " + cardGrade.getActiveCodeNo() + "个激活码");
         transferCode.setSendUserId(userId);
         transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
         transferCode.setTransferNo(-cardGrade.getActiveCodeNo());
         transferCodeService.create(transferCode);
-        this.updateUserStatus(userId,UserStatusType.ACTIVATESUCCESSED.getCode());
+        this.updateUserStatus(userId, UserStatusType.ACTIVATESUCCESSED.getCode());
+        return true;
+    }
+
+
+    /**
+     * 用户升级
+     *
+     * @param loginUser
+     * @param targetCardGrade
+     * @param upGradeType
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public Boolean upGrade(User loginUser, CardGrade targetCardGrade, UpGradeType upGradeType) throws Exception {
+        try {
+//            Double insurancePayScale = parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE);
+//            Double insuranceTradeScale = parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE);
+//
+//
+//
+//            /**扣激活码**/
+//            User updateUser = new User();
+//            updateUser.setId(loginUser.getId());
+//            updateUser.setActiveCodeNo(loginUser.getActiveCodeNo() - targetCardGrade.getActiveCodeNo());
+//            updateUser.setRegisterCodeNo(loginUser.getRegisterCodeNo() - targetCardGrade.getRegisterCodeNo());
+//            updateUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
+//            this.updateById(updateUser.getId(), updateUser);
+//
+//            //冻结账号虚拟币 激活账号
+//            User updateActiveUser = new User();
+//            updateActiveUser.setId(loginUser.getId());
+//            //TODO 扣减账号币数量 对应人民币市值换算
+//            updateActiveUser.setTradeAmt(CurrencyUtil.subtract(loginUser.getTradeAmt(), targetCardGrade.getInsuranceAmt() * insuranceTradeScale, 4));
+//            updateActiveUser.setPayAmt(CurrencyUtil.subtract(loginUser.getPayAmt(), targetCardGrade.getInsuranceAmt() * insurancePayScale, 4));
+//            updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
+//            this.updateById(updateActiveUser.getId(), updateActiveUser);
+//
+//            UserDetail activeUserDetail = userDetailService.readById(loginUser.getId());
+//            //写入冻结
+//            UserDetail updateActiveUserDetailContion = new UserDetail();
+//            updateActiveUserDetailContion.setId(activeUserDetail.getId());
+//            updateActiveUserDetailContion.setForzenPayAmt(CurrencyUtil.multiply(targetCardGrade.getInsuranceAmt(), insurancePayScale, 4));
+//            updateActiveUserDetailContion.setForzenTradeAmt(CurrencyUtil.multiply(targetCardGrade.getInsuranceAmt(), insuranceTradeScale, 4));
+//            userDetailService.updateById(updateActiveUserDetailContion.getId(), updateActiveUserDetailContion);
+
+            if (upGradeType.getCode() == UpGradeType.ORIGINUPGRADE.getCode().intValue()) {
+                this.originUpgrade(loginUser.getId(), targetCardGrade.getGrade());
+            } else if (upGradeType.getCode() == UpGradeType.COVERAGEUPGRADE.getCode().intValue()) {
+                this.coverageUpgrade(loginUser.getId(), targetCardGrade.getGrade());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 }

@@ -7,16 +7,16 @@ import com.base.page.Page;
 import com.base.page.PageResult;
 import com.base.page.ResultCode;
 import com.constant.*;
-import com.service.*;
-import com.vo.*;
-import com.utils.classutils.MyBeanUtils;
 import com.model.*;
 import com.redis.Strings;
+import com.service.*;
 import com.utils.DateUtils.DateUtils;
+import com.utils.classutils.MyBeanUtils;
 import com.utils.codeutils.Md5Util;
 import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.ToolUtil;
+import com.vo.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +53,8 @@ public class UserController {
     private UserGradeRecordService userGradeRecordService;
     @Autowired
     private UserDepartmentService userDepartmentService;
+    @Autowired
+    private ParameterService parameterService;
 
 
     /**
@@ -174,22 +176,22 @@ public class UserController {
         if (loginUser.getActiveCodeNo() < cardGrade.getRegisterCodeNo()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
         }
-        User inviterUser=null;
-        if (vo.getContactUserId()!=loginUser.getUid()){
+        User inviterUser = null;
+        if (vo.getContactUserId() != loginUser.getUid()) {
             User inviterCondition = new User();
             inviterCondition.setUid(loginUser.getUid());
             inviterUser = userService.readOne(inviterCondition);
             if (inviterUser == null) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "接点人信息有误");
             }
-        }else {
-            inviterUser=loginUser;
+        } else {
+            inviterUser = loginUser;
         }
         User model = new User();
         BeanUtils.copyProperties(model, vo);
         model.setPayWord(vo.getPayword());
         userService.innerRegister(loginUser, inviterUser, model, cardGrade);
-        return new JsonResult(ResultCode.SUCCESS.getCode(),"注册成功");
+        return new JsonResult(ResultCode.SUCCESS.getCode(), "注册成功");
     }
 
 
@@ -326,14 +328,24 @@ public class UserController {
         //生成保单时交易币必须有的比例数量
         double insuranceTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE), 0d);
 
+        Double needPayCoin = parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE) * CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4);
+        Double needTradeCoin = parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE) * CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4);
         /**校验虚拟币**/
-        if (loginUser.getPayAmt() < CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4)) {
+        if (loginUser.getPayAmt() < needPayCoin) {
             return new JsonResult(ResultCode.ERROR.getCode(), "购物币不足，无法激活");
         }
-        if (loginUser.getTradeAmt() < CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4)) {
+        if (loginUser.getTradeAmt() < needTradeCoin) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");
         }
+//        upGrade(vo, loginUser, cardGrade, insurancePayScale, insuranceTradeScale);
+        Boolean flag = userService.upGrade(loginUser, cardGrade, UpGradeType.fromCode(vo.getUpGradeWay()));
+        if (flag) {
+            return new JsonResult(ResultCode.SUCCESS.getCode(), "升级报单成功，等待结算");
+        }
+        return new JsonResult(ResultCode.ERROR.getCode(), "升级失败，请联系客服");
+    }
 
+    private void upGrade(@RequestBody UpgradeUserVo vo, User loginUser, CardGrade cardGrade, double insurancePayScale, double insuranceTradeScale) throws Exception {
         /**扣激活码**/
         User updateUser = new User();
         updateUser.setId(loginUser.getId());
@@ -364,13 +376,12 @@ public class UserController {
         } else if (vo.getUpGradeWay().intValue() == UpGradeType.COVERAGEUPGRADE.getCode().intValue()) {
             userService.coverageUpgrade(loginUser.getId(), vo.getGrade());
         }
-        return new JsonResult();
     }
 
     /**
      * 升级记录
      *
-     * @param page       分页查询
+     * @param page 分页查询
      */
     @ResponseBody
     @RequestMapping(value = "/upGradeRecord", method = RequestMethod.GET)
@@ -390,14 +401,14 @@ public class UserController {
             /*if (upGradeWay == null || upGradeWay < 0) {
                 model.setUpGradeType(upGradeWay);
             }*/
-            int count = userGradeRecordService.readCount(model);
+            Integer count = userGradeRecordService.readCount(model);
             List<UserGradeRecordVo> rslist = null;
-            if (count > 0) {
+            if (count !=null && count > 0) {
                 List<UserGradeRecord> list = userGradeRecordService.readList(model, page.getPageNo(), page.getPageSize(), count);
                 UserGradeRecordVo po = null;
                 rslist = new ArrayList<UserGradeRecordVo>();
-                for(UserGradeRecord record : list){
-                    po=MyBeanUtils.copyProperties(record,UserGradeRecordVo.class);
+                for (UserGradeRecord record : list) {
+                    po = MyBeanUtils.copyProperties(record, UserGradeRecordVo.class);
                     po.setUpGradeType(record.getUpGradeType());
                     po.setHistoryGrade(record.getHistoryGrade());
                     po.setCurrencyGrade(record.getCurrencyGrade());
@@ -447,8 +458,8 @@ public class UserController {
         if (loginUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
         }
-        User updateUser =new User();
-        UserDetail upateDetail=new UserDetail();
+        User updateUser = new User();
+        UserDetail upateDetail = new UserDetail();
         if (ToolUtil.isNotEmpty(vo.getNickName())) {
             updateUser.setNickName(vo.getNickName());
         }
@@ -475,12 +486,12 @@ public class UserController {
         }
         if (ToolUtil.isNotEmpty(vo.getOutTradeAddress())) {
             upateDetail.setOutTradeAddress(vo.getOutTradeAddress());
-     }
+        }
 
         // 更新用户信息
-        userService.updateById(loginUser.getId(),updateUser);
-        userDetailService.updateById(loginUser.getId(),upateDetail);
-        return new JsonResult(ResultCode.SUCCESS.getCode(),"保存成功");
+        userService.updateById(loginUser.getId(), updateUser);
+        userDetailService.updateById(loginUser.getId(), upateDetail);
+        return new JsonResult(ResultCode.SUCCESS.getCode(), "保存成功");
     }
 
 
@@ -594,17 +605,17 @@ public class UserController {
         if (StringUtils.isEmpty(vo.getPhoneNumber())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "手机号不能为空");
         }
-        if(StringUtils.isEmpty(vo.getPhoneCode())){
+        if (StringUtils.isEmpty(vo.getPhoneCode())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "验证码不能为空");
         }
-        if(StringUtils.isEmpty(vo.getNewPassWord())){
+        if (StringUtils.isEmpty(vo.getNewPassWord())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新密码不能为空");
         }
-        if(!vo.getNewPassWord().equals(vo.getConfirmPassWord())){
+        if (!vo.getNewPassWord().equals(vo.getConfirmPassWord())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "两次密码输入不一致");
         }
-        String rsCode = Strings.get(RedisKey.SMS_CODE.getKey() +vo.getPhoneNumber());
-        if(org.springframework.util.StringUtils.isEmpty(rsCode) || !rsCode.equalsIgnoreCase(vo.getPhoneCode())){
+        String rsCode = Strings.get(RedisKey.SMS_CODE.getKey() + vo.getPhoneNumber());
+        if (org.springframework.util.StringUtils.isEmpty(rsCode) || !rsCode.equalsIgnoreCase(vo.getPhoneCode())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "验证码错误或者失效了");
         }
 
@@ -620,13 +631,12 @@ public class UserController {
         updateUser.setUpdateTime(new Date());
 
         //修改成功，删除验证码
-        Strings.del(RedisKey.SMS_CODE.getKey() +vo.getPhoneNumber());
+        Strings.del(RedisKey.SMS_CODE.getKey() + vo.getPhoneNumber());
 
         // 更新用户信息
         userService.updateById(loginUser.getId(), updateUser);
         return new JsonResult();
     }
-
 
 
     /**
@@ -654,12 +664,12 @@ public class UserController {
             updateUser.setUpdateTime(new Date());
             userService.updateById(loginUser.getId(), updateUser);
             //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
-           return userService.innerActicveUser(loginUser, cardGrade);
+            return userService.innerActicveUser(loginUser, cardGrade);
 
-        }else if (loginUser.getStatus() == UserStatusType.ACTIVATESUCCESSED.getCode()){
-            return new JsonResult(ResultCode.SUCCESS.getCode(),"账号已经是激活状态");
+        } else if (loginUser.getStatus() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
+            return new JsonResult(ResultCode.SUCCESS.getCode(), "账号已经是激活状态");
         }
-        return new JsonResult(ResultCode.ERROR.getCode(),"无法激活");
+        return new JsonResult(ResultCode.ERROR.getCode(), "无法激活");
     }
 
 
@@ -678,13 +688,13 @@ public class UserController {
             JsonResult x = checkLoginUser(loginUser);
             if (x != null) return x;
             UserDetail userDetail = userDetailService.readById(loginUser.getId());
-            if (userDetail==null){
-                return  new JsonResult(ResultCode.ERROR.getCode(),"获取用户信息失败");
+            if (userDetail == null) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "获取用户信息失败");
             }
             Map<String, String> rs = new HashedMap();
-            if (UserStatusType.INNER_REGISTER_SUCCESSED.getCode()==loginUser.getStatus()){
+            if (UserStatusType.INNER_REGISTER_SUCCESSED.getCode() == loginUser.getStatus()) {
                 CardGrade userCard = cardGradeService.getUserCardGrade(loginUser.getCardGrade());
-                if (userCard==null){
+                if (userCard == null) {
                     return new JsonResult(ResultCode.ERROR.getCode(), "无法查询到会员开卡等级");
                 }
                 //人民币兑换支付币汇率
@@ -692,9 +702,9 @@ public class UserController {
                 //人民币兑换交易币汇率
                 Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
                 //支付币兑换人民币汇率
-                Double payConverRmbScale = CurrencyUtil.getPoundage(1/payScale,1d,2);
+                Double payConverRmbScale = CurrencyUtil.getPoundage(1 / payScale, 1d, 2);
                 //交易币兑换人民币汇率
-                Double tradeConverRmbScale = CurrencyUtil.getPoundage(1/tradeScale,1d,2);
+                Double tradeConverRmbScale = CurrencyUtil.getPoundage(1 / tradeScale, 1d, 2);
                 //生成保单时支付币必须有的比例数量
                 Double insurancePayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE), 0d);
                 //生成保单时交易币必须有的比例数量
@@ -712,25 +722,25 @@ public class UserController {
                 //需要补充购物币数量
                 Double needBuyPayAmt = payAmount - loginUser.getPayAmt();
                 needBuyPayAmt = needBuyPayAmt > 0 ? needBuyPayAmt : 0d;
-                UserDetail updateModel =new UserDetail();
-                Boolean isUpdate =false;
-                if (ToolUtil.isEmpty(userDetail.getInPayAddress())){
-                    userDetail.setInPayAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY.getCode()),loginUser.getUid()+""));
+                UserDetail updateModel = new UserDetail();
+                Boolean isUpdate = false;
+                if (ToolUtil.isEmpty(userDetail.getInPayAddress())) {
+                    userDetail.setInPayAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY.getCode()), loginUser.getUid() + ""));
                     updateModel.setInPayAddress(userDetail.getInPayAddress());
-                    isUpdate=true;
+                    isUpdate = true;
                 }
-                if (ToolUtil.isEmpty(userDetail.getInTradeAddress())){
-                    userDetail.setInTradeAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE.getCode()),loginUser.getUid()+""));
+                if (ToolUtil.isEmpty(userDetail.getInTradeAddress())) {
+                    userDetail.setInTradeAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE.getCode()), loginUser.getUid() + ""));
                     updateModel.setInTradeAddress(userDetail.getInTradeAddress());
-                    isUpdate=true;
+                    isUpdate = true;
                 }
-                if (isUpdate){
-                    userDetailService.updateById(userDetail.getId(),updateModel);
+                if (isUpdate) {
+                    userDetailService.updateById(userDetail.getId(), updateModel);
                 }
 
                 //最大收益
                 Double cardMaxproft = userCard.getInsuranceAmt() * userCard.getOutMultiple();
-                rs.put("tradeConverRmbScale", tradeConverRmbScale +"");
+                rs.put("tradeConverRmbScale", tradeConverRmbScale + "");
                 rs.put("payConverRmbScale", payConverRmbScale + "");
                 rs.put("payAmount", payAmount + "");
                 rs.put("tradeAmount", tradeAmount + "");
@@ -742,11 +752,11 @@ public class UserController {
                 rs.put("cardMaxproft", cardMaxproft + "");
                 rs.put("inTradeAddress", userDetail.getInTradeAddress());
                 rs.put("inPayAddress", userDetail.getInPayAddress());
-                rs.put("inEquityAddress", userDetail.getInEquityAddress() );
-                rs.put("payAmt",loginUser.getPayAmt() + "");
-                rs.put("tradeAmt", loginUser.getTradeAmt() + "" );
+                rs.put("inEquityAddress", userDetail.getInEquityAddress());
+                rs.put("payAmt", loginUser.getPayAmt() + "");
+                rs.put("tradeAmt", loginUser.getTradeAmt() + "");
             }
-            rs.put("status", loginUser.getStatus()+"");
+            rs.put("status", loginUser.getStatus() + "");
             return new JsonResult(rs);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -765,7 +775,7 @@ public class UserController {
             if (!userStatus.contains(loginUser.getStatus())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
             }
-            if (loginUser.getCardGrade()==null || loginUser.getCardGrade()==0){
+            if (loginUser.getCardGrade() == null || loginUser.getCardGrade() == 0) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "账号初始化数据有误");
             }
         }

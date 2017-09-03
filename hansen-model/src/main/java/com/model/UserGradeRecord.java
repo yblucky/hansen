@@ -36,7 +36,7 @@ public class UserGradeRecord extends BaseModel {
      * */
     private double amt;
     /**
-     * 1：原点升级 2 覆盖升级
+     * 2：原点升级 3 覆盖升级
      * */
     private Integer upGradeType;
 

@@ -150,7 +150,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
                 //更新用户星级
                 userService.updateUserGradeByUserId(referId, grade.getGrade());
                 //写入用户升级记录
-                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade, UpGradeType.COVERAGEUPGRADE.getCode(), orderNo);
+                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade,grade.getGrade(), UpGradeType.STARGRADE.getCode(), orderNo);
             }
             referId = refferUser.getFirstReferrer();
         }
@@ -166,8 +166,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         userService.manageBonus(activeUser.getId(), tradeOrder);
         //写入极差奖待做任务领取奖励记录，有则写
         userService.differnceBonus(activeUser.getId(), tradeOrder);
-        //写入用户升级记录
-        userGradeRecordService.addGradeRecord(activeUser, GradeRecordType.CARDUPDATE, activeUser.getGrade(), tradeOrder.getCardGrade(), tradeOrder.getOrderNo());
+//        //写入用户升级记录
+//        userGradeRecordService.addGradeRecord(activeUser, GradeRecordType.CARDUPDATE, activeUser.getGrade(), tradeOrder.getCardGrade(), tradeOrder.getOrderNo());
         // 更改订单的结算状态
         TradeOrder updateOrder = new TradeOrder();
         updateOrder.setStatus(OrderStatus.HANDLED.getCode());

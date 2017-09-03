@@ -10,5 +10,5 @@ import com.model.UserGradeRecord;
  */
 public interface UserGradeRecordService extends CommonService<UserGradeRecord> {
 
-    void addGradeRecord(User user, GradeRecordType recordType, Integer historyGrade, Integer upGradeType, String orderNo);
+    void addGradeRecord(User user, GradeRecordType recordType, Integer historyGrade,Integer afterUpGrade, Integer upGradeType, String orderNo);
 }

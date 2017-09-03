@@ -6,12 +6,22 @@ package com.constant;
  */
 public enum UpGradeType {
 
-    /**保单升级 */
+    /**
+     * 保单升级
+     */
     INSURANCE(1, "保单升级"),
-    /** 原点升级 */
+    /**
+     * 原点升级 补差价升级
+     */
     ORIGINUPGRADE(2, "原点升级"),
-    /** 覆盖升级 */
-    COVERAGEUPGRADE(3, "覆盖升级");
+    /**
+     * 覆盖升级
+     */
+    COVERAGEUPGRADE(3, "覆盖升级"),
+    /**
+     * 星级变更
+     */
+    STARGRADE(4, "星级变更");
 
 
     private final Integer code;
@@ -20,8 +30,8 @@ public enum UpGradeType {
 
     public static UpGradeType fromCode(Integer code) {
         try {
-            for(UpGradeType upGradeType : UpGradeType.values()){
-                if(upGradeType.getCode().intValue() == code.intValue()){
+            for (UpGradeType upGradeType : UpGradeType.values()) {
+                if (upGradeType.getCode().intValue() == code.intValue()) {
                     return upGradeType;
                 }
             }

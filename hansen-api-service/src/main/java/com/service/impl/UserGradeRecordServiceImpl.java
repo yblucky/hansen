@@ -30,7 +30,7 @@ public class UserGradeRecordServiceImpl extends CommonServiceImpl<UserGradeRecor
     }
 
     @Transactional
-    public void addGradeRecord(User user, GradeRecordType recordType, Integer historyGrade, Integer upGradeType, String orderNo){
+    public void addGradeRecord(User user, GradeRecordType recordType, Integer historyGrade,Integer afterUpGrade, Integer upGradeType, String orderNo){
         UserGradeRecord record = new UserGradeRecord();
         record.setUserId(user.getId());
         record.setCurrencyGrade(user.getGrade());
@@ -38,6 +38,7 @@ public class UserGradeRecordServiceImpl extends CommonServiceImpl<UserGradeRecor
         record.setUpGradeType(upGradeType);
         record.setRemark(recordType.getMsg());
         record.setHistoryGrade(historyGrade);
+        record.setCurrencyGrade(afterUpGrade);
         record.setOrderNo(orderNo);
         record.setAmt(user.getInsuranceAmt());
         this.create(record);

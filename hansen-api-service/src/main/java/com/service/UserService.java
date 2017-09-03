@@ -3,10 +3,13 @@ package com.service;
 import com.base.page.JsonResult;
 import com.base.service.CommonService;
 import com.constant.RecordType;
+import com.constant.UpGradeType;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @date 2016年11月27日
@@ -29,7 +32,7 @@ public interface UserService extends CommonService<User> {
 
     void differnceBonus(String userId, TradeOrder order) throws Exception;
 
-    void originUpgrade(String userId, Integer cardGrade);
+    void originUpgrade(String userId, Integer cardGrade) throws  Exception;
 
     void coverageUpgrade(String userId, Integer cardGrade) throws Exception;
 
@@ -70,4 +73,6 @@ public interface UserService extends CommonService<User> {
     User readUserByLoginName(String loginName);
 
     Boolean intervalActice(String userId);
+
+    Boolean  upGrade(User loginUser, CardGrade cardGrade, UpGradeType upGradeType) throws Exception;
 }

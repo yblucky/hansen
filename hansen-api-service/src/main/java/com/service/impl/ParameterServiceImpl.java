@@ -2,6 +2,7 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
+import com.constant.Constant;
 import com.mapper.ParameterMapper;
 import com.model.Parameter;
 import com.service.ParamUtil;
@@ -81,8 +82,8 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
             Double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
             //人民币兑换交易币汇率
             Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
-            map.put("payScale", payScale);
-            map.put("tradeScale", tradeScale);
+            map.put(Constant.RMB_CONVERT_PAY_SCALE, payScale);
+            map.put(Constant.RMB_CONVERT_TRADE_SCALE, tradeScale);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("从系统参数表查询汇率出错");
