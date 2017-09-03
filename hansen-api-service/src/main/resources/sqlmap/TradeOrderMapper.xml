@@ -62,6 +62,9 @@
             <if test="taskTime != null">
                 AND createTime &lt;= #{taskTime}
             </if>
+            <if test="userId != null">
+                AND receviceUserId = #{userId}
+            </if>
             limit #{startRow}, #{pageSize};
         </where>
     </select>
@@ -97,5 +100,38 @@
 
     <update id="deleteById">
         update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <update id="batchUpdateTaskCycle">
+        UPDATE
+        <include refid="table_name"/>
+        SET taskCycle = taskCycle-1
+        where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+    </update>
+
+    <update id="batchUpdateSignCycle">
+        UPDATE
+        <include refid="table_name"/>
+        SET signCycle = signCycle-1
+        where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+    </update>
+
+    <update id="batchUpdateTaskCycleDefault">
+        UPDATE
+        <include refid="table_name"/>
+        SET taskCycle = #{taskCycle},signCycle = signCycle-1
+        where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+    </update>
+
+
+    <update id="batchUpdateOrderStatus">
+        UPDATE
+        <include refid="table_name"/>
+        SET status = 2
+        where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
     </update>
 </mapper>

@@ -183,7 +183,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             //冻结用户账号，等待下次激活
             userService.updateUserStatus(userId, UserStatusType.OUT.getCode());
         }
-        List<TradeOrder> orderList = tradeOrderService.readRewardList(new Date(), 1, 100);
+        List<TradeOrder> orderList = tradeOrderService.readRewardList(userId,new Date(), 1, 100);
         //需要更新任务次数的id集合
         List<String> orderIdList1 = new ArrayList<>();
         //需要更新领取奖励次数的id集合

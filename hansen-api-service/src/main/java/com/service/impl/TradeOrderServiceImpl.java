@@ -176,8 +176,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     }
 
     @Override
-    public List<TradeOrder> readRewardList(Date taskTime, Integer startRow, Integer pageSize) throws Exception {
-        return tradeOrderMapper.readRewardList(taskTime, startRow, pageSize);
+    public List<TradeOrder> readRewardList(String userId,Date taskTime, Integer startRow, Integer pageSize) throws Exception {
+        return tradeOrderMapper.readRewardList(userId,taskTime, startRow, pageSize);
     }
 
     @Override

@@ -18,7 +18,7 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Boolean handleInsuranceTradeOrder(String orderNo) throws Exception;
 
-    List<TradeOrder> readRewardList(Date taskTime, Integer startRow, Integer pageSize) throws Exception;
+    List<TradeOrder> readRewardList(String userId,Date taskTime, Integer startRow, Integer pageSize) throws Exception;
 
     Integer batchUpdateSignCycle(List<String> idList) throws Exception;
 
