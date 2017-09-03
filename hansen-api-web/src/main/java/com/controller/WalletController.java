@@ -80,7 +80,7 @@ public class WalletController {
             }
         } else if (CurrencyType.PAY.getCode() == vo.getWalletOrderType()) {
             if (user.getPayAmt() < vo.getAmount()) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足");
+                return new JsonResult(ResultCode.ERROR.getCode(), "购物币数量不足");
             }
         } else if (CurrencyType.EQUITY.getCode() == vo.getWalletOrderType()) {
             if (user.getEquityAmt() < vo.getAmount()) {
@@ -136,7 +136,7 @@ public class WalletController {
             }
         } else if (WalletOrderType.PAY_COIN_DRWA.getCode() == vo.getWalletOrderType()) {
             if (user.getPayAmt() < vo.getAmount()) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足");
+                return new JsonResult(ResultCode.ERROR.getCode(), "购物币数量不足");
             }
         } else if (WalletOrderType.EQUITY_COIN_DRWA.getCode() == vo.getWalletOrderType()) {
             if (user.getEquityAmt() < vo.getAmount()) {

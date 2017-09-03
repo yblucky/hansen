@@ -644,7 +644,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         Double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
         Double payCoinAmt=payRmbAmt*payScale;
         if (activeUser.getPayAmt() <= payCoinAmt) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
+            return new JsonResult(ResultCode.ERROR.getCode(), "购物币数量不足，无法激活账号");
         }
 
         Double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);

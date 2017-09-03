@@ -176,7 +176,7 @@ public class CoinController extends BaseController {
                 address = coinUserDetail.getOutTradeAddress();
             } else if (currencyType.getCode() == CurrencyType.PAY.getCode()) {
                 if (ToolUtil.isEmpty(coinUserDetail.getOutPayAddress())) {
-                    respBody.add(RespCodeEnum.ERROR.getCode(), "用户未添加支付币提币地址");
+                    respBody.add(RespCodeEnum.ERROR.getCode(), "用户未添加购物币提币地址");
                     return respBody;
                 }
                 address = coinUserDetail.getOutPayAddress();

@@ -89,7 +89,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             upGradeType = UpGradeType.INSURANCE.getCode();
             double payRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
             if (activeUser.getPayAmt() < payRmbAmt) {
-                logger.error("支付币数量不足，无法激活账号");
+                logger.error("购物币数量不足，无法激活账号");
             }
 
 

@@ -558,7 +558,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         //冻结账号虚拟币 激活账号
         double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
         if (activeUser.getPayAmt() < payRmbAmt) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
+            return new JsonResult(ResultCode.ERROR.getCode(), "购物币数量不足，无法激活账号");
         }
 
         double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);

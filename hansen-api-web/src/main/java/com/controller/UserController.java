@@ -240,7 +240,7 @@ public class UserController {
         }
         /**校验虚拟币**/
         if (activeUser.getPayAmt() < cardGrade.getInsuranceAmt() * 50 / 100) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "支付币不足，无法激活");
+            return new JsonResult(ResultCode.ERROR.getCode(), "购物币不足，无法激活");
         }
         if (activeUser.getTradeAmt() < cardGrade.getInsuranceAmt() * 50 / 100) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");
@@ -328,7 +328,7 @@ public class UserController {
 
         /**校验虚拟币**/
         if (loginUser.getPayAmt() < CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4)) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "支付币不足，无法激活");
+            return new JsonResult(ResultCode.ERROR.getCode(), "购物币不足，无法激活");
         }
         if (loginUser.getTradeAmt() < CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");

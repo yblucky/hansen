@@ -20,17 +20,17 @@ public enum WalletOrderType {
      */
     TRADE_COIN_RECHARGE (3, "交易币充币"),
     /**
-     *支付币内部转账
+     *购物币内部转账
      */
-    PAY_COIN_INNER_TRANSFER(4, "支付币内部转账"),
+    PAY_COIN_INNER_TRANSFER(4, "购物币内部转账"),
     /**
-     * 支付币提币
+     * 购物币提币
      */
-    PAY_COIN_DRWA(5, "支付币提币"),
+    PAY_COIN_DRWA(5, "购物币提币"),
     /**
-     * 支付币充币
+     * 购物币充币
      */
-    PAY_COIN_RECHARGE (6, "支付币充币"),
+    PAY_COIN_RECHARGE (6, "购物币充币"),
 
     /**
      * 股权币充币
@@ -49,9 +49,9 @@ public enum WalletOrderType {
      */
     TRADE_COIN_BACK_CHARGE(10, "交易币管理员充值"),
     /**
-     * 支付币管理员充值
+     * 购物币管理员充值
      */
-    PAY_COIN_BACK_CHARGE(11, "支付币管理员充值"),
+    PAY_COIN_BACK_CHARGE(11, "购物币管理员充值"),
     /**
      * 股权币提币
      */
