@@ -250,7 +250,7 @@ public class ActiveCodeController {
         }
         Boolean flag = userService.intervalActice(user.getId());
         if (flag){
-            return new JsonResult(ResultCode.SUCCESS.getCode(), "激活成功");
+            return new JsonResult(ResultCode.SUCCESS.getCode(),   "激活成功");
         }
         return new JsonResult(ResultCode.ERROR.getCode(), "激活失败");
     }
