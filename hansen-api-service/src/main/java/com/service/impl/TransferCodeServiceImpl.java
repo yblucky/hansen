@@ -38,5 +38,4 @@ public class TransferCodeServiceImpl extends CommonServiceImpl<TransferCode> imp
     public List<TransferCode> readListByUserId(String userId, Page page) {
         return transferCodeMapper.readListByUserId(userId,page.getStartRow(),page.getPageSize());
     }
-
 }

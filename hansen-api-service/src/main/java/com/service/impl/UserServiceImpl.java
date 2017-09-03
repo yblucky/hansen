@@ -47,6 +47,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     private UserDepartmentService userDepartmentService;
     @Autowired
     private ActiveCodeService activeCodeService;
+    @Autowired
+    private TransferCodeService transferCodeService  ;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -628,7 +630,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     public void updateUserStatus(String userId, Integer status) {
         User updateUser = new User();
         updateUser.setId(userId);
-        updateUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
+        updateUser.setStatus(status);
         this.updateById(updateUser.getId(), updateUser);
     }
 
@@ -721,5 +723,21 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Override
     public User readUserByLoginName(String loginName) {
         return userMapper.readUserByLoginName(loginName);
+    }
+
+    @Override
+    public Boolean intervalActice(String userId) {
+        TransferCode transferCode = new TransferCode();
+        User user =this.readById(userId);
+        CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
+        this.updateUserActiveCode(userId, -cardGrade.getActiveCodeNo());
+        transferCode.setType(CodeType.ACTIVATECODE.getCode());
+        transferCode.setRemark("用户出局后重新激活,使用 "+cardGrade.getActiveCodeNo()+"个激活码");
+        transferCode.setSendUserId(userId);
+        transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
+        transferCode.setTransferNo(-cardGrade.getActiveCodeNo());
+        transferCodeService.create(transferCode);
+        this.updateUserStatus(userId,UserStatusType.ACTIVATESUCCESSED.getCode());
+        return true;
     }
 }

@@ -85,6 +85,7 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         model.setSignTime(new Date());
         model.setUserId(userId);
         model.setRemark(remark);
+        model.setAmt(amt);
         model.setStatus(SignType.WAITING_SIGN.getCode());
         this.create(model);
         return model;

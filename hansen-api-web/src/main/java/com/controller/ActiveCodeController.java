@@ -229,4 +229,29 @@ public class ActiveCodeController {
         }
         return new JsonResult(pageResult);
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/intervalActice", method = RequestMethod.GET)
+    public JsonResult intervalActice(HttpServletRequest request) {
+        Token token = TokenUtil.getSessionUser(request);
+        User user = userService.readById(token.getId());
+        if (user == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
+        }
+        if (UserStatusType.OUT.getCode() != user.getStatus()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "不是出局状态，不可激活");
+        }
+        CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
+        if (cardGrade==null){
+            return new JsonResult(ResultCode.ERROR.getCode(), "用户开卡等级有误");
+        }
+        if (user.getActiveCodeNo()<cardGrade.getActiveCodeNo()){
+            return new JsonResult(ResultCode.ERROR.getCode(), "激活不足,无法激活账户");
+        }
+        Boolean flag = userService.intervalActice(user.getId());
+        if (flag){
+            return new JsonResult(ResultCode.SUCCESS.getCode(), "激活成功");
+        }
+        return new JsonResult(ResultCode.ERROR.getCode(), "激活失败");
+    }
 }

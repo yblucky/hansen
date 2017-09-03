@@ -68,4 +68,6 @@ public interface UserService extends CommonService<User> {
     JsonResult innerActicveUser(User activeUser, CardGrade cardGrade) throws Exception;
 
     User readUserByLoginName(String loginName);
+
+    Boolean intervalActice(String userId);
 }
