@@ -643,13 +643,13 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
         Double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
         Double payCoinAmt=payRmbAmt*payScale;
-        if (activeUser.getPayAmt() <= payCoinAmt) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "购物币数量不足，无法激活账号");
+        if (activeUser.getPayAmt() < payCoinAmt) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
         }
 
         Double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
         Double tradeCoinAmt=tradeRmbAmt*tradeScale;
-        if (activeUser.getTradeAmt() <= tradeCoinAmt) {
+        if (activeUser.getTradeAmt() < tradeCoinAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足，无法激活账号");
         }
         // 扣除虚拟币
