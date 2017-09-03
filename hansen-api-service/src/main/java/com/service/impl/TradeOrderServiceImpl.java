@@ -67,6 +67,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         tradeOrder.setConfirmAmt(cardGrade.getInsuranceAmt());
         tradeOrder.setPoundage(0d);
         tradeOrder.setStatus(OrderStatus.PENDING.getCode());
+        tradeOrder.setTaskCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+        tradeOrder.setSignCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)));
         this.create(tradeOrder);
         return tradeOrder;
     }
@@ -107,6 +109,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             updateActiveUser.setId(activeUser.getId());
             updateActiveUser.setInsuranceAmt(tradeOrder.getAmt());
             updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
+            updateActiveUser.setRemainTaskNo(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
             updateActiveUser.setMaxProfits(cardGrade.getOutMultiple() * tradeOrder.getAmt());
             userService.updateById(updateActiveUser.getId(), updateActiveUser);
             UserDetail activeUserDetailContion = new UserDetail();

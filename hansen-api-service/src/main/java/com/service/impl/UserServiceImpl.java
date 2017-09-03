@@ -385,6 +385,14 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         model.setSignCycle(rewardInterval);
         model.setSource(recordType.getCode());
         model.setRemark(recordType.getMsg());
+        try {
+            model.setTaskCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+            model.setSignCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.setTaskCycle(0);
+            model.setSignCycle(0);
+        }
         tradeOrderService.create(model);
     }
 
@@ -433,6 +441,14 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         tradeOrder.setConfirmAmt(0d);
         tradeOrder.setPoundage(0d);
         tradeOrder.setStatus(OrderStatus.PENDING.getCode());
+        try {
+            tradeOrder.setTaskCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+            tradeOrder.setSignCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            tradeOrder.setTaskCycle(0);
+            tradeOrder.setSignCycle(0);
+        }
         tradeOrderService.create(tradeOrder);
         // TODO: 2017/8/3 点位升级成功后的记录
         userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getGrade(), UpGradeType.ORIGINUPGRADE.getCode(), tradeOrder.getOrderNo());
@@ -486,6 +502,14 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         tradeOrder.setConfirmAmt(0d);
         tradeOrder.setPoundage(0d);
         tradeOrder.setStatus(OrderStatus.PENDING.getCode());
+        try {
+            tradeOrder.setTaskCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+            tradeOrder.setSignCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            tradeOrder.setTaskCycle(0);
+            tradeOrder.setSignCycle(0);
+        }
         tradeOrderService.create(tradeOrder);
         userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getGrade(), UpGradeType.COVERAGEUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
