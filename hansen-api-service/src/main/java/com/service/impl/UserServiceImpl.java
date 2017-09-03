@@ -543,6 +543,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
 
         user.setFirstReferrer(loginUser.getId());
+        user.setRemainTaskNo(0);
         user.setSecondReferrer(loginUser.getFirstReferrer());
         user.setContactUserId(loginUser.getId());
         user.setPassword(Md5Util.MD5Encode(user.getPassword(), DateUtils.currentDateToggeter()));
@@ -590,6 +591,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         userDepartment.setUid(createUser.getUid());
         userDepartment.setUserId(createUser.getId());
         userDepartment.setId(ToolUtil.getUUID());
+        userDepartment.setPerformance(0d);
         userDepartmentService.createUserDepartment(userDepartment);
         /**扣注册码**/
         activeCodeService.useRegisterCode(innerUser.getId(), cardGrade.getRegisterCodeNo(),   "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");

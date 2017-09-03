@@ -65,7 +65,7 @@
 	</update>
 
 	<update id="deleteById">
-		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+		update <include refid="table_name"/> set status = 2,updateTime=now() where id = #{id}
 	</update>
 </mapper>
 

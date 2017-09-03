@@ -5,6 +5,7 @@ import com.base.TokenUtil;
 import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
+import com.constant.StatusType;
 import com.model.SysUser;
 import com.model.Task;
 import com.service.TaskService;
@@ -106,6 +107,7 @@ public class TaskController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "任务链接不能为空");
             return respBody;
         }
+        vo.setStatus(StatusType.TRUE.getCode());
         taskService.create(vo);
         respBody.add(RespCodeEnum.SUCCESS.getCode(),"新增任务成功");
         return respBody;
@@ -145,6 +147,7 @@ public class TaskController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "任务链接不能为空");
             return respBody;
         }
+        vo.setStatus(StatusType.TRUE.getCode());
         taskService.updateById(vo.getId(), vo);
         respBody.add(RespCodeEnum.SUCCESS.getCode(),"更新成功");
         return respBody;

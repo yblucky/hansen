@@ -8,18 +8,16 @@ import com.constant.CodeType;
 import com.constant.Constant;
 import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
-import com.model.ActiveCode;
 import com.model.TransferCode;
 import com.model.User;
 import com.model.WalletOrder;
-import com.service.ActiveCodeService;
 import com.service.TransferCodeService;
 import com.service.UserService;
 import com.service.WalletOrderService;
 import com.utils.toolutils.OrderNoUtil;
+import com.utils.toolutils.ToolUtil;
 import com.vo.BackReChargeVo;
 import com.vo.UserVo;
-import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +49,14 @@ public class ChargeController {
     public RespBody list(HttpServletRequest request, UserVo vo, Paging page) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
-        User condition = new User();
-        condition.setUid(vo.getUid());
+        User user=null;
         List<WalletOrder> list = new ArrayList<WalletOrder>();
-        User user = userService.readOne(condition);
+        String userId="";
+        if (ToolUtil.isNotEmpty(vo.getUid()) && vo.getUid()!=0){
+            User condition = new User();
+            condition.setUid(vo.getUid());
+            user = userService.readOne(condition);
+        }
         if (page.getPageNumber()==0){
             page.setPageNumber(1);
         }
@@ -64,27 +66,26 @@ public class ChargeController {
         Page page1= new Page();
         page1.setPageNo(page.getPageNumber());
         page1.setPageSize(page.getPageSize());
-        if (user == null) {
-            page.setTotalCount(0);
-        } else {
-             List<Integer> orderTypeList = new ArrayList<>();
-            orderTypeList.add(WalletOrderType.TRADE_COIN_BACK_CHARGE.getCode());
-            orderTypeList.add(WalletOrderType.PAY_COIN_BACK_CHARGE.getCode());
-            orderTypeList.add(WalletOrderType.EQUITY_COIN_BACK_CHARGE.getCode());
-
-            Integer c = walletOrderService.readOrderCount(user.getId(),orderTypeList);
-            if (c != null && c > 0) {
-                list = walletOrderService.readOrderList(user.getId(),orderTypeList,page1);
-                for (WalletOrder order:list){
-                    User u= userService.readById(order.getReceviceUserId());
-                    order.setRemark(u.getNickName());
-                    order.setReceviceUserId(u.getUid()+"");
-                }
-            }else {
-                c=0;
-            }
-            page.setTotalCount(c);
+        if (user!=null){
+            userId=user.getId();
         }
+        List<Integer> orderTypeList = new ArrayList<>();
+        orderTypeList.add(WalletOrderType.TRADE_COIN_BACK_CHARGE.getCode());
+        orderTypeList.add(WalletOrderType.PAY_COIN_BACK_CHARGE.getCode());
+        orderTypeList.add(WalletOrderType.EQUITY_COIN_BACK_CHARGE.getCode());
+
+        Integer c = walletOrderService.readOrderCount(userId,orderTypeList);
+        if (c != null && c > 0) {
+            list = walletOrderService.readOrderList(userId,orderTypeList,page1);
+            for (WalletOrder order:list){
+                User u= userService.readById(order.getReceviceUserId());
+                order.setRemark(u.getNickName());
+                order.setReceviceUserId(u.getUid()+"");
+            }
+        }else {
+            c=0;
+        }
+        page.setTotalCount(c);
         respBody.add(RespCodeEnum.SUCCESS.getCode(),"成功",page,list);
         respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功", page, list);
         return respBody;
@@ -134,6 +135,7 @@ public class ChargeController {
         addModel.setSendUserId(Constant.SYSTEM_USER_ID);
         addModel.setStatus(WalletOrderStatus.SUCCESS.getCode());
         if (vo.getPayAmt() != null && vo.getPayAmt() > 0) {
+            addModel.setId(ToolUtil.getUUID());
             addModel.setOrderNo(OrderNoUtil.get());
             addModel.setAmount(vo.getPayAmt());
             addModel.setConfirmAmt(vo.getPayAmt());
@@ -143,6 +145,7 @@ public class ChargeController {
             userService.updatePayAmtByUserId(chargeTargerUser.getId(), vo.getPayAmt());
         }
         if (vo.getTradeAmt() != null && vo.getTradeAmt() > 0) {
+            addModel.setId(ToolUtil.getUUID());
             addModel.setOrderNo(OrderNoUtil.get());
             addModel.setAmount(vo.getTradeAmt());
             addModel.setConfirmAmt(vo.getTradeAmt());
@@ -152,6 +155,7 @@ public class ChargeController {
             userService.updateTradeAmtByUserId(chargeTargerUser.getId(), vo.getTradeAmt());
         }
         if (vo.getEquityAmt() != null && vo.getEquityAmt() > 0) {
+            addModel.setId(ToolUtil.getUUID());
             addModel.setOrderNo(OrderNoUtil.get());
             addModel.setAmount(vo.getEquityAmt());
             addModel.setConfirmAmt(vo.getEquityAmt());

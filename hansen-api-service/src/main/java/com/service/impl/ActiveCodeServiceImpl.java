@@ -51,17 +51,16 @@ public class ActiveCodeServiceImpl extends CommonServiceImpl<ActiveCode> impleme
             userService.updateUserActiveCode(fromUserId, -transferNo);
             userService.updateUserActiveCode(toUserId, transferNo);
             transferCode.setType(CodeType.ACTIVATECODE.getCode());
-            transferCode.setRemark("用户转让激活码：" + from.getUid() + "  to  " + to.getUid()+ " "+transferNo+"个");
+            transferCode.setRemark("用户转让激活码：" + from.getUid() + "转让" + to.getUid()+ " "+transferNo+"个");
         }else if (codeType==CodeType.REGISTERCODE.getCode()){
             userService.updateUserRegisterCode(fromUserId, -transferNo);
             userService.updateUserRegisterCode(toUserId, transferNo);
             transferCode.setType(CodeType.REGISTERCODE.getCode());
-            transferCode.setRemark("用户转让注册码：" + from.getUid() + "  to  " + to.getUid()+ " "+transferNo+"个");
+            transferCode.setRemark("用户转让注册码：" + from.getUid() + "转让" + to.getUid()+ " "+transferNo+"个");
         }
         transferCode.setSendUserId(fromUserId);
         transferCode.setReceviceUserId(toUserId);
-        transferCode.setTransferNo(transferNo);
-
+        transferCode.setTransferNo(-transferNo);
         transferCodeService.create(transferCode);
         return true;
     }

@@ -307,17 +307,18 @@ public class WalletController {
 //            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
 //        }
 
-        WalletOrder condition = new WalletOrder();
-        condition.setOrderType(orderTypeList.get(0));
-        Integer count = walletOrderService.readCount(condition);
+//        WalletOrder condition = new WalletOrder();
+//        condition.setOrderType(orderTypeList.get(0));
+//        Integer count = walletOrderService.readCount(condition);
+        Integer count = 0;
         try {
-            if (count != null && count > 0) {
+//            if (count != null && count > 0) {
                 List<WalletOrder> orderList = new ArrayList<>();
                 pageResult = walletOrderService.readTransferList(user.getId(), orderTypeList, page);
                 BeanUtils.copyProperties(page,pageResult);
-            } else {
-                pageResult.setRows(Collections.emptyList());
-            }
+//            } else {
+//                pageResult.setRows(Collections.emptyList());
+//            }
             return new JsonResult(pageResult);
         } catch (Exception e) {
             e.printStackTrace();

@@ -72,7 +72,7 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
             userService.updateEquityAmtByUserId(fromUserId, -confirmAmount);
             userService.updateEquityAmtByUserId(toUserId, confirmAmount);
         }
-        this.addWalletOrder(fromUserId, toUserId, walletOrderType, amt, confirmAmount, poundage, WalletOrderStatus.SUCCESS);
+        this.addWalletOrder(fromUserId, toUserId, walletOrderType, -amt, -confirmAmount, poundage, WalletOrderStatus.SUCCESS);
         return true;
     }
 
@@ -142,11 +142,10 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         }
         PageResult<WalletOrder> pageResult = new PageResult<WalletOrder>();
         BeanUtils.copyProperties(pageResult, page);
-
         List<WalletOrder> list = walletOrderMapper.readTransferList(userId, orderType, page);
         if (ToolUtil.isEmpty(list)) {
             list = Collections.emptyList();
-
+            pageResult.setTotalSize(0);
         }
         pageResult.setTotalSize(list.size());
         pageResult.setRows(list);
