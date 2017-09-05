@@ -130,23 +130,16 @@ public class BillController {
     @ResponseBody
     @RequestMapping(value = "/statistic", method = RequestMethod.GET)
     public JsonResult inList(HttpServletRequest request) throws Exception {
-        JsonResult result = null;
-        Token token = TokenUtil.getSessionUser(request);
-        User user = userService.readById(token.getId());
-        if (user == null) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
-        }
-
-        List<Integer> sourceList = new ArrayList<>();
-        List<Integer> orderTypeList = new ArrayList<>();
-        sourceList.add(OrderType.PUSH.getCode());
-        sourceList.add(OrderType.MANAGE.getCode());
-        sourceList.add(OrderType.DIFFERENT.getCode());
-        sourceList.add(OrderType.EQUALITY.getCode());
-        sourceList.add(OrderType.RELASE.getCode());
-        List<TradeOrderVo> voList = new ArrayList<>();
-        Integer count = tradeOrderService.readRewardCountByOrderType(user.getId(), sourceList);
-
+//        List<Integer> sourceList = new ArrayList<>();
+//        List<Integer> orderTypeList = new ArrayList<>();
+//        sourceList.add(OrderType.PUSH.getCode());
+//        sourceList.add(OrderType.MANAGE.getCode());
+//        sourceList.add(OrderType.DIFFERENT.getCode());
+//        sourceList.add(OrderType.EQUALITY.getCode());
+//        sourceList.add(OrderType.RELASE.getCode());
+//        List<TradeOrderVo> voList = new ArrayList<>();
+//        Integer count = tradeOrderService.readRewardCountByOrderType(null, sourceList);
+//
 
         List<Integer> declarationOrderTypeList = new ArrayList<>();
         declarationOrderTypeList.add(OrderType.INSURANCE.getCode());
