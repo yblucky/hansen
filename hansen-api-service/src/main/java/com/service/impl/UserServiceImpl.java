@@ -160,6 +160,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }*/
         //一代直推奖
         User parentUser = this.readById(pushUser.getFirstReferrer());
+        if (parentUser==null){
+            return;
+        }
         //一代推荐人必须也是激活状态
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
             String orderNo = order.getOrderNo();
@@ -175,6 +178,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         //二代直推奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
+        if (grandfatherUser==null){
+            return;
+        }
         //二代推荐人必须是激活状态
         if (grandfatherUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
             //二代推荐人下属部门必须有三个以上是激活状态的
@@ -216,6 +222,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }*/
         //一代管理奖
         User parentUser = this.readById(pushUser.getFirstReferrer());
+        if (parentUser==null){
+            return;
+        }
         //一代推荐人必须也是激活状态并且一代推荐人的保单等级大于或等于推荐人
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode() && parentUser.getCardGrade().intValue() >= pushUser.getCardGrade()) {
             String orderNo = order.getOrderNo();
@@ -232,6 +241,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         //二代管理奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
+        if (grandfatherUser==null){
+            return;
+        }
         //二代推荐人必须是激活状态
         if (grandfatherUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode() && grandfatherUser.getCardGrade().intValue() >= pushUser.getCardGrade()) {
             //二代推荐人下属部门必须有三个以上是激活状态的
@@ -390,6 +402,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         try {
             model.setTaskCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
             model.setSignCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)));
+            model.setStatus(model.getStatus()==null?0:model.getStatus());
         } catch (Exception e) {
             e.printStackTrace();
             model.setTaskCycle(0);

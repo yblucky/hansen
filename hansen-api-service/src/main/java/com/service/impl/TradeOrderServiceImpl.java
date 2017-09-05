@@ -55,6 +55,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         TradeOrder tradeOrder = new TradeOrder();
         tradeOrder.setOrderNo(OrderNoUtil.get());
         tradeOrder.setAmt(cardGrade.getInsuranceAmt());
+        tradeOrder.setConfirmAmt(cardGrade.getInsuranceAmt());
+        tradeOrder.setCardGrade(cardGrade.getGrade());
         tradeOrder.setSendUserId(activeUser.getId());
         tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
         tradeOrder.setSource(OrderType.INSURANCE.getCode());
@@ -64,7 +66,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         tradeOrder.setPayAmtScale(Double.valueOf(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE)));
         tradeOrder.setTradeAmtScale(Double.valueOf(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE)));
         tradeOrder.setEquityAmtScale(Double.valueOf(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE)));
-        tradeOrder.setConfirmAmt(cardGrade.getInsuranceAmt());
         tradeOrder.setPoundage(0d);
         tradeOrder.setStatus(OrderStatus.PENDING.getCode());
         tradeOrder.setTaskCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
@@ -120,10 +121,10 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
 //            userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(), 0d);
         } else if (OrderType.INSURANCE_COVER.getCode() == tradeOrder.getSource()) {
             upGradeType = UpGradeType.COVERAGEUPGRADE.getCode();
-            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * tradeOrder.getAmt());
+            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * tradeOrder.getAmt() + activeUser.getInsuranceAmt());
         } else if (OrderType.INSURANCE_ORIGIN.getCode() == tradeOrder.getSource()) {
             upGradeType = UpGradeType.ORIGINUPGRADE.getCode();
-            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), tradeOrder.getAmt() + activeUser.getInsuranceAmt());
+            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), tradeOrder.getAmt());
         }
         //更新用户开卡级别
         userService.updateCardGradeByUserId(tradeOrder.getSendUserId(), tradeOrder.getCardGrade());

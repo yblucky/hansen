@@ -14,8 +14,8 @@
         <module>hansen-api-web</module>
         <module>hansen-manage-service</module>
         <module>hansen-manage-web</module>
-        <!--	<module>hansen-test-web</module>
-        <module>hansen-h5</module>-->
+        <!--<module>hansen-test-web</module>-->
+        <module>hansen-task</module>
 
     </modules>
 
