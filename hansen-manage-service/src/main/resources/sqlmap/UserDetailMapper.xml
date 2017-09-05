@@ -51,6 +51,19 @@
         <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
     </select>
 
+    <select id="findAll" resultType="com.vo.UserDetailVo">
+        SELECT ud.id,ud.inPayAddress,ud.inTradeAddress,ud.inEquityAddress,ud.outPayAddress,ud.outEquityAddress,ud.outTradeAddress
+                ,us.uid,us.nickName,us.phone
+          FROM base_user_detail ud
+          INNER JOIN base_user us on ud.id = us.id
+          <where>
+              1=1
+              <if test="model.uid != null"> and us.uid= #{model.uid}</if>
+              <if test="model.phone != null"> and us.phone= #{model.phone}</if>
+          </where>
+        limit #{startRow}, #{pageSize};
+    </select>
+
     <select id="readOne" resultType="com.model.UserDetail">
         <include refid="selector"/> <include refid="condition"/> limit 1;
     </select>
