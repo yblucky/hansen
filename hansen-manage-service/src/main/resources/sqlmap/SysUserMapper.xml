@@ -5,7 +5,7 @@
 
 
     <sql id="fields">
-        userName,loginName,password,salt,mobile,roleId,roleName,userIcon,createTime,lastTime,state,createTime,updateTime,status,remark
+        userName,loginName,password,salt,mobile,roleId,roleName,userIcon,createTime,lastTime,state,updateTime,status,remark
     </sql>
 
     <sql id="fields_id">
@@ -37,7 +37,7 @@
 
     <insert id="create" useGeneratedKeys="true" keyProperty="id">
         insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-        values(#{id},#{userName},#{loginName},#{password},#{salt},#{mobile},#{roleId},#{roleName},#{userIcon},now(),#{lastTime},#{state},now(),now(),#{status},#{remark});
+        values(#{id},#{userName},#{loginName},#{password},#{salt},#{mobile},#{roleId},#{roleName},#{userIcon},now(),#{lastTime},#{state},now(),#{status},#{remark});
     </insert>
 
     <select id="readById" resultType="com.model.SysUser">

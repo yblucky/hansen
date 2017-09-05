@@ -65,7 +65,7 @@
         <include refid="table"/>
         <set>
             <if test="model.name != null and model.name !=''">name= #{model.name},</if>
-            <if test="model.value != null">value= #{model.value},</if>
+            <if test="model.value != null and model.value != 0 ">value= #{model.value},</if>
             <if test="model.kind != null and model.kind !=''">kind= #{model.kind},</if>
             <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
             <if test="model.status != null and model.status !=''">status= #{model.status},</if>

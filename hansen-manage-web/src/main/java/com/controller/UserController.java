@@ -5,6 +5,7 @@ import com.base.page.*;
 import com.Token;
 import com.base.TokenUtil;
 import com.constant.StatusType;
+import com.constant.UserStatusType;
 import com.model.CardGrade;
 import com.model.SysUser;
 import com.service.CardGradeService;
@@ -111,6 +112,13 @@ public class UserController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
             return respBody;
         }
+        User appUser = userService.readById(userId);
+        if (UserStatusType.ACTIVATESUCCESSED.getCode().intValue() == appUser.getStatus().intValue()
+                || UserStatusType.WAITACTIVATE.getCode().intValue() == appUser.getStatus().intValue()) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "用户激活或正在保单中，不允许删除");
+            return respBody;
+        }
+
         userService.deleteById(userId);
         respBody.add(RespCodeEnum.SUCCESS.getCode(), "用户已删除");
         return respBody;
