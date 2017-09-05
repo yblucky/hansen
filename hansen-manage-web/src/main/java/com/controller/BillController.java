@@ -214,6 +214,6 @@ public class BillController {
         //拨付比
         map.put("maxOut",maxOut);
         map.put("hasOut",hasOut);
-        return new JsonResult( );
+        return new JsonResult(map);
     }
 }
