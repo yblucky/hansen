@@ -166,6 +166,19 @@
 	<update id="updateUserGradeByUserId">
 		update <include refid="table_name"/> set grade = grade ,updateTime=now() where id = #{id}
 	</update>
+
+	<select id="sumUserMaxProfitByTime" resultType="Double">
+		select  SUM(maxProfits) from <include refid="table_name"/>
+		<where>
+			1=1
+			<if test="startTime != null">
+				AND createTime >=#{startTime}
+			</if>
+			<if test="endTime != null">
+				AND createTime >=#{endTime}
+			</if>
+		</where>
+	</select>
 </mapper>
 
 

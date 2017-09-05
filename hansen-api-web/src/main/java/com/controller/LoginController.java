@@ -62,9 +62,9 @@ public class LoginController {
         // 登录
         String token = TokenUtil.generateToken(user.getId(), user.getNickName());
         Strings.setEx(RedisKey.TOKEN_API.getKey() + user.getId(), RedisKey.TOKEN_API.getSeconds(), token);
-        if (logger.isInfoEnabled()) {
-            logger.info(String.format("user login[%s]", TokenUtil.getTokenObject(token)));
-        }
+
+            logger.error(token);
+
         user.setRemark(token);
         return new JsonResult(user);
     }

@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.utils.numberutils.RandomUtil.getCode;
-
 /**
  * @date 2016年11月27日
  */
@@ -133,14 +131,14 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         User refferUser = null;
         String referId = activeUser.getFirstReferrer();
         for (i = 0; i < 10000; i++) {
-            if (ToolUtil.isEmpty(referId)){
+            if (ToolUtil.isEmpty(referId)) {
                 break;
             }
             if (Constant.SYSTEM_USER_ID.equals(referId)) {
                 break;
             }
             refferUser = userService.readById(referId);
-            if (refferUser == null  && UserStatusType.ACTIVATESUCCESSED.getCode()!=refferUser.getStatus()) {
+            if (refferUser == null && UserStatusType.ACTIVATESUCCESSED.getCode() != refferUser.getStatus()) {
                 continue;
             }
             userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
@@ -151,7 +149,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
                 //更新用户星级
                 userService.updateUserGradeByUserId(referId, grade.getGrade());
                 //写入用户升级记录
-                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade,grade.getGrade(), UpGradeType.STARGRADE.getCode(), orderNo);
+                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade, grade.getGrade(), UpGradeType.STARGRADE.getCode(), orderNo);
             }
             referId = refferUser.getFirstReferrer();
         }
@@ -177,8 +175,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     }
 
     @Override
-    public List<TradeOrder> readRewardList(String userId,Date taskTime, Integer startRow, Integer pageSize) throws Exception {
-        return tradeOrderMapper.readRewardList(userId,taskTime, startRow, pageSize);
+    public List<TradeOrder> readRewardList(String userId, Date taskTime, Integer startRow, Integer pageSize) throws Exception {
+        return tradeOrderMapper.readRewardList(userId, taskTime, startRow, pageSize);
     }
 
     @Override
@@ -210,8 +208,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     }
 
 
-
-
     @Override
     public Integer batchUpdateTaskCycleDefault(List<String> idList, Integer taskCycle) throws Exception {
         if (ToolUtil.isEmpty(idList)) {
@@ -223,5 +219,25 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     @Override
     public Integer batchUpdateOrderStatus(List<String> idList) {
         return tradeOrderMapper.batchUpdateOrderStatus(idList);
+    }
+
+
+    @Override
+    public List<TradeOrder> readRewardListByOrderType(String userId, List<Integer> source, Integer startRow, Integer pageSize) throws Exception {
+        return tradeOrderMapper.readRewardListByOrderType(userId, source, startRow, pageSize);
+    }
+
+    @Override
+    public Integer readRewardCountByOrderType(String userId, List<Integer> source) {
+        return tradeOrderMapper.readRewardCountByOrderType(userId, source);
+    }
+
+    @Override
+    public Double sumReadRewardByOrderType(String userId, List<Integer> source) {
+        Double sum  =tradeOrderMapper.sumReadRewardByOrderType(userId, source);
+        if (sum==null){
+            sum=0d;
+        }
+        return sum;
     }
 }

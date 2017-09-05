@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface TradeOrderMapper extends CommonDao<TradeOrder> {
-    List<TradeOrder> readRewardList(@Param("taskTime") Date taskTime, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize) throws Exception;
+    List<TradeOrder> readRewardList(@Param("userId")String userId, @Param("taskTime") Date taskTime, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize) throws Exception;
 
     Integer batchUpdateSignCycle(@Param("list") List<String> idList);
 
@@ -20,5 +20,18 @@ public interface TradeOrderMapper extends CommonDao<TradeOrder> {
 
     Integer batchUpdateOrderStatus(@Param("list") List<String> idList);
 
+    List<TradeOrder> readRewardListByOrderType(@Param("userId")String userId,@Param("list")List<Integer> source, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize) throws Exception;
+
+    Integer readRewardCountByOrderType(@Param("userId")String userId,@Param("list") List<Integer> source);
+
+    Double  sumReadRewardByOrderType(@Param("userId")String userId,@Param("list") List<Integer> source);
+
+    Integer countTotalOrderAmtByTime(@Param("list") List<Integer> source,@Param("startTime")String startTime,@Param("endTime")String endTime);
+
+    Double sumTotalOrderAmtByTime(@Param("list") List<Integer> source,@Param("startTime")String startTime,@Param("endTime")String endTime);
+
+    Double sumTotalPayAmtByTime(@Param("list") List<Integer> source,@Param("startTime")String startTime,@Param("endTime")String endTime);
+
+    Double sumTotalTradeAmtByTime(@Param("list") List<Integer> source,@Param("startTime")String startTime,@Param("endTime")String endTime);
 
 }

@@ -9,6 +9,8 @@ import com.model.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @date 2016年11月27日
  */
@@ -16,10 +18,10 @@ public interface UserService extends CommonService<User> {
 
 
     @Transactional
-    void userIncomeAmt(Double incomAmt, String userId, RecordType type, String orderNo)  throws Exception;
+    void userIncomeAmt(Double incomAmt, String userId, RecordType type, String orderNo) throws Exception;
 
     @Transactional
-    void weeklyIncomeAmt(User user)throws Exception;
+    void weeklyIncomeAmt(User user) throws Exception;
 
     @Transactional
     void pushBonus(String pushUserId, TradeOrder order) throws Exception;
@@ -68,6 +70,8 @@ public interface UserService extends CommonService<User> {
     User innerRegister(User innerUser, User inviterUser, User createUser, CardGrade cardGrade) throws Exception;
 
     JsonResult innerActicveUser(User activeUser, CardGrade cardGrade) throws Exception;
+
+    Double sumUserMaxProfitByTime(String startTime, String endTime);
 
 
 }

@@ -16,12 +16,9 @@ import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import java.util.Date;
 import java.util.Map;
-
-import static com.service.WalletUtil.getBitCoinClient;
 
 
 /**
@@ -629,6 +626,15 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
     @Override
     public void updateUserRegisterCode(String userId, Integer registerNo) {
-        userMapper.updateUserRegisterCode(userId,registerNo);
+        userMapper.updateUserRegisterCode(userId, registerNo);
+    }
+
+    @Override
+    public Double sumUserMaxProfitByTime(String startTime, String endTime) {
+        Double sum = userMapper.sumUserMaxProfitByTime(startTime, endTime);
+        if (sum == null) {
+            sum = 0d;
+        }
+        return sum;
     }
 }

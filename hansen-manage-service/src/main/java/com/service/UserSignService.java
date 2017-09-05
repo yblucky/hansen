@@ -9,8 +9,10 @@ import com.model.UserSign;
  */
 public interface UserSignService extends CommonService<UserSign> {
 
-    UserSign  addUserSign(String userId, Double amt, SignType signType, String remark);
+    UserSign addUserSign(String userId, Double amt, SignType signType, String remark);
 
     public Boolean sign(String signId) throws Exception;
+
+    Double sumUserSignByTime(String startTime, String endTime);
 
 }

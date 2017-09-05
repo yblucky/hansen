@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- 登录接口，免登录验证的接口 -->
 <no_authorized>
 	<url>/index/app</url>
+	<url>/bill/statistic</url>
 </no_authorized>
