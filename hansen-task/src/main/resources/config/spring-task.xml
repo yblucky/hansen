@@ -20,6 +20,6 @@
     <!-- 保单结算 -->
     <bean id="orderHandleTask" class="com.task.TradeOrderHandleTask"></bean>
     <task:scheduled-tasks>
-        <task:scheduled ref="orderHandleTask" method="doTask" cron="0/20 * * * * ?"/>
+        <task:scheduled ref="orderHandleTask" method="doTask" cron="0 0/3 * * * ?"/>
     </task:scheduled-tasks>
 </beans>
