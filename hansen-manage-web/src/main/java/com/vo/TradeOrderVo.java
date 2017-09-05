@@ -9,6 +9,14 @@ import com.model.TradeOrder;
 public class TradeOrderVo extends TradeOrder {
 
     /**
+     * 用户uid
+     */
+    private Integer uid;
+    /**
+     * 用户手机号
+     */
+    private String phone;
+    /**
      * 用户姓名
      */
     private String nickName;
@@ -56,5 +64,21 @@ public class TradeOrderVo extends TradeOrder {
 
     public void setRewardType(String rewardType) {
         this.rewardType = rewardType;
+    }
+
+    public Integer getUid() {
+        return uid;
+    }
+
+    public void setUid(Integer uid) {
+        this.uid = uid;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

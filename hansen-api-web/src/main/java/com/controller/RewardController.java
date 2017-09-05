@@ -39,7 +39,7 @@ public class RewardController {
 
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public JsonResult inList(HttpServletRequest request, Page page, String tradeOrderType) throws Exception {
+    public JsonResult list(HttpServletRequest request, Page page, String tradeOrderType) throws Exception {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.readById(token.getId());
@@ -112,6 +112,7 @@ public class RewardController {
         }
         Double totalReward = tradeOrderService.sumReadRewardByOrderType(user.getId(), sourceList);
         pageResult.getExtend().put("totalReward", totalReward);
+        pageResult.setTotalSize(count);
         return new JsonResult(pageResult);
     }
 }
