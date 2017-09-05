@@ -127,7 +127,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), tradeOrder.getAmt());
         }
         //更新用户开卡级别
-        userService.updateCardGradeByUserId(tradeOrder.getSendUserId(), tradeOrder.getCardGrade());
+//        userService.updateCardGradeByUserId(tradeOrder.getSendUserId(), tradeOrder.getCardGrade());
         //向上累加业绩
         int i;
         User refferUser = null;

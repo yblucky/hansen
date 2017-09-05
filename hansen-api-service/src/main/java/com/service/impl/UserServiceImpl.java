@@ -458,8 +458,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         User updateModel = new User();
         updateModel.setId(userId);
         updateModel.setCardGrade(targetCardGradeNo);
-        updateModel.setInsuranceAmt(targetCardGrade.getInsuranceAmt());
-        updateModel.setMaxProfits(CurrencyUtil.multiply(targetCardGrade.getOutMultiple(), targetCardGrade.getInsuranceAmt(), 4));
+//        updateModel.setInsuranceAmt(targetCardGrade.getInsuranceAmt());
+//        updateModel.setMaxProfits(CurrencyUtil.multiply(targetCardGrade.getOutMultiple(), targetCardGrade.getInsuranceAmt(), 4));
         updateModel.setRemark("用户补差价升级，由" + CardLevelType.fromCode(user.getCardGrade()) + "升级到" + CardLevelType.fromCode(targetCardGradeNo));
         this.updateById(userId, updateModel);
 
@@ -551,9 +551,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
         //更新相关信息
         User updateModel = new User();
-        updateModel.setGrade(targetCardGrade.getGrade());
-        updateModel.setInsuranceAmt(targetCardGrade.getInsuranceAmt());
-        updateModel.setMaxProfits(CurrencyUtil.getPoundage(CurrencyUtil.multiply(targetCardGrade.getOutMultiple(), targetCardGrade.getInsuranceAmt(), 4) + user.getMaxProfits(), 1d));
+        updateModel.setCardGrade(targetCardGrade.getGrade());
+//        updateModel.setInsuranceAmt(targetCardGrade.getInsuranceAmt());
+//        updateModel.setMaxProfits(CurrencyUtil.getPoundage(CurrencyUtil.multiply(targetCardGrade.getOutMultiple(), targetCardGrade.getInsuranceAmt(), 4) + user.getMaxProfits(), 1d));
         updateModel.setRemark("用户覆盖升级，由" + CardLevelType.fromCode(user.getCardGrade()) + "升级到" + CardLevelType.fromCode(targetCardGradeNo));
         this.updateById(userId, updateModel);
 
