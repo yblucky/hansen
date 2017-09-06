@@ -76,6 +76,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         userTask.setRemark(TaskStatusType.PENDING.getMsg());
         userTask.setTaskType(1);
         userTask.setRewardNo(1);
+        userTask.setLinkImgPath(task.getLinkImgPath());
         userTask.setAssignTaskTime(assignTime);
         this.create(userTask);
         return true;

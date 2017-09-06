@@ -111,6 +111,6 @@ public class TaskController {
             return new JsonResult(ResultCode.ERROR.getCode(), "任务不存在");
         }
         userTaskService.doTask(user.getId(), userTask);
-        return new JsonResult();
+        return new JsonResult(userTask);
     }
 }

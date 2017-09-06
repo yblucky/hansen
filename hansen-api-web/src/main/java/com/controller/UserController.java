@@ -191,7 +191,14 @@ public class UserController {
         BeanUtils.copyProperties(model, vo);
         model.setPayWord(vo.getPayword());
         userService.innerRegister(loginUser, inviterUser, model, cardGrade);
-        return new JsonResult(ResultCode.SUCCESS.getCode(), "注册成功");
+        //返回用户uid和手机号
+        User con = new User();
+        con.setLoginName(vo.getLoginName());
+        User resultUser = userService.readOne(regisUserContion);
+        if(resultUser == null){
+            return new JsonResult(ResultCode.ERROR.getCode(), "注册成功,返回注册用户信息失败");
+        }
+        return new JsonResult(ResultCode.SUCCESS.getCode(), "注册成功",resultUser);
     }
 
 
@@ -772,8 +779,9 @@ public class UserController {
             userStatus.add(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
             userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
             userStatus.add(UserStatusType.WAITACTIVATE.getCode());
+            userStatus.add(UserStatusType.OUT.getCode());
             if (!userStatus.contains(loginUser.getStatus())) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
+                return new JsonResult(ResultCode.NO_LOGIN.getCode(), "您的帐号已被禁用");
             }
             if (loginUser.getCardGrade() == null || loginUser.getCardGrade() == 0) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "账号初始化数据有误");
