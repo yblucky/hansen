@@ -140,6 +140,8 @@ public class UserVo implements Serializable {
     private Double rmbConvertTradeScale;
     private Double payConverRmbScale;
     private Double tradeConverRmbScale;
+    private Double payCoinOutScale;
+    private Double tradeCoinOutScale;
 
 
 
@@ -462,5 +464,21 @@ public class UserVo implements Serializable {
 
     public void setTradeConverRmbScale(Double tradeConverRmbScale) {
         this.tradeConverRmbScale = tradeConverRmbScale;
+    }
+
+    public Double getPayCoinOutScale() {
+        return payCoinOutScale;
+    }
+
+    public void setPayCoinOutScale(Double payCoinOutScale) {
+        this.payCoinOutScale = payCoinOutScale;
+    }
+
+    public Double getTradeCoinOutScale() {
+        return tradeCoinOutScale;
+    }
+
+    public void setTradeCoinOutScale(Double tradeCoinOutScale) {
+        this.tradeCoinOutScale = tradeCoinOutScale;
     }
 }
