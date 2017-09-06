@@ -88,18 +88,6 @@
         update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
     </update>
 
-    <select id="readRewardCountByOrderType" resultType="Integer">
-        select <include refid="fields_id"/> from <include refid="table_name"/>
-        <where>
-            1=1
-            <if test="userId != null">
-                AND receviceUserId = #{userId}
-            </if>
-            <if test="list != null">
-                AND  source in    <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
-            </if>
-        </where>
-    </select>
 
 
     <select id="readRewardListByOrderType" resultType="com.model.TradeOrder">
