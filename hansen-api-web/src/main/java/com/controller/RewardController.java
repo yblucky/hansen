@@ -81,12 +81,12 @@ public class RewardController {
                 if (OrderType.PUSH.getCode() == order.getSource()) {
                     User u = userService.readById(order.getSendUserId());
                     if (u != null) {
-                        order.setRemark("会员" + u.getUid() + "注册，获得" + order.getConfirmAmt() + "奖励");
+                        order.setRemark("会员" + u.getUid() + "直推奖励，获得" + order.getConfirmAmt() + "奖励");
                     }
                     vo.setRewardType(OrderType.PUSH.getMsg());
                 } else if (OrderType.PUSH.getCode() == order.getSource()) {
                     User u = userService.readById(order.getSendUserId());
-                    vo.setRemark("来自会员" + u.getUid() + "注册，获得" + order.getConfirmAmt() + "奖励");
+                    vo.setRemark("来自会员" + u.getUid() + "直推奖励，获得" + order.getConfirmAmt() + "奖励");
                     vo.setRewardType(OrderType.PUSH.getMsg());
                 } else if (OrderType.MANAGE.getCode() == order.getSource()) {
                     User u = userService.readById(order.getSendUserId());
