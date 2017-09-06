@@ -93,6 +93,7 @@ public class CardGradeController {
         cardGradeVo.setPayAmt(CurrencyUtil.multiply(payRmbAmt, payScale, 4));
         cardGradeVo.setTradeAmt(CurrencyUtil.multiply(tradeRmbAmt, tradeScale, 4));
         cardGradeVo.setEquityAmt(0d);
+        cardGradeVo.setMaxProfits(CurrencyUtil.multiply(model.getInsuranceAmt(), model.getOutMultiple(), 4));
         return new JsonResult(cardGradeVo);
     }
 
@@ -128,22 +129,24 @@ public class CardGradeController {
         //会员的本身等级
         CardGrade userCardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
         //计算差价
-        Integer differRegisterNo=targetModel.getRegisterCodeNo() - userCardGrade.getRegisterCodeNo();
-        Integer differActiceNo=targetModel.getActiveCodeNo() - userCardGrade.getActiveCodeNo();
-        Double  insuranceAmt=targetModel.getInsuranceAmt()-userCardGrade.getInsuranceAmt();
-        Double  differPayRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 4);
-        Double  differTradeRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 4);
+        Integer differRegisterNo = targetModel.getRegisterCodeNo() - userCardGrade.getRegisterCodeNo();
+        Integer differActiceNo = targetModel.getActiveCodeNo() - userCardGrade.getActiveCodeNo();
+        Double insuranceAmt = targetModel.getInsuranceAmt() - userCardGrade.getInsuranceAmt();
+        Double differPayRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 4);
+        Double differTradeRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 4);
         //人民币兑换支付币汇率
         double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
         //人民币兑换交易币汇率
         double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
         CardGradeVo cardGradeVo = new CardGradeVo();
-         //人民币兑换支付币汇率
+        //人民币兑换支付币汇率
         cardGradeVo.setPayAmt(CurrencyUtil.multiply(differPayRmbAmt, payScale, 4));
         cardGradeVo.setTradeAmt(CurrencyUtil.multiply(differTradeRmbAmt, tradeScale, 4));
         cardGradeVo.setEquityAmt(0d);
         cardGradeVo.setActiveCodeNo(differActiceNo);
         cardGradeVo.setRegisterCodeNo(differRegisterNo);
+        Double targetMaxProfit = CurrencyUtil.multiply(targetModel.getInsuranceAmt(), targetModel.getOutMultiple(), 4);
+        cardGradeVo.setMaxProfits(CurrencyUtil.add(targetMaxProfit, user.getMaxProfits(), 4));
         return new JsonResult(cardGradeVo);
     }
 }
