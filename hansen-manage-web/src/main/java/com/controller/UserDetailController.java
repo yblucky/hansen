@@ -4,6 +4,7 @@ import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
 import com.model.SysUser;
+import com.model.UserDetail;
 import com.service.UserDetailService;
 import com.sysservice.ManageUserService;
 import com.vo.SysUserVo;
@@ -55,8 +56,11 @@ public class UserDetailController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
             return respBody;
         }
+        if(vo.getUid()!=null || !"".equals(vo.getPhone())){
+            page.setPageNumber(0);
+        }
         List<UserDetailVo> list = new ArrayList<>();
-        Integer count = userDetailService.readCount(null);
+        Integer count = userDetailService.readCount(new UserDetail());
         if (count != null && count > 0) {
             list = userDetailService.findAll(vo, page.getPageNumber(), page.getPageSize(), count);
         }

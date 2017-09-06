@@ -58,8 +58,8 @@
           INNER JOIN base_user us on ud.id = us.id
           <where>
               1=1
-              <if test="model.uid != null"> and us.uid= #{model.uid}</if>
-              <if test="model.phone != null"> and us.phone= #{model.phone}</if>
+              <if test="model.uid != null and model.uid != ''"> and us.uid= #{model.uid}</if>
+              <if test="model.phone != null and model.phone != ''"> and us.phone= #{model.phone}</if>
           </where>
         limit #{startRow}, #{pageSize};
     </select>
