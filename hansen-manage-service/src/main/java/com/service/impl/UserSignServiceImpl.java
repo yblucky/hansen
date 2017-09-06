@@ -92,6 +92,10 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
 
     @Override
     public Double sumUserSignByTime(String startTime, String endTime) {
-        return userSignMapper.sumUserSignByTime(startTime,endTime);
+        Double sum =userSignMapper.sumUserSignByTime(startTime,endTime);
+        if (sum==null){
+            sum=0d;
+        }
+        return sum;
     }
 }

@@ -97,7 +97,7 @@
 
     <!-- 查询所有系统参数 -->
     <select id="getList" resultType="com.model.Parameter">
-        <include refid="selector"/>
+        <include refid="selector"/>  ORDER BY  groupType desc
     </select>
 
 </mapper>

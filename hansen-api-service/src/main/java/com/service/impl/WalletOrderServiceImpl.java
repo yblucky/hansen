@@ -8,12 +8,8 @@ import com.constant.CurrencyType;
 import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
 import com.mapper.WalletOrderMapper;
-import com.model.Parameter;
-import com.model.WalletOrder;
-import com.service.ParamUtil;
-import com.service.UserService;
-import com.service.WalletOrderService;
-import com.service.WalletTransactionService;
+import com.model.*;
+import com.service.*;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.ToolUtil;
 import org.apache.commons.beanutils.BeanUtils;
@@ -38,6 +34,8 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
     private WalletOrderMapper walletOrderMapper;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserDetailService userDetailService;
     @Autowired
     private WalletTransactionService transactionService;
 
@@ -107,33 +105,45 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         Double poundageScale = 0d;
         Double poundage = 0d;
         Double confirmAmount = 0d;
-        String txtId = "";
         if (!outType.contains(walletOrderType.getCode())) {
             return false;
         }
-        BitcoinClient bitcoinClient = null;
+        UserDetail userDetail=userDetailService.readById(fromUserId);
+        User user=userService.readById(fromUserId);
+        WalletTransaction model =new WalletTransaction();
         if (WalletOrderType.TRADE_COIN_DRWA.getCode() == walletOrderType.getCode()) {
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.TRADECOINOUTSCALE));
             poundageScale = amt * poundageScale;
             confirmAmount = amt - poundage;
             userService.updateTradeAmtByUserId(fromUserId, -confirmAmount);
+            model.setAddress(userDetail.getOutTradeAddress());
+            model.setOrderType(WalletOrderType.TRADE_COIN_DRWA.getCode());
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.TRADE);
 //            txtId= WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         } else if (WalletOrderType.PAY_COIN_DRWA.getCode() == walletOrderType.getCode()) {
             poundageScale = amt * poundageScale;
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.PAYCOINOUTSCALE));
             userService.updatePayAmtByUserId(fromUserId, -confirmAmount);
+            model.setAddress(userDetail.getOutPayAddress());
+            model.setOrderType(WalletOrderType.PAY_COIN_DRWA.getCode());
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.PAY);
 //            txtId=WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         } else if (WalletOrderType.EQUITY_COIN_DRWA.getCode() == walletOrderType.getCode()) {
             poundageScale = amt * poundageScale;
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.EQUITYCOINOUTSCALE));
+            model.setAddress(userDetail.getOutEquityAddress());
             userService.updateEquityAmtByUserId(fromUserId, -confirmAmount);
+            model.setOrderType(WalletOrderType.EQUITY_COIN_DRWA.getCode());
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.EQUITY);
 //            txtId=  WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         }
         //创建提币订单
-        WalletOrder order = this.addWalletOrder(fromUserId, "", walletOrderType, amt, confirmAmount, poundage, WalletOrderStatus.PENDING);
+        WalletOrder order = this.addWalletOrder(fromUserId, "", walletOrderType, -amt, -confirmAmount, poundage, WalletOrderStatus.PENDING);
+        model.setAmount(-confirmAmount);
+        model.setStatus(WalletOrderStatus.PENDING.getCode());
+        model.setTransactionStatus(WalletOrderStatus.PENDING.getMsg());
+        model.setUserId(user.getUid().toString());
+        transactionService.create(model);
         //管理后台审核通过的审核，生成此记录
 //        transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID,address,walletOrderType,txtId,order.getOrderNo(),amt);
         return true;

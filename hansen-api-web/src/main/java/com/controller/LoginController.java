@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.tools.Tool;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -125,6 +126,9 @@ public class LoginController {
         User updateUser = new User();
         updateUser.setLoginTime(new Date());
         userService.updateById(loginUser.getId(), updateUser);
+        if (ToolUtil.isNotEmpty(loginUser.getUid()) || loginUser.getUid()==0){
+            updateUser.setNickName(loginUser.getUid()+"");
+        }
         UserDetail detail = userDetailService.readById(loginUser.getId());
         // 登录
         String token = TokenUtil.generateToken(loginUser.getId(), loginUser.getNickName());
@@ -195,10 +199,16 @@ public class LoginController {
         Double payConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertPayScale,1d,2);
         //交易币兑换人民币汇率
         Double tradeConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertTradeScale,1d,2);
+        //提币手续费
+        Double payCoinOutScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.PAYCOINOUTSCALE), 0d);
+        //提币手续费
+        Double tradeCoinOutScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.TRADECOINOUTSCALE), 0d);
         vo.setPayConverRmbScale(payConverRmbScale);
         vo.setTradeConverRmbScale(tradeConverRmbScale);
         vo.setRmbConvertPayScale(rmbConvertPayScale);
         vo.setRmbConvertTradeScale(rmbConvertTradeScale);
+        vo.setPayCoinOutScale(payCoinOutScale);
+        vo.setTradeCoinOutScale(tradeCoinOutScale);
         return new JsonResult(vo);
     }
 

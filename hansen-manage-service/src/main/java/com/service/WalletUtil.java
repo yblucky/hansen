@@ -139,26 +139,22 @@ public class WalletUtil {
     }
 
     public static void main(String[] args) {
-        long a = new Date().getTime();
-        System.out.println(new Date().getTime());
-     /*   for (int i = 0; i < 1000; i++) {
-
             // System.out.println(WalletUtil.client.getBalance("123"));
-            System.out.println(WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new BigDecimal(0.02), "a", "b"));
-        }
-        System.out.println((new Date().getTime() - a) / 1000);*/
+//            System.out.println(WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new BigDecimal(0.02), "a", "b"));
+
         // WalletUtil.sendToAddress("ro8b9yAGuatvt6BubqHSCmbVwsc6Xsk3jx", new
         // BigDecimal(0.02), "a", "b");
         // WalletUtil.getAccountAddress("000001");
 
-        BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
+        BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20679);
 //        System.out.println(JSON.toJSONString(bitcoinClient.getTransaction("bfb2b451184259940c8b23dffb5af4e2d6e9a2db44a702e9efc1c0ecbe7a2451")));
         System.out.println(bitcoinClient.getBalance());
-        System.out.println(bitcoinClient.getBalance("000001"));
-        System.out.println(bitcoinClient.getBalance("01"));
-        System.out.println(bitcoinClient.getBalance("02"));
+//        System.out.println(bitcoinClient.getBalance("000001"));
+//        System.out.println(bitcoinClient.getBalance("01"));
+//        System.out.println(bitcoinClient.getBalance("02"));
 //        bitcoinClient.sendToAddress("rhrgi626nKKSFFqD63KUhHQ3tggbEMYaMt", new BigDecimal("2"), "", "");
-        System.out.println(bitcoinClient.sendFrom("02", "rirwjvfXXAMi1ZUHEEq6QwVcMTKSTovdmb", new BigDecimal("2.1"), 3, "", ""));;
+//        System.out.println(bitcoinClient.sendFrom("trade", "WYb753eibKo1tYfGziBZ7pqEBiW4bZnfqB", new BigDecimal("2.1"), 3, "", ""));
+        sendToAddress(bitcoinClient,"WYb753eibKo1tYfGziBZ7pqEBiW4bZnfqB",new BigDecimal("2"),"test","test");
 //        System.out.println(WalletUtil.getAccountAddress(bitcoinClient, "000001"));
 //        System.out.println(JSON.toJSONString(WalletUtil.listTransactions(bitcoinClient,"",100)));
 //        System.out.println(JSON.toJSONString(WalletUtil.sendFrom(bitcoinClient, "", "rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y", new BigDecimal("2"), "test01", "test001")));

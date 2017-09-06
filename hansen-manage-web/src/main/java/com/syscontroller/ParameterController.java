@@ -4,7 +4,9 @@ import com.annotation.SystemControllerLog;
 import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
+import com.constant.RedisKey;
 import com.model.Parameter;
+import com.redis.Strings;
 import com.service.ParamUtil;
 import com.service.ParameterService;
 import com.sysservice.ManageParameterService;
@@ -65,6 +67,7 @@ public class ParameterController {
         try {
             parameterService.create(parameterVo);
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置保存成功");
+            Strings.del(RedisKey.SYS_PARAM_UPDTOKEN.getKey());
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "参数设置保存失败");
             LogUtils.error("参数设置保存失败！", ex);
@@ -90,6 +93,7 @@ public class ParameterController {
             po.setName(parameterVo.getName());
             po.setTitle(parameterVo.getTitle());
             parameterService.updateById(parameterVo.getId(),po);
+            Strings.del(RedisKey.SYS_PARAM_UPDTOKEN.getKey());
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置保存成功");
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "参数设置保存失败");
@@ -113,6 +117,7 @@ public class ParameterController {
             parameterService.deleteById(parameterVo.getId());
             ParamUtil.getIstance().reloadParam();
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置删除成功");
+            Strings.del(RedisKey.SYS_PARAM_UPDTOKEN.getKey());
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "参数设置删除失败");
             LogUtils.error("参数设置删除失败！", ex);

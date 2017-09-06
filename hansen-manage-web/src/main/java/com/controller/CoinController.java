@@ -61,7 +61,7 @@ public class CoinController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public RespBody list(HttpServletRequest request, Integer currencyType, Paging page, Integer status) throws Exception  {
+    public RespBody list(HttpServletRequest request, Integer currencyType, Paging page, Integer status,String orderNo) throws Exception  {
         // 创建返回对象
         RespBody respBody = new RespBody();
         String token = request.getHeader("token");
@@ -78,6 +78,9 @@ public class CoinController extends BaseController {
         }
         if (status != null) {
             condition.setStatus(status);
+        }
+        if (ToolUtil.isNotEmpty(orderNo)){
+            condition.setOrderNo(orderNo);
         }
         Integer count = walletOrderService.readCount(condition);
         List<WalletOrder> orders = null;
@@ -193,7 +196,7 @@ public class CoinController extends BaseController {
             }
 
             BitcoinClient client = WalletUtil.getBitCoinClient(currencyType);
-            String txtId = WalletUtil.sendFrom(client, coinUser.getUid().toString(), address, new BigDecimal(order.getAmount().toString()), "用户" + coinUser.getUid() + "提币", "用户" + address + "收币");
+            String txtId = WalletUtil.sendToAddress(client, address, new BigDecimal(order.getAmount().toString()), "用户" + coinUser.getUid() + "提币", "用户" + address + "收币");
             if (ToolUtil.isNotEmpty(txtId)) {
                 vo.setStatus(WalletOrderStatus.CONFIRMING.getCode());
                 updateModel.setRemark("提币审核通过，审核人：" + sysUser.getUserName());
