@@ -39,6 +39,10 @@ public class CardGradeVo {
      * 动静出局倍数
      */
     private Integer outMultiple;
+    /**
+     * 最大收益
+     */
+    private Double maxProfits;
 
     public Integer getGrade() {
         return grade;
@@ -110,5 +114,13 @@ public class CardGradeVo {
 
     public void setEquityAmt(Double equityAmt) {
         this.equityAmt = equityAmt;
+    }
+
+    public Double getMaxProfits() {
+        return maxProfits;
+    }
+
+    public void setMaxProfits(Double maxProfits) {
+        this.maxProfits = maxProfits;
     }
 }

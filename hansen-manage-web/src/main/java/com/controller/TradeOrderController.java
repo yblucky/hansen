@@ -55,8 +55,8 @@ public class TradeOrderController extends BaseController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public RespBody getTask(HttpServletRequest request, HttpServletResponse response, Paging page, Integer uid,String phone, String tradeOrderType) throws Exception {
+    @RequestMapping(value = "/orderlist", method = RequestMethod.GET)
+    public RespBody orderList(HttpServletRequest request, HttpServletResponse response, Paging page, Integer uid,String phone, String tradeOrderType) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
         String token = request.getHeader("token");
@@ -144,7 +144,7 @@ public class TradeOrderController extends BaseController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/rewardList", method = RequestMethod.GET)
     public JsonResult rewardList(HttpServletRequest request, Paging page, Integer uid,String phone, String tradeOrderType) throws Exception {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);

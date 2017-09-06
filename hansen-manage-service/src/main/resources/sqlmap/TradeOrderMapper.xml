@@ -88,8 +88,6 @@
         update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
     </update>
 
-
-
     <select id="readRewardListByOrderType" resultType="com.model.TradeOrder">
         select <include refid="fields_id"/> from <include refid="table_name"/>
         <where>
