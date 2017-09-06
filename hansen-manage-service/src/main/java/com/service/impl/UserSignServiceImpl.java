@@ -89,4 +89,9 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         this.create(model);
         return model;
     }
+
+    @Override
+    public Double sumUserSignByTime(String startTime, String endTime) {
+        return userSignMapper.sumUserSignByTime(startTime,endTime);
+    }
 }

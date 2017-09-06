@@ -65,4 +65,17 @@
 	<update id="deleteById">
 		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
 	</update>
+
+	<select id="sumUserSignByTime" resultType="Double">
+		select  SUM(amt) from <include refid="table_name"/>
+		<where>
+			1=1
+			<if test="startTime != null">
+				AND createTime >=#{startTime}
+			</if>
+			<if test="endTime != null">
+				AND createTime >=#{endTime}
+			</if>
+		</where>
+	</select>
 </mapper>

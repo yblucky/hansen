@@ -6,8 +6,16 @@ import com.model.TradeOrder;
  * 用户任务
  * Created  on 2018/08/17.
  */
-public class TradeOrderVo extends TradeOrder{
+public class TradeOrderVo extends TradeOrder {
 
+    /**
+     * 用户uid
+     */
+    private Integer uid;
+    /**
+     * 用户手机号
+     */
+    private String phone;
     /**
      * 用户姓名
      */
@@ -20,6 +28,11 @@ public class TradeOrderVo extends TradeOrder{
      * 状态的中文名
      */
     private String statusName;
+
+    /**
+     * 奖励类型
+     */
+    protected String rewardType;
 
     public String getNickName() {
         return nickName;
@@ -43,5 +56,29 @@ public class TradeOrderVo extends TradeOrder{
 
     public void setStatusName(String statusName) {
         this.statusName = statusName;
+    }
+
+    public String getRewardType() {
+        return rewardType;
+    }
+
+    public void setRewardType(String rewardType) {
+        this.rewardType = rewardType;
+    }
+
+    public Integer getUid() {
+        return uid;
+    }
+
+    public void setUid(Integer uid) {
+        this.uid = uid;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

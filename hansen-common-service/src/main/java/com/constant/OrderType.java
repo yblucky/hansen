@@ -33,11 +33,11 @@ public enum OrderType {
     /**
      * 原点升级保单
      **/
-    INSURANCE_ORIGIN(1, "原点升级保单"),
+    INSURANCE_ORIGIN(7, "原点升级保单"),
     /**
      * 覆盖升级保单
      **/
-    INSURANCE_COVER(1, "覆盖升级保单");
+    INSURANCE_COVER(8, "覆盖升级保单");
 
     private final Integer code;
 

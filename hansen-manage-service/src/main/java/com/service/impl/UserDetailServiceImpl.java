@@ -5,8 +5,11 @@ import com.base.service.impl.CommonServiceImpl;
 import com.mapper.UserDetailMapper;
 import com.service.UserDetailService;
 import com.model.UserDetail;
+import com.vo.UserDetailVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @date 2016年11月27日
@@ -38,5 +41,10 @@ public class UserDetailServiceImpl extends CommonServiceImpl<UserDetail> impleme
     @Override
     public Integer updateForzenTradeAmtByUserId(String userId, Double amt) {
         return userDetailMapper.updateForzenTradeAmtByUserId(userId,amt);
+    }
+
+    @Override
+    public List<UserDetailVo> findAll(UserDetailVo vo, int pageNumber, int pageSize, Integer count) {
+        return userDetailMapper.findAll(vo,pageNumber,pageSize);
     }
 }

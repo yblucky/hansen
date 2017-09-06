@@ -70,4 +70,6 @@
 		select SUM(amt) from <include refid="table_name"/> WHERE `status`=2 AND  userId=#{userId}
 	</select>
 
+
+
 </mapper>

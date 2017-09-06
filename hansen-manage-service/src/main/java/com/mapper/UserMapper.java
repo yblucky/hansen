@@ -32,4 +32,6 @@ public interface UserMapper extends CommonDao<User> {
 
     Integer updateUserRegisterCode(@Param("id") String userId, @Param("registerCodeNo") Integer registerNo);
 
+    Double sumUserMaxProfitByTime(@Param("startTime") String startTime, @Param("endTime") String endTime);
+
 }

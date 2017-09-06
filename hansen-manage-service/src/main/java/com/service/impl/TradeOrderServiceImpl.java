@@ -170,8 +170,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     }
 
     @Override
-    public List<TradeOrder> readRewardList(Date taskTime, Integer startRow, Integer pageSize) throws Exception {
-        return tradeOrderMapper.readRewardList(taskTime, startRow, pageSize);
+    public List<TradeOrder> readRewardList(String userId,Date taskTime, Integer startRow, Integer pageSize) throws Exception {
+        return tradeOrderMapper.readRewardList(userId,taskTime, startRow, pageSize);
     }
 
     @Override
@@ -216,5 +216,56 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     @Override
     public Integer batchUpdateOrderStatus(List<String> idList) {
         return tradeOrderMapper.batchUpdateOrderStatus(idList);
+    }
+
+    @Override
+    public List<TradeOrder> readRewardListByOrderType(String userId, List<Integer> source, Integer startRow, Integer pageSize) throws Exception {
+        return tradeOrderMapper.readRewardListByOrderType(userId, source,startRow, pageSize);
+    }
+
+    @Override
+    public Integer readRewardCountByOrderType(String userId, List<Integer> source) {
+        return tradeOrderMapper.readRewardCountByOrderType(userId, source);
+    }
+
+    @Override
+    public Double sumReadRewardByOrderType(String userId, List<Integer> source) {
+        return tradeOrderMapper.sumReadRewardByOrderType(userId, source);
+    }
+
+    @Override
+    public Integer countTotalOrderAmtByTime(List<Integer> source, String startTime, String endTime) {
+        Integer count = tradeOrderMapper.countTotalOrderAmtByTime(source,startTime,endTime);
+        if (count==null){
+            count=0;
+        }
+        return count;
+    }
+
+    @Override
+    public Double sumTotalOrderAmtByTime(List<Integer> source, String startTime, String endTime) {
+        Double sum= tradeOrderMapper.sumTotalOrderAmtByTime(source,startTime,endTime);
+        if (sum==null){
+            sum =0d;
+        }
+        return sum;
+    }
+
+    @Override
+    public Double sumTotalPayAmtByTime(List<Integer> source, String startTime, String endTime) {
+        Double sum= tradeOrderMapper.sumTotalPayAmtByTime(source,startTime,endTime);
+        if (sum==null){
+            sum =0d;
+        }
+        return sum;
+    }
+
+    @Override
+    public Double sumTotalTradeAmtByTime(List<Integer> source, String startTime, String endTime) {
+        Double sum= tradeOrderMapper.sumTotalTradeAmtByTime(source,startTime,endTime);
+        if (sum==null){
+            sum =0d;
+        }
+        return sum;
     }
 }
