@@ -19,7 +19,7 @@ public enum CodeType {
     /**
      * 注册使用注册码
      */
-    REGISTER_USE_REGISTERCODE(10, "转账使用注册码"),
+    REGISTER_USE_REGISTERCODE(10, "注册使用注册码"),
     /**
      * 转账使用注册码
      */

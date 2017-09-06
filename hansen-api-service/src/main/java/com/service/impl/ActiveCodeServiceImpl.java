@@ -50,12 +50,12 @@ public class ActiveCodeServiceImpl extends CommonServiceImpl<ActiveCode> impleme
         if (codeType==CodeType.ACTIVATECODE.getCode()){
             userService.updateUserActiveCode(fromUserId, -transferNo);
             userService.updateUserActiveCode(toUserId, transferNo);
-            transferCode.setType(CodeType.ACTIVATECODE.getCode());
+            transferCode.setType(CodeType.TRANSFER_USE_ACTIVECODE.getCode());
             transferCode.setRemark("用户转让激活码：" + from.getUid() + "转让" + to.getUid()+ " "+transferNo+"个");
         }else if (codeType==CodeType.REGISTERCODE.getCode()){
             userService.updateUserRegisterCode(fromUserId, -transferNo);
             userService.updateUserRegisterCode(toUserId, transferNo);
-            transferCode.setType(CodeType.REGISTERCODE.getCode());
+            transferCode.setType(CodeType.TRANSFER_USE_REGISTERCODE.getCode());
             transferCode.setRemark("用户转让注册码：" + from.getUid() + "转让" + to.getUid()+ " "+transferNo+"个");
         }
         transferCode.setSendUserId(fromUserId);
@@ -72,10 +72,10 @@ public class ActiveCodeServiceImpl extends CommonServiceImpl<ActiveCode> impleme
         TransferCode transferCode = new TransferCode();
         transferCode.setSendUserId(userId);
         transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
-        transferCode.setType(CodeType.ACTIVATECODE.getCode());
+        transferCode.setType(CodeType.REGISTER_USE_ACTIVECODE.getCode());
         transferCode.setTransferNo(-activeNo);
         if (ToolUtil.isEmpty(remark)) {
-            transferCode.setRemark("用户激活账号：" + userId);
+            transferCode.setRemark("用户激活账号,使用"+activeNo+"个激活码");
         } else {
             transferCode.setRemark(remark);
         }
@@ -89,10 +89,10 @@ public class ActiveCodeServiceImpl extends CommonServiceImpl<ActiveCode> impleme
         TransferCode transferCode = new TransferCode();
         transferCode.setSendUserId(userId);
         transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
-        transferCode.setType(CodeType.REGISTERCODE.getCode());
+        transferCode.setType(CodeType.REGISTER_USE_REGISTERCODE.getCode());
         transferCode.setTransferNo(-registerCodeNo);
         if (ToolUtil.isEmpty(remark)) {
-            transferCode.setRemark("用户注册账号：" + userId);
+            transferCode.setRemark("用户注册账号,使用"+registerCodeNo+"个激活码");
         } else {
             transferCode.setRemark(remark);
         }
