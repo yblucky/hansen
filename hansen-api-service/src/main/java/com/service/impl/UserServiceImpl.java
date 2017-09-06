@@ -373,7 +373,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         if (user.getGrade() == null || "".equals(user.getGrade())) {
             user.setGrade(0);
         }
-        Grade userGrade = gradeService.getUserGrade(user.getId());
+        Grade userGrade = gradeService.getUserGrade2(user.getId());
         if (userGrade != null && userGrade.getGrade().intValue() > user.getGrade().intValue()) {
             User model = new User();
             model.setGrade(userGrade.getGrade());
@@ -657,7 +657,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         user.setFirstReferrer(loginUser.getId());
         user.setRemainTaskNo(0);
         user.setSecondReferrer(loginUser.getFirstReferrer());
-        user.setContactUserId(loginUser.getId());
+        user.setContactUserId(inviterUser.getId());
         user.setPassword(Md5Util.MD5Encode(user.getPassword(), DateUtils.currentDateToggeter()));
         user.setPayWord(Md5Util.MD5Encode(user.getPayWord(), DateUtils.currentDateToggeter()));
         user.setSalt(DateUtils.currentDateToggeter());

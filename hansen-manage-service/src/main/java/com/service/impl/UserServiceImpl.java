@@ -508,7 +508,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         String tradeAddress = WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE), user.getLoginName());
         user.setFirstReferrer(inviterUser.getId());
         user.setSecondReferrer(inviterUser.getSecondReferrer());
-        user.setContactUserId(null);
+        user.setContactUserId(inviterUser.getId());
         user.setPassword(Md5Util.MD5Encode(user.getPassword(), DateUtils.currentDateToggeter()));
         user.setSalt(DateUtils.currentDateToggeter());
         user.setStatus(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
@@ -530,7 +530,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         createUser = this.createRegisterUser(createUser, cardGrade, inviterUser);
         /**建立部门关系**/
         UserDepartment userDepartment = new UserDepartment();
-        userDepartment.setParentUserId(innerUser.getId());
+        userDepartment.setParentUserId(inviterUser.getId());
         userDepartment.setUid(createUser.getUid());
         userDepartment.setUserId(createUser.getId());
         userDepartmentService.createUserDepartment(userDepartment);

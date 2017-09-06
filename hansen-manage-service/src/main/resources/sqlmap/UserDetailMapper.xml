@@ -61,6 +61,7 @@
               <if test="model.uid != null and model.uid != ''"> and us.uid= #{model.uid}</if>
               <if test="model.phone != null and model.phone != ''"> and us.phone= #{model.phone}</if>
           </where>
+        ORDER BY ud.createtime desc
         limit #{startRow}, #{pageSize};
     </select>
 

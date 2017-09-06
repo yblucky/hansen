@@ -12,4 +12,6 @@ public interface GradeService extends CommonService<Grade> {
     Grade getGradeDetail(Integer grade);
 
     Grade getUserGrade(String userId) throws Exception;
+
+    Grade getUserGrade2(String userId) throws Exception;
 }
