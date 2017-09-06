@@ -144,7 +144,7 @@ public class TradeOrderController extends BaseController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/testlist", method = RequestMethod.GET)
     public JsonResult rewardList(HttpServletRequest request, Paging page, Integer uid,String phone, String tradeOrderType) throws Exception {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);
