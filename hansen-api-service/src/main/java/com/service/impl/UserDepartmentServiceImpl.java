@@ -46,6 +46,15 @@ public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment>
     }
 
     @Override
+    public Integer getMaxGrade(String parentUserId) {
+        Integer maxGrade= userDepartmentMapper.getMaxGrade(parentUserId);
+        if (maxGrade==null){
+            return 0;
+        }
+        return maxGrade;
+    }
+
+    @Override
     public Boolean createUserDepartment(UserDepartment userDepartment) {
         userDepartment.setPerformance(0d);
         userDepartmentMapper.create(userDepartment);

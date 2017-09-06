@@ -191,6 +191,10 @@ public class LoginController {
         }
         vo.setStatus(user.getStatus());
         vo.setToken(redisToken);
+        //提币手续费
+        Double payCoinOutScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.PAYCOINOUTSCALE), 0d);
+        //提币手续费
+        Double tradeCoinOutScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.TRADECOINOUTSCALE), 0d);
         //人民币兑换支付币汇率
         Double rmbConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
         //人民币兑换交易币汇率

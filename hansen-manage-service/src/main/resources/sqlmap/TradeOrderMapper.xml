@@ -98,7 +98,8 @@
             <if test="list != null">
                 AND  source in    <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
             </if>
-            limit #{startRow}, #{pageSize};
+            ORDER by createTime desc
+            limit #{startRow}, #{pageSize}
         </where>
     </select>
 

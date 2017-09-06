@@ -63,7 +63,9 @@
 	</select>
 
 	<select id="readList" resultType="User">
-		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+		<include refid="selector"/> <include refid="condition"/>
+		ORDER BY createtime desc
+		limit #{startRow}, #{pageSize};
 	</select>
 
 	<select id="readOne" resultType="User">
