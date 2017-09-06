@@ -100,4 +100,59 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
         }
         return null;
     }
+
+    /**
+     * 会员业绩等级计算
+     *
+     * @param userId 用户id
+     */
+    @Override
+    public Grade getUserGrade2(String userId) throws Exception {
+        User user = userService.readById(userId);
+        if(user.getGrade() == null){
+            user.setGrade(0);
+        }
+        if(user.getGrade() == GradeType.GRADE8.getCode().intValue()){
+            System.out.println("已是最高等级");
+            return null;
+        }
+        //获取用户的所有部门（不包含设有接点人的部门）
+        List<UserDepartment> list = userDepartmentService.getAll(userId);
+        //获取用户的所有部门的总业绩（不包含设有接点人的部门）
+        Double sumAmt = userDepartmentService.getSumAmt(userId);
+        //获取用户的三个部门用户的最高等级的级别
+        Integer maxGrade = userDepartmentService.getMaxGrade(userId);
+        //部门数量小于2个或所有部门总业绩不达标则不计算
+        if (list == null || list.size() < 2 || sumAmt < 100000) {
+            System.out.println("用户未达到升级条件");
+            return null;
+        }
+        //市代、省代、董事长符合即返回
+        if(maxGrade.intValue() > 0 && (maxGrade.intValue()+1) > user.getGrade().intValue()){
+            return this.getGradeDetail(maxGrade+1);
+        }
+        for (GradeType gradeType : GradeType.values()) {
+            if(user.getGrade().intValue() >= gradeType.getCode().intValue()){
+                continue;
+            }
+            Grade grade = this.getGradeDetail(gradeType.getCode());
+            switch (gradeType){
+                //专员、主任、经理的最大两个部门大于10W,30W,50W业绩，其中最小部门不小于总业绩的20%
+                case GRADE1:
+                case GRADE2:
+                case GRADE3:
+                case GRADE4:{
+                    Double firstMaxAmt = list.get(0).getPerformance();
+                    Double sedMaxAmt = list.get(1).getPerformance();
+                    Double sumMax = CurrencyUtil.getPoundage(firstMaxAmt + sedMaxAmt, 1d);
+                    Double minProfit = CurrencyUtil.getPoundage(sumAmt*0.2,1d);
+                    if (sumMax >= grade.getSumPerformance() && sedMaxAmt >= minProfit) {
+                        return grade;
+                    }
+                    break;
+                }
+            }
+        }
+        return null;
+    }
 }
