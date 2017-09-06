@@ -26,4 +26,9 @@ public class SysRolePermissionServiceImpl extends CommonServiceImpl<SysRolePermi
     protected Class<SysRolePermission> getModelClass() {
         return SysRolePermission.class;
     }
+
+    @Override
+    public void deleteByRoleId(String roleId) {
+        sysRolePermissionMapper.deleteByRoleId(roleId);
+    }
 }

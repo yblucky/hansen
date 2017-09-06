@@ -48,7 +48,7 @@ public class RoleServiceImpl extends CommonServiceImpl<SysRole> implements RoleS
     @Override
     public void saveRolePerm(SysRolePermissionVo rolePerm) throws Exception {
         //删除数据
-        sysResourceService.deleteById(rolePerm.getRoleId());
+        sysRolePermissionService.deleteByRoleId(rolePerm.getRoleId());
         //保存数据
         for (SysRolePermissionVo.RolePermVo spVo : rolePerm.getLis()) {
             SysRolePermission rolePermPo = new SysRolePermission();

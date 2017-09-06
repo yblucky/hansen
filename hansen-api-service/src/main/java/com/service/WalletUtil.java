@@ -14,6 +14,8 @@ import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -157,6 +159,13 @@ public class WalletUtil {
     }
 
     public static void main(String[] args) {
+        System.out.println(new Date().getTime());
+        Map map=new HashMap();
+        map.put("time","1504668631");
+        String time =JSON.toJSONString(map);
+        System.out.println(time);
+        JSON.parse(time);
+
         BitcoinClient bitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 29996);
         List<TransactionInfo> list = bitcoinClient.listTransactions("10000");
         System.out.println(JSON.toJSONString(list));
@@ -190,6 +199,7 @@ public class WalletUtil {
 //        System.out.println(JSON.toJSONString(WalletUtil.sendFrom(bitcoinClient, "", "rW53u6WDfZFoVWyHrgcGTU3AwtCJAipk9y", new BigDecimal("2"), "test01", "test001")));
 //        System.out.println(JSON.toJSONString(WalletUtil.sendToAddress(bitcoinClient,"rfciwDvRrHS6DFjM3nxriU9XmAMbaXMRaP",new BigDecimal("2"),"test01","test001")));
     }
+
 
 
 }

@@ -103,7 +103,7 @@ public class TaskController {
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "账号未激活");
         }
-        if (ToolUtil.isEmpty(taskvo.getTaskId())) {
+        if (ToolUtil.isEmpty(taskvo.getUserTaskId())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "任务id不能为空");
         }
         UserTask userTask = userTaskService.readById(taskvo.getUserTaskId());
@@ -111,6 +111,6 @@ public class TaskController {
             return new JsonResult(ResultCode.ERROR.getCode(), "任务不存在");
         }
         userTaskService.doTask(user.getId(), userTask);
-        return new JsonResult();
+        return new JsonResult(userTask);
     }
 }
