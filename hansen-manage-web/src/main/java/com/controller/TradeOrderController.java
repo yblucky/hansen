@@ -1,8 +1,9 @@
 package com.controller;
 
-import com.Token;
-import com.base.TokenUtil;
-import com.base.page.*;
+import com.base.page.PageResult;
+import com.base.page.Paging;
+import com.base.page.RespBody;
+import com.base.page.RespCodeEnum;
 import com.constant.CardLevelType;
 import com.constant.OrderStatus;
 import com.constant.OrderType;
@@ -46,7 +47,7 @@ public class TradeOrderController extends BaseController {
 
 
     /**
-     * 获取任务列表
+     * 获取保单列表：首次保单  覆盖升级  补差升级
      *
      * @param request
      * @param response
@@ -56,7 +57,7 @@ public class TradeOrderController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/orderlist", method = RequestMethod.GET)
-    public RespBody orderList(HttpServletRequest request, HttpServletResponse response, Paging page, Integer uid,String phone, String tradeOrderType) throws Exception {
+    public RespBody orderList(HttpServletRequest request, HttpServletResponse response, Paging page, Integer uid, String phone, String tradeOrderType) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
         String token = request.getHeader("token");
@@ -67,28 +68,28 @@ public class TradeOrderController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
             return respBody;
         }
-        Boolean isHasData=true;
+        Boolean isHasData = true;
         String receviceUserId = null;
         User con = new User();
 
-        User conUser=null;
+        User conUser = null;
         if (uid != null) {
             con.setUid(uid);
             conUser = userService.readOne(con);
-            if (conUser==null){
-                isHasData=false;
+            if (conUser == null) {
+                isHasData = false;
+            } else {
+                receviceUserId = conUser.getId();
             }
-        }else {
-            receviceUserId=conUser.getId();
         }
         if (phone != null) {
             con.setPhone(phone);
             conUser = userService.readOne(con);
-            if (conUser==null){
-                isHasData=false;
+            if (conUser == null) {
+                isHasData = false;
+            } else {
+                receviceUserId = conUser.getId();
             }
-        }else {
-            receviceUserId=conUser.getId();
         }
         if (page.getPageNumber() == 0) {
             page.setPageNumber(0);
@@ -99,10 +100,10 @@ public class TradeOrderController extends BaseController {
         List<TradeOrder> list = null;
         List<TradeOrderVo> rsList = null;
         List<Integer> sourceList = new ArrayList<>();
-            sourceList.add(OrderType.INSURANCE.getCode());
-            sourceList.add(OrderType.INSURANCE_ORIGIN.getCode());
-            sourceList.add(OrderType.INSURANCE_COVER.getCode());
-        Integer count = tradeOrderService.readRewardCountByOrderType(user.getId(), sourceList);
+        sourceList.add(OrderType.INSURANCE.getCode());
+        sourceList.add(OrderType.INSURANCE_ORIGIN.getCode());
+        sourceList.add(OrderType.INSURANCE_COVER.getCode());
+        Integer count = tradeOrderService.readRewardCountByOrderType(receviceUserId, sourceList);
         if (count != null && count > 0) {
             list = tradeOrderService.readRewardListByOrderType(receviceUserId, sourceList, page.getStartRow(), page.getPageSize());
             rsList = new ArrayList<>();
@@ -143,37 +144,39 @@ public class TradeOrderController extends BaseController {
     }
 
 
+    /**
+     * 奖励列表
+     *
+     * @param request
+     * @param page
+     * @param uid
+     * @param phone
+     * @param tradeOrderType
+     * @return
+     * @throws Exception
+     */
     @ResponseBody
     @RequestMapping(value = "/rewardList", method = RequestMethod.GET)
-    public JsonResult rewardList(HttpServletRequest request, Paging page, Integer uid,String phone, String tradeOrderType) throws Exception {
-        JsonResult result = null;
-        Token token = TokenUtil.getSessionUser(request);
-        User user = userService.readById(token.getId());
-        if (user == null) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
-        }
-        Boolean isHasData=true;
+    public RespBody rewardList(HttpServletRequest request, Paging page, Integer uid, String phone, String tradeOrderType) throws Exception {
+        // 创建返回对象
+        RespBody respBody = new RespBody();
         String receviceUserId = null;
         User con = new User();
 
-        User conUser=null;
+        User conUser = null;
         if (uid != null) {
             con.setUid(uid);
             conUser = userService.readOne(con);
-            if (conUser==null){
-                isHasData=false;
+            if (conUser != null) {
+                receviceUserId = conUser.getId();
             }
-        }else {
-            receviceUserId=conUser.getId();
         }
         if (phone != null) {
             con.setPhone(phone);
             conUser = userService.readOne(con);
-            if (conUser==null){
-                isHasData=false;
+            if (conUser != null) {
+                receviceUserId = conUser.getId();
             }
-        }else {
-            receviceUserId=conUser.getId();
         }
         if (page.getPageNumber() == 0) {
             page.setPageNumber(0);
@@ -201,7 +204,7 @@ public class TradeOrderController extends BaseController {
         PageResult<TradeOrderVo> pageResult = new PageResult<>();
         pageResult.setRows(voList);
         BeanUtils.copyProperties(page, pageResult);
-        Integer count = tradeOrderService.readRewardCountByOrderType(user.getId(), sourceList);
+        Integer count = tradeOrderService.readRewardCountByOrderType(receviceUserId, sourceList);
         if (count != null && count > 0) {
             List<TradeOrder> list = tradeOrderService.readRewardListByOrderType(receviceUserId, sourceList, page.getStartRow(), page.getPageSize());
             for (TradeOrder order : list) {
@@ -234,8 +237,8 @@ public class TradeOrderController extends BaseController {
                     vo.setRemark("来自会员" + u.getUid() + "周期释放，获得" + order.getConfirmAmt() + "奖励");
                     vo.setRewardType(OrderType.RELASE.getMsg());
                 }
-                User receUser = userService.readById(receviceUserId);
-                if (receUser!=null){
+                User receUser = userService.readById(order.getReceviceUserId());
+                if (receUser != null) {
                     vo.setNickName(receUser.getNickName());
                     vo.setUid(receUser.getUid());
                     vo.setPhone(receUser.getPhone());
@@ -248,7 +251,9 @@ public class TradeOrderController extends BaseController {
             count = 0;
         }
         pageResult.setTotalSize(count);
-        return new JsonResult(pageResult);
+        page.setTotalCount(count);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功", page, voList);
+        return respBody;
     }
 
 }

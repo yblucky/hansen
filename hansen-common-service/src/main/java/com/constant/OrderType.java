@@ -27,7 +27,7 @@ public enum OrderType {
      */
     EQUALITY(5, "平级奖"),
     /**
-     * 平级奖
+     * 每周收益
      **/
     RELASE(6, "每周收益"),
     /**
