@@ -82,7 +82,7 @@ public class TradeOrderController extends BaseController {
                 receviceUserId = conUser.getId();
             }
         }
-        if (phone != null) {
+        if (ToolUtil.isNotEmpty(phone)) {
             con.setPhone(phone);
             conUser = userService.readOne(con);
             if (conUser == null) {
@@ -171,7 +171,7 @@ public class TradeOrderController extends BaseController {
                 receviceUserId = conUser.getId();
             }
         }
-        if (phone != null) {
+        if (ToolUtil.isNotEmpty(phone)) {
             con.setPhone(phone);
             conUser = userService.readOne(con);
             if (conUser != null) {
