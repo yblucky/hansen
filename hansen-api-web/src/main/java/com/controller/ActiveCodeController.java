@@ -206,7 +206,7 @@ public class ActiveCodeController {
 
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public JsonResult inList(HttpServletRequest request, Page page,Integer type) {
+    public JsonResult inList(HttpServletRequest request, Page page,Integer codeType) {
         JsonResult result = null;
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.readById(token.getId());
@@ -219,12 +219,16 @@ public class ActiveCodeController {
         if (page.getPageSize() == null) {
             page.setPageSize(10);
         }
+        if(codeType == null || (codeType != 1 && codeType != 2)){
+            return new JsonResult(ResultCode.ERROR.getCode(), "code类型不能为空");
+        }
+
         List<TransferCode> list = new ArrayList<>();
         PageResult<TransferCode> pageResult = new PageResult<>();
         BeanUtils.copyProperties(page,pageResult);
-        Integer count = transferCodeService.readCountByUserId(user.getId());
+        Integer count = transferCodeService.readCountByUserId(user.getId(),codeType);
         if (count != null && count > 0) {
-            list = transferCodeService.readListByUserId(user.getId(),page);
+            list = transferCodeService.readListByUserId(user.getId(),codeType,page);
             pageResult.setRows(list);
         }
         return new JsonResult(pageResult);

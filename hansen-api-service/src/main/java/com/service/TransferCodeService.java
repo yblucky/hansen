@@ -10,8 +10,8 @@ import java.util.List;
  * @date 2017年08月15日
  */
 public interface TransferCodeService extends CommonService<TransferCode> {
-    Integer readCountByUserId(String userId);
+    Integer readCountByUserId(String userId,Integer codeType);
 
-    List<TransferCode> readListByUserId(String userId, Page page);
+    List<TransferCode> readListByUserId(String userId, Integer codeType,Page page);
 
 }
