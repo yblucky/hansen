@@ -102,15 +102,15 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         UserTask lastUserTask = this.readLastOne(userId);
         if (lastUserTask == null) {
             //从来都没有领取过任务，默认第一天
-            if(ids.size() == 0){
+            if (ids.size() == 0) {
                 //获取所有任务列表
                 List<Task> taskList = taskService.readAll(new Task());
                 //判断是否有任务列表，如果没有，就return
-                if(taskList == null){
+                if (taskList == null) {
                     return false;
                 }
                 //循环任务列表，保存任务ids
-                for(Task task: taskList){
+                for (Task task : taskList) {
                     //将任务id保存到set里
                     ids.add(task.getId());
                 }
@@ -124,15 +124,15 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             if (diffDay > remainTaskNo) {
                 diffDay = remainTaskNo;
             }
-            if(ids.size() == 0){
+            if (ids.size() == 0) {
                 //获取所有任务列表
                 List<Task> taskList = taskService.readAll(new Task());
                 //判断是否有任务列表，如果没有，就return
-                if(taskList == null){
+                if (taskList == null) {
                     return false;
                 }
                 //循环任务列表，保存任务ids
-                for(Task task: taskList){
+                for (Task task : taskList) {
                     //将任务id保存到set里
                     ids.add(task.getId());
                 }
@@ -153,7 +153,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
 
     @Override
     @Transactional
-    public Boolean doTask(String userId,UserTask userTask) throws Exception {
+    public Boolean doTask(String userId, UserTask userTask) throws Exception {
         User user = userService.readById(userId);
         if (user == null) {
             return false;
@@ -161,13 +161,6 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         if (user.getRemainTaskNo() <= 0) {
             return false;
         }
-//        UserTask conditon = new UserTask();
-//        conditon.setUserId(userId);
-//        conditon.setTaskId(taskId);
-//        UserTask userTask = this.readOne(conditon);
-//        if (userTask == null) {
-//            return false;
-//        }
         if (TaskStatusType.PENDING.getCode() != userTask.getStatus()) {
             return false;
         }
@@ -185,7 +178,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         this.updateById(userTask.getId(), updteModel);
         userService.updateRemainTaskNoByUserId(userId, -1);
 
-        List<TradeOrder> orderList = tradeOrderService.readRewardList(userId,new Date(), 0, 100);
+        List<TradeOrder> orderList = tradeOrderService.readRewardList(userId, new Date(), 0, 100);
         //需要更新任务次数的id集合
         List<String> orderIdList1 = new ArrayList<>();
         //需要更新领取奖励次数的id集合
@@ -200,26 +193,26 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
                 orderIdList21.add(order);
                 orderIdList2.add(order.getId());
             }
-            if (order.getSignCycle()==1){
+            if (order.getSignCycle() == 1) {
                 orderIdList3.add(order.getId());
             }
         }
-        if (ToolUtil.isNotEmpty(orderIdList1)){
+        if (ToolUtil.isNotEmpty(orderIdList1)) {
             tradeOrderService.batchUpdateTaskCycle(orderIdList1);
         }
-        if (ToolUtil.isNotEmpty(orderIdList2)){
+        if (ToolUtil.isNotEmpty(orderIdList2)) {
             //完成7次奖励，一次奖励发放，任务周期归为系统设置默认值
             Integer taskCycle = Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL));
-            tradeOrderService.batchUpdateTaskCycleDefault(orderIdList2,taskCycle);
+            tradeOrderService.batchUpdateTaskCycleDefault(orderIdList2, taskCycle);
             //逐条写入奖励发放记录
-            for (TradeOrder order :orderIdList21){
+            for (TradeOrder order : orderIdList21) {
                 //TODO 一天若有奖金 需要合并，待完善
-                userSignService.addUserSign(order.getReceviceUserId(),order.getAmt()/order.getSignCycle(), SignType.WAITING_SIGN,"完成一个任务周期，新增奖励发放记录");
+                userSignService.addUserSign(order.getReceviceUserId(), order.getAmt() / order.getSignCycle(), SignType.WAITING_SIGN, "完成一个任务周期，新增奖励发放记录");
                 userService.weeklyIncomeAmt(user);
             }
         }
         //如果是最后一个周期，更新奖金订单状态为完成发放
-        if (ToolUtil.isNotEmpty(orderIdList3)){
+        if (ToolUtil.isNotEmpty(orderIdList3)) {
             tradeOrderService.batchUpdateOrderStatus(orderIdList3);
         }
         return true;
@@ -227,8 +220,8 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
 
     @Override
     public Integer readCompeleteUserTaskCount(String userId) {
-        Integer compeleteUserTaskCount =  userTaskMapper.readCompeleteUserTaskCount(userId);
-        if (compeleteUserTaskCount==null){
+        Integer compeleteUserTaskCount = userTaskMapper.readCompeleteUserTaskCount(userId);
+        if (compeleteUserTaskCount == null) {
             return 0;
         }
         return compeleteUserTaskCount;

@@ -167,8 +167,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         performanceRecord.setRemark(OrderType.fromCode(tradeOrder.getSource()).getMsg());
         //写入直推奖待做任务领取奖励记录，有则写
         userService.pushBonus(activeUser.getId(), tradeOrder);
-        //写入管理奖待做任务领取奖励记录，有则写
-        userService.manageBonus(activeUser.getId(), tradeOrder);
         //写入极差奖待做任务领取奖励记录，有则写
         userService.differnceBonus(activeUser.getId(), tradeOrder);
 //        //写入用户升级记录

@@ -46,8 +46,6 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     private TransferCodeService transferCodeService;
     @Autowired
     private ParameterService parameterService;
-    @Autowired
-    private WalletOrderService walletOrderService;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -88,7 +86,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     }
 
     /**
-     * 用户每周收益   此方法作废，现在改为做完7次任务后获取奖励(后台参数维护)
+     * 用户每周收益    现在改为做完7次任务后获取奖励(后台参数维护)
      */
     @Override
     @Transactional
@@ -111,7 +109,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         //静态收益
         double incomeAmt = CurrencyUtil.getPoundage(user.getInsuranceAmt() * cardGrade.getReleaseScale(), 1d);
         //静态收益转为三种币
-        userIncomeAmt(incomeAmt, user.getId(), RecordType.RELASE, orderNo);
+//        userIncomeAmt(incomeAmt, user.getId(), RecordType.RELASE, orderNo);
         //用户剩余保单金额
         double insuranceAmt = CurrencyUtil.getPoundage(user.getInsuranceAmt() - incomeAmt, 1d);
         User model = new User();
@@ -132,7 +130,11 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         this.updateById(user.getId(), model);
         // TODO: 2017/7/14 记录用户释放信息
-        this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE, 1, 1);
+        String remark="收益释放：会员"+user.getUid()+"领取任务收益";
+        this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE, 1, 1,remark);
+        //判断是否有管理奖
+        //写入管理奖待做任务领取奖励记录，有则写
+        this.manageBonus(user.getId(),null);
     }
 
     /**
@@ -170,7 +172,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
            /*存入一代推荐人的三种钱包中  需要做完7次任务才可以分4次领取
             userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);*/
             // TODO: 2017/7/14 记录一代直推奖记录
-            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, 1, 1);
+            String remark="直推奖：会员"+pushUser.getUid()+"报单一代奖励";
+            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, 1, 1,remark);
         }
         //二代直推奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
@@ -194,7 +197,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 //存入二代推荐人的三种钱包中
 //                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);
                 // TODO: 2017/7/14 记录二代直推奖记录
-                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+                String remark="直推奖：会员"+pushUser.getUid()+"报单二代奖励";
+                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)),remark);
             }
         }
     }
@@ -226,9 +230,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         CardGrade cardGrade = null;
         //一代推荐人必须也是激活状态
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
-            String orderNo = order.getOrderNo();
-            //保单等级以最小为准
+            String orderNo="";
+            if (order!=null){
+                orderNo  = order.getOrderNo();
+            }
 
+            //保单等级以最小为准
             cardGrade = cardGradeService.getUserCardGrade(cardLevel);
             if (cardGrade==null){
                 logger.error("卡参数等级错误");
@@ -236,7 +243,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             }
             //管理收益按两者最小保单金额*2%
             if (cardLevel > parentUser.getCardGrade()) {
-                //直推用户较大，按上级算\
+                //直推用户较大，按上级算
                 targetCardGrade = parentUser.getCardGrade();
             } else {
                 targetCardGrade = cardLevel;
@@ -251,7 +258,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             //存入一代推荐人的三种钱包中
 //            userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
             // TODO: 2017/7/14 记录一代管理奖记录
-            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1, 1);
+            String remark="管理奖：会员"+pushUser.getUid()+"报单一代管理奖励";
+            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1, 1,remark);
         }
         //二代管理奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
@@ -286,7 +294,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 //                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
                 // TODO: 2017/7/14 记录二代管理奖记录
 //                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 0, 0);
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+                String remark="管理奖：会员"+pushUser.getUid()+"报单二代管理奖励";
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)),remark);
             }
         }
     }
@@ -352,7 +361,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * sameRewradScale, 1d);
 //                this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.SAME, orderNo);
                 //领取平级奖记录
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, 1, 1);
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, 1, 1,"");
                 //中断级差
                 return;
             }
@@ -363,7 +372,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 if (bonusScale > 0 && i == 0) {
                     double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * bonusScale, 1d);
                     this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT, orderNo);
-                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, 1, 1);
+                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, 1, 1,"");
                 }
                 // TODO: 2017/7/17 领取级差奖  保单金额*1%
                 parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
@@ -373,8 +382,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.DIFFERENT, orderNo);
                 bonusScale = parentGrade.getRewardScale();
                 //领取级差奖
+                String remark="平级奖：会员"+user.getUid()+"报单平级奖励";
 //                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)),"");
             }
             childUser = parentUser;
         }
@@ -400,12 +410,6 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         double insuranceAmt = cardGrade.getInsuranceAmt();
         //用户所处的等级所能拿到奖金的比例
         double bonusScale = 0d;
-       /* Grade grade = gradeService.getGradeDetail(user.getGrade());
-        if (grade != null) {
-            bonusScale = grade.getRewardScale();
-        } else {
-            user.setGrade(0);
-        }*/
         User childUser = user;
         //1星到5星的奖励比率为 2% < 4% < 6% < 8% < 12% < 16% < 20% 平级奖 2% 最多领取22%
         for (int i = 0; i < 7; i++) {
@@ -445,7 +449,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * sameRewradScale, 1d);
 //                this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.SAME, orderNo);
                 //领取平级奖记录
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, 1, 1);
+                String remark="平级奖：会员"+user.getUid()+"报单平级奖励";
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, 1, 1,remark);
                 //中断级差
                 return;
             }
@@ -456,7 +461,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 if (bonusScale > 0 && i == 0) {
                     double incomeAmt = CurrencyUtil.getPoundage(insuranceAmt * bonusScale, 1d);
                     this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT, orderNo);
-                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, 1, 1);
+                    String remark="级差奖：会员"+user.getUid()+"报单一代奖励";
+                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, 1, 1,remark);
                 }
                 // TODO: 2017/7/17 领取级差奖  保单金额*1%
                 parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
@@ -467,7 +473,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 bonusScale = parentGrade.getRewardScale();
                 //领取级差奖
 //                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
+                String remark="级差奖：会员"+user.getUid()+"报单奖励";
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, Integer.valueOf(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)), Integer.valueOf(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)),remark);
             }
             childUser = parentUser;
         }
@@ -523,7 +530,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
 
     //新增用户收入记录
-    private void addTradeOrder(String sendUserId, String receviceUserId, String order, Double amt, RecordType recordType, Integer rewardInterval, Integer taskInterval) {
+    private void addTradeOrder(String sendUserId, String receviceUserId, String order, Double amt, RecordType recordType, Integer rewardInterval, Integer taskInterval,String remark) {
+        User newUser = this.readById(sendUserId);
         TradeOrder model = new TradeOrder();
         model.setSendUserId(sendUserId);
         model.setReceviceUserId(receviceUserId);
@@ -534,7 +542,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         model.setTaskCycle(taskInterval);
         model.setSignCycle(rewardInterval);
         model.setSource(recordType.getCode());
-        model.setRemark(recordType.getMsg());
+        if (ToolUtil.isNotEmpty(remark)){
+            model.setRemark(remark);
+        }else {
+            model.setRemark(recordType.getMsg());
+        }
+
         model.setStatus(OrderStatus.PENDING.getCode());
 //        try {
 //            model.setTaskCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
@@ -555,6 +568,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
      * @param targetCardGradeNo 升级等级
      */
     @Override
+    @Transactional
     public void originUpgrade(String userId, Integer targetCardGradeNo) throws Exception {
         User user = this.readById(userId);
         if (user == null) {
@@ -597,7 +611,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         updateModel.setCardGrade(targetCardGradeNo);
 //        updateModel.setInsuranceAmt(targetCardGrade.getInsuranceAmt());
 //        updateModel.setMaxProfits(CurrencyUtil.multiply(targetCardGrade.getOutMultiple(), targetCardGrade.getInsuranceAmt(), 4));
-        updateModel.setRemark("用户补差价升级，由" + CardLevelType.fromCode(user.getCardGrade()).getMsg() + "升级到" + CardLevelType.fromCode(targetCardGradeNo));
+        updateModel.setRemark("用户补差价升级，由" + CardLevelType.fromCode(user.getCardGrade()).getMsg() + "升级到" + CardLevelType.fromCode(targetCardGradeNo).getMsg());
         this.updateById(userId, updateModel);
 
         //更新用户详情冻结信息
@@ -639,7 +653,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         tradeOrderService.create(tradeOrder);
         // TODO: 2017/8/3 点位升级成功后的记录
-        userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.ORIGINUPGRADE.getCode(), tradeOrder.getOrderNo());
+        userGradeRecordService.addGradeRecord(user, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.ORIGINUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
 
     /**
@@ -737,7 +751,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             tradeOrder.setSignCycle(0);
         }
         tradeOrderService.create(tradeOrder);
-        userGradeRecordService.addGradeRecord(updateModel, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.COVERAGEUPGRADE.getCode(), tradeOrder.getOrderNo());
+        userGradeRecordService.addGradeRecord(user, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.COVERAGEUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
 
     @Override

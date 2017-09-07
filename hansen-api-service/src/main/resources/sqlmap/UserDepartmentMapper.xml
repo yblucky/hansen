@@ -56,7 +56,7 @@
 			<if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
 			<if test="model.uid != null">uid= #{model.uid},</if>
 			<if test="model.performance != null">performance= #{model.performance},</if>
-			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.status != null and model.status !=0">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
 			<if test="model.grade != null and model.grade !=''">grade= #{model.grade},</if>
 			updateTime=now()
