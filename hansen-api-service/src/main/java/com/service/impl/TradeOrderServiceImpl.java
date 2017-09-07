@@ -148,6 +148,12 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             if (grade != null && grade.getGrade() != refferUser.getGrade()) {
                 //更新用户星级
                 userService.updateUserGradeByUserId(referId, grade.getGrade());
+                UserDepartment con = new UserDepartment();
+                con.setUserId(refferUser.getId());
+                UserDepartment userDepartment = userDepartmentService.readOne(con);
+                UserDepartment updateModel = new UserDepartment();
+                updateModel.setGrade(grade.getGrade());
+                userDepartmentService.updateById(userDepartment.getId(),updateModel);
                 //写入用户升级记录
                 userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade, grade.getGrade(), UpGradeType.STARGRADE.getCode(), orderNo);
             }

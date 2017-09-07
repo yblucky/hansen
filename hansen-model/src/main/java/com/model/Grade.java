@@ -27,6 +27,10 @@ public class Grade extends BaseModel {
      */
     private Double remainScale;
     /**
+     * 最小部分比例
+     */
+    private Double minScale;
+    /**
      * 此星级获取级差奖励比例
      */
     private Double rewardScale;
@@ -69,5 +73,13 @@ public class Grade extends BaseModel {
 
     public void setRewardScale(Double rewardScale) {
         this.rewardScale = rewardScale;
+    }
+
+    public Double getMinScale() {
+        return minScale;
+    }
+
+    public void setMinScale(Double minScale) {
+        this.minScale = minScale;
     }
 }

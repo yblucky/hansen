@@ -19,4 +19,6 @@ public interface UserDepartmentMapper extends CommonDao<UserDepartment> {
     List<UserDepartment> getAll(@Param("parentUserId") String parentUserId);
 
     Integer getMaxGrade(@Param("parentUserId") String parentUserId);
+
+    List<UserDepartment> getDirectMaxGradeList(@Param("parentUserId") String parentUserId);
 }

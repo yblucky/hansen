@@ -3,6 +3,7 @@ package com.service;
 import com.base.service.CommonService;
 import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
+import com.model.SysUser;
 import com.model.WalletTransaction;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 
@@ -26,4 +27,10 @@ public interface WalletTransactionService extends CommonService<WalletTransactio
     public void checkTransactionListStatus(String userId, Integer currencyType) throws Exception;
 
     public void checkTransactionStatus(WalletTransaction transaction) throws Exception;
+
+    public Boolean checkCoinOut(SysUser loginUser, String orderId,Integer status)  throws Exception;
+
+
+
+
 }

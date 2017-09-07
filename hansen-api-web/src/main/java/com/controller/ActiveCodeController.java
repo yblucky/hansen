@@ -246,7 +246,7 @@ public class ActiveCodeController {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户开卡等级有误");
         }
         if (user.getActiveCodeNo()<cardGrade.getActiveCodeNo()){
-            return new JsonResult(ResultCode.ERROR.getCode(), "激活不足,无法激活账户");
+            return new JsonResult(ResultCode.ERROR.getCode(), "激活码不足,无法激活账户");
         }
         Boolean flag = userService.intervalActice(user.getId());
         if (flag){

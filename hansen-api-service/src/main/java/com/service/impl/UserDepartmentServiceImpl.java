@@ -70,4 +70,9 @@ public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment>
     public List<UserDepartment> getDirectTeamList(String parentUserId) {
         return userDepartmentMapper.getDirectTeamList(parentUserId);
     }
+
+    @Override
+    public List<UserDepartment> getDirectMaxGradeList(String parentUserId) {
+        return userDepartmentMapper.getDirectMaxGradeList(parentUserId);
+    }
 }

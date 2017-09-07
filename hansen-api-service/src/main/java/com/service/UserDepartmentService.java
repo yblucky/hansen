@@ -2,6 +2,7 @@ package com.service;
 
 import com.base.service.CommonService;
 import com.model.UserDepartment;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface UserDepartmentService extends CommonService<UserDepartment> {
     Integer updatePerformance(String userId, Double performance);
 
     List<UserDepartment> getDirectTeamList(String parentUserId);
+
+    List<UserDepartment> getDirectMaxGradeList(String parentUserId);
 }

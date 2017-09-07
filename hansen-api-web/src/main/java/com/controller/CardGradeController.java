@@ -70,11 +70,17 @@ public class CardGradeController {
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public JsonResult info(HttpServletRequest request, HttpServletResponse response, Integer cardGrade) throws Exception {
-
+        Token token = TokenUtil.getSessionUser(request);
+        User user = userService.readById(token.getId());
+        if (user == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
+        }
         if (StringUtils.isEmpty(cardGrade)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "等级不能为空");
         }
-
+        if (StringUtils.isEmpty(cardGrade)) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "等级不能为空");
+        }
         //判断手机号是否存在
         CardGrade conditon = new CardGrade();
         conditon.setGrade(cardGrade);
@@ -93,7 +99,10 @@ public class CardGradeController {
         cardGradeVo.setPayAmt(CurrencyUtil.multiply(payRmbAmt, payScale, 4));
         cardGradeVo.setTradeAmt(CurrencyUtil.multiply(tradeRmbAmt, tradeScale, 4));
         cardGradeVo.setEquityAmt(0d);
-        cardGradeVo.setMaxProfits(CurrencyUtil.multiply(model.getInsuranceAmt(), model.getOutMultiple(), 4));
+        CardGrade targetModel = cardGradeService.readOne(conditon);
+        Double targetMaxProfit = CurrencyUtil.multiply(model.getInsuranceAmt(), targetModel.getOutMultiple(), 4);
+        cardGradeVo.setMaxProfits(CurrencyUtil.add(targetMaxProfit, user.getMaxProfits(), 4));
+
         return new JsonResult(cardGradeVo);
     }
 
@@ -145,8 +154,7 @@ public class CardGradeController {
         cardGradeVo.setEquityAmt(0d);
         cardGradeVo.setActiveCodeNo(differActiceNo);
         cardGradeVo.setRegisterCodeNo(differRegisterNo);
-        Double targetMaxProfit = CurrencyUtil.multiply(targetModel.getInsuranceAmt(), targetModel.getOutMultiple(), 4);
-        cardGradeVo.setMaxProfits(CurrencyUtil.add(targetMaxProfit, user.getMaxProfits(), 4));
+        cardGradeVo.setMaxProfits(CurrencyUtil.multiply(targetModel.getInsuranceAmt(), targetModel.getOutMultiple(), 4));
         return new JsonResult(cardGradeVo);
     }
 }

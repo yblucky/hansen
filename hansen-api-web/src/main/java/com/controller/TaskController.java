@@ -57,9 +57,9 @@ public class TaskController {
         if (user == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户不存在");
         }
-        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "账号未激活");
-        }
+//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
+//            return new JsonResult(ResultCode.ERROR.getCode(), "账号未激活");
+//        }
         userTaskService.assignUserTask(user.getId());
         UserTask condition = new UserTask();
         condition.setUserId(user.getId());

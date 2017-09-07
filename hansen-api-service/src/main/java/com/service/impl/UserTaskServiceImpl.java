@@ -120,7 +120,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             Task firstTask = taskService.readById(taskId);
             this.addUserTask(userId, firstTask, new Date());
         } else {
-            Integer diffDay = DateUtils.differentDaysByMillisecond(lastUserTask.getAssignTaskTime(), new Date());
+            Integer diffDay = DateUtils.differentDaysByMillisecond(lastUserTask.getCreateTime(), new Date());
             if (diffDay > remainTaskNo) {
                 diffDay = remainTaskNo;
             }
@@ -185,7 +185,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         this.updateById(userTask.getId(), updteModel);
         userService.updateRemainTaskNoByUserId(userId, -1);
 
-        List<TradeOrder> orderList = tradeOrderService.readRewardList(userId,new Date(), 1, 100);
+        List<TradeOrder> orderList = tradeOrderService.readRewardList(userId,new Date(), 0, 100);
         //需要更新任务次数的id集合
         List<String> orderIdList1 = new ArrayList<>();
         //需要更新领取奖励次数的id集合
@@ -215,6 +215,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             for (TradeOrder order :orderIdList21){
                 //TODO 一天若有奖金 需要合并，待完善
                 userSignService.addUserSign(order.getReceviceUserId(),order.getAmt()/order.getSignCycle(), SignType.WAITING_SIGN,"完成一个任务周期，新增奖励发放记录");
+                userService.weeklyIncomeAmt(user);
             }
         }
         //如果是最后一个周期，更新奖金订单状态为完成发放

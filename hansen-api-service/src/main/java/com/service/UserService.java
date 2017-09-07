@@ -75,4 +75,6 @@ public interface UserService extends CommonService<User> {
     Boolean intervalActice(String userId);
 
     Boolean  upGrade(User loginUser, CardGrade cardGrade, UpGradeType upGradeType) throws Exception;
+
+    void differnceBonusNew(String userId, TradeOrder order) throws Exception;
 }

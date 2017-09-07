@@ -118,13 +118,17 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
             userService.updateTradeAmtByUserId(fromUserId, -confirmAmount);
             model.setAddress(userDetail.getOutTradeAddress());
             model.setOrderType(WalletOrderType.TRADE_COIN_DRWA.getCode());
+            model.setRemark(WalletOrderType.TRADE_COIN_DRWA.getMsg());
+            userDetailService.updateForzenTradeAmtByUserId(fromUserId,confirmAmount);
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.TRADE);
 //            txtId= WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         } else if (WalletOrderType.PAY_COIN_DRWA.getCode() == walletOrderType.getCode()) {
             poundageScale = amt * poundageScale;
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.PAYCOINOUTSCALE));
             userService.updatePayAmtByUserId(fromUserId, -confirmAmount);
+            userDetailService.updateForzenPayAmtByUserId(fromUserId,confirmAmount);
             model.setAddress(userDetail.getOutPayAddress());
+            model.setRemark(WalletOrderType.TRADE_COIN_DRWA.getMsg());
             model.setOrderType(WalletOrderType.PAY_COIN_DRWA.getCode());
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.PAY);
 //            txtId=WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
@@ -133,15 +137,18 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.EQUITYCOINOUTSCALE));
             model.setAddress(userDetail.getOutEquityAddress());
             userService.updateEquityAmtByUserId(fromUserId, -confirmAmount);
+            userDetailService.updateForzenEquityAmtByUserId(fromUserId,confirmAmount);
+            model.setRemark(WalletOrderType.TRADE_COIN_DRWA.getMsg());
             model.setOrderType(WalletOrderType.EQUITY_COIN_DRWA.getCode());
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.EQUITY);
 //            txtId=  WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         }
         //创建提币订单
-        WalletOrder order = this.addWalletOrder(fromUserId, "", walletOrderType, -amt, -confirmAmount, poundage, WalletOrderStatus.PENDING);
+//        WalletOrder order = this.addWalletOrder(fromUserId, "", walletOrderType, -amt, -confirmAmount, poundage, WalletOrderStatus.PENDING);
         model.setAmount(-confirmAmount);
         model.setStatus(WalletOrderStatus.PENDING.getCode());
         model.setTransactionStatus(WalletOrderStatus.PENDING.getMsg());
+        model.setMessage(WalletOrderStatus.PENDING.getMsg());
         model.setUserId(user.getUid().toString());
         transactionService.create(model);
         //管理后台审核通过的审核，生成此记录

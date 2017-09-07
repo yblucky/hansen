@@ -3,18 +3,20 @@ package com.service.impl;
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.GradeType;
-import com.constant.UserStatusType;
 import com.mapper.GradeMapper;
-import com.service.GradeService;
-import com.service.UserDepartmentService;
-import com.service.UserService;
 import com.model.Grade;
 import com.model.User;
 import com.model.UserDepartment;
+import com.service.GradeService;
+import com.service.UserDepartmentService;
+import com.service.UserService;
 import com.utils.numberutils.CurrencyUtil;
+import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,7 +54,7 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
     }
 
     /**
-     * 会员业绩等级计算
+     * 会员业绩等级计算 :加业绩，同时判断用户等级
      *
      * @param userId 用户id
      */
@@ -68,38 +70,53 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
         //获取用户的所有部门的总业绩（不包含设有接点人的部门）
         Double sumAmt = userDepartmentService.getSumAmt(userId);
         //部门数量小于2个或所有部门总业绩不达标则不计算
-        if (list == null || list.size() < 2 || sumAmt < 300000) {
+        if (list == null || list.size() < 2 || sumAmt < 100000) {
             System.out.println("用户未达到升级条件");
             return null;
         }
+        Integer last = 0;
         for (GradeType gradeType : GradeType.values()) {
-            Grade grade = this.getGradeDetail(gradeType.getCode());
-            //1星等级特殊判断，业绩最大的两个部门之和要达到30万且业绩较小的部门业绩要大于10万
-            if (gradeType.getCode().intValue() == GradeType.GRADE1.getCode()) {
-                Double firstMaxAmt = list.get(0).getPerformance();
-                Double sedMaxAmt = list.get(1).getPerformance();
-                Double sumMax = CurrencyUtil.getPoundage(firstMaxAmt + sedMaxAmt, 1d);
-                if (sumMax >= grade.getSumPerformance() && sedMaxAmt >= 100000) {
-                    return grade;
+            List<Integer> gradeList = new ArrayList<>();
+
+            //县 市  省  董事判断条件
+            //获取最大三个部门的等级
+            List<UserDepartment> departments = userDepartmentService.getDirectMaxGradeList(userId);
+            if (departments == null || ToolUtil.isNotEmpty(departments)) {
+                for (UserDepartment userDepartment : departments) {
+                    gradeList.add(userDepartment.getGrade());
                 }
-                continue;
-            }
-            //2星到5星有规则判断，除去最大几个部门，剩余部门业绩之和占总业绩之比率
-            if (sumAmt > grade.getSumPerformance() && list != null && list.size() > grade.getRemoveNo()) {
-                Double maxAmt = 0d;
-                //去除5个业绩最大部门
-                for (int i = 0; i < grade.getRemoveNo(); i++) {
-                    maxAmt = CurrencyUtil.getPoundage(maxAmt + list.get(i).getPerformance(), 1d);
-                }
-                //其余部门业绩之和必须大于总业绩的10%
-                Double diffAmt = CurrencyUtil.getPoundage(sumAmt - maxAmt, 1d);
-                if (diffAmt > grade.getSumPerformance() * grade.getRemainScale()) {
-                    return grade;
+                Collections.sort(gradeList);
+                if (gradeList.get(0) > GradeType.GRADE7.getCode()) {
+                    //三个最小是大于8 董事
+                    return this.getGradeDetail(GradeType.GRADE8.getCode());
+                } else if (gradeList.get(0) > GradeType.GRADE6.getCode()) {
+                    //三个最小是大于7 省代
+                    return this.getGradeDetail(GradeType.GRADE7.getCode());
+                } else if (gradeList.get(0) > GradeType.GRADE5.getCode()) {
+                    //三个最小是大于6 市代
+                    return this.getGradeDetail(GradeType.GRADE6.getCode());
+                } else if (gradeList.get(0) > GradeType.GRADE4.getCode()) {
+                    //三个最小是大于5 县代
+                    return this.getGradeDetail(GradeType.GRADE5.getCode());
                 }
             }
         }
+        Grade grade =null;
+       for (int i=0;i<4;i++){
+           grade= this.getGradeDetail(4-i);
+           //专员 10万，小部分必须大于20%   专员  主任  经理 区代的判断条件一致
+           Double firstMaxAmt = list.get(0).getPerformance();
+           Double sedMaxAmt = list.get(1).getPerformance();
+           Double smallAmt = firstMaxAmt > sedMaxAmt ? sedMaxAmt : firstMaxAmt;
+           Double sumMax = CurrencyUtil.getPoundage(firstMaxAmt + sedMaxAmt, 1d);
+           if (sumMax >= grade.getSumPerformance() && sumMax * grade.getMinScale() <= sedMaxAmt) {
+               return this.getGradeDetail(4-i);
+           }
+       }
         return null;
     }
+
+
 
     /**
      * 会员业绩等级计算
@@ -109,10 +126,10 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
     @Override
     public Grade getUserGrade2(String userId) throws Exception {
         User user = userService.readById(userId);
-        if(user.getGrade() == null){
+        if (user.getGrade() == null) {
             user.setGrade(0);
         }
-        if(user.getGrade() == GradeType.GRADE8.getCode().intValue()){
+        if (user.getGrade() == GradeType.GRADE8.getCode().intValue()) {
             System.out.println("已是最高等级");
             return null;
         }
@@ -128,24 +145,24 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
             return null;
         }
         //市代、省代、董事长符合即返回
-        if(maxGrade.intValue() > 0 && (maxGrade.intValue()+1) > user.getGrade().intValue()){
-            return this.getGradeDetail(maxGrade+1);
+        if (maxGrade.intValue() > 0 && (maxGrade.intValue() + 1) > user.getGrade().intValue()) {
+            return this.getGradeDetail(maxGrade + 1);
         }
         for (GradeType gradeType : GradeType.values()) {
-            if(user.getGrade().intValue() >= gradeType.getCode().intValue()){
+            if (user.getGrade().intValue() >= gradeType.getCode().intValue()) {
                 continue;
             }
             Grade grade = this.getGradeDetail(gradeType.getCode());
-            switch (gradeType){
+            switch (gradeType) {
                 //专员、主任、经理的最大两个部门大于10W,30W,50W业绩，其中最小部门不小于总业绩的20%
                 case GRADE1:
                 case GRADE2:
                 case GRADE3:
-                case GRADE4:{
+                case GRADE4: {
                     Double firstMaxAmt = list.get(0).getPerformance();
                     Double sedMaxAmt = list.get(1).getPerformance();
                     Double sumMax = CurrencyUtil.getPoundage(firstMaxAmt + sedMaxAmt, 1d);
-                    Double minProfit = CurrencyUtil.getPoundage(sumAmt*0.2,1d);
+                    Double minProfit = CurrencyUtil.getPoundage(sumAmt * 0.2, 1d);
                     if (sumMax >= grade.getSumPerformance() && sedMaxAmt >= minProfit) {
                         return grade;
                     }

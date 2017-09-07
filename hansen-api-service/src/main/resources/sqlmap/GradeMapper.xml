@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.GradeMapper">
 
 	<sql id="fields">
-		grade,sumPerformance,rewardScale,createTime,updateTime,status,remark
+		grade,sumPerformance,rewardScale,minScale,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">

@@ -6,10 +6,7 @@ import com.base.page.JsonResult;
 import com.base.page.ResultCode;
 import com.constant.RedisKey;
 import com.constant.UserStatusType;
-import com.model.CardGrade;
-import com.model.Parameter;
-import com.model.User;
-import com.model.UserDetail;
+import com.model.*;
 import com.redis.Strings;
 import com.service.*;
 import com.utils.codeutils.Md5Util;
@@ -36,6 +33,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.utils.numberutils.RandomUtil.getCode;
+
 @Controller
 @RequestMapping("/login")
 public class LoginController {
@@ -48,9 +47,7 @@ public class LoginController {
     @Autowired
     private CardGradeService cardGradeService;
     @Autowired
-    private TradeOrderService tradeOrderService;
-    @Autowired
-    private UserGradeRecordService userGradeRecordService;
+    private GradeService gradeService;
 
 
     @ResponseBody
@@ -99,8 +96,9 @@ public class LoginController {
         } else {
             Set<Integer> userStatus = new HashSet<>();
             userStatus.add(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
-            userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
             userStatus.add(UserStatusType.WAITACTIVATE.getCode());
+            userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
+            userStatus.add(UserStatusType.OUT.getCode());
             if (!userStatus.contains(loginUser.getStatus())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
             }
@@ -175,7 +173,7 @@ public class LoginController {
         if (null == user) {
             return new JsonResult(2, "无法找到用户信息");
         }
-        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode() && user.getStatus() != UserStatusType.WAITACTIVATE.getCode()) {
+        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode() && user.getStatus() != UserStatusType.WAITACTIVATE.getCode() && user.getStatus() != UserStatusType.OUT.getCode()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
         }
         // Redis获取Token
@@ -203,10 +201,6 @@ public class LoginController {
         Double payConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertPayScale,1d,2);
         //交易币兑换人民币汇率
         Double tradeConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertTradeScale,1d,2);
-        //提币手续费
-        Double payCoinOutScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.PAYCOINOUTSCALE), 0d);
-        //提币手续费
-        Double tradeCoinOutScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.TRADECOINOUTSCALE), 0d);
         vo.setPayConverRmbScale(payConverRmbScale);
         vo.setTradeConverRmbScale(tradeConverRmbScale);
         vo.setRmbConvertPayScale(rmbConvertPayScale);
@@ -316,6 +310,20 @@ public class LoginController {
         model.setPayWord(Md5Util.MD5Encode(vo.getNewPayPassConfirm(), user.getSalt()));
         userService.updateById(user.getId(), model);
         return new JsonResult();
+    }
+
+    /**
+     * 测试业绩升级
+     */
+    @ResponseBody
+    @RequestMapping(value = "/test1", method = RequestMethod.GET)
+    public JsonResult testGrade(HttpServletRequest request,String userId) throws Exception {
+        Grade grade= gradeService.getUserGrade(userId);
+
+        if (grade==null){
+            return new JsonResult(ResultCode.ERROR);
+        }
+        return new JsonResult(grade);
     }
 
     public static void main(String[] args) {

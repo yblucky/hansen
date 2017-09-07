@@ -75,6 +75,10 @@
 		order by a.performance desc
 	</select>
 
+	<select id="getDirectMaxGradeList" resultType="UserDepartment">
+		<include refid="selector"/>  where parentUserId=#{parentUserId}  and grade >0  ORDER BY grade desc LIMIT 3;
+	</select>
+
 	<select id="getSumAmt" resultType="java.lang.Double">
 		select sum(performance) sumAmt from <include refid="table_name"/> as a
 		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and b.contactUserId = a.parentUserId and a.status = 1
@@ -91,7 +95,7 @@
 	</update>
 
 	<select id="getAll" resultType="UserDepartment">
-		<include refid="selector"/> WHERE parentUserId=#{parentUserId}  ;
+		<include refid="selector"/> WHERE parentUserId=#{parentUserId}  ORDER BY performance DESC  ;
 	</select>
 </mapper>
 

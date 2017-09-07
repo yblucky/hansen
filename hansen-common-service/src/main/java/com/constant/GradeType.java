@@ -26,7 +26,7 @@ public enum GradeType {
     /**
      * 区代
      */
-    GRADE4(5, "区代"),
+    GRADE4(4, "区代"),
 
     /**
      * 县代

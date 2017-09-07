@@ -2,20 +2,28 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
+import com.constant.Constant;
+import com.constant.CurrencyType;
 import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
 import com.mapper.WalletTransactionMapper;
+import com.model.SysUser;
+import com.model.User;
+import com.service.UserDetailService;
 import com.service.UserService;
 import com.service.WalletTransactionService;
 import com.model.Parameter;
 import com.model.WalletTransaction;
 import com.service.WalletUtil;
+import com.utils.toolutils.OrderNoUtil;
+import com.utils.toolutils.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 import ru.paradoxs.bitcoin.client.TransactionInfo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +37,8 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     private WalletTransactionMapper walletTransactionMapper;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserDetailService userDetailService;
     @Override
     protected CommonDao<WalletTransaction> getDao() {
         return walletTransactionMapper;
@@ -151,5 +161,53 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
         transaction.setStatus(walletOrderStatus.getCode());
         this.create(transaction);
         return 1;
+    }
+
+
+    @Override
+    @Transactional
+    public Boolean checkCoinOut(SysUser loginUser, String orderId,Integer status) throws Exception {
+        WalletTransaction  order = this.readById(orderId);
+
+        if (order==null){
+            return false;
+        }
+        if (ToolUtil.isNotEmpty(order.getUserId())){
+            return false;
+        }
+        User con = new User();
+        con.setUid(Integer.valueOf(order.getUserId()));
+        User user=userService.readOne(con);
+        CurrencyType currencyType = WalletOrderType.getCoinTypeFromWalletOrderTypeCode(order.getOrderType());
+        if (user==null){
+            logger.error("提币审核找不到提币用户，提币失败");
+        }
+        if (WalletOrderStatus.DENIED.getCode()==status){
+            logger.error("审核不通过，原路退回");
+            if (CurrencyType.TRADE.getCode()==currencyType.getCode()){
+                userService.updateTradeAmtByUserId(user.getId(),-order.getAmount());
+                userDetailService.updateForzenTradeAmtByUserId(user.getId(),order.getAmount());
+            }else if (CurrencyType.PAY.getCode()==currencyType.getCode()){
+                userService.updatePayAmtByUserId(user.getId(),-order.getAmount());
+                userDetailService.updateForzenPayAmtByUserId(user.getId(),order.getAmount());
+            }else  if (CurrencyType.EQUITY.getCode()==currencyType.getCode()){
+                userService.updateEquityAmtByUserId(user.getId(),-order.getAmount());
+                userDetailService.updateForzenEquityAmtByUserId(user.getId(),order.getAmount());
+            }
+
+        }
+        WalletTransaction updateModel = new WalletTransaction();
+
+        BitcoinClient client = WalletUtil.getBitCoinClient(currencyType);
+        String txtId = WalletUtil.sendToAddress(client, order.getAddress(), new BigDecimal(order.getAmount().toString()), "用户" + order.getUserId() + "提币", "用户" + order.getAddress() + "收币");
+        if (ToolUtil.isNotEmpty(txtId)) {
+            updateModel.setStatus(WalletOrderStatus.CONFIRMING.getCode());
+            updateModel.setRemark("提币审核通过，审核人：" + loginUser.getUserName());
+            this.addWalletOrderTransaction(Constant.SYSTEM_USER_ID,order.getAddress(), WalletOrderType.fromCode(order.getOrderType()), WalletOrderStatus.CONFIRMING, txtId, OrderNoUtil.get(), order.getAmount());
+        }
+        updateModel.setId(orderId);
+        updateModel.setRemark(WalletOrderStatus.CONFIRMING.getMsg());
+        this.updateById(order.getId(), updateModel);
+        return true;
     }
 }

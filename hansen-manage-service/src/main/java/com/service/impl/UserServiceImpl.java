@@ -97,10 +97,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             System.out.println("用户不是激活状态");
             return;
         }
-        if (ToolUtil.daysBetween(user.getReleaseTime(), new Date().toString()) < 7) {
-            System.out.println("用户还没到释放时间");
-            return;
-        }
+//        if (ToolUtil.daysBetween(user.getReleaseTime(), new Date().toString()) < 7) {
+//            System.out.println("用户还没到释放时间");
+//            return;
+//        }
         if (user.getSumProfits() > user.getMaxProfits()) {
             System.out.println("用户累计收益已超过最大收益，不能继续领取");
             return;
@@ -110,7 +110,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         //静态收益
         double incomeAmt = CurrencyUtil.getPoundage(user.getInsuranceAmt() * cardGrade.getReleaseScale(), 1d);
         //静态收益转为三种币
-        userIncomeAmt(incomeAmt, user.getId(), RecordType.RELASE, orderNo);
+//        userIncomeAmt(incomeAmt, user.getId(), RecordType.RELASE, orderNo);
         //用户剩余保单金额
         double insuranceAmt = CurrencyUtil.getPoundage(user.getInsuranceAmt() - incomeAmt, 1d);
         User model = new User();
