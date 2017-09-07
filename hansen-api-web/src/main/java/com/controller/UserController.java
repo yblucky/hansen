@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.service.WalletUtil.getBitCoinClient;
+import static com.utils.numberutils.CurrencyUtil.multiply;
 
 
 @Controller
@@ -195,10 +196,10 @@ public class UserController {
         User con = new User();
         con.setLoginName(vo.getLoginName());
         User resultUser = userService.readOne(regisUserContion);
-        if(resultUser == null){
+        if (resultUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "注册成功,返回注册用户信息失败");
         }
-        return new JsonResult(ResultCode.SUCCESS.getCode(), "注册成功",resultUser);
+        return new JsonResult(ResultCode.SUCCESS.getCode(), "注册成功", resultUser);
     }
 
 
@@ -325,23 +326,45 @@ public class UserController {
         if (loginUser.getCardGrade().intValue() >= cardGrade.getGrade().intValue()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "升级只能从低往高升级");
         }
-        if (loginUser.getRegisterCodeNo() < cardGrade.getRegisterCodeNo() || loginUser.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
+        //会员的本身等级
+        CardGrade userCardGrade = cardGradeService.getUserCardGrade(loginUser.getCardGrade());
+        //计算差价
+        Integer differRegisterNo = cardGrade.getRegisterCodeNo() - userCardGrade.getRegisterCodeNo();
+        Integer differActiceNo = cardGrade.getActiveCodeNo() - userCardGrade.getActiveCodeNo();
+        Double insuranceAmt = cardGrade.getInsuranceAmt() - userCardGrade.getInsuranceAmt();
+        Double differPayRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 4);
+        Double differTradeRmbAmt = CurrencyUtil.getPoundage(insuranceAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 4);
+        //人民币兑换支付币汇率
+        double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
+        //人民币兑换交易币汇率
+        double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+
+
+        if (UpGradeType.COVERAGEUPGRADE.getCode() == vo.getUpGradeWay()) {
+            differActiceNo = cardGrade.getActiveCodeNo();
+            differRegisterNo = cardGrade.getRegisterCodeNo();
+            differPayRmbAmt=CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 4);
+            differTradeRmbAmt=CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 4);
+        }
+        Double differPayAmt = CurrencyUtil.multiply(differPayRmbAmt, payScale, 4);
+        Double differTradeAmt = CurrencyUtil.multiply(differTradeRmbAmt, tradeScale, 4);
+        if (loginUser.getRegisterCodeNo() < differActiceNo || loginUser.getActiveCodeNo() < differRegisterNo) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户激活码或注册码不足，请先补充激活码或注册码!");
         }
 
 
-        //生成保单时支付币必须有的比例数量
-        double insurancePayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE), 0d);
-        //生成保单时交易币必须有的比例数量
-        double insuranceTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE), 0d);
-
-        Double needPayCoin = parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE) * CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4);
-        Double needTradeCoin = parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE) * CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4);
+//        //生成保单时支付币必须有的比例数量
+//        double insurancePayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE), 0d);
+//        //生成保单时交易币必须有的比例数量
+//        double insuranceTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE), 0d);
+//
+//        Double needPayCoin = parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE) * CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4);
+//        Double needTradeCoin = parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE) * CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4);
         /**校验虚拟币**/
-        if (loginUser.getPayAmt() < needPayCoin) {
+        if (loginUser.getPayAmt() < differPayAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "购物币不足，无法激活");
         }
-        if (loginUser.getTradeAmt() < needTradeCoin) {
+        if (loginUser.getTradeAmt() < differTradeAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");
         }
 //        upGrade(vo, loginUser, cardGrade, insurancePayScale, insuranceTradeScale);
@@ -374,8 +397,8 @@ public class UserController {
         //写入冻结
         UserDetail updateActiveUserDetailContion = new UserDetail();
         updateActiveUserDetailContion.setId(activeUserDetail.getId());
-        updateActiveUserDetailContion.setForzenPayAmt(CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4));
-        updateActiveUserDetailContion.setForzenTradeAmt(CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4));
+        updateActiveUserDetailContion.setForzenPayAmt(multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4));
+        updateActiveUserDetailContion.setForzenTradeAmt(multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4));
         userDetailService.updateById(updateActiveUserDetailContion.getId(), updateActiveUserDetailContion);
 
         if (vo.getUpGradeWay().intValue() == UpGradeType.ORIGINUPGRADE.getCode().intValue()) {
@@ -410,7 +433,7 @@ public class UserController {
             }*/
             Integer count = userGradeRecordService.readCount(model);
             List<UserGradeRecordVo> rslist = null;
-            if (count !=null && count > 0) {
+            if (count != null && count > 0) {
                 List<UserGradeRecord> list = userGradeRecordService.readList(model, page.getPageNo(), page.getPageSize(), count);
                 UserGradeRecordVo po = null;
                 rslist = new ArrayList<UserGradeRecordVo>();
