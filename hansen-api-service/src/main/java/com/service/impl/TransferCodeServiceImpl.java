@@ -30,12 +30,12 @@ public class TransferCodeServiceImpl extends CommonServiceImpl<TransferCode> imp
     }
 
     @Override
-    public Integer readCountByUserId(String userId) {
-        return transferCodeMapper.readCountByUserId(userId);
+    public Integer readCountByUserId(String userId,Integer codeType) {
+        return transferCodeMapper.readCountByUserId(userId,codeType);
     }
 
     @Override
-    public List<TransferCode> readListByUserId(String userId, Page page) {
-        return transferCodeMapper.readListByUserId(userId,page.getStartRow(),page.getPageSize());
+    public List<TransferCode> readListByUserId(String userId,Integer codeType, Page page) {
+        return transferCodeMapper.readListByUserId(userId,codeType,page.getStartRow(),page.getPageSize());
     }
 }

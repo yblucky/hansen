@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface TransferCodeMapper extends CommonDao<TransferCode> {
 
-   Integer readCountByUserId(@Param("userId") String userId);
+   Integer readCountByUserId(@Param("userId") String userId,@Param("codeType") Integer codeType);
 
-    List<TransferCode> readListByUserId(@Param("userId") String userId, @Param("startRow") int startRow, @Param("pageSize") int pageSize);
+    List<TransferCode> readListByUserId(@Param("userId") String userId,@Param("codeType") Integer codeType, @Param("startRow") int startRow, @Param("pageSize") int pageSize);
 
 }
