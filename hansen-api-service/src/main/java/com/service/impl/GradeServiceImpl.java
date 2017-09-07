@@ -86,16 +86,19 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
                     gradeList.add(userDepartment.getGrade());
                 }
                 Collections.sort(gradeList);
-                if (gradeList.get(0) > GradeType.GRADE7.getCode()) {
+                System.out.println(gradeList.get(0).intValue());
+                System.out.println(GradeType.GRADE4.getCode().intValue());
+                if (gradeList.get(0).intValue() >=GradeType.GRADE7.getCode().intValue()) {
                     //三个最小是大于8 董事
                     return this.getGradeDetail(GradeType.GRADE8.getCode());
-                } else if (gradeList.get(0) > GradeType.GRADE6.getCode()) {
+                } else if (gradeList.get(0).intValue() >=GradeType.GRADE6.getCode().intValue()) {
                     //三个最小是大于7 省代
                     return this.getGradeDetail(GradeType.GRADE7.getCode());
-                } else if (gradeList.get(0) > GradeType.GRADE5.getCode()) {
+                } else if (gradeList.get(0).intValue() >=GradeType.GRADE5.getCode().intValue()) {
                     //三个最小是大于6 市代
                     return this.getGradeDetail(GradeType.GRADE6.getCode());
-                } else if (gradeList.get(0) > GradeType.GRADE4.getCode()) {
+                } else if (gradeList.get(0).intValue() >= GradeType.GRADE4.getCode().intValue()) {
+
                     //三个最小是大于5 县代
                     return this.getGradeDetail(GradeType.GRADE5.getCode());
                 }
