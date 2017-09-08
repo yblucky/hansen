@@ -48,7 +48,9 @@ public enum RedisKey {
     /**防止签到重复点击，保存20秒*/
     SIGN("sign", 20),
     /**防止做任务提币重复点击，保存20秒*/
-    DO_TASK("DO_TASK", 20);
+    DO_TASK("DO_TASK", 20),
+    /**防止做任务提币重复点击，保存20秒*/
+    ACTIVE("ACTIVE", 20);
 
     private final String key;
 

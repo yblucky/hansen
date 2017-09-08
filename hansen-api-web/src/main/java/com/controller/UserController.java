@@ -182,7 +182,7 @@ public class UserController {
         User inviterUser = null;
         if (vo.getContactUserId() != loginUser.getUid()) {
             User inviterCondition = new User();
-            inviterCondition.setUid(loginUser.getUid());
+            inviterCondition.setUid(vo.getUid());
             inviterUser = userService.readOne(inviterCondition);
             if (inviterUser == null) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "接点人信息有误");
@@ -658,8 +658,11 @@ public class UserController {
             updateUser.setUpdateTime(new Date());
             userService.updateById(loginUser.getId(), updateUser);
             //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
+            Boolean f = RedisLock.redisLock(RedisKey.ACTIVE.getKey()+loginUser.getUid(),loginUser.getId(),RedisKey.ACTIVE.getSeconds());
+            if (!f){
+                return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
+            }
             return userService.innerActicveUser(loginUser, cardGrade);
-
         } else if (loginUser.getStatus() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
             return new JsonResult(ResultCode.SUCCESS.getCode(), "账号已经是激活状态");
         }
