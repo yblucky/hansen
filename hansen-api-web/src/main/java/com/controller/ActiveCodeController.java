@@ -110,7 +110,7 @@ public class ActiveCodeController {
 
 
     /**
-     * 激活码转赠接口
+     * 激活码和注册码转赠接口
      *
      * @param request
      * @param response
@@ -144,6 +144,11 @@ public class ActiveCodeController {
 
         if (ToolUtil.isEmpty(vo.getToId()) && vo.getToUid() == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "请选择转账目标用户");
+        }
+
+        //判断转账目标用户是否是自己，如果是，就返回
+        if(vo.getToId().equals(fromUser.getId()) || vo.getToUid().equals(fromUser.getUid())){
+            return new JsonResult(ResultCode.ERROR.getCode(), "转账目标用户不能是自己");
         }
 
         if (ToolUtil.isEmpty(vo.getPayword())) {
