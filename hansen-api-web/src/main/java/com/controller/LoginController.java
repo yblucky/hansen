@@ -319,6 +319,10 @@ public class LoginController {
     @RequestMapping(value = "/test1", method = RequestMethod.GET)
     public JsonResult testGrade(HttpServletRequest request,String userId) throws Exception {
         Grade grade= gradeService.getUserGrade(userId);
+        if (grade!=null){
+            userService.updateUserGradeByUserId(userId,grade.getGrade());
+        }
+
 
         if (grade==null){
             return new JsonResult(ResultCode.ERROR);

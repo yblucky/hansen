@@ -37,7 +37,7 @@
 			<if test="model.password != null and model.password != ''">and password=#{model.password}</if>
 			<if test="model.firstReferrer != null and model.firstReferrer != ''">and firstReferrer=#{model.firstReferrer}</if>
 			<if test="model.secondReferrer != null and model.secondReferrer != ''">and secondReferrer=#{model.secondReferrer}</if>
-			<if test="model.grade != null">and grade=#{model.grade}</if>
+			<if test="model.grade != null  and model.grade != 0">and grade=#{model.grade}</if>
 			<if test="model.cardGrade != null">and cardGrade=#{model.cardGrade}</if>
 			<if test="model.releaseTime != null and model.releaseTime != ''">and releaseTime=#{model.releaseTime}</if>
 			<if test="model.equityAmt != null">and equityAmt=#{model.equityAmt}</if>
@@ -100,8 +100,8 @@
 			<if test="model.password != null and model.password !=''">password= #{model.password},</if>
 			<if test="model.firstReferrer != null and model.firstReferrer !=''">firstReferrer= #{model.firstReferrer},</if>
 			<if test="model.secondReferrer != null and model.secondReferrer !=''">secondReferrer= #{model.secondReferrer},</if>
-			<if test="model.grade != null">grade= #{model.grade},</if>
-			<if test="model.cardGrade != null">cardGrade= #{model.cardGrade},</if>
+			<if test="model.grade != null  and model.grade != 0">grade= #{model.grade},</if>
+			<if test="model.cardGrade != null  and model.cardGrade != 0">cardGrade= #{model.cardGrade},</if>
 			<if test="model.releaseTime != null and model.releaseTime !=''">releaseTime= #{model.releaseTime},</if>
 			<if test="model.equityAmt != null">equityAmt= #{model.equityAmt},</if>
 			<if test="model.payAmt != null">payAmt= #{model.payAmt},</if>
@@ -162,15 +162,15 @@
 	</update>
 
 	<update id="updateUserStatusByUserId">
-		update <include refid="table_name"/> set status = status ,updateTime=now() where id = #{id}
+		update <include refid="table_name"/> set status = #{status} ,updateTime=now() where id = #{id}
 	</update>
 
 	<update id="updateUserCardGradeByUserId">
-		update <include refid="table_name"/> set cardGrade = cardGrade ,updateTime=now() where id = #{id}
+		update <include refid="table_name"/> set cardGrade = #{cardGrade} ,updateTime=now() where id = #{id}
 	</update>
 
 	<update id="updateUserGradeByUserId">
-		update <include refid="table_name"/> set grade = grade ,updateTime=now() where id = #{id}
+		update <include refid="table_name"/> set grade = #{grade} ,updateTime=now() where id = #{id}
 	</update>
 </mapper>
 

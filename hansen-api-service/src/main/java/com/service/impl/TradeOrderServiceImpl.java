@@ -134,9 +134,9 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             if (ToolUtil.isEmpty(referId)) {
                 break;
             }
-            if (Constant.SYSTEM_USER_ID.equals(referId)) {
-                break;
-            }
+//            if (Constant.SYSTEM_USER_ID.equals(referId)) {
+//                break;
+//            }
             refferUser = userService.readById(referId);
             if (refferUser == null && UserStatusType.ACTIVATESUCCESSED.getCode() != refferUser.getStatus()) {
                 continue;
