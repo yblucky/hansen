@@ -850,10 +850,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
         /**建立部门关系**/
         UserDepartment userDepartment = new UserDepartment();
+        userDepartment.setId(createUser.getId());
         userDepartment.setParentUserId(inviterUser.getId());
         userDepartment.setUid(createUser.getUid());
         userDepartment.setUserId(createUser.getId());
-        userDepartment.setId(ToolUtil.getUUID());
         userDepartment.setPerformance(0d);
         userDepartment.setStatus(StatusType.TRUE.getCode());
         userDepartment.setGrade(cardGrade.getGrade());

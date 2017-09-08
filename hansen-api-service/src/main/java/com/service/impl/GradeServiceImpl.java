@@ -112,7 +112,7 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
            Double sedMaxAmt = list.get(1).getPerformance();
            Double smallAmt = firstMaxAmt > sedMaxAmt ? sedMaxAmt : firstMaxAmt;
            Double sumMax = CurrencyUtil.getPoundage(firstMaxAmt + sedMaxAmt, 1d);
-           if (sumMax >= grade.getSumPerformance() && sumMax * grade.getMinScale() <= sedMaxAmt) {
+           if (sumMax >= grade.getSumPerformance() && sumMax * grade.getMinScale() <= smallAmt) {
                return this.getGradeDetail(4-i);
            }
        }
