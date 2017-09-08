@@ -6,8 +6,10 @@ import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
 import com.base.page.ResultCode;
+import com.constant.RedisKey;
 import com.constant.UserStatusType;
 import com.service.*;
+import com.utils.toolutils.RedisLock;
 import com.vo.TaskVo;
 import com.model.User;
 import com.model.UserTask;
@@ -109,6 +111,10 @@ public class TaskController {
         UserTask userTask = userTaskService.readById(taskvo.getUserTaskId());
         if (userTask == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "任务不存在");
+        }
+        Boolean f = RedisLock.redisLock(RedisKey.DO_TASK.getKey()+user.getUid(),user.getId(),RedisKey.DO_TASK.getSeconds());
+        if (!f){
+            return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
         }
         userTaskService.doTask(user.getId(), userTask);
         return new JsonResult(userTask);

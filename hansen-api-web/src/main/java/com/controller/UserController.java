@@ -15,6 +15,7 @@ import com.utils.classutils.MyBeanUtils;
 import com.utils.codeutils.Md5Util;
 import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.OrderNoUtil;
+import com.utils.toolutils.RedisLock;
 import com.utils.toolutils.ToolUtil;
 import com.vo.*;
 import org.apache.commons.beanutils.BeanUtils;
@@ -35,6 +36,7 @@ import java.util.*;
 
 import static com.service.WalletUtil.getBitCoinClient;
 import static com.utils.numberutils.CurrencyUtil.multiply;
+import static com.utils.toolutils.RedisLock.redisLock;
 
 
 @Controller
@@ -351,23 +353,17 @@ public class UserController {
         if (loginUser.getRegisterCodeNo() < differActiceNo || loginUser.getActiveCodeNo() < differRegisterNo) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户激活码或注册码不足，请先补充激活码或注册码!");
         }
-
-
-//        //生成保单时支付币必须有的比例数量
-//        double insurancePayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE), 0d);
-//        //生成保单时交易币必须有的比例数量
-//        double insuranceTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE), 0d);
-//
-//        Double needPayCoin = parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE) * CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4);
-//        Double needTradeCoin = parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE) * CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4);
-        /**校验虚拟币**/
+         /**校验虚拟币**/
         if (loginUser.getPayAmt() < differPayAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "购物币不足，无法激活");
         }
         if (loginUser.getTradeAmt() < differTradeAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");
         }
-//        upGrade(vo, loginUser, cardGrade, insurancePayScale, insuranceTradeScale);
+        Boolean f = RedisLock.redisLock(RedisKey.UPGRADE.getKey()+loginUser.getUid(),loginUser.getId(),RedisKey.UPGRADE.getSeconds());
+        if (!f){
+            return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
+        }
         Boolean flag = userService.upGrade(loginUser, cardGrade, UpGradeType.fromCode(vo.getUpGradeWay()));
         if (flag) {
             return new JsonResult(ResultCode.SUCCESS.getCode(), "升级报单成功，等待结算");
@@ -375,38 +371,6 @@ public class UserController {
         return new JsonResult(ResultCode.ERROR.getCode(), "升级失败，请联系客服");
     }
 
-    private void upGrade(@RequestBody UpgradeUserVo vo, User loginUser, CardGrade cardGrade, double insurancePayScale, double insuranceTradeScale) throws Exception {
-        /**扣激活码**/
-        User updateUser = new User();
-        updateUser.setId(loginUser.getId());
-        updateUser.setActiveCodeNo(loginUser.getActiveCodeNo() - cardGrade.getActiveCodeNo());
-        updateUser.setRegisterCodeNo(loginUser.getRegisterCodeNo() - cardGrade.getRegisterCodeNo());
-        updateUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-        userService.updateById(updateUser.getId(), updateUser);
-
-        //冻结账号虚拟币 激活账号
-        User updateActiveUser = new User();
-        updateActiveUser.setId(loginUser.getId());
-        //TODO 扣减账号币数量 对应人民币市值换算
-        updateActiveUser.setTradeAmt(CurrencyUtil.subtract(loginUser.getTradeAmt(), cardGrade.getInsuranceAmt() * insuranceTradeScale, 4));
-        updateActiveUser.setPayAmt(CurrencyUtil.subtract(loginUser.getPayAmt(), cardGrade.getInsuranceAmt() * insurancePayScale, 4));
-        updateActiveUser.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-        userService.updateById(updateActiveUser.getId(), updateActiveUser);
-
-        UserDetail activeUserDetail = userDetailService.readById(loginUser.getId());
-        //写入冻结
-        UserDetail updateActiveUserDetailContion = new UserDetail();
-        updateActiveUserDetailContion.setId(activeUserDetail.getId());
-        updateActiveUserDetailContion.setForzenPayAmt(multiply(cardGrade.getInsuranceAmt(), insurancePayScale, 4));
-        updateActiveUserDetailContion.setForzenTradeAmt(multiply(cardGrade.getInsuranceAmt(), insuranceTradeScale, 4));
-        userDetailService.updateById(updateActiveUserDetailContion.getId(), updateActiveUserDetailContion);
-
-        if (vo.getUpGradeWay().intValue() == UpGradeType.ORIGINUPGRADE.getCode().intValue()) {
-            userService.originUpgrade(loginUser.getId(), vo.getGrade());
-        } else if (vo.getUpGradeWay().intValue() == UpGradeType.COVERAGEUPGRADE.getCode().intValue()) {
-            userService.coverageUpgrade(loginUser.getId(), vo.getGrade());
-        }
-    }
 
     /**
      * 升级记录

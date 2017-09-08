@@ -128,6 +128,18 @@ public class LoginController {
             updateUser.setNickName(loginUser.getUid()+"");
         }
         UserDetail detail = userDetailService.readById(loginUser.getId());
+        final  String userId=loginUser.getId();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    userService.reloadUserGrade(userId);
+                } catch (Exception e) {
+                    System.out.println("登录重新计算用户等级异常");
+                    e.printStackTrace();
+                }
+            }
+        });
         // 登录
         String token = TokenUtil.generateToken(loginUser.getId(), loginUser.getNickName());
         Strings.setEx(RedisKey.TOKEN_API.getKey() + loginUser.getId(), RedisKey.TOKEN_API.getSeconds(), token);

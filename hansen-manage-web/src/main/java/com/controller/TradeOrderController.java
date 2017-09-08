@@ -197,7 +197,7 @@ public class TradeOrderController extends BaseController {
             sourceList.add(OrderType.PUSH.getCode());
             sourceList.add(OrderType.MANAGE.getCode());
             sourceList.add(OrderType.DIFFERENT.getCode());
-            sourceList.add(OrderType.EQUALITY.getCode());
+            sourceList.add(OrderType.SAME.getCode());
             sourceList.add(OrderType.RELASE.getCode());
         }
         List<TradeOrderVo> voList = new ArrayList<>();
@@ -228,10 +228,10 @@ public class TradeOrderController extends BaseController {
                     User u = userService.readById(order.getSendUserId());
                     vo.setRemark("来自会员" + u.getUid() + "级差奖励，获得" + order.getConfirmAmt() + "奖励");
                     vo.setRewardType(OrderType.DIFFERENT.getMsg());
-                } else if (OrderType.EQUALITY.getCode() == order.getSource()) {
+                } else if (OrderType.SAME.getCode() == order.getSource()) {
                     User u = userService.readById(order.getSendUserId());
                     vo.setRemark("来自会员" + u.getUid() + "平级奖励，获得" + order.getConfirmAmt() + "奖励");
-                    vo.setRewardType(OrderType.EQUALITY.getMsg());
+                    vo.setRewardType(OrderType.SAME.getMsg());
                 } else if (OrderType.RELASE.getCode() == order.getSource()) {
                     User u = userService.readById(order.getSendUserId());
                     vo.setRemark("来自会员" + u.getUid() + "周期释放，获得" + order.getConfirmAmt() + "奖励");

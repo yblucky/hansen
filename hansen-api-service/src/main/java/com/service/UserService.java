@@ -30,6 +30,8 @@ public interface UserService extends CommonService<User> {
 
     void reloadUserGrade(User user) throws Exception;
 
+    void reloadUserGrade(String  userId) throws Exception;
+
     void differnceBonus(String userId, TradeOrder order) throws Exception;
 
     void originUpgrade(String userId, Integer cardGrade) throws  Exception;

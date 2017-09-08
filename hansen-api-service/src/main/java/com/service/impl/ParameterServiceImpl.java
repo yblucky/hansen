@@ -54,7 +54,10 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
     @Override
     public Double getRmbConvertCoinRate(String id, String name) {
         try {
-            String url = ParamUtil.getIstance().get(Parameter.RMBCONVERTCOINSCALEBASEURL) + "";
+            if (ToolUtil.isEmpty(name)){
+                logger.error("获取交易平台" + name + "汇率失败");
+            }
+            String url = ParamUtil.getIstance().get(Parameter.RMBCONVERTCOINSCALEBASEURL) + name;
             JSONObject jsonObject = HttpUtil.doGetRequest(url);
             if (jsonObject == null) {
                 return 0d;
@@ -62,7 +65,7 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
             if (jsonObject.containsKey("24H_Last_price")) {
                 Double last24Price = jsonObject.getDouble("24H_Last_price");
                 if (last24Price == null) {
-                    last24Price = 0d;
+                    last24Price = 1d;
                 }
                 return last24Price;
             }

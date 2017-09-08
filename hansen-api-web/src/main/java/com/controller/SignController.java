@@ -6,6 +6,7 @@ import com.base.page.JsonResult;
 import com.base.page.Page;
 import com.base.page.PageResult;
 import com.base.page.ResultCode;
+import com.constant.RedisKey;
 import com.constant.SignType;
 import com.constant.UserStatusType;
 import com.model.Parameter;
@@ -17,6 +18,7 @@ import com.service.UserSignService;
 import com.service.UserTaskService;
 import com.utils.classutils.MyBeanUtils;
 import com.utils.numberutils.CurrencyUtil;
+import com.utils.toolutils.RedisLock;
 import com.utils.toolutils.ToolUtil;
 import com.vo.UserSignVo;
 import org.apache.commons.collections.map.HashedMap;
@@ -61,6 +63,11 @@ public class SignController {
                 return new JsonResult(ResultCode.ERROR.getCode(), "用户已激活,保单处理中");
             }
             return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
+        }
+
+        Boolean f = RedisLock.redisLock(RedisKey.SIGN.getKey()+user.getUid(),user.getId(),RedisKey.SIGN.getSeconds());
+        if (!f){
+            return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
         }
 
         UserSign conditon = new UserSign();

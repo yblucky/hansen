@@ -16,6 +16,7 @@ import com.service.WalletOrderService;
 import com.service.WalletTransactionService;
 import com.service.WalletUtil;
 import com.utils.codeutils.Md5Util;
+import com.utils.toolutils.RedisLock;
 import com.utils.toolutils.ToolUtil;
 import com.vo.CoinInOutVo;
 import com.vo.CoinTransferVo;
@@ -68,9 +69,11 @@ public class WalletController {
         if (user == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登录用户不存在");
         }
-//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
-//            return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
-//        }
+
+        //判断转账目标用户是否是自己，如果是，就返回
+        if(vo.getToUid().equals(user.getId()) || vo.getToUid().equals(user.getUid())){
+            return new JsonResult(ResultCode.ERROR.getCode(), "转账目标用户不能是自己");
+        }
         if (!user.getPayWord().equals(Md5Util.MD5Encode(vo.getPayPassWord(), user.getSalt()))) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付密码不正确");
         }
@@ -97,6 +100,10 @@ public class WalletController {
 //            return new JsonResult(ResultCode.ERROR.getCode(), "收款账号未激活");
 //        }
 
+        Boolean f = RedisLock.redisLock(RedisKey.TRANSFER_COIN.getKey()+user.getUid(),user.getId(),RedisKey.TRANSFER_COIN.getSeconds());
+        if (!f){
+            return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
+        }
         try {
             walletOrderService.coinTransfer(user.getId(), toUser.getId(), WalletOrderType.fromCode(vo.getWalletOrderType()), vo.getAmount());
             return new JsonResult(ResultCode.SUCCESS.getCode(), "转账成功");
@@ -142,6 +149,10 @@ public class WalletController {
             if (user.getEquityAmt() < vo.getAmount()) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "股权币数量不足");
             }
+        }
+        Boolean f = RedisLock.redisLock(RedisKey.TRANSFER_COIN_OUT.getKey()+user.getUid(),user.getId(),RedisKey.TRANSFER_COIN_OUT.getSeconds());
+        if (!f){
+            return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
         }
 
         try {
@@ -373,8 +384,8 @@ public class WalletController {
     }
 
     public static void main(String[] args) {
-        System.out.println(WalletUtil.getBitCoinClient("127.0.0.1","user","password",20679));
-        System.out.println(JSON.toJSONString(WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient("127.0.0.1","user","password",20679),"8ab7d243db85dce9aecc7a115ba08d8e723636f362488b43a749ef85a96f5771")));
+//        System.out.println(WalletUtil.getBitCoinClient("127.0.0.1","user","password",20679));
+//        System.out.println(JSON.toJSONString(WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient("127.0.0.1","user","password",20679),"8ab7d243db85dce9aecc7a115ba08d8e723636f362488b43a749ef85a96f5771")));
 
     }
 }

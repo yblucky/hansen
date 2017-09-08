@@ -7,6 +7,7 @@ import com.base.page.Page;
 import com.base.page.PageResult;
 import com.base.page.ResultCode;
 import com.constant.CodeType;
+import com.constant.RedisKey;
 import com.constant.UserStatusType;
 import com.model.*;
 import com.service.ActiveCodeService;
@@ -14,6 +15,7 @@ import com.service.CardGradeService;
 import com.service.TransferCodeService;
 import com.service.UserService;
 import com.utils.codeutils.Md5Util;
+import com.utils.toolutils.RedisLock;
 import com.vo.CodeTransferVo;
 import com.vo.CodeVo;
 import com.utils.numberutils.UUIDUtil;
@@ -147,7 +149,7 @@ public class ActiveCodeController {
         }
 
         //判断转账目标用户是否是自己，如果是，就返回
-        if(vo.getToId().equals(fromUser.getId()) || vo.getToUid().equals(fromUser.getUid())){
+        if(vo.getToUid().equals(fromUser.getId()) || vo.getToUid().equals(fromUser.getUid())){
             return new JsonResult(ResultCode.ERROR.getCode(), "转账目标用户不能是自己");
         }
 
@@ -171,9 +173,10 @@ public class ActiveCodeController {
         if (toUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "目标用户不存在");
         }
-//        if (UserStatusType.ACTIVATESUCCESSED.getCode() != toUser.getStatus()) {
-//            return new JsonResult(ResultCode.ERROR.getCode(), "目标账号未激活");
-//        }
+        Boolean f = RedisLock.redisLock(RedisKey.TRANSFER_CODE.getKey()+fromUser.getUid(),fromUser.getId(),RedisKey.TRANSFER_CODE.getSeconds());
+        if (!f){
+            return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
+        }
         activeCodeService.codeTransfer(fromUser.getId(), toUser.getId(), toUser.getUid(), vo.getTransferNo(),vo.getCodeType());
         return new JsonResult(ResultCode.SUCCESS.getCode(), "激活码转账成功");
     }

@@ -109,9 +109,9 @@ public class GradeServiceImpl extends CommonServiceImpl<Grade> implements GradeS
            grade= this.getGradeDetail(4-i);
            //专员 10万，小部分必须大于20%   专员  主任  经理 区代的判断条件一致
            Double firstMaxAmt = list.get(0).getPerformance();
-           Double sedMaxAmt = list.get(1).getPerformance();
-           Double smallAmt = firstMaxAmt > sedMaxAmt ? sedMaxAmt : firstMaxAmt;
-           Double sumMax = CurrencyUtil.getPoundage(firstMaxAmt + sedMaxAmt, 1d);
+           Double secondMaxAmt = list.get(1).getPerformance();
+           Double smallAmt = firstMaxAmt > secondMaxAmt ? secondMaxAmt : firstMaxAmt;
+           Double sumMax = CurrencyUtil.getPoundage(firstMaxAmt + secondMaxAmt, 1d);
            if (sumMax >= grade.getSumPerformance() && sumMax * grade.getMinScale() <= smallAmt) {
                return this.getGradeDetail(4-i);
            }

@@ -89,21 +89,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         Integer upGradeType = 0;
         //写入最大收益
         if (OrderType.INSURANCE.getCode() == tradeOrder.getSource()) {
-//            upGradeType = UpGradeType.INSURANCE.getCode();
-//            double payRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
-//            if (activeUser.getPayAmt() < payRmbAmt) {
-//                logger.error("支付币数量不足，无法激活账号");
-//            }
-//
-//
-//            double tradeRmbAmt = CurrencyUtil.multiply(tradeOrder.getAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
-//            if (activeUser.getTradeAmt() < tradeRmbAmt) {
-//                logger.error("交易币数量不足，无法激活账号");
-//            }
-//            double payAmt = CurrencyUtil.multiply(payRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE)), 2);
-//            double tradeAmt = CurrencyUtil.multiply(tradeRmbAmt, Double.valueOf(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE)), 2);
-//            userService.updatePayAmtByUserId(activeUser.getId(), -payAmt);
-//            userService.updatePayAmtByUserId(activeUser.getId(), -tradeAmt);
             User updateActiveUser = new User();
             updateActiveUser.setId(activeUser.getId());
             updateActiveUser.setInsuranceAmt(tradeOrder.getAmt());
@@ -113,10 +98,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             userService.updateById(updateActiveUser.getId(), updateActiveUser);
             UserDetail activeUserDetailContion = new UserDetail();
             activeUserDetailContion.setId(activeUser.getId());
-            //写入冻结
-//            userDetailService.updateForzenPayAmtByUserId(activeUser.getId(), payAmt);
-//            userDetailService.updateForzenTradeAmtByUserId(activeUser.getId(), tradeAmt);
-//            userDetailService.updateForzenEquityAmtByUserId(activeUser.getId(), 0d);
         } else if (OrderType.INSURANCE_COVER.getCode() == tradeOrder.getSource()) {
             upGradeType = UpGradeType.COVERAGEUPGRADE.getCode();
             userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * tradeOrder.getAmt() + activeUser.getInsuranceAmt());
@@ -124,39 +105,33 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             upGradeType = UpGradeType.ORIGINUPGRADE.getCode();
             userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), tradeOrder.getAmt());
         }
-        //更新用户开卡级别
-//        userService.updateCardGradeByUserId(tradeOrder.getSendUserId(), tradeOrder.getCardGrade());
         //向上累加业绩
-        int i;
         User refferUser = null;
         String referId = activeUser.getFirstReferrer();
-        for (i = 0; i < 10000; i++) {
+        for (int i = 0; i < 10000; i++) {
             if (ToolUtil.isEmpty(referId)) {
                 break;
             }
-//            if (Constant.SYSTEM_USER_ID.equals(referId)) {
-//                break;
-//            }
             refferUser = userService.readById(referId);
             if (refferUser == null && UserStatusType.ACTIVATESUCCESSED.getCode() != refferUser.getStatus()) {
                 continue;
             }
             userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
             Integer historyGrade = refferUser.getGrade();
-            //重新计算用户星级
-            Grade grade = gradeService.getUserGrade(refferUser.getId());
-            if (grade != null && grade.getGrade() != refferUser.getGrade()) {
-                //更新用户星级
-                userService.updateUserGradeByUserId(referId, grade.getGrade());
-                UserDepartment con = new UserDepartment();
-                con.setUserId(refferUser.getId());
-                UserDepartment userDepartment = userDepartmentService.readOne(con);
-                UserDepartment updateModel = new UserDepartment();
-                updateModel.setGrade(grade.getGrade());
-                userDepartmentService.updateById(userDepartment.getId(),updateModel);
-                //写入用户升级记录
-                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade, grade.getGrade(), UpGradeType.STARGRADE.getCode(), orderNo);
-            }
+//            //重新计算用户星级
+//            Grade grade = gradeService.getUserGrade(refferUser.getId());
+//            if (grade != null && grade.getGrade() != refferUser.getGrade()) {
+//                //更新用户星级
+//                userService.updateUserGradeByUserId(referId, grade.getGrade());
+//                UserDepartment con = new UserDepartment();
+//                con.setUserId(refferUser.getId());
+//                UserDepartment userDepartment = userDepartmentService.readOne(con);
+//                UserDepartment updateModel = new UserDepartment();
+//                updateModel.setGrade(grade.getGrade());
+//                userDepartmentService.updateById(userDepartment.getId(),updateModel);
+//                //写入用户升级记录
+//                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade, grade.getGrade(), UpGradeType.STARGRADE.getCode(), orderNo);
+//            }
             referId = refferUser.getFirstReferrer();
         }
         //写入结算记录
@@ -169,8 +144,6 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         userService.pushBonus(activeUser.getId(), tradeOrder);
         //写入极差奖待做任务领取奖励记录，有则写
         userService.differnceBonus(activeUser.getId(), tradeOrder);
-//        //写入用户升级记录
-//        userGradeRecordService.addGradeRecord(activeUser, GradeRecordType.CARDUPDATE, activeUser.getGrade(), tradeOrder.getCardGrade(), tradeOrder.getOrderNo());
         // 更改订单的结算状态
         TradeOrder updateOrder = new TradeOrder();
         updateOrder.setStatus(OrderStatus.HANDLED.getCode());

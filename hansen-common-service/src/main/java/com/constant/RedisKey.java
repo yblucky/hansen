@@ -36,7 +36,19 @@ public enum RedisKey {
      */
     TRADE_ORDER_IS_HANDING("sms_code_", 60 * 60*24),
     /** 图片验证码，保存10分钟 */
-    PIC_CODE("pic_code_", 10 * 60);
+    PIC_CODE("pic_code_", 10 * 60),
+    /** 防止升级重复点击，保存30秒 */
+    UPGRADE("upgrade", 30),
+    /**防止码转账重复点击，保存20秒*/
+    TRANSFER_CODE("transfer_code", 20),
+    /**防止转账重复点击，保存20秒*/
+    TRANSFER_COIN("transfer_coin", 20),
+    /**防止提币重复点击，保存20秒*/
+    TRANSFER_COIN_OUT("transfer_coin_out", 20),
+    /**防止签到重复点击，保存20秒*/
+    SIGN("sign", 20),
+    /**防止做任务提币重复点击，保存20秒*/
+    DO_TASK("DO_TASK", 20);
 
     private final String key;
 
