@@ -7,6 +7,10 @@ package com.base.page;
  */
 public enum ResultCode {
     /**
+     *需要提示用的失败信息
+     */
+    SHOW_ERROR(8888, "失败"),
+    /**
      * 失败
      */
     ERROR(9999, "失败"),

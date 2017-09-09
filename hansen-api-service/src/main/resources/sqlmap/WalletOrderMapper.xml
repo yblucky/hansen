@@ -41,7 +41,7 @@
 	</select>
 
 	<select id="readList" resultType="com.model.WalletOrder">
-		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+		<include refid="selector"/> <include refid="condition"/> ORDER BY createTime desc    limit #{startRow}, #{pageSize};
 	</select>
 
 	<select id="readOne" resultType="com.model.WalletOrder">
@@ -83,8 +83,7 @@
 				#{item}
 			</foreach>
 		</if>
-		ORDER BY createTime DESC
-		LIMIT #{page.startRow}, #{page.pageSize}
+		ORDER BY createTime DESC 	LIMIT #{page.startRow}, #{page.pageSize}
 	</select>
 
 </mapper>

@@ -10,6 +10,10 @@ import java.util.List;
 
 @Repository
 public interface TradeOrderMapper extends CommonDao<TradeOrder> {
+    List<TradeOrder> readWaitHandleList(@Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize) throws Exception;
+
+    Integer readWaitHandleCount() throws Exception;
+
     List<TradeOrder> readRewardList(@Param("userId") String userId, @Param("taskTime") Date taskTime, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize) throws Exception;
 
     Integer batchUpdateSignCycle(@Param("list") List<String> idList);

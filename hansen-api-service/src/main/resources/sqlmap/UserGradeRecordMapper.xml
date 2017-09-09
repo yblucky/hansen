@@ -39,7 +39,7 @@
 	</select>
 
 	<select id="readList" resultType="com.model.UserGradeRecord">
-		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+		<include refid="selector"/> <include refid="condition"/>  ORDER BY createTime desc   limit #{startRow}, #{pageSize};
 	</select>
 
 	<select id="readOne" resultType="com.model.UserGradeRecord">

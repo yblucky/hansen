@@ -20,6 +20,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,6 +49,8 @@ public class LoginController {
     private CardGradeService cardGradeService;
     @Autowired
     private GradeService gradeService;
+    @Autowired
+    private TradeOrderService tradeOrderService;
 
 
     @ResponseBody
@@ -128,18 +131,21 @@ public class LoginController {
             updateUser.setNickName(loginUser.getUid()+"");
         }
         UserDetail detail = userDetailService.readById(loginUser.getId());
-        final  String userId=loginUser.getId();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    userService.reloadUserGrade(userId);
-                } catch (Exception e) {
-                    System.out.println("登录重新计算用户等级异常");
-                    e.printStackTrace();
-                }
-            }
-        });
+//        final  String userId=loginUser.getId();
+        logger.error("000000000000000000000 计算用户等级 0000000000000000000000000000");
+         userService.reloadUserGrade(loginUser.getId());
+        logger.error("0000000000000000000000000000000000000000000000000");
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//
+//                } catch (Exception e) {
+//                    System.out.println("登录重新计算用户等级异常");
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
         // 登录
         String token = TokenUtil.generateToken(loginUser.getId(), loginUser.getNickName());
         Strings.setEx(RedisKey.TOKEN_API.getKey() + loginUser.getId(), RedisKey.TOKEN_API.getSeconds(), token);
@@ -196,6 +202,7 @@ public class LoginController {
         if (logger.isInfoEnabled()) {
             logger.info(String.format("user again login[%s]", TokenUtil.getTokenObject(redisToken)));
         }
+        userService.reloadUserGrade(user.getId());
         UserDetail detail = userDetailService.readById(user.getId());
         UserVo vo = new UserVo();
         BeanUtils.copyProperties(vo, user);
@@ -345,6 +352,27 @@ public class LoginController {
         return new JsonResult(grade);
     }
 
+    /**
+     * 测试极差
+     */
+    @ResponseBody
+    @RequestMapping(value = "/differ", method = RequestMethod.GET)
+    public JsonResult differ(HttpServletRequest request,String userId,String orderNo) throws Exception {
+        TradeOrder con = new TradeOrder();
+        con.setOrderNo(orderNo);
+        TradeOrder order =  tradeOrderService.readOne(con);
+        if (ToolUtil.isEmpty(orderNo)){
+            return new JsonResult(ResultCode.ERROR.getCode(),"订单为空");
+        }
+        if (order==null){
+            return new JsonResult(ResultCode.ERROR.getCode(),"找不到订单");
+        }
+        if (order!=null){
+            userService.differnceBonus(userId,order);
+        }
+
+        return new JsonResult(ResultCode.SUCCESS);
+    }
     public static void main(String[] args) {
         String uuid = ToolUtil.getUUID();
         System.out.println(uuid);

@@ -156,10 +156,10 @@ public class ActiveCodeController {
         if (ToolUtil.isEmpty(vo.getPayword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付密码不能为空");
         }
-        if (ToolUtil.isEmpty(fromUser.getPassword())) {
+        if (ToolUtil.isEmpty(fromUser.getPayWord())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "未设置支付密码");
         }
-        if (!fromUser.getPassword().equals(Md5Util.MD5Encode(vo.getPayword(),fromUser.getSalt()))){
+        if (!fromUser.getPayWord().equals(Md5Util.MD5Encode(vo.getPayword(),fromUser.getSalt()))){
             return new JsonResult(ResultCode.ERROR.getCode(), "支付密码错误");
         }
         User toUser = null;
@@ -205,7 +205,7 @@ public class ActiveCodeController {
             return new JsonResult(ResultCode.ERROR.getCode(), "无法获取用户开卡等级");
         }
         if (user.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "冲洗激活需要" + cardGrade.getActiveCodeNo() + "个激活码，激活码数量不足");
+            return new JsonResult(ResultCode.ERROR.getCode(), "重新激活需要" + cardGrade.getActiveCodeNo() + "个激活码，激活码数量不足");
         }
         activeCodeService.useActiveCode(user.getId(), cardGrade.getActiveCodeNo(), "");
         return new JsonResult(ResultCode.SUCCESS.getCode(), "激活账户成功");

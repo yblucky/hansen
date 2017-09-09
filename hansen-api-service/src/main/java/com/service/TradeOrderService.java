@@ -4,6 +4,7 @@ import com.base.service.CommonService;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
@@ -35,5 +36,9 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
     Integer readRewardCountByOrderType(String userId, List<Integer> source);
 
     Double  sumReadRewardByOrderType(String userId, List<Integer> source);
+
+    List<TradeOrder> readWaitHandleList( Integer startRow, Integer pageSize) throws Exception;
+
+    Integer readWaitHandleCount() throws Exception;
 
 }

@@ -61,6 +61,8 @@ public class SignController {
         if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
             if (user.getStatus().intValue() == UserStatusType.WAITACTIVATE.getCode().intValue()) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "用户已激活,保单处理中");
+            }else if (user.getStatus().intValue() == UserStatusType.OUT.getCode().intValue()) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "需要重新激活账号");
             }
             return new JsonResult(ResultCode.ERROR.getCode(), "登录账号未激活");
         }

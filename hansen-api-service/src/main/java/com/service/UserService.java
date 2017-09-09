@@ -7,9 +7,7 @@ import com.constant.UpGradeType;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @date 2016年11月27日
@@ -26,15 +24,15 @@ public interface UserService extends CommonService<User> {
     @Transactional
     void pushBonus(String pushUserId, TradeOrder order) throws Exception;
 
-    void manageBonus(String pushUserId, TradeOrder order) throws Exception;
+    Double manageBonus(String pushUserId, TradeOrder order,Double weekAmt) throws Exception;
 
     void reloadUserGrade(User user) throws Exception;
 
-    void reloadUserGrade(String  userId) throws Exception;
+    void reloadUserGrade(String userId) throws Exception;
 
     void differnceBonus(String userId, TradeOrder order) throws Exception;
 
-    void originUpgrade(String userId, Integer cardGrade) throws  Exception;
+    void originUpgrade(String userId, Integer cardGrade) throws Exception;
 
     void coverageUpgrade(String userId, Integer cardGrade) throws Exception;
 
@@ -76,7 +74,11 @@ public interface UserService extends CommonService<User> {
 
     Boolean intervalActice(String userId);
 
-    Boolean  upGrade(User loginUser, CardGrade cardGrade, UpGradeType upGradeType) throws Exception;
+    Boolean upGrade(User loginUser, CardGrade cardGrade, UpGradeType upGradeType) throws Exception;
 
     void differnceBonusNew(String userId, TradeOrder order) throws Exception;
+
+    Boolean  isVrticalLine(Integer inviterUid,Integer concatUid) throws Exception;
+
+    Boolean  isVrticalLine(String inviterUserId,String concatUserId) throws Exception;
 }

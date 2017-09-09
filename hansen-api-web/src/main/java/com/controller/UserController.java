@@ -180,12 +180,16 @@ public class UserController {
             return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
         }
         User inviterUser = null;
-        if (vo.getContactUserId() != loginUser.getUid()) {
+        if (vo.getContactUserId().intValue() != loginUser.getUid().intValue()) {
             User inviterCondition = new User();
-            inviterCondition.setUid(vo.getUid());
+            inviterCondition.setUid(vo.getContactUserId());
             inviterUser = userService.readOne(inviterCondition);
             if (inviterUser == null) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "接点人信息有误");
+            }
+            Boolean flag = userService.isVrticalLine(loginUser.getId(),inviterUser.getId());
+            if (!flag){
+                return new JsonResult(ResultCode.ERROR.getCode(), "接点人必须注册在邀请人下");
             }
         } else {
             inviterUser = loginUser;

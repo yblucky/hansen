@@ -62,7 +62,7 @@ public class Page implements Serializable {
 
 	public Integer getStartRow() {
 		if (pageNo == null || pageNo < 1) {
-			startRow = 1;
+			startRow = 0;
 		} else {
 			startRow = (pageNo - 1) * pageSize;
 		}

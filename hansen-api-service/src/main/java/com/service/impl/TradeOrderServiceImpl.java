@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.sun.tools.doclint.Entity.sum;
+
 /**
  * @date 2016年11月27日
  */
@@ -107,8 +109,13 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         }
         //向上累加业绩
         User refferUser = null;
-        String referId = activeUser.getFirstReferrer();
-        for (int i = 0; i < 10000; i++) {
+        String referId = activeUser.getContactUserId();
+        UserDetail userDetail=userDetailService.readById(referId);
+        if (userDetail==null){
+            logger.error("保单结束结算："+orderNo+"无法查询到下单用户");
+            return false;
+        }
+        for (int i = 0; i < userDetail.getLevles(); i++) {
             if (ToolUtil.isEmpty(referId)) {
                 break;
             }
@@ -132,7 +139,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
 //                //写入用户升级记录
 //                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade, grade.getGrade(), UpGradeType.STARGRADE.getCode(), orderNo);
 //            }
-            referId = refferUser.getFirstReferrer();
+            referId = refferUser.getContactUserId();
         }
         //写入结算记录
         TradePerformanceRecord performanceRecord = new TradePerformanceRecord();
@@ -216,5 +223,19 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             sum=0d;
         }
         return sum;
+    }
+
+    @Override
+    public List<TradeOrder> readWaitHandleList(Integer startRow, Integer pageSize) throws Exception {
+        return tradeOrderMapper.readWaitHandleList(startRow, pageSize);
+    }
+
+    @Override
+    public Integer readWaitHandleCount() throws Exception {
+        Integer count  =tradeOrderMapper.readWaitHandleCount();
+        if (count==null){
+            count=0;
+        }
+        return count;
     }
 }

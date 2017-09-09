@@ -12,6 +12,7 @@
 	<url>/order/handle</url>
 	<url>/order/add</url>
 	<url>/login/test1</url>
+	<url>/login/differ</url>
 
 	<!-- 静态资源-->
 	<url>/resources</url>

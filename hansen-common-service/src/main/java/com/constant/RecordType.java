@@ -6,9 +6,9 @@ package com.constant;
  *
  */
 public enum RecordType {
-    // TODO: 2017/7/14 待完善
+
     /** 每周收益 */
-    RELASE(1, "每周收益"),
+    RELASE(6, "每周收益"),
 
     /** 直推奖 */
     PUSH(2, "直推奖"),

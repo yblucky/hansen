@@ -59,6 +59,7 @@
 				  <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
 			  </if>
 		  </where>
+		ORDER BY createTime desc
 	</select>
 
 	<select id="readOne" resultType="WalletTransaction">
