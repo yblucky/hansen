@@ -156,6 +156,9 @@ public class LoginController {
         Double rmbConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
         //人民币兑换交易币汇率
         Double rmbConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+        if (rmbConvertPayScale==0 || rmbConvertTradeScale==0){
+            return new JsonResult(ResultCode.ERROR.getCode(), "汇率参数错误");
+        }
         //支付币兑换人民币汇率
         Double payConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertPayScale,1d,2);
         //交易币兑换人民币汇率
