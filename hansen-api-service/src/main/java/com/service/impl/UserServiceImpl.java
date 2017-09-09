@@ -1134,9 +1134,4 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         return false;
     }
 
-    public static void main(String[] args) {
-        String s = "asfsf";
-        s += "asfs1232134";
-        System.out.println(s);
-    }
 }
