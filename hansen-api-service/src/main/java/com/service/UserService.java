@@ -24,7 +24,7 @@ public interface UserService extends CommonService<User> {
     @Transactional
     void pushBonus(String pushUserId, TradeOrder order) throws Exception;
 
-    Double manageBonus(String pushUserId, TradeOrder order,Double weekAmt) throws Exception;
+    Double manageBonus(String pushUserId, TradeOrder order, Double weekAmt) throws Exception;
 
     void reloadUserGrade(User user) throws Exception;
 
@@ -54,6 +54,14 @@ public interface UserService extends CommonService<User> {
 
     Integer updateSumProfitsByUserId(String userId, Double maxProfits);
 
+    Integer updateInsuranceAmtByUserId(String userId, Double insuranceAmt);
+
+    Integer updateSumProfitsCoverByUserId(String userId, Double maxProfits);
+
+    Integer updateInsuranceAmtCoverByUserId(String userId, Double insuranceAmt);
+
+    Integer updateMaxProfitsCoverByUserId(String userId, Double maxProfits);
+
     Integer updateCardGradeByUserId(String userId, Integer cardGrade);
 
     Integer updateRemainTaskNoByUserId(String userId, Integer remainTaskNo);
@@ -78,7 +86,7 @@ public interface UserService extends CommonService<User> {
 
     void differnceBonusNew(String userId, TradeOrder order) throws Exception;
 
-    Boolean  isVrticalLine(Integer inviterUid,Integer concatUid) throws Exception;
+    Boolean isVrticalLine(Integer inviterUid, Integer concatUid) throws Exception;
 
-    Boolean  isVrticalLine(String inviterUserId,String concatUserId) throws Exception;
+    Boolean isVrticalLine(String inviterUserId, String concatUserId) throws Exception;
 }

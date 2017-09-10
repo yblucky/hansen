@@ -136,9 +136,28 @@
 		update <include refid="table_name"/> set payAmt = payAmt + #{payAmt},updateTime=now() where id = #{id} and (payAmt + #{payAmt})>=0
 	</update>
 
+	<update id="updateInsuranceAmtByUserId">
+		update <include refid="table_name"/> set insuranceAmt = insuranceAmt + #{insuranceAmt},updateTime=now() where id = #{id} and (insuranceAmt + #{insuranceAmt})>=0
+	</update>
+
+
 	<update id="updateSumProfitsByUserId">
 		update <include refid="table_name"/> set sumProfits = sumProfits + #{sumProfits},updateTime=now() where id = #{id} and (sumProfits + #{sumProfits})>=0
 	</update>
+
+
+	<update id="updateInsuranceAmtCoverByUserId">
+		update <include refid="table_name"/> set insuranceAmt =   #{insuranceAmt},updateTime=now() where id = #{id} and ( #{insuranceAmt})>=0
+	</update>
+
+	<update id="updateSumProfitsCoverByUserId">
+		update <include refid="table_name"/> set sumProfits =  #{sumProfits},updateTime=now() where id = #{id} and ( #{sumProfits})>=0
+	</update>
+
+	<update id="updateMaxProfitsCoverByUserId">
+		update <include refid="table_name"/> set maxProfits =   #{maxProfits},updateTime=now() where id = #{id} and (  #{maxProfits})>=0
+	</update>
+
 
 	<update id="updateMaxProfitsByUserId">
 		update <include refid="table_name"/> set maxProfits = maxProfits + #{maxProfits},updateTime=now() where id = #{id} and (maxProfits + #{maxProfits})>=0

@@ -164,7 +164,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         userGradeRecordService.addGradeRecord(activeUser, GradeRecordType.CARDUPDATE, activeUser.getGrade(), tradeOrder.getCardGrade(), tradeOrder.getOrderNo());
         // 更改订单的结算状态
         TradeOrder updateOrder = new TradeOrder();
-        updateOrder.setStatus(OrderStatus.HANDLED.getCode());
+        updateOrder.setStatus(OrderStatus.HANDING.getCode());
         this.updateById(tradeOrder.getId(), updateOrder);
         return true;
     }

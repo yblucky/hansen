@@ -7,6 +7,7 @@ import com.base.service.impl.CommonServiceImpl;
 import com.constant.*;
 import com.mapper.UserMapper;
 import com.model.*;
+import com.qiniu.storage.Configuration;
 import com.service.*;
 import com.utils.DateUtils.DateUtils;
 import com.utils.codeutils.Md5Util;
@@ -134,7 +135,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         // TODO记录用户释放信息
         String remark = "收益释放：会员" + user.getUid() + "领取任务收益";
         String orderNo = OrderNoUtil.get() + "-" + RecordType.RELASE.toString();
-        TradeOrder tradeOrder = this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE, 1,-1, remark, OrderStatus.HANDLED.getCode());
+        TradeOrder tradeOrder = this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE, 1,-1, remark, OrderStatus.HANDING.getCode());
 
         userSignService.addUserSign(user.getId(), incomeAmt, SignType.WAITING_SIGN, "静态释放，新增奖励发放记录");
 
@@ -151,9 +152,14 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Override
     @Transactional
     public void pushBonus(String pushUserId, TradeOrder order) throws Exception {
+        logger.error("--------------------开始计算直推奖：" + order + "----------------------");
         User pushUser = this.readById(pushUserId);
         if (pushUser == null) {
-            System.out.println("找不到用户....");
+            logger.error("--------------------找不到用户：" + order + "----------------------");
+            return;
+        }
+        if (order==null){
+            logger.error("--------------------找不到订单 " + order + "----------------------");
             return;
         }
         String orderNo = order.getOrderNo();
@@ -165,54 +171,92 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }*/
         //一代直推奖
 //        this.reloadUserGrade(pushUser.getFirstReferrer());
-        User parent = this.readById(pushUser.getFirstReferrer());
-
         User parentUser = this.readById(pushUser.getFirstReferrer());
+        User grandfatherUser = this.readById(pushUser.getSecondReferrer());
         if (parentUser == null) {
             return;
         }
+        Double pushRewardBaseAmt = order.getAmt();
+        if (pushRewardBaseAmt==null || pushRewardBaseAmt.doubleValue()==0){
+            logger.error("--------------------保单金额为空，数据错误 " + order + "----------------------");
+            return;
+        }
+        Boolean isOrignal=OrderType.INSURANCE_ORIGIN.getCode()==order.getSource();
+        if (isOrignal){
+            //如果是补差升级
+            if (order.getCardGrade()==null){
+                logger.error("--------------------补差升级，数据错误，用户目标卡等级数据没有写入 " + order + "----------------------");
+            }
+        }
+        Boolean isHasPushFirst=true;
+        Boolean isHasPushSecond=true;
+
         //一代推荐人必须也是激活状态
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
-            //保单等级以最小为准
-            Integer cardLevel = parentUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : parentUser.getCardGrade();
-            CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
-            //直推收益按两者最小保单金额*6%
-            double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHFIRSTREFERRERSCALE)), 1d);
+           if (isOrignal){
+               if (order.getCardGrade()>=parentUser.getCardGrade()){
+                   logger.error("--------------------补差升级，升级用户的卡等级高过上级，无奖励" + order + "----------------------");
+                   isHasPushFirst=false;
+               }
+           }
+          if (isHasPushFirst){
+              //保单等级以最小为准
+              Integer cardLevel = parentUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : parentUser.getCardGrade();
+              CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
+              if (isOrignal){
+                  //如果是补差升级，就按差价算
+                  cardGrade.setInsuranceAmt(pushRewardBaseAmt);
+              }
+              //直推收益按两者最小保单金额*6%
+              double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHFIRSTREFERRERSCALE)), 1d);
            /*存入一代推荐人的三种钱包中  需要做完7次任务才可以分4次领取
             userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);*/
-            // TODO 记录一代直推奖记录
-            String remark = "直推奖：会员" + pushUser.getUid() + "报单一代奖励";
-            orderNo = order.getOrderNo() + "-" + RecordType.PUSH.toString() + "-" + 1;
-            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.PENDING.getCode());
+              // TODO 记录一代直推奖记录
+              String remark = "直推奖：会员" + pushUser.getUid() + "报单一代奖励";
+              orderNo = order.getOrderNo() + "-" + RecordType.PUSH.toString() + "-" + 1;
+              this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.PENDING.getCode());
+          }
         }
 
         //二代直推奖
-        User grandfatherUser = this.readById(pushUser.getSecondReferrer());
+
         if (grandfatherUser == null) {
             return;
         }
         //二代推荐人必须是激活状态
         if (grandfatherUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
-//            this.reloadUserGrade(pushUser.getSecondReferrer());
-            grandfatherUser = this.readById(pushUser.getSecondReferrer());
-            //二代推荐人下属部门必须有三个以上是激活状态的
-            User selModel = new User();
-            selModel.setFirstReferrer(grandfatherUser.getId());
-            selModel.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
-            Integer count = this.readCount(selModel);
-            if (count >= 3) {
-                //保单等级以最小为准
-                Integer cardLevel = grandfatherUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : grandfatherUser.getCardGrade();
-                CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
-                //直推收益按两者最小保单金额*4%
-                double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHSECONDREFERRERSCALE)), 1d);
-                //存入二代推荐人的三种钱包中
-//                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);
-                // TODO 记录二代直推奖记录
-                String remark = "直推奖：会员" + pushUser.getUid() + "报单二代奖励";
-                orderNo = order.getOrderNo() + "-" + RecordType.PUSH.toString() + "-" + 2;
-                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.PENDING.getCode());
+            if (isOrignal){
+                if (order.getCardGrade()>=grandfatherUser.getCardGrade()){
+                    logger.error("--------------------补差升级，升级用户的卡等级高过上级，无奖励" + order + "----------------------");
+                    isHasPushSecond=false;
+                }
             }
+            if (isHasPushSecond){
+                grandfatherUser = this.readById(pushUser.getSecondReferrer());
+                //二代推荐人下属部门必须有三个以上是激活状态的
+                User selModel = new User();
+                selModel.setFirstReferrer(grandfatherUser.getId());
+                selModel.setStatus(UserStatusType.ACTIVATESUCCESSED.getCode());
+                Integer count = this.readCount(selModel);
+                if (count >= 3) {
+                    //保单等级以最小为准
+                    Integer cardLevel = grandfatherUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : grandfatherUser.getCardGrade();
+                    CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
+                    if (isOrignal){
+                        //如果是补差升级，就按差价算
+                        cardGrade.setInsuranceAmt(pushRewardBaseAmt);
+                    }
+                    //直推收益按两者最小保单金额*4%
+                    double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHSECONDREFERRERSCALE)), 1d);
+                    //存入二代推荐人的三种钱包中
+//                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);
+                    // TODO 记录二代直推奖记录
+                    String remark = "直推奖：会员" + pushUser.getUid() + "报单二代奖励";
+                    orderNo = order.getOrderNo() + "-" + RecordType.PUSH.toString() + "-" + 2;
+                    this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.PENDING.getCode());
+                }
+            }
+
         }
     }
 
@@ -328,6 +372,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
      */
     @Override
     public void differnceBonus(String pushUserId, TradeOrder order) throws Exception {
+        if (order==null){
+            logger.error("--------------------找不到订单 " + order + "----------------------");
+            return;
+        }
         logger.error("--------------------开始计算极差奖：" + order.getOrderNo() + "----------------------");
         User activeUser = this.readById(pushUserId);
         if (activeUser == null) {
@@ -341,19 +389,23 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             return;
         }
         String orderNo = order.getOrderNo();
-        //用户激活的保单等级
-        CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
         double insuranceAmt = order.getConfirmAmt();
         //用户所处的等级所能拿到奖金的比例
         double bonusScale = 0d;
-//        Grade grade = gradeService.getGradeDetail(user.getGrade());
-//        if (grade != null) {
-//            bonusScale = grade.getRewardScale();
-//        } else {
-//            user.setGrade(0);
-//            logger.error("根据用户等级参数表获取级差奖结算比例错误....");
-//            return;
-//        }
+
+        Double differRewardBaseAmt = order.getAmt();
+        if (differRewardBaseAmt==null || differRewardBaseAmt.doubleValue()==0){
+            logger.error("--------------------计算级差奖 保单金额为空，数据错误 " + order + "----------------------");
+            return;
+        }
+        Boolean isOrignal=OrderType.INSURANCE_ORIGIN.getCode()==order.getSource();
+        if (isOrignal){
+            //如果是补差升级
+            if (order.getCardGrade()==null){
+                logger.error("--------------------计算级差奖 补差升级，数据错误，用户目标卡等级数据没有写入 " + order + "----------------------");
+            }
+        }
+
         User childUser = user;
         //1星到5星的奖励比率为 2% < 4% < 6% < 8% < 12% < 16% < 20% 平级奖 2% 最多领取22%
         for (int i = 0; i < 7; i++) {
@@ -589,7 +641,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         model.setSignCycle(0);
         model.setSource(recordType.getCode());
         model.setRemark(recordType.getMsg());
-        model.setStatus(OrderStatus.HANDLED.getCode());
+        model.setStatus(OrderStatus.HANDING.getCode());
         model.setStatus(model.getStatus() == null ? 0 : model.getStatus());
         tradeOrderService.create(model);
     }
@@ -612,7 +664,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             model.setRemark(recordType.getMsg());
         }
         if (status == null || status < 0) {
-            model.setStatus(OrderStatus.HANDLED.getCode());
+            model.setStatus(OrderStatus.HANDING.getCode());
         }
 
         try {
@@ -628,7 +680,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             }
             model.setStatus(model.getStatus() == null ? 0 : model.getStatus());
             if (recordType.getCode().intValue()==RecordType.RELASE.getCode().intValue()){
-                model.setStatus(OrderStatus.HANDLED.getCode());
+                model.setStatus(OrderStatus.HANDING.getCode());
                 model.setSignCycle(0);
                 model.setTaskCycle(0);
             }else if(recordType.getCode().intValue()==RecordType.MANAGE.getCode().intValue()){
@@ -713,7 +765,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         //生成保单
         TradeOrder tradeOrder = new TradeOrder();
         tradeOrder.setOrderNo(OrderNoUtil.get());
-        tradeOrder.setAmt(targetCardGrade.getInsuranceAmt());
+        tradeOrder.setAmt(insuranceAmt);
         tradeOrder.setSendUserId(userId);
         tradeOrder.setReceviceUserId(Constant.SYSTEM_USER_ID);
         tradeOrder.setSource(OrderType.INSURANCE_ORIGIN.getCode());
@@ -721,7 +773,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         tradeOrder.setPayAmtScale(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)));
         tradeOrder.setTradeAmtScale(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)));
         tradeOrder.setEquityAmtScale(0d);
-        tradeOrder.setConfirmAmt(0d);
+        tradeOrder.setConfirmAmt(insuranceAmt);
         tradeOrder.setPoundage(0d);
         tradeOrder.setStatus(OrderStatus.PENDING.getCode());
         try {
@@ -732,6 +784,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             tradeOrder.setTaskCycle(0);
             tradeOrder.setSignCycle(0);
         }
+        tradeOrder.setCardGrade(targetCardGradeNo);
         tradeOrderService.create(tradeOrder);
         // TODO: 2017/8/3 点位升级成功后的记录
         userGradeRecordService.addGradeRecord(user, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.ORIGINUPGRADE.getCode(), tradeOrder.getOrderNo());
@@ -829,6 +882,18 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             tradeOrder.setTaskCycle(0);
             tradeOrder.setSignCycle(0);
         }
+        //原来的保单需要失效
+        TradeOrder con = new TradeOrder();
+        con.setSendUserId(userId);
+        con.setStatus(OrderStatus.HANDING.getCode());
+        TradeOrder oldOrder = tradeOrderService.readOne(con);
+        if (oldOrder!=null) {
+            TradeOrder update = new TradeOrder();
+            update.setStatus(OrderStatus.DEL.getCode());
+            update.setRemark("保单覆盖升级,此单失效");
+            tradeOrderService.updateById(oldOrder.getId(),update);
+        }
+        tradeOrder.setCardGrade(targetCardGradeNo);
         tradeOrderService.create(tradeOrder);
         userGradeRecordService.addGradeRecord(user, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.COVERAGEUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
@@ -930,7 +995,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         /**扣注册码**/
         activeCodeService.useRegisterCode(innerUser.getId(), cardGrade.getRegisterCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
         /**扣激活码**/
-        activeCodeService.useActiveCode(innerUser.getId(), cardGrade.getActiveCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getActiveCodeNo() + "个激活码");
+//        activeCodeService.useActiveCode(innerUser.getId(), cardGrade.getActiveCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getActiveCodeNo() + "个激活码");
         return createUser;
     }
 
@@ -998,10 +1063,29 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     }
 
     @Override
+    public Integer updateMaxProfitsCoverByUserId(String userId, Double maxProfits) {
+        return userMapper.updateMaxProfitsCoverByUserId(userId,maxProfits);
+    }
+
+    @Override
     public Integer updateSumProfitsByUserId(String userId, Double sumProfits) {
         return userMapper.updateSumProfitsByUserId(userId, sumProfits);
     }
 
+    @Override
+    public Integer updateInsuranceAmtByUserId(String userId, Double insuranceAmt) {
+        return userMapper.updateInsuranceAmtByUserId(userId, insuranceAmt);
+    }
+
+    @Override
+    public Integer updateSumProfitsCoverByUserId(String userId, Double sumProfits) {
+        return userMapper.updateSumProfitsCoverByUserId(userId, sumProfits);
+    }
+
+    @Override
+    public Integer updateInsuranceAmtCoverByUserId(String userId, Double insuranceAmt) {
+        return userMapper.updateInsuranceAmtCoverByUserId(userId, insuranceAmt);
+    }
 
     @Override
     public Integer updateCardGradeByUserId(String userId, Integer cardGrade) {

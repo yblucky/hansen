@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.sun.tools.doclint.Entity.sum;
-
 /**
  * @date 2016年11月27日
  */
@@ -87,10 +85,21 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         CardGrade cardGradeMdel = new CardGrade();
         cardGradeMdel.setGrade(tradeOrder.getCardGrade());
         CardGrade cardGrade = cardGradeService.readOne(cardGradeMdel);
+        if (tradeOrder==null){
+            logger.error(" ----------handleInsuranceTradeOrder  结算订单不存在-------- ");
+        }
+        //查出原点升级之前的保单
+        TradeOrder model=null;
+        if (OrderType.INSURANCE_ORIGIN.getCode().equals(tradeOrder.getSource())){
+            TradeOrder con = new TradeOrder();
+            con.setSendUserId(tradeOrder.getSendUserId());
+            con.setStatus(OrderStatus.HANDING.getCode());
+            model = this.readOne(con);
+        }
 
         Integer upGradeType = 0;
         //写入最大收益
-        if (OrderType.INSURANCE.getCode() == tradeOrder.getSource()) {
+        if (OrderType.INSURANCE.getCode().intValue() == tradeOrder.getSource()) {
             User updateActiveUser = new User();
             updateActiveUser.setId(activeUser.getId());
             updateActiveUser.setInsuranceAmt(tradeOrder.getAmt());
@@ -100,19 +109,38 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             userService.updateById(updateActiveUser.getId(), updateActiveUser);
             UserDetail activeUserDetailContion = new UserDetail();
             activeUserDetailContion.setId(activeUser.getId());
-        } else if (OrderType.INSURANCE_COVER.getCode() == tradeOrder.getSource()) {
+        } else if (OrderType.INSURANCE_COVER.getCode().intValue() == tradeOrder.getSource()) {
             upGradeType = UpGradeType.COVERAGEUPGRADE.getCode();
-            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * tradeOrder.getAmt() + activeUser.getInsuranceAmt());
-        } else if (OrderType.INSURANCE_ORIGIN.getCode() == tradeOrder.getSource()) {
-            upGradeType = UpGradeType.ORIGINUPGRADE.getCode();
-            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), tradeOrder.getAmt());
+            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
+            //更新用户的静态收益释放基数
+//            userService.updateInsuranceAmtByUserId(tradeOrder.getSendUserId(),cardGrade.getInsuranceAmt());
+            //不做叠加
+            userService.updateInsuranceAmtCoverByUserId(tradeOrder.getSendUserId(), cardGrade.getInsuranceAmt());
+        } else if (OrderType.INSURANCE_ORIGIN.getCode().intValue() == tradeOrder.getSource()) {
+            //补差升级,结算成功后，合并保单
+            userService.updateMaxProfitsCoverByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
+//            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
+            //更新用户的静态收益释放基数
+            userService.updateInsuranceAmtCoverByUserId(tradeOrder.getSendUserId(), cardGrade.getInsuranceAmt());
+            if (model!=null){
+                TradeOrder update = new TradeOrder();
+                update.setStatus(OrderStatus.DEL.getCode());
+                update.setRemark("补差升级，结算成功后，删除原保单");
+                CardGrade cardGrade1=cardGradeService.getUserCardGrade(tradeOrder.getCardGrade());
+                if (cardGrade==null){
+                    logger.error(" ----------handleInsuranceTradeOrder  补差升级，用户的目标等级查询不到-------- ");
+                }
+                update.setAmt(cardGrade.getInsuranceAmt());
+                update.setConfirmAmt(cardGrade.getInsuranceAmt());
+                this.updateById(model.getId(),update);
+            }
         }
         //向上累加业绩
         User refferUser = null;
         String referId = activeUser.getContactUserId();
-        UserDetail userDetail=userDetailService.readById(referId);
-        if (userDetail==null){
-            logger.error("保单结束结算："+orderNo+"无法查询到下单用户");
+        UserDetail userDetail = userDetailService.readById(referId);
+        if (userDetail == null) {
+            logger.error("保单结束结算：" + orderNo + "无法查询到下单用户");
             return false;
         }
         for (int i = 0; i < userDetail.getLevles(); i++) {
@@ -153,7 +181,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         userService.differnceBonus(activeUser.getId(), tradeOrder);
         // 更改订单的结算状态
         TradeOrder updateOrder = new TradeOrder();
-        updateOrder.setStatus(OrderStatus.HANDLED.getCode());
+        updateOrder.setStatus(OrderStatus.HANDING.getCode());
         this.updateById(tradeOrder.getId(), updateOrder);
         return true;
     }
@@ -218,9 +246,9 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
 
     @Override
     public Double sumReadRewardByOrderType(String userId, List<Integer> source) {
-        Double sum  =tradeOrderMapper.sumReadRewardByOrderType(userId, source);
-        if (sum==null){
-            sum=0d;
+        Double sum = tradeOrderMapper.sumReadRewardByOrderType(userId, source);
+        if (sum == null) {
+            sum = 0d;
         }
         return sum;
     }
@@ -232,9 +260,9 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
 
     @Override
     public Integer readWaitHandleCount() throws Exception {
-        Integer count  =tradeOrderMapper.readWaitHandleCount();
-        if (count==null){
-            count=0;
+        Integer count = tradeOrderMapper.readWaitHandleCount();
+        if (count == null) {
+            count = 0;
         }
         return count;
     }

@@ -360,17 +360,19 @@ public class LoginController {
     public JsonResult differ(HttpServletRequest request,String userId,String orderNo) throws Exception {
         TradeOrder con = new TradeOrder();
         con.setOrderNo(orderNo);
-        TradeOrder order =  tradeOrderService.readOne(con);
-        if (ToolUtil.isEmpty(orderNo)){
-            return new JsonResult(ResultCode.ERROR.getCode(),"订单为空");
-        }
-        if (order==null){
-            return new JsonResult(ResultCode.ERROR.getCode(),"找不到订单");
-        }
-        if (order!=null){
-            userService.differnceBonus(userId,order);
-        }
-
+//        TradeOrder order =  tradeOrderService.readOne(con);
+//        if (ToolUtil.isEmpty(orderNo)){
+//            return new JsonResult(ResultCode.ERROR.getCode(),"订单为空");
+//        }
+//        if (order==null){
+//            return new JsonResult(ResultCode.ERROR.getCode(),"找不到订单");
+//        }
+//        if (order!=null){
+//            userService.differnceBonus(userId,order);
+//        }
+        userService.updateMaxProfitsByUserId(userId, 22222d);
+        //更新用户的静态收益释放基数
+        userService.updateInsuranceAmtByUserId(userId,333d);
         return new JsonResult(ResultCode.SUCCESS);
     }
     public static void main(String[] args) {

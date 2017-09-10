@@ -52,7 +52,7 @@
     </select>
 
     <select id="readOne" resultType="com.model.TradeOrder">
-        <include refid="selector"/> <include refid="condition"/> limit 1;
+        <include refid="selector"/> <include refid="condition"/> ORDER BY createTime DESC   limit 1;
     </select>
 
     <select id="readWaitHandleList" resultType="com.model.TradeOrder">
