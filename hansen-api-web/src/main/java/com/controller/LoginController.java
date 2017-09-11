@@ -4,6 +4,7 @@ import com.Token;
 import com.base.TokenUtil;
 import com.base.page.JsonResult;
 import com.base.page.ResultCode;
+import com.constant.OrderType;
 import com.constant.RedisKey;
 import com.constant.UserStatusType;
 import com.model.*;
@@ -17,10 +18,10 @@ import com.vo.LoginUserVo;
 import com.vo.PayPasswordVo;
 import com.vo.UserVo;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.locale.converters.DecimalLocaleConverter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,12 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.tools.Tool;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.utils.numberutils.RandomUtil.getCode;
+import java.util.*;
 
 @Controller
 @RequestMapping("/login")
@@ -51,6 +47,10 @@ public class LoginController {
     private GradeService gradeService;
     @Autowired
     private TradeOrderService tradeOrderService;
+    @Autowired
+    private UserSignService userSignService;
+    @Autowired
+    private UserDepartmentService userDepartmentService;
 
 
     @ResponseBody
@@ -64,7 +64,7 @@ public class LoginController {
         String token = TokenUtil.generateToken(user.getId(), user.getNickName());
         Strings.setEx(RedisKey.TOKEN_API.getKey() + user.getId(), RedisKey.TOKEN_API.getSeconds(), token);
 
-            logger.error(token);
+        logger.error(token);
 
         user.setRemark(token);
         return new JsonResult(user);
@@ -127,13 +127,13 @@ public class LoginController {
         User updateUser = new User();
         updateUser.setLoginTime(new Date());
         userService.updateById(loginUser.getId(), updateUser);
-        if (ToolUtil.isNotEmpty(loginUser.getUid()) || loginUser.getUid()==0){
-            updateUser.setNickName(loginUser.getUid()+"");
+        if (ToolUtil.isNotEmpty(loginUser.getUid()) || loginUser.getUid() == 0) {
+            updateUser.setNickName(loginUser.getUid() + "");
         }
         UserDetail detail = userDetailService.readById(loginUser.getId());
 //        final  String userId=loginUser.getId();
         logger.error("000000000000000000000 计算用户等级 0000000000000000000000000000");
-         userService.reloadUserGrade(loginUser.getId());
+        userService.reloadUserGrade(loginUser.getId());
         logger.error("0000000000000000000000000000000000000000000000000");
 //        new Thread(new Runnable() {
 //            @Override
@@ -162,13 +162,13 @@ public class LoginController {
         Double rmbConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
         //人民币兑换交易币汇率
         Double rmbConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
-        if (rmbConvertPayScale==0 || rmbConvertTradeScale==0){
+        if (rmbConvertPayScale == 0 || rmbConvertTradeScale == 0) {
             return new JsonResult(ResultCode.ERROR.getCode(), "汇率参数错误");
         }
         //支付币兑换人民币汇率
-        Double payConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertPayScale,1d,2);
+        Double payConverRmbScale = CurrencyUtil.getPoundage(1 / rmbConvertPayScale, 1d, 2);
         //交易币兑换人民币汇率
-        Double tradeConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertTradeScale,1d,2);
+        Double tradeConverRmbScale = CurrencyUtil.getPoundage(1 / rmbConvertTradeScale, 1d, 2);
         u.setPayConverRmbScale(payConverRmbScale);
         u.setTradeConverRmbScale(tradeConverRmbScale);
         u.setRmbConvertPayScale(rmbConvertPayScale);
@@ -220,9 +220,22 @@ public class LoginController {
         //人民币兑换交易币汇率
         Double rmbConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
         //支付币兑换人民币汇率
-        Double payConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertPayScale,1d,2);
+        Double payConverRmbScale = CurrencyUtil.getPoundage(1 / rmbConvertPayScale, 1d, 2);
         //交易币兑换人民币汇率
-        Double tradeConverRmbScale = CurrencyUtil.getPoundage(1/rmbConvertTradeScale,1d,2);
+        Double tradeConverRmbScale = CurrencyUtil.getPoundage(1 / rmbConvertTradeScale, 1d, 2);
+        //查询用户累计动态收益
+        List sources = new ArrayList();
+        sources.add(OrderType.PUSH.getCode());
+        sources.add(OrderType.MANAGE.getCode());
+        sources.add(OrderType.DIFFERENT.getCode());
+        sources.add(OrderType.SAME.getCode());
+        Double sumDynamicProfitsCount = tradeOrderService.readSumDynamicProfitsCount(user.getId(), sources);
+        //查询用户的冻结收益
+        if (UserStatusType.OUT.getCode().intValue() == user.getStatus().intValue()) {
+            Double sumFrozen = userSignService.readSumFrozenCount(user.getId());
+            vo.setSumFrozenProfits(sumFrozen);
+        }
+        vo.setDynamicProfits(sumDynamicProfitsCount);
         vo.setPayConverRmbScale(payConverRmbScale);
         vo.setTradeConverRmbScale(tradeConverRmbScale);
         vo.setRmbConvertPayScale(rmbConvertPayScale);
@@ -339,14 +352,14 @@ public class LoginController {
      */
     @ResponseBody
     @RequestMapping(value = "/test1", method = RequestMethod.GET)
-    public JsonResult testGrade(HttpServletRequest request,String userId) throws Exception {
-        Grade grade= gradeService.getUserGrade(userId);
-        if (grade!=null){
-            userService.updateUserGradeByUserId(userId,grade.getGrade());
+    public JsonResult testGrade(HttpServletRequest request, String userId) throws Exception {
+        Grade grade = gradeService.getUserGrade(userId);
+        if (grade != null) {
+            userService.updateUserGradeByUserId(userId, grade.getGrade());
         }
 
 
-        if (grade==null){
+        if (grade == null) {
             return new JsonResult(ResultCode.ERROR);
         }
         return new JsonResult(grade);
@@ -357,9 +370,9 @@ public class LoginController {
      */
     @ResponseBody
     @RequestMapping(value = "/differ", method = RequestMethod.GET)
-    public JsonResult differ(HttpServletRequest request,String userId,String orderNo) throws Exception {
-        TradeOrder con = new TradeOrder();
-        con.setOrderNo(orderNo);
+    public JsonResult differ(HttpServletRequest request, String userId, String userId1, String userId2, String orderNo) throws Exception {
+//        TradeOrder con = new TradeOrder();
+//        con.setOrderNo(orderNo);
 //        TradeOrder order =  tradeOrderService.readOne(con);
 //        if (ToolUtil.isEmpty(orderNo)){
 //            return new JsonResult(ResultCode.ERROR.getCode(),"订单为空");
@@ -370,11 +383,42 @@ public class LoginController {
 //        if (order!=null){
 //            userService.differnceBonus(userId,order);
 //        }
-        userService.updateMaxProfitsByUserId(userId, 22222d);
-        //更新用户的静态收益释放基数
-        userService.updateInsuranceAmtByUserId(userId,333d);
-        return new JsonResult(ResultCode.SUCCESS);
+//        userService.updateMaxProfitsByUserId(userId, 22222d);
+//        //更新用户的静态收益释放基数
+//        userService.updateInsuranceAmtByUserId(userId,333d);
+
+//        Boolean flag = userService.isVrticalLine(userId1, userId2);
+          List<UserDepartment> list=  userDepartmentService.getAllUserDepartment();
+        if (list==null){
+            return new JsonResult("空");
+        }
+        try {
+            for (UserDepartment userDepartment:list){
+                User user =  userService.readById(userDepartment.getId());
+                if (user==null){
+                    continue;
+                }
+                if (user.getCardGrade()==null){
+                    continue;
+                }
+                if (UserStatusType.ACTIVATESUCCESSED.getCode().intValue()!=user.getStatus()){
+                    continue;
+                }
+                CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
+                if (cardGrade==null ||cardGrade.getInsuranceAmt()==null){
+                    continue;
+                }
+                Double perfomance =  cardGrade.getInsuranceAmt();
+                userDepartmentService.updatePerformance(user.getId(),perfomance);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JsonResult("error");
+        }
+        return new JsonResult("ok");
+
     }
+
     public static void main(String[] args) {
         String uuid = ToolUtil.getUUID();
         System.out.println(uuid);

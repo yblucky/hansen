@@ -82,4 +82,5 @@ public class CardGrade extends BaseModel {
     public void setOutMultiple(Integer outMultiple) {
         this.outMultiple = outMultiple;
     }
+
 }

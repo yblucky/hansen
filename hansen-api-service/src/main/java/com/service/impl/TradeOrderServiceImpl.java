@@ -138,6 +138,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         //向上累加业绩
         User refferUser = null;
         String referId = activeUser.getContactUserId();
+        //保单激活，自己就是一个部门，给自己单独加上部门业绩
+        userDepartmentService.updatePerformance(activeUser.getId(), tradeOrder.getAmt());
         UserDetail userDetail = userDetailService.readById(referId);
         if (userDetail == null) {
             logger.error("保单结束结算：" + orderNo + "无法查询到下单用户");
@@ -151,7 +153,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             if (refferUser == null && UserStatusType.ACTIVATESUCCESSED.getCode() != refferUser.getStatus()) {
                 continue;
             }
-            userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
+//            userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
+              userDepartmentService.updateDeparmentAndTeamPerformanceByUserId(referId,tradeOrder.getConfirmAmt(),tradeOrder.getConfirmAmt());
             Integer historyGrade = refferUser.getGrade();
 //            //重新计算用户星级
 //            Grade grade = gradeService.getUserGrade(refferUser.getId());
@@ -247,6 +250,16 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     @Override
     public Double sumReadRewardByOrderType(String userId, List<Integer> source) {
         Double sum = tradeOrderMapper.sumReadRewardByOrderType(userId, source);
+        if (sum == null) {
+            sum = 0d;
+        }
+        return sum;
+    }
+
+
+    @Override
+    public Double readSumDynamicProfitsCount(String userId, List<Integer> source) {
+        Double sum = tradeOrderMapper.readSumDynamicProfitsCount(userId, source);
         if (sum == null) {
             sum = 0d;
         }

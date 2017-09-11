@@ -17,11 +17,17 @@ public interface UserDepartmentService extends CommonService<UserDepartment> {
 
     List<UserDepartment> getAll(String parentUserId);
 
+    List<UserDepartment> getAllUserDepartment();
+
     Double getSumAmt(String parentUserId);
+
+    Double getSumDeparmentPerformanceByParentUserId(String parentUserId);
 
     Integer updatePerformance(String userId, Double performance);
 
-    Integer updateTeamPerformanceByUserId(String userId, Double teamPerformance);
+    Integer updateTeamPerformanceByUserId(String userId, Double performance);
+
+    Integer updateDeparmentAndTeamPerformanceByUserId(String userId,  Double performance,Double teamPerformance);
 
     List<UserDepartment> getDirectTeamList(String parentUserId);
 

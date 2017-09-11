@@ -31,7 +31,7 @@
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{userId},#{uid},#{performance}.#{teamPerformance},#{grade},#{parentUserId},#{nickName},now(),now(),#{status},#{remark});
+		values(#{id},#{userId},#{uid},#{performance},#{teamPerformance},#{grade},#{parentUserId},#{nickName},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="UserDepartment">
@@ -70,10 +70,11 @@
 	</update>
 
 	<select id="getDirectTeamList" resultType="UserDepartment">
-		select a.id,a.userId,a.uid,a.performance,a.teamPerformance,a.createTime,a.updateTime,a.status,a.remark,a.parentUserId,a.nickName
-		  from <include refid="table_name"/> as a
-		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId}  and   a.parentUserId=#{parentUserId}
-		order by a.performance desc
+		<!--select a.id,a.userId,a.uid,a.performance,a.teamPerformance,a.createTime,a.updateTime,a.status,a.remark,a.parentUserId,a.nickName-->
+		  <!--from <include refid="table_name"/> as a-->
+		<!--INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId}  and   a.parentUserId=#{parentUserId}-->
+		<!--order by a.performance desc-->
+        select id,userId,uid,performance,teamPerformance,createTime,updateTime,status,remark,parentUserId,nickName from <include refid="table_name"/>    where parentUserId=#{parentUserId}  order by performance desc
 	</select>
 
 	<select id="getDirectMaxGradeList" resultType="UserDepartment">
@@ -85,7 +86,12 @@
 		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and b.contactUserId = a.parentUserId and a.status = 1
 	</select>
 
-	<select id="getMaxGrade" resultType="java.lang.Integer">
+    <select id="getSumDeparmentPerformanceByParentUserId" resultType="java.lang.Double">
+        select SUM(performance) sumAmt from <include refid="table_name"/>  WHERE parentUserId=#{parentUserId};
+    </select>
+
+
+    <select id="getMaxGrade" resultType="java.lang.Integer">
 		select max(b.grade) from <include refid="table_name"/> as a
 		INNER JOIN base_user as b on a.userId = b.id and a.parentUserId = #{parentUserId} and a.status = 1 and b.grade >3
 		GROUP BY b.grade HAVING (count(1)>=3)
@@ -99,8 +105,16 @@
 		update <include refid="table_name"/> set teamPerformance = teamPerformance + #{teamPerformance},updateTime=now() where userId = #{userId} and (teamPerformance + #{teamPerformance})>0
 	</update>
 
+	<update id="updateDeparmentAndTeamPerformanceByUserId">
+		update <include refid="table_name"/> set teamPerformance = teamPerformance + #{teamPerformance},performance = performance + #{performance},updateTime=now() where userId = #{userId} and (teamPerformance + #{teamPerformance})>0
+	</update>
+
 	<select id="getAll" resultType="UserDepartment">
 		<include refid="selector"/> WHERE parentUserId=#{parentUserId}  ORDER BY performance DESC  ;
+	</select>
+
+	<select id="getAllUserDepartment" resultType="UserDepartment">
+		<include refid="selector"/> ORDER BY performance DESC  ;
 	</select>
 </mapper>
 

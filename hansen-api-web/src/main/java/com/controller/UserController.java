@@ -35,8 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.service.WalletUtil.getBitCoinClient;
-import static com.utils.numberutils.CurrencyUtil.multiply;
-import static com.utils.toolutils.RedisLock.redisLock;
 
 
 @Controller
@@ -187,8 +185,8 @@ public class UserController {
             if (inviterUser == null) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "接点人信息有误");
             }
-            Boolean flag = userService.isVrticalLine(loginUser.getId(),inviterUser.getId());
-            if (!flag){
+            Boolean flag = userService.isVrticalLine(loginUser.getId(), inviterUser.getId());
+            if (!flag) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "接点人必须注册在邀请人下");
             }
         } else {
@@ -349,23 +347,23 @@ public class UserController {
         if (UpGradeType.COVERAGEUPGRADE.getCode() == vo.getUpGradeWay()) {
             differActiceNo = cardGrade.getActiveCodeNo();
             differRegisterNo = cardGrade.getRegisterCodeNo();
-            differPayRmbAmt=CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 4);
-            differTradeRmbAmt=CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 4);
+            differPayRmbAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 4);
+            differTradeRmbAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 4);
         }
         Double differPayAmt = CurrencyUtil.multiply(differPayRmbAmt, payScale, 4);
         Double differTradeAmt = CurrencyUtil.multiply(differTradeRmbAmt, tradeScale, 4);
         if (loginUser.getRegisterCodeNo() < differActiceNo || loginUser.getActiveCodeNo() < differRegisterNo) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户激活码或注册码不足，请先补充激活码或注册码!");
         }
-         /**校验虚拟币**/
+        /**校验虚拟币**/
         if (loginUser.getPayAmt() < differPayAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "购物币不足，无法激活");
         }
         if (loginUser.getTradeAmt() < differTradeAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币不足，无法激活");
         }
-        Boolean f = RedisLock.redisLock(RedisKey.UPGRADE.getKey()+loginUser.getUid(),loginUser.getId(),RedisKey.UPGRADE.getSeconds());
-        if (!f){
+        Boolean f = RedisLock.redisLock(RedisKey.UPGRADE.getKey() + loginUser.getUid(), loginUser.getId(), RedisKey.UPGRADE.getSeconds());
+        if (!f) {
             return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
         }
         Boolean flag = userService.upGrade(loginUser, cardGrade, UpGradeType.fromCode(vo.getUpGradeWay()));
@@ -435,12 +433,26 @@ public class UserController {
         if (loginUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
         }
+        //获取部门总业绩
+        Double sumDeparmentPerformance = userDepartmentService.getSumDeparmentPerformanceByParentUserId(parentUserId);
+
         List<UserDepartment> userDepartments = userDepartmentService.getDirectTeamList(parentUserId);
+        if (loginUser.getId().equals(parentUserId)) {
+            for (UserDepartment department : userDepartments) {
+                if (department.getGrade() == null || department.getGrade() == 0) {
+                    department.setRemark("普通会员");
+                } else {
+                    department.setRemark(GradeType.getName(department.getGrade()));
+                }
+
+            }
+        }
         if (userDepartments == null) {
             userDepartments = Collections.emptyList();
         }
         int count = userDepartments.size();
         PageResult<UserDepartment> pageResult = new PageResult(page.getPageNo(), page.getPageSize(), count, userDepartments);
+        pageResult.getExtend().put("sumDeparmentPerformance", sumDeparmentPerformance);
         return new JsonResult(pageResult);
     }
 
@@ -506,6 +518,9 @@ public class UserController {
             upateDetail.setBankType(vo.getBankType());
         }
 
+        if (ToolUtil.isNotEmpty(vo.getReceiverPhone())) {
+            upateDetail.setReceiverPhone(vo.getReceiverPhone());
+        }
 
 
         // 更新用户信息
@@ -684,8 +699,8 @@ public class UserController {
             updateUser.setUpdateTime(new Date());
             userService.updateById(loginUser.getId(), updateUser);
             //如果用户状态是内部注册成功，已经代为扣除激活码的状态，则走此流程，此流程走完，满足条件的情况下，用户账号即被激活成功
-            Boolean f = RedisLock.redisLock(RedisKey.ACTIVE.getKey()+loginUser.getUid(),loginUser.getId(),RedisKey.ACTIVE.getSeconds());
-            if (!f){
+            Boolean f = RedisLock.redisLock(RedisKey.ACTIVE.getKey() + loginUser.getUid(), loginUser.getId(), RedisKey.ACTIVE.getSeconds());
+            if (!f) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
             }
             return userService.innerActicveUser(loginUser, cardGrade);

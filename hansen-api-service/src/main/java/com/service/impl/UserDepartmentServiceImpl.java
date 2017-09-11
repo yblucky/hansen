@@ -37,8 +37,22 @@ public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment>
     }
 
     @Override
+    public List<UserDepartment> getAllUserDepartment(){
+        return userDepartmentMapper.getAllUserDepartment();
+    }
+
+    @Override
     public Double getSumAmt(String parentUserId) {
         Double sumAmt= userDepartmentMapper.getSumAmt(parentUserId);
+        if (sumAmt==null){
+            return 0d;
+        }
+        return sumAmt;
+    }
+
+    @Override
+    public Double getSumDeparmentPerformanceByParentUserId(String parentUserId) {
+        Double sumAmt= userDepartmentMapper.getSumDeparmentPerformanceByParentUserId(parentUserId);
         if (sumAmt==null){
             return 0d;
         }
@@ -70,6 +84,12 @@ public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment>
     @Override
     public Integer updateTeamPerformanceByUserId(String userId, Double teamPerformance) {
         return userDepartmentMapper.updateTeamPerformanceByUserId(userId,teamPerformance);
+    }
+
+
+    @Override
+    public Integer updateDeparmentAndTeamPerformanceByUserId(String userId, Double performance, Double teamPerformance) {
+        return userDepartmentMapper.updateDeparmentAndTeamPerformanceByUserId(userId,performance,teamPerformance);
     }
 
     @Override

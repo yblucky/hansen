@@ -16,4 +16,6 @@ public interface UserSignService extends CommonService<UserSign> {
 
     Double readSignCount(String userId);
 
+    Double readSumFrozenCount(String userId);
+
 }

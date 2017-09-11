@@ -25,6 +25,18 @@ public class UserSign extends BaseModel {
      * 本次签到领取金额：人民币，精确到分
      */
     private Double amt;
+    /**
+     * 当天人民币兑换股权币的汇率
+     */
+    private Double rmbCovertEquityScale;
+    /**
+     * 当天人民币兑换支付币的汇率
+     */
+    private Double rmbCovertPayAmtScale;
+    /**
+     * 当天人民币兑换交易币币的汇率
+     */
+    private Double rmbCovertTradeAmtScale;
 
     public String getUserId() {
         return userId;
@@ -56,5 +68,29 @@ public class UserSign extends BaseModel {
 
     public void setAmt(Double amt) {
         this.amt = amt;
+    }
+
+    public Double getRmbCovertEquityScale() {
+        return rmbCovertEquityScale;
+    }
+
+    public void setRmbCovertEquityScale(Double rmbCovertEquityScale) {
+        this.rmbCovertEquityScale = rmbCovertEquityScale;
+    }
+
+    public Double getRmbCovertPayAmtScale() {
+        return rmbCovertPayAmtScale;
+    }
+
+    public void setRmbCovertPayAmtScale(Double rmbCovertPayAmtScale) {
+        this.rmbCovertPayAmtScale = rmbCovertPayAmtScale;
+    }
+
+    public Double getRmbCovertTradeAmtScale() {
+        return rmbCovertTradeAmtScale;
+    }
+
+    public void setRmbCovertTradeAmtScale(Double rmbCovertTradeAmtScale) {
+        this.rmbCovertTradeAmtScale = rmbCovertTradeAmtScale;
     }
 }

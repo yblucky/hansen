@@ -66,35 +66,39 @@ public class UserVo implements Serializable {
     /**
      * 股权币
      */
-    private Double equityAmt;
+    private Double equityAmt=0d;
     /**
      * 支付币
      */
-    private Double payAmt;
+    private Double payAmt=0d;
     /**
      * 交易币
      */
-    private Double tradeAmt;
+    private Double tradeAmt=0d;
     /**
      * 剩余保单金额
      */
-    private Double insuranceAmt;
+    private Double insuranceAmt=0d;
     /**
      * 预期最大收益
      */
-    private Double maxProfits;
+    private Double maxProfits=0d;
     /**
      * 累计收益
      */
-    private Double sumProfits;
+    private Double sumProfits=0d;
     /**
-     * 动态奖金：做任务领取的：管理奖+
+     * 动态奖金：做任务领取的：管理奖+直推奖+级差奖+平级奖
      */
-    private Double dynamicProfits;
+    private Double dynamicProfits=0d;
+    /**
+     * 失效需要重新激活时候的冻结奖金
+     */
+    private Double sumFrozenProfits=0d;
     /**
      * 累计提现收益
      */
-    private Double cashOutProfits;
+    private Double cashOutProfits=0d;
     /**
      * 接点人
      */
@@ -167,6 +171,12 @@ public class UserVo implements Serializable {
      * 银行卡号
      */
     private String bankCardNo;
+    /**
+     *
+     * 收货人手机号
+     *
+     */
+    private String receiverPhone;
 
 
     public Integer getStatus() {
@@ -551,5 +561,21 @@ public class UserVo implements Serializable {
 
     public void setDynamicProfits(Double dynamicProfits) {
         this.dynamicProfits = dynamicProfits;
+    }
+
+    public Double getSumFrozenProfits() {
+        return sumFrozenProfits;
+    }
+
+    public void setSumFrozenProfits(Double sumFrozenProfits) {
+        this.sumFrozenProfits = sumFrozenProfits;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
     }
 }

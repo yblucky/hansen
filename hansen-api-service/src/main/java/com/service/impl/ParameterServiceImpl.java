@@ -7,7 +7,10 @@ import com.mapper.ParameterMapper;
 import com.model.Parameter;
 import com.service.ParamUtil;
 import com.service.ParameterService;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import com.sun.tools.internal.jxc.ap.Const;
 import com.utils.httputils.HttpUtil;
+import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.ToolUtil;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.HashedMap;
@@ -57,7 +60,31 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
             if (ToolUtil.isEmpty(name)){
                 logger.error("获取交易平台" + name + "汇率失败");
             }
+            Double kyp = getKyPRate();
             String url = ParamUtil.getIstance().get(Parameter.RMBCONVERTCOINSCALEBASEURL) + name;
+            JSONObject jsonObject = HttpUtil.doGetRequest(url);
+            if (jsonObject == null) {
+                return 0d;
+            }
+            if (jsonObject.containsKey("24H_Last_price")) {
+                Double last24Price = jsonObject.getDouble("24H_Last_price");
+                if (last24Price == null) {
+                    last24Price = 1d;
+                }
+                return CurrencyUtil.divide(1,last24Price*kyp,4);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("获取交易平台" + name + "汇率失败");
+        }
+        return 0d;
+    }
+
+    @Override
+    public Double getKyPRate() {
+        try {
+            String url = ParamUtil.getIstance().get(Parameter.RMBCONVERTCOINSCALEBASEURL) + Constant.KYP;
             JSONObject jsonObject = HttpUtil.doGetRequest(url);
             if (jsonObject == null) {
                 return 0d;
@@ -72,10 +99,11 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("获取交易平台" + name + "汇率失败");
+            logger.error("获取交易平台" + Constant.KYP + "汇率失败");
         }
         return 0d;
     }
+
 
     @Override
     public Map<String, Object> getScale() {

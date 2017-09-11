@@ -77,8 +77,15 @@
         </where>
     </select>
 
-    <select id="readCount" resultType="int">
-        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    <select id="readCount" resultType="Integer">
+        SELECT COUNT(id) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <select id="readSumDynamicProfitsCount" resultType="Double">
+        select  SUM(confirmAmt)  from <include refid="table_name"/> WHERE  taskCycle=0 and signCycle=0 AND receviceUserId=#{userId}
+        <if test="list != null">
+            AND  source in    <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+        </if>
     </select>
 
     <update id="updateById">

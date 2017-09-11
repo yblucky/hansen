@@ -21,6 +21,8 @@ public interface ParameterService extends CommonService<Parameter> {
 
     Double getRmbConvertCoinRate(String id, String name);
 
+    public Double getKyPRate();
+
     Map<String, Object> getScale();
 
     Double getScale(String key);

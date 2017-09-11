@@ -7,7 +7,6 @@ import com.base.service.impl.CommonServiceImpl;
 import com.constant.*;
 import com.mapper.UserMapper;
 import com.model.*;
-import com.qiniu.storage.Configuration;
 import com.service.*;
 import com.utils.DateUtils.DateUtils;
 import com.utils.codeutils.Md5Util;
@@ -135,13 +134,13 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         // TODO记录用户释放信息
         String remark = "收益释放：会员" + user.getUid() + "领取任务收益";
         String orderNo = OrderNoUtil.get() + "-" + RecordType.RELASE.toString();
-        TradeOrder tradeOrder = this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE, 1,-1, remark, OrderStatus.HANDING.getCode());
+        TradeOrder tradeOrder = this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE, 1, -1, remark, OrderStatus.HANDING.getCode());
 
         userSignService.addUserSign(user.getId(), incomeAmt, SignType.WAITING_SIGN, "静态释放，新增奖励发放记录");
 
         //判断是否有管理奖
         //写入管理奖待做任务领取奖励记录，有则写
-        this.manageBonus(user.getId(), tradeOrder,incomeAmt);
+        this.manageBonus(user.getId(), tradeOrder, incomeAmt);
     }
 
     /**
@@ -158,7 +157,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             logger.error("--------------------找不到用户：" + order + "----------------------");
             return;
         }
-        if (order==null){
+        if (order == null) {
             logger.error("--------------------找不到订单 " + order + "----------------------");
             return;
         }
@@ -177,45 +176,45 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             return;
         }
         Double pushRewardBaseAmt = order.getAmt();
-        if (pushRewardBaseAmt==null || pushRewardBaseAmt.doubleValue()==0){
+        if (pushRewardBaseAmt == null || pushRewardBaseAmt.doubleValue() == 0) {
             logger.error("--------------------保单金额为空，数据错误 " + order + "----------------------");
             return;
         }
-        Boolean isOrignal=OrderType.INSURANCE_ORIGIN.getCode()==order.getSource();
-        if (isOrignal){
+        Boolean isOrignal = OrderType.INSURANCE_ORIGIN.getCode() == order.getSource();
+        if (isOrignal) {
             //如果是补差升级
-            if (order.getCardGrade()==null){
+            if (order.getCardGrade() == null) {
                 logger.error("--------------------补差升级，数据错误，用户目标卡等级数据没有写入 " + order + "----------------------");
             }
         }
-        Boolean isHasPushFirst=true;
-        Boolean isHasPushSecond=true;
+        Boolean isHasPushFirst = true;
+        Boolean isHasPushSecond = true;
 
         //一代推荐人必须也是激活状态
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
-           if (isOrignal){
-               if (order.getCardGrade()>=parentUser.getCardGrade()){
-                   logger.error("--------------------补差升级，升级用户的卡等级高过上级，无奖励" + order + "----------------------");
-                   isHasPushFirst=false;
-               }
-           }
-          if (isHasPushFirst){
-              //保单等级以最小为准
-              Integer cardLevel = parentUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : parentUser.getCardGrade();
-              CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
-              if (isOrignal){
-                  //如果是补差升级，就按差价算
-                  cardGrade.setInsuranceAmt(pushRewardBaseAmt);
-              }
-              //直推收益按两者最小保单金额*6%
-              double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHFIRSTREFERRERSCALE)), 1d);
+            if (isOrignal) {
+                if (order.getCardGrade() >= parentUser.getCardGrade()) {
+                    logger.error("--------------------补差升级，升级用户的卡等级高过上级，无奖励" + order + "----------------------");
+                    isHasPushFirst = false;
+                }
+            }
+            if (isHasPushFirst) {
+                //保单等级以最小为准
+                Integer cardLevel = parentUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : parentUser.getCardGrade();
+                CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
+                if (isOrignal) {
+                    //如果是补差升级，就按差价算
+                    cardGrade.setInsuranceAmt(pushRewardBaseAmt);
+                }
+                //直推收益按两者最小保单金额*6%
+                double incomeAmt = CurrencyUtil.getPoundage(cardGrade.getInsuranceAmt() * Double.valueOf(ParamUtil.getIstance().get(Parameter.PUSHFIRSTREFERRERSCALE)), 1d);
            /*存入一代推荐人的三种钱包中  需要做完7次任务才可以分4次领取
             userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.PUSH, orderNo);*/
-              // TODO 记录一代直推奖记录
-              String remark = "直推奖：会员" + pushUser.getUid() + "报单一代奖励";
-              orderNo = order.getOrderNo() + "-" + RecordType.PUSH.toString() + "-" + 1;
-              this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.PENDING.getCode());
-          }
+                // TODO 记录一代直推奖记录
+                String remark = "直推奖：会员" + pushUser.getUid() + "报单一代奖励";
+                orderNo = order.getOrderNo() + "-" + RecordType.PUSH.toString() + "-" + 1;
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.PENDING.getCode());
+            }
         }
 
         //二代直推奖
@@ -225,13 +224,13 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         //二代推荐人必须是激活状态
         if (grandfatherUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
-            if (isOrignal){
-                if (order.getCardGrade()>=grandfatherUser.getCardGrade()){
+            if (isOrignal) {
+                if (order.getCardGrade() >= grandfatherUser.getCardGrade()) {
                     logger.error("--------------------补差升级，升级用户的卡等级高过上级，无奖励" + order + "----------------------");
-                    isHasPushSecond=false;
+                    isHasPushSecond = false;
                 }
             }
-            if (isHasPushSecond){
+            if (isHasPushSecond) {
                 grandfatherUser = this.readById(pushUser.getSecondReferrer());
                 //二代推荐人下属部门必须有三个以上是激活状态的
                 User selModel = new User();
@@ -242,7 +241,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     //保单等级以最小为准
                     Integer cardLevel = grandfatherUser.getCardGrade() > pushUser.getCardGrade() ? pushUser.getCardGrade() : grandfatherUser.getCardGrade();
                     CardGrade cardGrade = cardGradeService.getUserCardGrade(cardLevel);
-                    if (isOrignal){
+                    if (isOrignal) {
                         //如果是补差升级，就按差价算
                         cardGrade.setInsuranceAmt(pushRewardBaseAmt);
                     }
@@ -267,7 +266,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
      */
     @Override
     @Transactional
-    public Double manageBonus(String pushUserId, TradeOrder order,Double weekAmt) throws Exception {
+    public Double manageBonus(String pushUserId, TradeOrder order, Double weekAmt) throws Exception {
         logger.error("--------------------开始计算管理奖：" + order + "----------------------");
         Double manage = 0d;
         User pushUser = this.readById(pushUserId);
@@ -312,7 +311,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             //存入一代推荐人的三种钱包中
 //            userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
             // TODO 记录一代管理奖记录
-            String remark = "管理奖：会员" + pushUser.getUid() + "静态收益，一代管理奖励"+incomeAmt;
+            String remark = "管理奖：会员" + pushUser.getUid() + "静态收益，一代管理奖励" + incomeAmt;
             String orderNo = order.getOrderNo() + "-" + RecordType.MANAGE.toString() + "-" + 1;
             manage += incomeAmt;
             this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1, -1, remark, OrderStatus.PENDING.getCode());
@@ -353,10 +352,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 //                userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.MANAGE, orderNo);
                 // TODO 记录二代管理奖记录
 //                this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 0, 0);
-                String remark = "管理奖：会员" + pushUser.getUid() + "静态收益，二代管理奖励"+incomeAmt;
+                String remark = "管理奖：会员" + pushUser.getUid() + "静态收益，二代管理奖励" + incomeAmt;
                 String orderNo = order.getOrderNo() + "-" + RecordType.MANAGE.toString() + "-" + 2;
                 manage += incomeAmt;
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1,-1, remark, OrderStatus.PENDING.getCode());
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1, -1, remark, OrderStatus.PENDING.getCode());
                 userSignService.addUserSign(parentUser.getId(), incomeAmt, SignType.WAITING_SIGN, remark);
             }
         }
@@ -372,7 +371,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
      */
     @Override
     public void differnceBonus(String pushUserId, TradeOrder order) throws Exception {
-        if (order==null){
+        if (order == null) {
             logger.error("--------------------找不到订单 " + order + "----------------------");
             return;
         }
@@ -394,14 +393,14 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         double bonusScale = 0d;
 
         Double differRewardBaseAmt = order.getAmt();
-        if (differRewardBaseAmt==null || differRewardBaseAmt.doubleValue()==0){
+        if (differRewardBaseAmt == null || differRewardBaseAmt.doubleValue() == 0) {
             logger.error("--------------------计算级差奖 保单金额为空，数据错误 " + order + "----------------------");
             return;
         }
-        Boolean isOrignal=OrderType.INSURANCE_ORIGIN.getCode()==order.getSource();
-        if (isOrignal){
+        Boolean isOrignal = OrderType.INSURANCE_ORIGIN.getCode() == order.getSource();
+        if (isOrignal) {
             //如果是补差升级
-            if (order.getCardGrade()==null){
+            if (order.getCardGrade() == null) {
                 logger.error("--------------------计算级差奖 补差升级，数据错误，用户目标卡等级数据没有写入 " + order + "----------------------");
             }
         }
@@ -420,7 +419,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 bonusScale = parentGrade.getRewardScale();
             } else {
                 parentUser.setGrade(0);
-                logger.error("第 " + i +" 次计算根据用户等级参数表获取级差奖结算比例错误....");
+                logger.error("第 " + i + " 次计算根据用户等级参数表获取级差奖结算比例错误....");
                 return;
             }
 //            bonusScale = parentGrade.getRewardScale();
@@ -462,12 +461,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 //                    this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT, orderNo);
                     logger.error("--------------------第一一个极差，领取平级奖,此单金额为：" + insuranceAmt + ",平级奖奖金比例为:" + bonusScale + ",计算后金额为：" + incomeAmt + "---------------");
                     this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.PENDING.getCode());
-                }else {
+                } else {
                     parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
-                    Grade  childGrade = gradeService.getGradeDetail(childUser.getGrade());
+                    Grade childGrade = gradeService.getGradeDetail(childUser.getGrade());
                     //当前可领取的比率减去上一级的比率
                     double scale = CurrencyUtil.getPoundage(parentGrade.getRewardScale() - childGrade.getRewardScale(), 1d);
-                    if (scale<=0){
+                    if (scale <= 0) {
                         logger.error("---------------" + (i + 1) + " 个极差 ,此处计算奖金，前面的等级已经分完，比例为 0 了 ，直接返回----------------");
                         return;
                     }
@@ -546,7 +545,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 //领取平级奖记录
                 String remark = "平级奖：会员" + user.getUid() + "报单平级奖励";
                 orderNo = order.getOrderNo() + RecordType.SAME.toString() + "-" + (i + 1) + user.getGrade() + "-" + parentUser.getGrade();
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, -1,-1, remark, OrderStatus.PENDING.getCode());
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, -1, -1, remark, OrderStatus.PENDING.getCode());
                 //中断级差
                 return;
             }
@@ -558,7 +557,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT, orderNo);
                     String remark = "级差奖：会员" + user.getUid() + "报单一代奖励";
                     orderNo = order.getOrderNo() + RecordType.DIFFERENT.toString() + "-" + user.getGrade() + "-" + (i + 1) + "-" + parentUser.getGrade();
-                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT,-1,-1, remark, OrderStatus.PENDING.getCode());
+                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, remark, OrderStatus.PENDING.getCode());
                 }
                 // TODO: 2017/7/17 领取级差奖  保单金额*1%
                 parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
@@ -571,7 +570,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 //                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
                 String remark = "级差奖：会员" + user.getUid() + "报单奖励";
                 orderNo = order.getOrderNo() + RecordType.DIFFERENT.toString() + "-" + (i + 1) + user.getGrade() + "-" + parentUser.getGrade();
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1,-1, remark, OrderStatus.PENDING.getCode());
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, remark, OrderStatus.PENDING.getCode());
             }
             childUser = parentUser;
         }
@@ -668,7 +667,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
 
         try {
-            if (taskInterval >=0) {
+            if (taskInterval >= 0) {
                 model.setTaskCycle(taskInterval);
             } else {
                 model.setTaskCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.TASKINTERVAL)));
@@ -679,11 +678,11 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 model.setSignCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)));
             }
             model.setStatus(model.getStatus() == null ? 0 : model.getStatus());
-            if (recordType.getCode().intValue()==RecordType.RELASE.getCode().intValue()){
+            if (recordType.getCode().intValue() == RecordType.RELASE.getCode().intValue()) {
                 model.setStatus(OrderStatus.HANDING.getCode());
                 model.setSignCycle(0);
                 model.setTaskCycle(0);
-            }else if(recordType.getCode().intValue()==RecordType.MANAGE.getCode().intValue()){
+            } else if (recordType.getCode().intValue() == RecordType.MANAGE.getCode().intValue()) {
                 model.setStatus(OrderStatus.PENDING.getCode());
                 model.setSignCycle(1);
             }
@@ -887,11 +886,11 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         con.setSendUserId(userId);
         con.setStatus(OrderStatus.HANDING.getCode());
         TradeOrder oldOrder = tradeOrderService.readOne(con);
-        if (oldOrder!=null) {
+        if (oldOrder != null) {
             TradeOrder update = new TradeOrder();
             update.setStatus(OrderStatus.DEL.getCode());
             update.setRemark("保单覆盖升级,此单失效");
-            tradeOrderService.updateById(oldOrder.getId(),update);
+            tradeOrderService.updateById(oldOrder.getId(), update);
         }
         tradeOrder.setCardGrade(targetCardGradeNo);
         tradeOrderService.create(tradeOrder);
@@ -1065,7 +1064,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
     @Override
     public Integer updateMaxProfitsCoverByUserId(String userId, Double maxProfits) {
-        return userMapper.updateMaxProfitsCoverByUserId(userId,maxProfits);
+        return userMapper.updateMaxProfitsCoverByUserId(userId, maxProfits);
     }
 
     @Override
@@ -1125,7 +1124,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
         this.updateUserActiveCode(userId, -cardGrade.getActiveCodeNo());
         transferCode.setType(CodeType.ACTIVATECODE.getCode());
-        transferCode.setRemark("用户出局后重新激活,使用 " + cardGrade.getActiveCodeNo() + "个激活码");
+        transferCode.setRemark("用户重新激活,使用 " + cardGrade.getActiveCodeNo() + "个激活码");
         transferCode.setSendUserId(userId);
         transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
         transferCode.setTransferNo(-cardGrade.getActiveCodeNo());
@@ -1181,39 +1180,37 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         if (ToolUtil.isEmpty(inviterUserId) || ToolUtil.isEmpty(concatUserId)) {
             return false;
         }
-        User inviter =this.readById(inviterUserId);
-        if (inviter==null){
+        User inviter = this.readById(inviterUserId);
+        if (inviter == null) {
             return false;
         }
-        User concatUser =this.readById(concatUserId);
-        if (concatUser==null){
+        User concatUser = this.readById(concatUserId);
+        if (concatUser == null) {
             return false;
         }
-        UserDetail  inviterDetail =userDetailService.readById(inviterUserId);
-        Integer inviterlevle =inviterDetail.getLevles();
-        UserDetail  concatUserDetail =userDetailService.readById(concatUserId);
-        Integer concatlevle =concatUserDetail.getLevles();
-        if (concatlevle==null || inviterlevle==null || concatlevle<=inviterlevle){
+        UserDetail inviterDetail = userDetailService.readById(inviterUserId);
+        Integer inviterlevle = inviterDetail.getLevles();
+        UserDetail concatUserDetail = userDetailService.readById(concatUserId);
+        Integer concatlevle = concatUserDetail.getLevles();
+        if (concatlevle == null || inviterlevle == null || concatlevle <= inviterlevle) {
             return false;
         }
         //获取层级差
-        Integer levelDiffer = concatlevle-inviterlevle+1;
-        User referUser= this.readById(concatUser.getFirstReferrer());
-        if (referUser==null){
+        Integer levelDiffer = concatlevle - inviterlevle + 1;
+        User referUser = this.readById(concatUser.getFirstReferrer());
+        if (referUser == null) {
             return false;
         }
-        if (referUser.getId().equals(inviterUserId)){
+        if (referUser.getId().equals(inviterUserId)) {
             return true;
         }
-        for (int i=0;i<levelDiffer;i++){
-            referUser=this.readById(referUser.getFirstReferrer());
-            if (referUser==null){
+        for (int i = 0; i < levelDiffer; i++) {
+            referUser = this.readById(referUser.getFirstReferrer());
+            if (referUser == null) {
                 return false;
             }
-            if (i>=(levelDiffer-2)){
-                if (referUser.getId().equals(inviterUserId)){
-                    return true;
-                }
+            if (referUser.getId().equals(inviterUserId)) {
+                return true;
             }
         }
         return false;

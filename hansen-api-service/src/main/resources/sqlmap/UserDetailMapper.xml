@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.UserDetailMapper">
 
     <sql id="fields">
-        forzenPayAmt,forzenTradeAmt,forzenEquityAmt,inPayAddress,inTradeAddress,inEquityAddress,outPayAddress,outEquityAddress,outTradeAddress,levles,province,city,county,addr,receiver,shopAddr,userName,bankName,bankType,bankCardNo,createTime,updateTime,status,remark
+        forzenPayAmt,forzenTradeAmt,forzenEquityAmt,inPayAddress,inTradeAddress,inEquityAddress,outPayAddress,outEquityAddress,outTradeAddress,levles,province,city,county,addr,receiver,shopAddr,userName,bankName,bankType,bankCardNo,receiverPhone,createTime,updateTime,status,remark
     </sql>
 
     <sql id="fields_id">
@@ -40,7 +40,7 @@
 
     <insert id="create" useGeneratedKeys="true" keyProperty="id">
         insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-        values(#{id},#{forzenPayAmt},#{forzenTradeAmt},#{forzenEquityAmt},#{inPayAddress},#{inTradeAddress},#{inEquityAddress},#{outPayAddress},#{outEquityAddress},#{outTradeAddress},#{levles},#{province},#{city},#{county},#{addr},#{receiver},#{shopAddr},#{userName},#{bankName},#{bankType},#{bankCardNo},now(),now(),#{status},#{remark});
+        values(#{id},#{forzenPayAmt},#{forzenTradeAmt},#{forzenEquityAmt},#{inPayAddress},#{inTradeAddress},#{inEquityAddress},#{outPayAddress},#{outEquityAddress},#{outTradeAddress},#{levles},#{province},#{city},#{county},#{addr},#{receiver},#{shopAddr},#{userName},#{bankName},#{bankType},#{bankCardNo},#{receiverPhone},now(),now(),#{status},#{remark});
     </insert>
 
     <select id="readById" resultType="com.model.UserDetail">
@@ -82,8 +82,8 @@
             <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
             <if test="model.bankName != null and model.bankName !=''">bankName= #{model.bankName},</if>
             <if test="model.bankType != null and model.bankType !=''">bankType= #{model.bankType},</if>
-            <if test="model.bankCardNo != null and model.bankCardNo !=''">addr= #{model.bankCardNo},</if>
-
+            <if test="model.bankCardNo != null and model.bankCardNo !=''">bankCardNo= #{model.bankCardNo},</if>
+            <if test="model.receiverPhone != null and model.receiverPhone !=''">receiverPhone= #{model.receiverPhone},</if>
             <if test="model.status != null">status= #{model.status},</if>
             <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
             updateTime=now()

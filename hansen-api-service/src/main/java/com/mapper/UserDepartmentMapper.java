@@ -14,11 +14,17 @@ public interface UserDepartmentMapper extends CommonDao<UserDepartment> {
 
     Double getSumAmt(@Param("parentUserId") String parentUserId);
 
+    Double getSumDeparmentPerformanceByParentUserId(@Param("parentUserId") String parentUserId);
+
     Integer updatePerformanceByUserId(@Param("userId")  String userId, @Param("performance")  Double performance);
 
     Integer updateTeamPerformanceByUserId(@Param("userId")  String userId, @Param("teamPerformance")  Double teamPerformance);
 
+    Integer updateDeparmentAndTeamPerformanceByUserId(@Param("userId")  String userId,  @Param("performance")  Double performance,@Param("teamPerformance")  Double teamPerformance);
+
     List<UserDepartment> getAll(@Param("parentUserId") String parentUserId);
+
+    List<UserDepartment> getAllUserDepartment();
 
     Integer getMaxGrade(@Param("parentUserId") String parentUserId);
 

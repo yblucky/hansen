@@ -10,4 +10,6 @@ public interface UserSignMapper extends CommonDao<UserSign> {
 
     Double readSignCount(@Param("userId") String userId);
 
+    Double readSumFrozenCount(@Param("userId") String userId);
+
 }

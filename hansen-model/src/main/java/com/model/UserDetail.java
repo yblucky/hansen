@@ -59,6 +59,10 @@ public class UserDetail extends BaseModel {
      */
     private String receiver;
     /**
+     * '收货人手机号
+     */
+    private String receiverPhone;
+    /**
      * ''收货地址''
      */
     private String shopAddr;
@@ -237,5 +241,13 @@ public class UserDetail extends BaseModel {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
     }
 }

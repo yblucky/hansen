@@ -104,4 +104,12 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         }
         return signCount;
     }
+    @Override
+    public Double readSumFrozenCount(String userId) {
+        Double signFrozenCount = userSignMapper.readSumFrozenCount(userId);
+        if (signFrozenCount == null) {
+            return 0d;
+        }
+        return signFrozenCount;
+    }
 }

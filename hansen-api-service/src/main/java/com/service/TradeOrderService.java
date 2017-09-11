@@ -37,6 +37,8 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Double  sumReadRewardByOrderType(String userId, List<Integer> source);
 
+    Double  readSumDynamicProfitsCount(String userId, List<Integer> source);
+
     List<TradeOrder> readWaitHandleList( Integer startRow, Integer pageSize) throws Exception;
 
     Integer readWaitHandleCount() throws Exception;
