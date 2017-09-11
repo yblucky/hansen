@@ -14,7 +14,7 @@ public class UserDepartment extends BaseModel {
 	private String userId;
 	/** uid */
 	private Integer uid;
-	/** 业绩 */
+	/** 部门业绩 */
 	private Double performance;
 	/** grade */
 	private Integer grade;
@@ -22,6 +22,8 @@ public class UserDepartment extends BaseModel {
 	private String parentUserId;
 	/** nickName*/
 	private String nickName;
+	/** 团队业绩 */
+	private Double teamPerformance;
 
 	public String getUserId() {
 		return userId;
@@ -69,5 +71,13 @@ public class UserDepartment extends BaseModel {
 
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
+	}
+
+	public Double getTeamPerformance() {
+		return teamPerformance;
+	}
+
+	public void setTeamPerformance(Double teamPerformance) {
+		this.teamPerformance = teamPerformance;
 	}
 }

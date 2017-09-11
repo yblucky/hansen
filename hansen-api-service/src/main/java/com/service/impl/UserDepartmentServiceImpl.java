@@ -57,6 +57,7 @@ public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment>
     @Override
     public Boolean createUserDepartment(UserDepartment userDepartment) {
         userDepartment.setPerformance(0d);
+        userDepartment.setTeamPerformance(0d);
         userDepartmentMapper.create(userDepartment);
         return  true;
     }
@@ -64,6 +65,11 @@ public class UserDepartmentServiceImpl extends CommonServiceImpl<UserDepartment>
     @Override
     public Integer updatePerformance(String userId, Double performance) {
         return userDepartmentMapper.updatePerformanceByUserId(userId,performance);
+    }
+
+    @Override
+    public Integer updateTeamPerformanceByUserId(String userId, Double teamPerformance) {
+        return userDepartmentMapper.updateTeamPerformanceByUserId(userId,teamPerformance);
     }
 
     @Override

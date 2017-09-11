@@ -486,6 +486,28 @@ public class UserController {
             upateDetail.setOutTradeAddress(vo.getOutTradeAddress());
         }
 
+        if (ToolUtil.isNotEmpty(vo.getUserName())) {
+            upateDetail.setUserName(vo.getUserName());
+        }
+
+        if (ToolUtil.isNotEmpty(vo.getReceiver())) {
+            upateDetail.setReceiver(vo.getReceiver());
+        }
+
+        if (ToolUtil.isNotEmpty(vo.getShopAddr())) {
+            upateDetail.setShopAddr(vo.getShopAddr());
+        }
+
+        if (ToolUtil.isNotEmpty(vo.getBankCardNo())) {
+            upateDetail.setBankCardNo(vo.getBankCardNo());
+        }
+
+        if (ToolUtil.isNotEmpty(vo.getBankType())) {
+            upateDetail.setBankType(vo.getBankType());
+        }
+
+
+
         // 更新用户信息
         userService.updateById(loginUser.getId(), updateUser);
         userDetailService.updateById(loginUser.getId(), upateDetail);

@@ -21,6 +21,8 @@ public interface UserDepartmentService extends CommonService<UserDepartment> {
 
     Integer updatePerformance(String userId, Double performance);
 
+    Integer updateTeamPerformanceByUserId(String userId, Double teamPerformance);
+
     List<UserDepartment> getDirectTeamList(String parentUserId);
 
     List<UserDepartment> getDirectMaxGradeList(String parentUserId);

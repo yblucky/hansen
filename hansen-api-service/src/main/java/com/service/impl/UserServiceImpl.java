@@ -989,6 +989,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         userDepartment.setUid(createUser.getUid());
         userDepartment.setUserId(createUser.getId());
         userDepartment.setPerformance(0d);
+        userDepartment.setTeamPerformance(0d);
         userDepartment.setStatus(StatusType.TRUE.getCode());
         userDepartment.setGrade(cardGrade.getGrade());
         userDepartmentService.createUserDepartment(userDepartment);

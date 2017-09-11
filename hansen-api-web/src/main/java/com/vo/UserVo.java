@@ -88,6 +88,10 @@ public class UserVo implements Serializable {
      */
     private Double sumProfits;
     /**
+     * 动态奖金：做任务领取的：管理奖+
+     */
+    private Double dynamicProfits;
+    /**
      * 累计提现收益
      */
     private Double cashOutProfits;
@@ -143,8 +147,26 @@ public class UserVo implements Serializable {
     private Double tradeCoinOutScale;
     private Double payCoinOutScale;
 
-
-
+    /**
+     * '收货人'
+     */
+    private String receiver;
+    /**
+     * ''收货地址''
+     */
+    private String shopAddr;
+    /**
+     * '银行名称'
+     */
+    private String bankName;
+    /**
+     * '银行所属型'
+     */
+    private String bankType;
+    /**
+     * 银行卡号
+     */
+    private String bankCardNo;
 
 
     public Integer getStatus() {
@@ -194,6 +216,7 @@ public class UserVo implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
     public String getToken() {
         return token;
     }
@@ -480,5 +503,53 @@ public class UserVo implements Serializable {
 
     public void setPayCoinOutScale(Double payCoinOutScale) {
         this.payCoinOutScale = payCoinOutScale;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public String getShopAddr() {
+        return shopAddr;
+    }
+
+    public void setShopAddr(String shopAddr) {
+        this.shopAddr = shopAddr;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getBankType() {
+        return bankType;
+    }
+
+    public void setBankType(String bankType) {
+        this.bankType = bankType;
+    }
+
+    public String getBankCardNo() {
+        return bankCardNo;
+    }
+
+    public void setBankCardNo(String bankCardNo) {
+        this.bankCardNo = bankCardNo;
+    }
+
+    public Double getDynamicProfits() {
+        return dynamicProfits;
+    }
+
+    public void setDynamicProfits(Double dynamicProfits) {
+        this.dynamicProfits = dynamicProfits;
     }
 }

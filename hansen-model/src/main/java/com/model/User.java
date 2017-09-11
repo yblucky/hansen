@@ -137,8 +137,6 @@ public class User extends BaseModel {
 
 
 
-
-
     public Integer getUid() {
         return uid;
     }
@@ -389,4 +387,5 @@ public class User extends BaseModel {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
 }

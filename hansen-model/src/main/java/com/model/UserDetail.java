@@ -53,7 +53,31 @@ public class UserDetail extends BaseModel {
      * 详细地址
      */
     private String addr;
- 
+
+    /**
+     * '收货人'
+     */
+    private String receiver;
+    /**
+     * ''收货地址''
+     */
+    private String shopAddr;
+    /**
+     * '用户名'
+     */
+    private String userName;
+    /**
+     * '银行名称'
+     */
+    private String bankName;
+    /**
+     * '银行所属型'
+     */
+    private String bankType;
+    /**
+     * 银行卡号
+     */
+    private String bankCardNo;
 
     public Double getForzenPayAmt() {
         return forzenPayAmt;
@@ -165,5 +189,53 @@ public class UserDetail extends BaseModel {
 
     public void setAddr(String addr) {
         this.addr = addr;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public String getShopAddr() {
+        return shopAddr;
+    }
+
+    public void setShopAddr(String shopAddr) {
+        this.shopAddr = shopAddr;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getBankType() {
+        return bankType;
+    }
+
+    public void setBankType(String bankType) {
+        this.bankType = bankType;
+    }
+
+    public String getBankCardNo() {
+        return bankCardNo;
+    }
+
+    public void setBankCardNo(String bankCardNo) {
+        this.bankCardNo = bankCardNo;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
