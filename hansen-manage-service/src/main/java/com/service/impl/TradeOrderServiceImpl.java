@@ -233,6 +233,7 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         return tradeOrderMapper.sumReadRewardByOrderType(userId, source);
     }
 
+
     @Override
     public Integer countTotalOrderAmtByTime(List<Integer> source, String startTime, String endTime) {
         Integer count = tradeOrderMapper.countTotalOrderAmtByTime(source,startTime,endTime);

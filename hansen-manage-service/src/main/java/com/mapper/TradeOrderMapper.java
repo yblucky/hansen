@@ -26,6 +26,7 @@ public interface TradeOrderMapper extends CommonDao<TradeOrder> {
 
     Double  sumReadRewardByOrderType(@Param("userId")String userId,@Param("list") List<Integer> source);
 
+
     Integer countTotalOrderAmtByTime(@Param("list") List<Integer> source,@Param("startTime")String startTime,@Param("endTime")String endTime);
 
     Double sumTotalOrderAmtByTime(@Param("list") List<Integer> source,@Param("startTime")String startTime,@Param("endTime")String endTime);

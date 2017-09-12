@@ -18,7 +18,7 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Boolean handleInsuranceTradeOrder(String orderNo) throws Exception;
 
-    List<TradeOrder> readRewardList(String userId,Date taskTime, Integer startRow, Integer pageSize) throws Exception;
+    List<TradeOrder> readRewardList(String userId, Date taskTime, Integer startRow, Integer pageSize) throws Exception;
 
     Integer batchUpdateSignCycle(List<String> idList) throws Exception;
 
@@ -30,19 +30,19 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Map<String, Double> getCoinNoFromRmb(Double rmbAmt) throws Exception;
 
-    List<TradeOrder> readRewardListByOrderType(String userId,List<Integer> source,   Integer startRow, Integer pageSize) throws Exception;
+    List<TradeOrder> readRewardListByOrderType(String userId, List<Integer> source, Integer startRow, Integer pageSize) throws Exception;
 
     Integer readRewardCountByOrderType(String userId, List<Integer> source);
 
-    Double  sumReadRewardByOrderType(String userId, List<Integer> source);
+    Double sumReadRewardByOrderType(String userId, List<Integer> source);
 
-    Integer countTotalOrderAmtByTime( List<Integer> source,String startTime,String endTime);
+    Integer countTotalOrderAmtByTime(List<Integer> source, String startTime, String endTime);
 
-    Double sumTotalOrderAmtByTime( List<Integer> source,String startTime,String endTime);
+    Double sumTotalOrderAmtByTime(List<Integer> source, String startTime, String endTime);
 
-    Double sumTotalPayAmtByTime( List<Integer> source,String startTime,String endTime);
+    Double sumTotalPayAmtByTime(List<Integer> source, String startTime, String endTime);
 
-    Double sumTotalTradeAmtByTime( List<Integer> source,String startTime,String endTime);
+    Double sumTotalTradeAmtByTime(List<Integer> source, String startTime, String endTime);
 
 
 }

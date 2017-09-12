@@ -119,7 +119,6 @@
     </select>
 
 
-
     <select id="readRewardCountByOrderType" resultType="Integer">
         select count(1) from <include refid="table_name"/>
         <where>

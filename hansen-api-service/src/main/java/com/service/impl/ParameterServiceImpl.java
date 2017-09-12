@@ -7,8 +7,6 @@ import com.mapper.ParameterMapper;
 import com.model.Parameter;
 import com.service.ParamUtil;
 import com.service.ParameterService;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import com.sun.tools.internal.jxc.ap.Const;
 import com.utils.httputils.HttpUtil;
 import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.ToolUtil;
@@ -57,7 +55,7 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
     @Override
     public Double getRmbConvertCoinRate(String id, String name) {
         try {
-            if (ToolUtil.isEmpty(name)){
+            if (ToolUtil.isEmpty(name)) {
                 logger.error("获取交易平台" + name + "汇率失败");
             }
             Double kyp = getKyPRate();
@@ -71,7 +69,7 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
                 if (last24Price == null) {
                     last24Price = 1d;
                 }
-                return CurrencyUtil.divide(1,last24Price*kyp,4);
+                return CurrencyUtil.divide(1, last24Price * kyp, 4);
             }
 
         } catch (Exception e) {
@@ -113,8 +111,11 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
             Double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
             //人民币兑换交易币汇率
             Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+            //人民币兑换交易币汇率
+            Double equityScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE), 0d);
             map.put(Constant.RMB_CONVERT_PAY_SCALE, payScale);
             map.put(Constant.RMB_CONVERT_TRADE_SCALE, tradeScale);
+            map.put(Constant.RMB_CONVERT_EQUITY_SCALE, equityScale);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("从系统参数表查询汇率出错");
