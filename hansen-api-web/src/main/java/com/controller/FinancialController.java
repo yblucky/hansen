@@ -135,6 +135,8 @@ public class FinancialController {
         map.put("rewardPushAmt",rewardPushAmt);
         map.put("rewardManageAmt",rewardManageAmt);
         map.put("rewardDifferAmt",rewardDifferAmt);
+        map.put("hasReleaseRmbAmt",hasReleaseRmbAmt);
+        map.put("frozenRmbAmt",frozenRmbAmt);
         return new JsonResult(map);
     }
 

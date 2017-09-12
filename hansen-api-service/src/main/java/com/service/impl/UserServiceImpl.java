@@ -1302,7 +1302,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Transactional
     public User shareRegisterCreateUser(User creatUser, User inviterUser) throws Exception {
 
-        creatUser.setCreateType(UserType.INNER.getCode());
+        creatUser.setCreateType(UserType.OUT.getCode());
         creatUser.setGrade(GradeType.GRADE0.getCode());
         creatUser.setCardGrade(CardLevelType.UNCHOOSE.getCode());
         creatUser.setMaxProfits(0d);
@@ -1361,6 +1361,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             updateModel.setInsuranceAmt(cardGrade.getInsuranceAmt());
             updateModel.setMaxProfits(CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), cardGrade.getOutMultiple(), 2));
             updateModel.setCardGrade(cardGrade.getGrade());
+            this.updateUserStatusByUserId(creatUser.getId(),UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
             this.updateById(creatUser.getId(), updateModel);
             logger.error("更新分享注册用户的卡等级成功");
         } catch (Exception e) {

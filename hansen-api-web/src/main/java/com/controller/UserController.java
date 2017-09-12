@@ -764,15 +764,30 @@ public class UserController {
                 needBuyPayAmt = needBuyPayAmt > 0 ? needBuyPayAmt : 0d;
                 UserDetail updateModel = new UserDetail();
                 Boolean isUpdate = false;
-                if (ToolUtil.isEmpty(userDetail.getInPayAddress())) {
-                    userDetail.setInPayAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY.getCode()), loginUser.getUid() + ""));
-                    updateModel.setInPayAddress(userDetail.getInPayAddress());
-                    isUpdate = true;
-                }
-                if (ToolUtil.isEmpty(userDetail.getInTradeAddress())) {
-                    userDetail.setInTradeAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE.getCode()), loginUser.getUid() + ""));
-                    updateModel.setInTradeAddress(userDetail.getInTradeAddress());
-                    isUpdate = true;
+                List list=new ArrayList();
+                list.add(200000);
+                list.add(200001);
+                list.add(200002);
+                list.add(200041);
+                list.add(99999);
+                try {
+                    if (ToolUtil.isEmpty(userDetail.getInPayAddress())) {
+                        userDetail.setInPayAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.PAY.getCode()), loginUser.getUid() + ""));
+                        updateModel.setInPayAddress(userDetail.getInPayAddress());
+                        isUpdate = true;
+                    }
+                    if (ToolUtil.isEmpty(userDetail.getInTradeAddress())) {
+                        userDetail.setInTradeAddress(WalletUtil.getAccountAddress(WalletUtil.getBitCoinClient(CurrencyType.TRADE.getCode()), loginUser.getUid() + ""));
+                        updateModel.setInTradeAddress(userDetail.getInTradeAddress());
+                        isUpdate = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (list.contains(loginUser.getUid())){
+                        return  new JsonResult(ResultCode.SHOW_ERROR.getCode(),"连接钱包服务器异常");
+                    }else{
+                        return  new JsonResult(ResultCode.ERROR.getCode(),"网络异常，请稍后重试");
+                    }
                 }
                 if (isUpdate) {
                     userDetailService.updateById(userDetail.getId(), updateModel);
@@ -813,6 +828,9 @@ public class UserController {
             userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
             userStatus.add(UserStatusType.WAITACTIVATE.getCode());
             userStatus.add(UserStatusType.OUT.getCode());
+            if (UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode().intValue()==(loginUser.getStatus())) {
+                return new JsonResult(ResultCode.ERROR.getCode(), "必须先选择开卡等级");
+            }
             if (!userStatus.contains(loginUser.getStatus())) {
                 return new JsonResult(ResultCode.NO_LOGIN.getCode(), "您的帐号已被禁用");
             }

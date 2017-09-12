@@ -87,6 +87,9 @@ public class ShareController {
         if (ToolUtil.isEmpty(vo.getPhone())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "手机号不能为空");
         }
+        if (ToolUtil.isEmpty(vo.getNickName())) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "昵称不能为空");
+        }
         if (ToolUtil.isEmpty(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "新建用户登录密码不能为空");
         }
@@ -152,10 +155,13 @@ public class ShareController {
         if (loginUser == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
         }
+        if (loginUser != null && loginUser.getCardGrade() > 0) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "用户已选定开卡等级");
+        }
         if (vo.getGrade()==null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "选择开卡等级不能为空");
         }
-        if (ValidateUtils.Number(vo.getGrade().toString())){
+        if (!ValidateUtils.Number(vo.getGrade().toString())){
             return new JsonResult(ResultCode.ERROR.getCode(), "卡等级必须是数字");
         }
         if (vo.getGrade()<=0 || vo.getGrade()>5){
@@ -169,4 +175,7 @@ public class ShareController {
         return new JsonResult(ResultCode.SUCCESS.getCode(), "选卡成功");
     }
 
+    public static void main(String[] args) {
+        System.out.println(ValidateUtils.Number("1"));
+    }
 }

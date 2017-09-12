@@ -98,6 +98,7 @@ public class LoginController {
             return new JsonResult(-1, "用户不存在");
         } else {
             Set<Integer> userStatus = new HashSet<>();
+            userStatus.add(UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode());
             userStatus.add(UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
             userStatus.add(UserStatusType.WAITACTIVATE.getCode());
             userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
@@ -194,7 +195,7 @@ public class LoginController {
         if (null == user) {
             return new JsonResult(2, "无法找到用户信息");
         }
-        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode() && user.getStatus() != UserStatusType.WAITACTIVATE.getCode() && user.getStatus() != UserStatusType.OUT.getCode()) {
+        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode() && user.getStatus() != UserStatusType.WAITACTIVATE.getCode() && user.getStatus() != UserStatusType.OUT.getCode() && user.getStatus() != UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
         }
         // Redis获取Token
