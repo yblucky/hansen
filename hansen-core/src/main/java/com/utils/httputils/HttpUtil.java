@@ -1,5 +1,6 @@
 package com.utils.httputils;
 
+import com.utils.numberutils.CurrencyUtil;
 import net.sf.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -81,7 +82,8 @@ public class HttpUtil {
             inputStream.close();
             inputStream = null;
             conn.disconnect();
-            jsonObject = JSONObject.fromObject(buffer.toString());
+            String s =buffer.toString().replaceFirst("\uFEFF\uFEFF","");
+            jsonObject = JSONObject.fromObject(s);
         } catch (ConnectException ce) {
             System.out.println("Server connection timed out.");
         } catch (Exception e) {
@@ -91,7 +93,7 @@ public class HttpUtil {
         return jsonObject;
     }
 
-    public String  getParamForPostOrGet(HttpServletRequest request,  HttpServletResponse response) throws ServletException, IOException {
+    public String getParamForPostOrGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, String[]> params = request.getParameterMap();
         String queryString = "";
         for (String key : params.keySet()) {
@@ -103,12 +105,32 @@ public class HttpUtil {
         }
         // 去掉最后一个空格
         queryString = queryString.substring(0, queryString.length() - 1);
-        return  queryString;
+        return queryString;
     }
 
-    public String  getParamForGet(HttpServletRequest request,  HttpServletResponse response) throws ServletException, IOException {
+    public String getParamForGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, String[]> params = request.getParameterMap();
         String queryString = request.getQueryString();
-        return  queryString;
+        return queryString;
+    }
+
+
+    public static void main(String[] args) {
+//        String url =  "http://www.kuaiyipai.cc/Home/api/index?currency=KYP";
+//        String url =  "http://www.kuaiyipai.cc/Home/api/index?currency=KYP";
+        String url =  "http://www.kuaiyipai.cc/Home/api/index?currency=HSS";
+        JSONObject jsonObject = HttpUtil.doGetRequest(url);
+        System.out.println(jsonObject.toString());
+        Double rate=0d;
+        if (jsonObject != null) {
+            if (jsonObject.containsKey("24H_Last_price")) {
+                Double last24Price = jsonObject.getDouble("24H_Last_price");
+                if (last24Price == null) {
+                    last24Price = 1d;
+                }
+                rate = CurrencyUtil.divide(1,last24Price,4);
+            }
+        }
+        System.out.println(rate);
     }
 }

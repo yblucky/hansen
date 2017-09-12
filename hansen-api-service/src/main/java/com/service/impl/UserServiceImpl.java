@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -1113,6 +1116,11 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     }
 
     @Override
+    public Integer clearUnActiveUserWithIds(List<String> list) {
+        return userMapper.clearUnActiveUserWithIds(list);
+    }
+
+    @Override
     public User readUserByLoginName(String loginName) {
         return userMapper.readUserByLoginName(loginName);
     }
@@ -1216,4 +1224,33 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         return false;
     }
 
+
+    @Override
+    public List<User> readUnActiceMoreThanDays() {
+        List<User> users= new ArrayList<>();
+        users=userMapper.readUnActiceMoreThanDays();
+        if (ToolUtil.isEmpty(users)){
+            users= Collections.emptyList();
+        }
+        return users;
+    }
+
+
+    @Override
+    public Boolean regularlyClearUnActiveUser() throws Exception {
+        List<User> users = this.readUnActiceMoreThanDays();
+        if (ToolUtil.isEmpty(users)){
+            return  true;
+        }
+        List<String> ids=new ArrayList<>();
+        for (User user:users){
+            ids.add(user.getId());
+        }
+        Integer count = this.clearUnActiveUserWithIds(ids);
+        if (count>=0){
+            logger.error("成功清除未激活用户"+count+"个");
+            return true;
+        }
+        return false;
+    }
 }

@@ -9,6 +9,8 @@ import com.model.TradeOrder;
 import com.model.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @date 2016年11月27日
  */
@@ -70,6 +72,8 @@ public interface UserService extends CommonService<User> {
 
     Integer updateUserGradeByUserId(String userId, Integer grade);
 
+    Integer clearUnActiveUserWithIds(List<String> list);
+
     Integer updateUserCardGradeByUserId(String userId, Integer cardGrade);
 
     User createRegisterUser(User creatUser, CardGrade cardGrade, User loginUser, User inviterUser) throws Exception;
@@ -89,4 +93,8 @@ public interface UserService extends CommonService<User> {
     Boolean isVrticalLine(Integer inviterUid, Integer concatUid) throws Exception;
 
     Boolean isVrticalLine(String inviterUserId, String concatUserId) throws Exception;
+
+    Boolean regularlyClearUnActiveUser() throws Exception;
+
+    List<User> readUnActiceMoreThanDays();
 }

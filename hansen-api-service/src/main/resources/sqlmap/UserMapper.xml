@@ -80,6 +80,13 @@
 		select count(1) from <include refid="table_name"/> <include refid="condition"/>
 	</select>
 
+	<select id="readUnActiceMoreThanDays" resultType="User">
+		<include refid="selector"/>
+		<![CDATA[
+			 WHERE status=2 and payAmt<=0 and tradeAmt<=0 and equityAmt<=0 and remainTaskNo=0 and cardGrade=1 and grade=0  and activeCodeNo=0 and registerCodeNo=0 and  (TO_DAYS(NOW()) - TO_DAYS(createTime)) >=2
+		]]>
+	</select>
+
 	<update id="updateById">
 		update <include refid="table_name"/>
 		<set>
@@ -190,6 +197,18 @@
 
 	<update id="updateUserGradeByUserId">
 		update <include refid="table_name"/> set grade = #{grade} ,updateTime=now() where id = #{id}
+	</update>
+
+	<update id="clearUnActiveUserWithIds" parameterType="Integer">
+		update
+		<include refid="table_name"/>
+		set updateTime=now(),remark='超时未激活，账户被清除'
+		<if test="list!=null">
+			,status=7 where id in
+			<foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
 	</update>
 </mapper>
 

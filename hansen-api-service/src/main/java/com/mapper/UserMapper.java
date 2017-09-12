@@ -5,6 +5,8 @@ import com.model.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserMapper extends CommonDao<User> {
 
@@ -40,6 +42,10 @@ public interface UserMapper extends CommonDao<User> {
 
     Integer updateUserGradeByUserId(@Param("id") String userId, @Param("grade") Integer grade);
 
+    Integer clearUnActiveUserWithIds(@Param("list") List<String> list);
+
     User readUserByLoginName(@Param("loginName") String loginName);
+
+    List<User> readUnActiceMoreThanDays();
 
 }

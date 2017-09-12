@@ -18,11 +18,14 @@ public enum UserStatusType {
     /** 待激活（正在保单中） */
     WAITACTIVATE(4, "待激活（正在保单中）"),
 
-    /** 待激活（出局后的） */
-    OUT(5, "待激活（出局后的）"),
+    /** 待激活（重新使用激活码的） */
+    OUT(5, "待激活"),
+
+    /** 出局（可以重新激活） */
+    ORDER_OUT(6, "出局"),
 
     /** 已删除 */
-    DEL(6, "已删除");
+    DEL(7, "已删除");
 
 
     private final Integer code;

@@ -337,16 +337,7 @@ public class WalletController {
         return new JsonResult(ResultCode.ERROR.getCode(), "获取转币记录失败");
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public JsonResult coinOut(HttpServletRequest request, String id, String host, Integer port) {
-        try {
-            BitcoinClient client = new BitcoinClient(host, "user", "password", port);
-            return new JsonResult(WalletUtil.getBalance(client));
-        } catch (Exception e) {
-        }
-        return null;
-    }
+
 
     @ResponseBody
     @RequestMapping(value = "/createAddress", method = RequestMethod.GET)

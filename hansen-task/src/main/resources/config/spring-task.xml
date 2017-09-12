@@ -22,4 +22,11 @@
     <task:scheduled-tasks>
         <task:scheduled ref="orderHandleTask" method="doTask" cron="0/38  * * * * ?"/>
     </task:scheduled-tasks>
+
+    <!-- 48小时清除用户 -->
+    <bean id="userDelHandleTask" class="com.task.UserDelHandleTask"></bean>
+    <task:scheduled-tasks>
+        <!--<task:scheduled ref="userDelHandleTask" method="doTask" cron="*  *  0/1 * * ?"/>-->
+        <task:scheduled ref="userDelHandleTask" method="doTask" cron="0/10  *  * * * ?"/>
+    </task:scheduled-tasks>
 </beans>

@@ -132,4 +132,5 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
         }
         return 1d;
     }
+
 }

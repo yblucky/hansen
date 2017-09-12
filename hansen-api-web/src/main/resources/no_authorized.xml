@@ -8,17 +8,21 @@
 	<url>/user/forgetPwd</url>
 	<url>/cardgrade/info</url>
 	<url>/cardgrade/list</url>
-	<url>/wallet/test</url>
-	<url>/order/handle</url>
+
+
+	<url>/app/handle</url>
 	<url>/order/add</url>
-	<url>/login/test1</url>
-	<url>/login/differ</url>
+	<url>/app/up</url>
+	<url>/app/differ</url>
+	<url>/app/push</url>
+	<url>/app/concat</url>
+	<url>/app/performance</url>
+	<url>/app/clear</url>
+	<url>/app/wallet</url>
 
 	<!-- 静态资源-->
 	<url>/resources</url>
 	<url>/download</url>
-	<url>/MP_verify</url>
-
 </no_authorized>
 
 
