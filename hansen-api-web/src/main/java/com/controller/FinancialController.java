@@ -110,6 +110,10 @@ public class FinancialController {
         Double rewardManageAmt=10000d;
         //级差奖
         Double rewardDifferAmt=10000d;
+        //已释放
+        Double hasReleaseRmbAmt=10000d;
+        //冻结
+        Double frozenRmbAmt=10000d;
 
         Map  map= new HashedMap();
         map.put("sumRmbAmt",sumRmbAmt);
