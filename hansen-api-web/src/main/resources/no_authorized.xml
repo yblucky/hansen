@@ -8,6 +8,7 @@
 	<url>/user/forgetPwd</url>
 	<url>/cardgrade/info</url>
 	<url>/cardgrade/list</url>
+	<url>/share/shareregister</url>
 
 
 	<url>/app/handle</url>

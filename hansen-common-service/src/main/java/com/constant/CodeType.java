@@ -29,10 +29,20 @@ public enum CodeType {
      */
     SYSTEM_SEND_USE_REGISTERCODE(12, "系统赠送注册码"),
     /**
-     * /**
+     *
      * 激活使用激活码
      */
     REGISTER_USE_ACTIVECODE(20, "激活使用激活码"),
+    /**
+     *
+     *七次任务账户失效激活使用激活码
+     */
+    OUT_USE_ACTIVECODE(23, "账户失效使用激活码"),
+    /**
+     *
+     *出局激活使用激活码
+     */
+    ORDER_OUT_USE_ACTIVECODE(24, "出局使用激活码"),
     /**
      * 转账使用激活码
      */

@@ -46,6 +46,8 @@ public interface UserMapper extends CommonDao<User> {
 
     User readUserByLoginName(@Param("loginName") String loginName);
 
+    User readUserByUid(@Param("uid") Integer uid);
+
     List<User> readUnActiceMoreThanDays();
 
 }

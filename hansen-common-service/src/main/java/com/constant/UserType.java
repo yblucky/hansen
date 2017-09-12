@@ -11,9 +11,9 @@ public enum UserType {
 	 */
 	INNER(1, "市场人员内部注册"),
 	/**
-	 * 用户自主注册
+	 * 分享注册
 	 */
-	OUT(2,  "用户自主注册");
+	OUT(2,  "分享注册");
 
 	private final Integer code;
 

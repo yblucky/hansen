@@ -84,6 +84,8 @@ public interface UserService extends CommonService<User> {
 
     User readUserByLoginName(String loginName);
 
+    User readUserByUid(Integer uid);
+
     Boolean intervalActice(String userId);
 
     Boolean upGrade(User loginUser, CardGrade cardGrade, UpGradeType upGradeType) throws Exception;
@@ -97,4 +99,12 @@ public interface UserService extends CommonService<User> {
     Boolean regularlyClearUnActiveUser() throws Exception;
 
     List<User> readUnActiceMoreThanDays();
+
+    User shareRegisterCreateUser(User creatUser,  User inviterUser) throws Exception;
+
+    User shareRegister(User createUser,User inviterUser) throws Exception;
+
+    JsonResult shareActicveUser(String userId) throws Exception;
+
+    Integer updateUserCardGrade(User creatUser, CardGrade cardGrade)  throws Exception;
 }

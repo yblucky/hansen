@@ -83,7 +83,7 @@ public class UserController {
         }
         User user = new User();
         BeanUtils.copyProperties(user, vo);
-        user.setStatus(UserStatusType.OUTREGISTER_SUCCESSED.getCode());
+        user.setStatus(UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode());
         BitcoinClient payBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
         BitcoinClient equityBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
         BitcoinClient tradeBitcoinClient = getBitCoinClient("127.0.0.1", "user", "password", 20099);
@@ -675,7 +675,7 @@ public class UserController {
 
 
     /**
-     * 市场内部注册的账号，用户手动点击激活账号
+     * 用户手动点击激活账号:市场人员内部注册，分享注册
      */
     @ResponseBody
     @RequestMapping(value = "/firstActicveUser", method = RequestMethod.GET)
@@ -706,6 +706,8 @@ public class UserController {
             return userService.innerActicveUser(loginUser, cardGrade);
         } else if (loginUser.getStatus() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
             return new JsonResult(ResultCode.SUCCESS.getCode(), "账号已经是激活状态");
+        } else if (UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode()==loginUser.getStatus() && UserType.OUT.getCode()==loginUser.getCreateType()) {
+            return userService.shareActicveUser(loginUser.getId());
         }
         return new JsonResult(ResultCode.ERROR.getCode(), "无法激活");
     }

@@ -76,6 +76,11 @@
 		<include refid="selector"/>  WHERE    loginName=#{loginName} OR uid=#{loginName} OR phone=#{loginName}  limit 1;
 	</select>
 
+
+	<select id="readUserByUid" resultType="User">
+		<include refid="selector"/>  WHERE    uid=#{uid}   limit 1;
+	</select>
+
 	<select id="readCount" resultType="int">
 		select count(1) from <include refid="table_name"/> <include refid="condition"/>
 	</select>

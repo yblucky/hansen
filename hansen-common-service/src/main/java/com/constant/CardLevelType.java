@@ -7,6 +7,11 @@ package com.constant;
 public enum CardLevelType {
 
     /**
+     * 未选
+     */
+    UNCHOOSE(0, "未选"),
+
+    /**
      * 普卡
      */
     ORDINARYCARD(1, "普卡"),

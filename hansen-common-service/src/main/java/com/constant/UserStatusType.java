@@ -6,8 +6,8 @@ package com.constant;
  */
 public enum UserStatusType {
 
-    /** 注册 */
-    OUTREGISTER_SUCCESSED(1, "用户自主注册"),
+    /** 分享注册 */
+    OUT_SHARE_REGISTER_SUCCESSED(1, "分享注册"),
 
     /** 注册成功 */
     INNER_REGISTER_SUCCESSED(2, "市场内部注册成功"),

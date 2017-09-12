@@ -242,6 +242,12 @@ public class ActiveCodeController {
         return new JsonResult(pageResult);
     }
 
+    /**
+     *
+     * 七次任务周期后，激活
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/intervalActice", method = RequestMethod.GET)
     public JsonResult intervalActice(HttpServletRequest request) {

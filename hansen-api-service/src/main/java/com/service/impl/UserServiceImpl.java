@@ -1125,13 +1125,19 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         return userMapper.readUserByLoginName(loginName);
     }
 
+
+    @Override
+    public User readUserByUid(Integer uid) {
+        return userMapper.readUserByUid(uid);
+    }
+
     @Override
     public Boolean intervalActice(String userId) {
         TransferCode transferCode = new TransferCode();
         User user = this.readById(userId);
         CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
         this.updateUserActiveCode(userId, -cardGrade.getActiveCodeNo());
-        transferCode.setType(CodeType.ACTIVATECODE.getCode());
+        transferCode.setType(CodeType.OUT_USE_ACTIVECODE.getCode());
         transferCode.setRemark("用户重新激活,使用 " + cardGrade.getActiveCodeNo() + "个激活码");
         transferCode.setSendUserId(userId);
         transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
@@ -1227,10 +1233,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 
     @Override
     public List<User> readUnActiceMoreThanDays() {
-        List<User> users= new ArrayList<>();
-        users=userMapper.readUnActiceMoreThanDays();
-        if (ToolUtil.isEmpty(users)){
-            users= Collections.emptyList();
+        List<User> users = new ArrayList<>();
+        users = userMapper.readUnActiceMoreThanDays();
+        if (ToolUtil.isEmpty(users)) {
+            users = Collections.emptyList();
         }
         return users;
     }
@@ -1239,18 +1245,194 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Override
     public Boolean regularlyClearUnActiveUser() throws Exception {
         List<User> users = this.readUnActiceMoreThanDays();
-        if (ToolUtil.isEmpty(users)){
-            return  true;
+        if (ToolUtil.isEmpty(users)) {
+            return true;
         }
-        List<String> ids=new ArrayList<>();
-        for (User user:users){
+        List<String> ids = new ArrayList<>();
+        for (User user : users) {
             ids.add(user.getId());
         }
         Integer count = this.clearUnActiveUserWithIds(ids);
-        if (count>=0){
-            logger.error("成功清除未激活用户"+count+"个");
+        if (count >= 0) {
+            logger.error("成功清除未激活用户" + count + "个");
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * 分享注册
+     *
+     * @param createUser
+     * @param inviterUser
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public User shareRegister(User createUser, User inviterUser) throws Exception {
+        /**创建用户账号**/
+        createUser = this.shareRegisterCreateUser(createUser, inviterUser);
+
+        /**建立部门关系**/
+        UserDepartment userDepartment = new UserDepartment();
+        userDepartment.setId(createUser.getId());
+        userDepartment.setParentUserId(inviterUser.getId());
+        userDepartment.setUid(createUser.getUid());
+        userDepartment.setUserId(createUser.getId());
+        userDepartment.setPerformance(0d);
+        userDepartment.setTeamPerformance(0d);
+        userDepartment.setStatus(StatusType.TRUE.getCode());
+        userDepartment.setGrade(GradeType.GRADE0.getCode());
+        userDepartmentService.createUserDepartment(userDepartment);
+        return createUser;
+    }
+
+
+    /**
+     * 分享注册创建用户和用户子表
+     *
+     * @param creatUser
+     * @param inviterUser
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public User shareRegisterCreateUser(User creatUser, User inviterUser) throws Exception {
+
+        creatUser.setCreateType(UserType.INNER.getCode());
+        creatUser.setGrade(GradeType.GRADE0.getCode());
+        creatUser.setCardGrade(CardLevelType.UNCHOOSE.getCode());
+        creatUser.setMaxProfits(0d);
+        creatUser.setInsuranceAmt(0d);
+        creatUser.setStatus(UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode());
+        String payAddress = "";
+        String equityAddress = "";
+        String tradeAddress = "";
+
+
+        creatUser.setFirstReferrer(inviterUser.getId());
+        creatUser.setRemainTaskNo(0);
+        creatUser.setSecondReferrer(inviterUser.getSecondReferrer());
+        creatUser.setContactUserId(inviterUser.getId());
+        creatUser.setPassword(Md5Util.MD5Encode(creatUser.getPassword(), DateUtils.currentDateToggeter()));
+        creatUser.setPayWord(Md5Util.MD5Encode(creatUser.getPayWord(), DateUtils.currentDateToggeter()));
+        creatUser.setSalt(DateUtils.currentDateToggeter());
+        String creatUserId = ToolUtil.getUUID();
+        creatUser.setId(creatUserId);
+        creatUser.setEquityAmt(0d);
+        creatUser.setTradeAmt(0d);
+        creatUser.setPayAmt(0d);
+        creatUser.setSumProfits(0d);
+
+        creatUser.setCashOutProfits(0d);
+        creatUser.setRegisterCodeNo(0);
+        creatUser.setActiveCodeNo(0);
+
+        this.create(creatUser);
+        creatUser = this.readById(creatUserId);
+        UserDetail inviterUserDetail = userDetailService.readById(inviterUser.getId());
+        UserDetail userDetail = new UserDetail();
+        userDetail.setId(creatUser.getId());
+        userDetail.setForzenEquityAmt(0d);
+        userDetail.setForzenPayAmt(0d);
+        userDetail.setForzenTradeAmt(0d);
+        userDetail.setStatus(creatUser.getStatus());
+        userDetail.setLevles(inviterUserDetail.getLevles() + 1);
+        userDetail.setInEquityAddress(equityAddress);
+        userDetail.setInTradeAddress(tradeAddress);
+        userDetail.setInPayAddress(payAddress);
+        userDetail.setLevles(inviterUserDetail.getLevles() + 1);
+        userDetailService.create(userDetail);
+        return creatUser;
+    }
+
+
+    @Override
+    @Transactional
+    public Integer updateUserCardGrade(User creatUser, CardGrade cardGrade) {
+        try {
+            creatUser.setCardGrade(cardGrade.getGrade());
+            creatUser.setMaxProfits(cardGrade.getInsuranceAmt() * cardGrade.getOutMultiple());
+            creatUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
+            User updateModel = new User();
+            updateModel.setInsuranceAmt(cardGrade.getInsuranceAmt());
+            updateModel.setMaxProfits(CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), cardGrade.getOutMultiple(), 2));
+            updateModel.setCardGrade(cardGrade.getGrade());
+            this.updateById(creatUser.getId(), updateModel);
+            logger.error("更新分享注册用户的卡等级成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
+    @Override
+    @Transactional
+    public JsonResult shareActicveUser(String userId) throws Exception {
+        User user = this.readById(userId);
+        if (user==null){
+            return  new JsonResult(ResultCode.ERROR.getCode(),"找不到用户");
+        }
+        CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
+        if (cardGrade==null){
+            return  new JsonResult(ResultCode.ERROR.getCode(),"用户卡等级有误");
+        }
+        //人民币兑换支付币汇率
+        Double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
+        //人民币兑换交易币汇率
+        Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+        Double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
+        Double payCoinAmt = payRmbAmt * payScale;
+        if (user.getRegisterCodeNo() < cardGrade.getRegisterCodeNo()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "注册码数量不足，无法激活账号");
+        }
+        if (user.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "激活码数量不足，无法激活账号");
+        }
+        if (user.getPayAmt() < payCoinAmt) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
+        }
+
+        Double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
+        Double tradeCoinAmt = tradeRmbAmt * tradeScale;
+        if (user.getTradeAmt() < tradeCoinAmt) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足，无法激活账号");
+        }
+        // 扣除虚拟币
+        this.updatePayAmtByUserId(user.getId(), -payCoinAmt);
+        this.updateTradeAmtByUserId(user.getId(), -tradeCoinAmt);
+        //写入冻结
+        userDetailService.updateForzenPayAmtByUserId(user.getId(), payCoinAmt);
+        userDetailService.updateForzenTradeAmtByUserId(user.getId(), tradeCoinAmt);
+        User updateActiveUser = new User();
+        updateActiveUser.setId(user.getId());
+        updateActiveUser.setInsuranceAmt(cardGrade.getInsuranceAmt());
+        updateActiveUser.setStatus(UserStatusType.WAITACTIVATE.getCode());
+        //修改用户状态
+        this.updateById(updateActiveUser.getId(), updateActiveUser);
+        //生成保单
+        tradeOrderService.createInsuranceTradeOrder(user, cardGrade);
+
+        TransferCode transferCode = new TransferCode();
+        this.updateUserActiveCode(userId, -cardGrade.getActiveCodeNo());
+        transferCode.setType(CodeType.REGISTER_USE_ACTIVECODE.getCode());
+        transferCode.setRemark("分享激活,使用 " + cardGrade.getActiveCodeNo() + "个激活码");
+        transferCode.setSendUserId(userId);
+        transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
+        transferCode.setTransferNo(-cardGrade.getActiveCodeNo());
+        transferCodeService.create(transferCode);
+        this.updateUserRegisterCode(userId, -cardGrade.getRegisterCodeNo());
+        transferCode.setType(CodeType.REGISTER_USE_REGISTERCODE.getCode());
+        transferCode.setRemark("分享注册,使用 " + cardGrade.getRegisterCodeNo() + "个注册码");
+        transferCode.setSendUserId(userId);
+        transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
+        transferCode.setTransferNo(-cardGrade.getRegisterCodeNo());
+        transferCodeService.create(transferCode);
+        this.updateUserStatus(userId, UserStatusType.ACTIVATESUCCESSED.getCode());
+        return new JsonResult(ResultCode.SUCCESS.getCode(), UserStatusType.WAITACTIVATE.getMsg());
     }
 }
