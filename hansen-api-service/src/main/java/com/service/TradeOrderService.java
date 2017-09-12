@@ -4,7 +4,6 @@ import com.base.service.CommonService;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
@@ -19,7 +18,7 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Boolean handleInsuranceTradeOrder(String orderNo) throws Exception;
 
-    List<TradeOrder> readRewardList(String userId,Date taskTime, Integer startRow, Integer pageSize) throws Exception;
+    List<TradeOrder> readRewardList(String userId, Date taskTime, Integer startRow, Integer pageSize) throws Exception;
 
     Integer batchUpdateSignCycle(List<String> idList) throws Exception;
 
@@ -31,15 +30,21 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Map<String, Double> getCoinNoFromRmb(Double rmbAmt) throws Exception;
 
-    List<TradeOrder> readRewardListByOrderType(String userId,List<Integer> source,   Integer startRow, Integer pageSize) throws Exception;
+    List<TradeOrder> readRewardListByOrderType(String userId, List<Integer> source, Integer startRow, Integer pageSize) throws Exception;
 
     Integer readRewardCountByOrderType(String userId, List<Integer> source);
 
-    Double  sumReadRewardByOrderType(String userId, List<Integer> source);
+    Double sumReadRewardByOrderType(String userId, List<Integer> source);
 
-    Double  readSumDynamicProfitsCount(String userId, List<Integer> source);
+    Double readWaiteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(String userId, Integer signCycle, Integer source);
 
-    List<TradeOrder> readWaitHandleList( Integer startRow, Integer pageSize) throws Exception;
+    Double readHasAllCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(String userId, Integer source);
+
+    Double readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(String userId, Integer signCycle, Integer source);
+
+    Double readSumDynamicProfitsCount(String userId, List<Integer> source);
+
+    List<TradeOrder> readWaitHandleList(Integer startRow, Integer pageSize) throws Exception;
 
     Integer readWaitHandleCount() throws Exception;
 

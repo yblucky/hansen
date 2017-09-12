@@ -256,6 +256,33 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
         return sum;
     }
 
+    @Override
+    public Double  readWaiteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(String userId, Integer signCycle, Integer source){
+        Double sum=tradeOrderMapper.readWaiteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(userId, signCycle,source);
+        if (sum==null){
+            sum=0d;
+        }
+        return sum;
+    }
+
+
+    @Override
+    public Double readHasAllCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(String userId, Integer source) {
+        Double sum=tradeOrderMapper.readHasAllCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(userId,source);
+        if (sum==null){
+            sum=0d;
+        }
+        return sum;
+    }
+
+    @Override
+    public Double readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(String userId, Integer signCycle, Integer source) {
+        Double sum=tradeOrderMapper.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(userId, signCycle,source);
+        if (sum==null){
+            sum=0d;
+        }
+        return sum;
+    }
 
     @Override
     public Double readSumDynamicProfitsCount(String userId, List<Integer> source) {

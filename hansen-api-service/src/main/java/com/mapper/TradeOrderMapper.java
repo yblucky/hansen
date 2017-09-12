@@ -30,6 +30,14 @@ public interface TradeOrderMapper extends CommonDao<TradeOrder> {
 
     Double sumReadRewardByOrderType(@Param("userId") String userId, @Param("list") List<Integer> source);
 
+    Double  readWaiteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(@Param("userId")String userId,@Param("signCycle")Integer signCycle,@Param("source") Integer source);
+
+    Double  readHasPartSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(@Param("userId")String userId,@Param("signCycle")Integer signCycle,@Param("source") Integer source);
+
+    Double  readHasAllCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(@Param("userId")String userId,@Param("source") Integer source);
+
+    Double  readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(@Param("userId")String userId,@Param("signCycle")Integer signCycle,@Param("source") Integer source);
+
     Double readSumDynamicProfitsCount(@Param("userId") String userId, @Param("list") List<Integer> source);
 
 

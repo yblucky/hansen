@@ -88,6 +88,23 @@
         </if>
     </select>
 
+
+
+    <!-- 待领取的奖励 -->
+    <select id="readWaiteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus" resultType="Double">
+        SELECT   SUM(signCycle*confirmAmt/#{signCycle})  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle>0 and signCycle>0 and  status=1
+    </select>
+
+    <!-- 已经领取完成的奖励 -->
+    <select id="readHasAllCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus" resultType="Double">
+        SELECT   SUM(confirmAmt)  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle=0 and signCycle=0 and  status=2
+    </select>
+
+    <!-- 还在做任务中已经领取的部分奖励 -->
+    <select id="readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus" resultType="Double">
+        SELECT   SUM(confirmAmt-signCycle*confirmAmt/#{signCycle})  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle>0 and signCycle>0 and  status=1
+    </select>
+
     <update id="updateById">
         update <include refid="table_name"/>
         <set>
