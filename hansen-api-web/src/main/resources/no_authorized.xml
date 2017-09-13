@@ -20,6 +20,7 @@
 	<url>/app/performance</url>
 	<url>/app/clear</url>
 	<url>/app/wallet</url>
+	<url>/register.html</url>
 
 	<!-- 静态资源-->
 	<url>/resources</url>

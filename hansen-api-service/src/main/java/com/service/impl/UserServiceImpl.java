@@ -1392,7 +1392,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             return new JsonResult(ResultCode.ERROR.getCode(), "注册码数量不足，无法激活账号");
         }
         if (user.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "激活码数量不足，无法激活账号");
+//            return new JsonResult(ResultCode.ERROR.getCode(), "激活码数量不足，无法激活账号");
         }
         if (user.getPayAmt() < payCoinAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
@@ -1419,13 +1419,13 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         tradeOrderService.createInsuranceTradeOrder(user, cardGrade);
 
         TransferCode transferCode = new TransferCode();
-        this.updateUserActiveCode(userId, -cardGrade.getActiveCodeNo());
-        transferCode.setType(CodeType.REGISTER_USE_ACTIVECODE.getCode());
-        transferCode.setRemark("分享激活,使用 " + cardGrade.getActiveCodeNo() + "个激活码");
-        transferCode.setSendUserId(userId);
-        transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
-        transferCode.setTransferNo(-cardGrade.getActiveCodeNo());
-        transferCodeService.create(transferCode);
+//        this.updateUserActiveCode(userId, -cardGrade.getActiveCodeNo());
+//        transferCode.setType(CodeType.REGISTER_USE_ACTIVECODE.getCode());
+//        transferCode.setRemark("分享激活,使用 " + cardGrade.getActiveCodeNo() + "个激活码");
+//        transferCode.setSendUserId(userId);
+//        transferCode.setReceviceUserId(Constant.SYSTEM_USER_ID);
+//        transferCode.setTransferNo(-cardGrade.getActiveCodeNo());
+//        transferCodeService.create(transferCode);
         this.updateUserRegisterCode(userId, -cardGrade.getRegisterCodeNo());
         transferCode.setType(CodeType.REGISTER_USE_REGISTERCODE.getCode());
         transferCode.setRemark("分享注册,使用 " + cardGrade.getRegisterCodeNo() + "个注册码");

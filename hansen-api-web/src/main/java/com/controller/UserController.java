@@ -171,12 +171,12 @@ public class UserController {
         if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
         }
-        if (loginUser.getActiveCodeNo() < cardGrade.getRegisterCodeNo()) {
+        if (loginUser.getRegisterCodeNo() < cardGrade.getRegisterCodeNo()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
         }
-        if (loginUser.getActiveCodeNo() < cardGrade.getRegisterCodeNo()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
-        }
+//        if (loginUser.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
+//            return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
+//        }
         User inviterUser = null;
         if (vo.getContactUserId().intValue() != loginUser.getUid().intValue()) {
             User inviterCondition = new User();

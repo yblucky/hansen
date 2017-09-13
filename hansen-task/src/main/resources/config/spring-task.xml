@@ -14,7 +14,7 @@
     <!-- 获取汇率   每日凌晨触发  -->
     <bean id="convertScaleTask" class="com.task.RmbConverCoinScaleTask"></bean>
     <task:scheduled-tasks>
-        <task:scheduled ref="convertScaleTask" method="doTask" cron="59 59 0 * * ?"/>
+        <task:scheduled ref="convertScaleTask" method="doTask" cron="59 59 23 * * ?"/>
     </task:scheduled-tasks>
 
     <!-- 保单结算 -->
