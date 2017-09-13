@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+</head>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<style>
+    body{
+        margin:0;
+    }
+    .register{
+        position: absolute;top:0;left:0;width:100%;height:100%;background:#fff;
+    }
+    .title{
+        height:44px;width:100%;line-height: 44px;color:#fff;text-align: center;background:#46adfc;
+    }
+    .content{
+        padding:0 3% 0 3%;width:94%;
+    }
+    .nickName,.telPhone,.loginPwd,.payPwd,.msgCode,.uid,.mail,.loginPwd_confirm,.payPwd_confirm{
+        height:50px;line-height: 50px;border-bottom:1px #e5e5e5 solid;font-size: 14px;
+    }
+    .input_nickName,.input_loginPwd,.input_payPwd,.input_msgCode,.input_uid,.input_mail,.input_loginPwd_confirm,.input_payPwd_confirm{
+        border:0;height:25px;line-height: 25px;margin-left:15px;
+    }
+    .areaCode{
+        background:none;margin:0 5px 0 15px;padding-right:10px;height:25px;line-height: 25px;display: inline-block;color:#46adfc;border-right:1px #e5e5e5 solid;
+    }
+    .input_telPhone{
+        border:0;height:25px;line-height: 25px;
+    }
+    .input_msgCode{
+        width:140px;
+    }
+    .getMsgCode{
+        border:0;float:right;height:27px;background: none;font-size: 12px;margin-top:11px;color:red;
+    }
+    .countDown{
+        color:#999;display: none;float:right;background:none;font-size: 12px;
+    }
+    .submit{
+        width:100%;background: #46adfc;border:0;height:45px;line-height: 45px;color:#fff;border-radius: 5px;font-size: 16px;margin-top:30px;
+    }
+    .gotoDownload{
+        text-align: right;font-size: 12px;text-decoration: underline;color:#46adfc;margin-top:30px;
+    }
+    .showToast{
+        position: absolute;height:45px;width:90%;padding:0;bottom:2%;left:5%;color:#fff;text-align: center;line-height: 45px;font-size: 14px;background: rgba(0,0,0,0.8);border-radius: 5px;display: none;opacity: 0;
+    }
+    .registerSuccess{
+        position: absolute;top:25%;left:14%;width:73%;height:33.3%;background:#F0F0F0;display:none;
+    }
+    .success_content{
+        padding:0 3% 0 3%;width:94%;text-align: center;
+    }
+    .success_img{
+        border-radius: 50%;width:60px;height:60px;margin:20px 0 10px 0;
+    }
+    .success_prompt{
+        width:150px;margin:0 auto;text-align: left;font-size: 15px;font-weight: bold;padding-left:45px;
+    }
+    .success_uid{
+        width:150px;margin:10px auto 0 auto;text-align: left;font-size: 12px;font-weight: bold;padding-left:45px;
+    }
+    .success_telPhone{
+      width:150px;margin:10px auto 0 auto;text-align: left;font-size: 12px;font-weight: bold;padding-left:45px;
+    }
+</style>
+<script>
+    var msgTimeNum = 60;
+    var msgCodeObj;
+    var shareUid;
+    var baseUrl = 'http://hs.6pyun.com/api';
+
+    $(function(){
+        shareUid = getUrlParam('shareUid');
+        if(shareUid == null || shareUid == "" || shareUid == undefined){
+          $('.input_uid').val(200000);
+        }else {
+          $('.input_uid').val(shareUid);
+        }
+
+    })
+
+    // 获取短信验证码
+    // function getMsgCode(){
+    //     if($('.input_telPhone').val() == null || $('.input_telPhone').val() == ''){
+    //         showToast("手机号码不能为空");
+    //     }else if(!(/^1[34578]\d{9}$/).test($('.input_telPhone').val())){
+    //         showToast("手机号码有误，请重填");
+    //     }else{
+    //         msgTimeNum = 60;
+    //         $(".getMsgCode").css("color","#999").attr("disabled",true);
+    //         $.ajax({
+    //             url:baseUrl+'/common/sendSms',
+    //             type:'get',
+    //             data:{
+    //                 mobile:$('.input_telPhone').val()
+    //             },
+    //             dataType:'json',
+    //             success:function(data,textStatus,jqXHR){
+    //                 if(data.code == '0000'){
+    //                     $(".getMsgCode").hide();
+    //                     $(".countDown").show();
+    //                     msgCodeObj = setInterval(function () {
+    //                         msgTimeNum--;
+    //                         $(".countDown").text(msgTimeNum+"秒");
+    //                         if(msgTimeNum==0){
+    //                             clearInterval(msgCodeObj);
+    //                             $(".getMsgCode").css("color","red").attr("disabled",false).show();
+    //                             $(".countDown").hide();
+    //                         }
+    //                     }, 1000);
+    //                     showToast("发送验证码成功");
+    //                 }else{
+    //                     showToast(data.message);
+    //                 }
+    //             },
+    //             error:function(xhr,textStatus){
+    //                 showToast(textStatus);
+    //             }
+    //         })
+    //     }
+    // }
+
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+
+    // 提交注册
+    function register(){
+        if(validator()){
+            var registerData = {
+                firstReferrer:$('.input_uid').val(),
+                nickName:$('.input_nickName').val(),
+                phone:$('.input_telPhone').val(),
+                email:$('.input_mail').val(),
+                password:$('.input_loginPwd').val(),
+                confirmPassword:$('.input_loginPwd_confirm').val(),
+                payword:$('.input_payPwd').val(),
+                confirmPayWord:$('.input_payPwd_confirm').val()
+            }
+            $(".submit").css("opacity","0.5").attr("disabled",true);
+            $.ajax({
+                url:baseUrl+'/share/shareregister',
+                type:'post',
+                data:JSON.stringify(registerData),
+                contentType: 'application/json',
+                dataType:'json',
+                // beforeSend:function(xhr,data){
+                //     console.log("data"+JSON.stringify(data));
+                //     console.log(xhr);
+                //     console.log('发送前');
+                // },
+                success:function(data,textStatus,jqXHR){
+                    console.log("data"+JSON.stringify(data));
+                    console.log("textStatus"+textStatus);
+                    console.log("jqXHR"+JSON.stringify(jqXHR));
+                    if(data.code == 200){
+                        showToast("注册成功,去登陆");
+                        $(".success_uid").append(data.result.uid);
+                        $(".success_telPhone").append(data.result.phone);
+                        $(".registerSuccess").show();
+                    }else{
+                        showToast(data.msg);
+                    }
+                    $(".submit").css("opacity","1").attr("disabled",false);
+                },
+                error:function(data,xhr,textStatus){
+                    showToast(textStatus);
+                    $(".submit").css("opacity","1").attr("disabled",false);
+                }
+            })
+        }
+    }
+
+    // 显示弹窗
+    function showToast(value){
+        $(".showToast").text(value);
+        $(".showToast").show().stop().animate({opacity:0.8});
+        setTimeout("hideToast()",1000);
+    }
+
+    // 隐藏弹窗
+    function hideToast(){
+        $(".showToast").stop().animate({opacity:0},function(){
+            $(".showToast").hide();
+        });
+    }
+
+    // 登录
+    function login(){
+         window.location.href="http://www.hansenshare.com";
+    }
+
+    // 验证
+    function validator(){
+        if(!/[^\s]+/.test($('.input_nickName').val())){
+            showToast("昵称不能全为空格");
+            return false;
+        }
+        if($('.input_nickName').val() == null || $('.input_nickName').val().trim() == ''){
+            showToast("昵称不能为空");
+            return false;
+        }
+        if((/[^\w\u4e00-\u9fa5]+/).test($('.input_nickName').val())){
+            showToast("昵称不能为特殊字符");
+            return false;
+        }
+        if($('.input_telPhone').val() == null || $('.input_telPhone').val().trim() == ''){
+            showToast("手机号码不能为空");
+            return false;
+        }
+        if(!(/^1[34578]\d{9}$/).test($('.input_telPhone').val())){
+            showToast("手机号码有误，请重填");
+            return false;
+        }
+        if(!/[^\s]+/.test($('.input_loginPwd').val())){
+            showToast("登录密码不能全为空格");
+            return false;
+        }
+        if($('.input_loginPwd').val() == null || $('.input_loginPwd').val().trim() == ''){
+            showToast("登录密码不能为空");
+            return false;
+        }
+        if($('.input_loginPwd').val().length < 6){
+            showToast("登录密码最少6位数");
+            return false;
+        }
+        if($('.input_loginPwd').val().length > 32){
+            showToast("登录密码最多32位数");
+            return false;
+        }
+        if(!/[^\s]+/.test($('.input_payPwd').val())){
+            showToast("支付密码不能全为空格");
+            return false;
+        }
+        if($('.input_payPwd').val() == null || $('.input_payPwd').val().trim() == ''){
+            showToast("支付密码不能为空");
+            return false;
+        }
+        if(!(/^[0-9]{6}$/.test($('.input_payPwd').val()))){
+            showToast("支付密码必须是6位数字");
+            return false;
+        }
+        return true;
+    }
+
+</script>
+<body>
+    <div class="register">
+        <div class="title">加入翰森国际社区</div>
+        <div class="content">
+            <div class="uid">
+                <span>邀&nbsp;&nbsp;请&nbsp;&nbsp;人</span>
+                <input type="text" class="input_uid" maxlength="6" readonly="readonly"/>
+            </div>
+            <div class="nickName">
+                <span>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称</span>
+                <input type="text" class="input_nickName" maxlength="6" placeholder="输入昵称"/>
+            </div>
+            <div class="telPhone">
+                <span>手机号码</span>
+                <mark class="areaCode">+86</mark>
+                <input type="text" class="input_telPhone" maxlength="11"  placeholder="您的手机号码"/>
+            </div>
+            <div class="mail">
+                <span>邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱</span>
+                <input type="text" class="input_mail" maxlength="25" placeholder="输入邮箱"/>
+            </div>
+            <div class="loginPwd">
+                <span>登录密码</span>
+                <input type="password" class="input_loginPwd" maxlength="32" placeholder="输入6~32位密码"/>
+            </div>
+            <div class="loginPwd_confirm">
+                <span>确认密码</span>
+                <input type="password" class="input_loginPwd_confirm" maxlength="32" placeholder="确认登录密码"/>
+            </div>
+            <div class="payPwd">
+                <span>支付密码</span>
+                <input type="password" class="input_payPwd" maxlength="6"  placeholder="输入6位数字支付密码"/>
+            </div>
+            <div class="payPwd_confirm">
+                <span>确认密码</span>
+                <input type="password" class="input_payPwd_confirm" maxlength="6"  placeholder="确认支付密码"/>
+            </div>
+
+            <button class="submit" onclick="register()">确定</button>
+            <!-- <div class="gotoDownload">
+                <span onclick="judge()">我已有帐号，直接下载APP</span>
+            </div> -->
+        </div>
+    </div>
+    <div class="registerSuccess" onclick="login()">
+        <div class="title">注册成功</div>
+        <div class="success_content">
+            <img class="success_img" src="registerSuccess.png"/>
+            <div class="success_prompt">恭喜您注册成功</div>
+            <div class="success_uid">UID&nbsp;</div>
+            <div class="success_telPhone">手机&nbsp;</div>
+        </div>
+    </div>
+    <div class="showToast"></div>
+</body>
+</html>
