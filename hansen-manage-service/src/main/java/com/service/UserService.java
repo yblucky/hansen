@@ -38,7 +38,6 @@ public interface UserService extends CommonService<User> {
 
     void updateUserRegisterCode(User loginUser, CardGrade cardGrade);
 
-
     void updateUserRegisterCode(String userId, Integer registerNo);
 
     void updateUserActiveCode(String userId, Integer activeNo);
@@ -72,6 +71,8 @@ public interface UserService extends CommonService<User> {
     JsonResult innerActicveUser(User activeUser, CardGrade cardGrade) throws Exception;
 
     Double sumUserMaxProfitByTime(String startTime, String endTime);
+
+    User readUserByUid(Integer uid);
 
 
 }

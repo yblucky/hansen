@@ -55,7 +55,7 @@ public class UserSignController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public RespBody getTask(HttpServletRequest request, HttpServletResponse response, Paging page) throws Exception {
+    public RespBody getTask(HttpServletRequest request, HttpServletResponse response, Paging page,String mobile,Integer uid,Integer status) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
         String token = request.getHeader("token");
@@ -66,9 +66,26 @@ public class UserSignController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
             return respBody;
         }
+        UserSign condition = new UserSign();
+        if (uid != null) {
+            condition.setUid(uid);
+        }
+        if (status != null) {
+            condition.setStatus(status);
+        }
+        if (ToolUtil.isNotEmpty(mobile)) {
+            User condion = new User();
+            condion.setPhone(mobile);
+            User u=userService.readOne(condion);
+            if (u==null){
+                respBody.add(RespCodeEnum.ERROR.getCode(), "没有记录");
+            }else{
+                condion.setUid(u.getUid());
+            }
+        }
         List<UserSign> userSignList = new ArrayList<>();
         List<UserSignVo> list = new ArrayList<>();
-        UserSign condition = new UserSign();
+
         Integer count = userSignService.readCount(condition);
         if (count != null && count > 0) {
             userSignList = userSignService.readList(condition, page.getPageNumber(), page.getPageSize(), count);

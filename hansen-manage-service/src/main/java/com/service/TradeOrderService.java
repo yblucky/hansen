@@ -4,6 +4,7 @@ import com.base.service.CommonService;
 import com.model.CardGrade;
 import com.model.TradeOrder;
 import com.model.User;
+import com.vo.BackReChargeVo;
 
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,8 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
     Double sumTotalPayAmtByTime(List<Integer> source, String startTime, String endTime);
 
     Double sumTotalTradeAmtByTime(List<Integer> source, String startTime, String endTime);
+
+
 
 
 }

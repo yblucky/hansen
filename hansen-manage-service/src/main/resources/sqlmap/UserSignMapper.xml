@@ -3,7 +3,7 @@
 <mapper namespace="com.mapper.UserSignMapper">
 
 	<sql id="fields">
-		userId,preSignTime,signTime,amt,createTime,updateTime,status,remark
+		userId,uid,preSignTime,signTime,amt,rmbCovertEquityScale,rmbCovertPayAmtScale,rmbCovertTradeAmtScale,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -19,6 +19,7 @@
 	<sql id="condition">
 		<where>
 			<if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
+			<if test="model.uid != null and model.uid != ''">uid=#{model.uid}</if>
 			<if test="model.preSignTime != null">and preSignTime=#{model.preSignTime}</if>
 			<if test="model.signTime != null">and signTime=#{model.signTime}</if>
 			<if test="model.amt != null">and amt=#{model.amt}</if>
@@ -29,7 +30,7 @@
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{userId},#{preSignTime},#{signTime},#{amt},now(),now(),#{status},#{remark});
+		values(#{id},#{userId},#{uid},#{preSignTime},#{signTime},#{amt},#{rmbCovertEquityScale},#{rmbCovertPayAmtScale},#{rmbCovertTradeAmtScale},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="com.model.UserSign">

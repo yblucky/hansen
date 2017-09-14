@@ -117,12 +117,13 @@ public class CoinController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/coinOutList",method = RequestMethod.GET)
-    public RespBody coinOutList(HttpServletRequest request, Integer currencyType, Paging page, Integer status,String uid) throws Exception  {
+    public RespBody coinOutList(HttpServletRequest request, Integer currencyType, Paging page, Integer status,String uid,String orderNo) throws Exception  {
         // 创建返回对象
         RespBody respBody = new RespBody();
-        String token = request.getHeader("token");
-        SysUserVo userVo = manageUserService.SysUserVo(token);
-        SysUser user = manageUserService.readById(userVo.getId());
+//        String token = request.getHeader("token");
+//        SysUserVo userVo = manageUserService.SysUserVo(token);
+//        SysUser user = manageUserService.readById(userVo.getId());
+        SysUser user = manageUserService.readById("3709027e482f489dbf5a79ab17649bd6");
         if (user == null) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
             return respBody;
@@ -137,6 +138,9 @@ public class CoinController extends BaseController {
         }
         if (ToolUtil.isNotEmpty(uid)){
             condition.setUserId(uid);
+        }
+        if (ToolUtil.isNotEmpty(orderNo)){
+            condition.setPrepayId(orderNo);
         }
         Integer count = walletTransactionService.readCount(condition);
         List<WalletTransaction> orders = null;
@@ -155,7 +159,7 @@ public class CoinController extends BaseController {
 
     /**
      * 2:交易币提币
-     * 5:支付币提币
+     * 5:支付币提币 废弃
      * 8:股权币提币
      *
      * @param request
@@ -191,9 +195,9 @@ public class CoinController extends BaseController {
                 return respBody;
             }
 
-            WalletOrder model = new WalletOrder();
-            model.setOrderNo(vo.getOrderId());
-            WalletOrder order = walletOrderService.readOne(model);
+            WalletTransaction  model = new WalletTransaction();
+            model.setPrepayId(vo.getOrderId());
+            WalletTransaction order = walletTransactionService.readOne(model);
             if (order == null) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "订单不存在");
                 return respBody;
@@ -202,17 +206,8 @@ public class CoinController extends BaseController {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "订单不是待审核状态");
                 return respBody;
             }
-            WalletOrder updateModel = new WalletOrder();
-            if (vo.getStatus() == WalletOrderStatus.DENIED.getCode()) {
-                updateModel.setId(vo.getOrderId());
-                updateModel.setStatus(WalletOrderStatus.DENIED.getCode());
-                updateModel.setRemark("审核不通过，审核人：" + sysUser.getUserName());
-                walletOrderService.updateById(order.getId(), updateModel);
-                respBody.add(RespCodeEnum.ERROR.getCode(), "审核不通过成功");
-                return respBody;
-            }
-            User coinUser = userService.readById(order.getSendUserId());
-            UserDetail coinUserDetail = userDetailService.readById(order.getSendUserId());
+            User coinUser = userService.readUserByUid(Integer.valueOf(order.getUserId()));
+            UserDetail coinUserDetail = userDetailService.readById(coinUser.getId());
             Boolean isDeleteFlag = false;
             if (coinUser == null) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "提币用户不存在");
@@ -226,7 +221,17 @@ public class CoinController extends BaseController {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "提币用户信息不存在");
                 return respBody;
             }
-            CurrencyType currencyType = WalletOrderType.getCoinTypeFromWalletOrderTypeCode(order.getOrderType());
+            Integer coinTyep=2;
+            if (WalletOrderType.TRADE_COIN_DRWA.getCode()==order.getOrderType()){
+                coinTyep=CurrencyType.TRADE.getCode();
+            }
+            if (WalletOrderType.PAY_COIN_DRWA.getCode()==order.getOrderType()){
+                coinTyep=CurrencyType.PAY.getCode();
+            }
+            if (WalletOrderType.EQUITY_COIN_DRWA.getCode()==order.getOrderType()){
+                coinTyep=CurrencyType.EQUITY.getCode();
+            }
+            CurrencyType currencyType = WalletOrderType.getCoinTypeFromWalletOrderTypeCode(coinTyep);
             String address = "";
             if (currencyType.getCode() == CurrencyType.TRADE.getCode()) {
                 if (ToolUtil.isEmpty(coinUserDetail.getOutTradeAddress())) {
@@ -251,17 +256,31 @@ public class CoinController extends BaseController {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "用户未添加提币地址");
                 return respBody;
             }
+            WalletTransaction updateModel = new WalletTransaction();
+            if (vo.getStatus() == WalletOrderStatus.DENIED.getCode()) {
+                updateModel.setId(vo.getOrderId());
+                updateModel.setStatus(WalletOrderStatus.DENIED.getCode());
+                updateModel.setRemark("审核不通过，审核人：" + sysUser.getUserName());
+                updateModel.setMessage("审核不通过");
+                walletTransactionService.updateById(order.getId(), updateModel);
+                respBody.add(RespCodeEnum.ERROR.getCode(), "审核不通过成功");
+                return respBody;
+            }
 
             BitcoinClient client = WalletUtil.getBitCoinClient(currencyType);
-            String txtId = WalletUtil.sendToAddress(client, address, new BigDecimal(order.getAmount().toString()), "用户" + coinUser.getUid() + "提币", "用户" + address + "收币");
+//            String txtId = WalletUtil.sendToAddress(client, address, new BigDecimal(order.getAmount().toString()), "用户" + coinUser.getUid() + "提币", "用户" + address + "收币");
+            String txtId=ToolUtil.getUUID();
             if (ToolUtil.isNotEmpty(txtId)) {
+
                 vo.setStatus(WalletOrderStatus.CONFIRMING.getCode());
-                updateModel.setRemark("提币审核通过，审核人：" + sysUser.getUserName());
-                transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID, address, WalletOrderType.fromCode(order.getOrderType()), WalletOrderStatus.CONFIRMING, txtId, order.getOrderNo(), order.getAmount());
+                updateModel.setRemark("审核通过，确认中，审核人：" + sysUser.getUserName());
+                updateModel.setMessage(WalletOrderStatus.CONFIRMING.getMsg());
+                updateModel.setId(order.getId());
+                updateModel.setStatus(vo.getStatus());
+                walletTransactionService.updateById(order.getId(), updateModel);
+                respBody.add(RespCodeEnum.SUCCESS.getCode(),WalletOrderStatus.CONFIRMING.getMsg());
+//                transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID, address, WalletOrderType.fromCode(order.getOrderType()), WalletOrderStatus.CONFIRMING, txtId, order.getPrepayId(), order.getAmount());
             }
-            updateModel.setId(vo.getOrderId());
-            updateModel.setStatus(vo.getStatus());
-            walletOrderService.updateById(order.getId(), updateModel);
         } catch (Exception e) {
             e.printStackTrace();
             respBody.add(RespCodeEnum.ERROR.getCode(), "提现审核异常");
@@ -347,8 +366,9 @@ public class CoinController extends BaseController {
         try {
 
             String token = request.getHeader("token");
-            SysUserVo userVo = manageUserService.SysUserVo(token);
-            SysUser sysUser = manageUserService.readById(userVo.getId());
+//            SysUserVo userVo = manageUserService.SysUserVo(token);
+//            SysUser sysUser = manageUserService.readById(userVo.getId());
+            SysUser sysUser = manageUserService.readById("3709027e482f489dbf5a79ab17649bd6");
             if (sysUser == null) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
                 return respBody;

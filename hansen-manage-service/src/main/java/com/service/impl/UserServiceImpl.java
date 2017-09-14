@@ -637,4 +637,9 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         return sum;
     }
+
+    @Override
+    public User readUserByUid(Integer uid) {
+        return userMapper.readUserByUid(uid);
+    }
 }

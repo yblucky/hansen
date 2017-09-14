@@ -38,7 +38,7 @@
 	</select>
 
 	<select id="readList" resultType="com.model.Task">
-		<include refid="selector"/> <include refid="condition"/>
+		<include refid="selector"/> <include refid="condition"/> WHERE  status=1
 		ORDER by createTime desc
 		limit #{startRow}, #{pageSize};
 	</select>
@@ -61,6 +61,7 @@
 			<if test="model.taskType != null">taskType= #{model.taskType},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+			<if test="model.linkImgPath != null and model.linkImgPath !=''">linkImgPath= #{model.linkImgPath},</if>
 			updateTime=now()
 		</set>
 		where id=#{id}

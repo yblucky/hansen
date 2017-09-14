@@ -45,54 +45,54 @@ public class ChargeController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public RespBody list(HttpServletRequest request, UserVo vo, Paging page) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
-        User user=null;
+        User user = null;
         List<WalletOrder> list = new ArrayList<WalletOrder>();
-        String userId="";
-        if (ToolUtil.isNotEmpty(vo.getUid()) && vo.getUid()!=0){
+        String userId = "";
+        if (ToolUtil.isNotEmpty(vo.getUid()) && vo.getUid() != 0) {
             User condition = new User();
             condition.setUid(vo.getUid());
             user = userService.readOne(condition);
         }
-        if (page.getPageNumber()==0){
+        if (page.getPageNumber() == 0) {
             page.setPageNumber(1);
         }
-        if (page.getPageSize()==0){
+        if (page.getPageSize() == 0) {
             page.setPageSize(10);
         }
-        Page page1= new Page();
+        Page page1 = new Page();
         page1.setPageNo(page.getPageNumber());
         page1.setPageSize(page.getPageSize());
-        if (user!=null){
-            userId=user.getId();
+        if (user != null) {
+            userId = user.getId();
         }
         List<Integer> orderTypeList = new ArrayList<>();
         orderTypeList.add(WalletOrderType.TRADE_COIN_BACK_CHARGE.getCode());
         orderTypeList.add(WalletOrderType.PAY_COIN_BACK_CHARGE.getCode());
         orderTypeList.add(WalletOrderType.EQUITY_COIN_BACK_CHARGE.getCode());
 
-        Integer c = walletOrderService.readOrderCount(userId,orderTypeList);
+        Integer c = walletOrderService.readOrderCount(userId, orderTypeList);
         if (c != null && c > 0) {
-            list = walletOrderService.readOrderList(userId,orderTypeList,page1);
-            for (WalletOrder order:list){
-                User u= userService.readById(order.getReceviceUserId());
+            list = walletOrderService.readOrderList(userId, orderTypeList, page1);
+            for (WalletOrder order : list) {
+                User u = userService.readById(order.getReceviceUserId());
                 order.setRemark(u.getNickName());
-                order.setReceviceUserId(u.getUid()+"");
+                order.setReceviceUserId(u.getUid() + "");
             }
-        }else {
-            c=0;
+        } else {
+            c = 0;
         }
         page.setTotalCount(c);
-        respBody.add(RespCodeEnum.SUCCESS.getCode(),"成功",page,list);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功", page, list);
         respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功", page, list);
         return respBody;
     }
 
     @ResponseBody
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RespBody add(HttpServletRequest request, @RequestBody BackReChargeVo vo) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
@@ -105,8 +105,14 @@ public class ChargeController {
         if (chargeTargerUser == null) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "充值用户不存在");
         }
+        walletOrderService.chargeService(vo, chargeTargerUser);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功");
+        return respBody;
+    }
+
+    private void chargeService(BackReChargeVo vo, User chargeTargerUser) {
         if (vo.getActiveCodeNo() != null && vo.getActiveCodeNo() > 0) {
-            TransferCode transferCode  =new TransferCode();
+            TransferCode transferCode = new TransferCode();
             transferCode.setSendUserId(Constant.SYSTEM_USER_ID);
             transferCode.setReceviceUserId(chargeTargerUser.getId());
             transferCode.setTransferNo(vo.getActiveCodeNo().intValue());
@@ -118,7 +124,7 @@ public class ChargeController {
             userService.updateUserActiveCode(chargeTargerUser.getId(), vo.getActiveCodeNo().intValue());
         }
         if (vo.getRegisterCodeNo() != null && vo.getRegisterCodeNo() > 0) {
-            TransferCode transferCode  =new TransferCode();
+            TransferCode transferCode = new TransferCode();
             transferCode.setSendUserId(Constant.SYSTEM_USER_ID);
             transferCode.setReceviceUserId(chargeTargerUser.getId());
             transferCode.setTransferNo(vo.getRegisterCodeNo().intValue());
@@ -164,7 +170,5 @@ public class ChargeController {
             walletOrderService.create(addModel);
             userService.updateEquityAmtByUserId(chargeTargerUser.getId(), vo.getEquityAmt());
         }
-        respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功");
-        return respBody;
     }
 }

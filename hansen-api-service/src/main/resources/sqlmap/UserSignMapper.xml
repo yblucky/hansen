@@ -3,7 +3,7 @@
 <mapper namespace="com.mapper.UserSignMapper">
 
 	<sql id="fields">
-		userId,preSignTime,signTime,amt,rmbCovertEquityScale,rmbCovertPayAmtScale,rmbCovertTradeAmtScale,createTime,updateTime,status,remark
+		userId,uid,preSignTime,signTime,amt,rmbCovertEquityScale,rmbCovertPayAmtScale,rmbCovertTradeAmtScale,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -29,7 +29,7 @@
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{userId},#{preSignTime},#{signTime},#{amt},#{rmbCovertEquityScale},#{rmbCovertPayAmtScale},#{rmbCovertTradeAmtScale},now(),now(),#{status},#{remark});
+		values(#{id},#{userId},#{uid},#{preSignTime},#{signTime},#{amt},#{rmbCovertEquityScale},#{rmbCovertPayAmtScale},#{rmbCovertTradeAmtScale},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="com.model.UserSign">

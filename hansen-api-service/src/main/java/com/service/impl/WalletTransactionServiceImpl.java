@@ -1,5 +1,6 @@
 package com.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.CurrencyType;
@@ -121,7 +122,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
 //            } else {
 //                transaction.setAddress(info.getOtherAccount());
 //            }
-            transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(0).toString());
+            transaction.setMessage(WalletUtil.checkTransactionStatus(0).getMessage());
             this.create(transaction);
         }
         return true;
@@ -159,7 +160,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             }
         }
         if (isUpdate) {
-            updateModel.setTransactionStatus(WalletUtil.checkTransactionStatus(confirmations).getMessage());
+            updateModel.setMessage(WalletUtil.checkTransactionStatus(confirmations).getMessage());
             this.updateById(transaction.getId(), updateModel);
             if (transaction.getOrderType() == 1) {
                 userService.updatePayAmtByUserId(transaction.getUserId(), transaction.getAmount());
@@ -191,6 +192,65 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
     @Override
     public Integer readCoinOutterCountByUid(String uid, List<Integer> list) {
         return walletTransactionMapper.readCoinOutterCountByUid(uid, list);
+    }
+
+    @Override
+    @Transactional
+    public List<WalletTransaction> handleWalletTransactions(User user, List<Integer> orderTypeList, List<WalletTransaction> transactionList) {
+        try {
+            transactionList = this.readCoinOutterListByUid(String.valueOf(user.getUid()), orderTypeList);
+        } catch (Exception e) {
+            logger.error("readCoinOutterListByUid sql查询失败");
+            e.printStackTrace();
+        }
+        for (WalletTransaction transaction : transactionList) {
+            WalletTransaction updateModel = new WalletTransaction();
+            updateModel.setId(transaction.getId());
+            TransactionInfo transactionInfo = null;
+            try {
+                logger.error("循环查找确认中的交易记录的比较：transaction.getStatus()：" + transaction.getStatus() + "  TransactionStatusType.CHECKING.getCode():" + (TransactionStatusType.CHECKING.getCode() + " == "));
+                System.out.println(transaction.getStatus().intValue() == TransactionStatusType.CHECKING.getCode());
+                if (transaction.getTransactionStatus().intValue() == TransactionStatusType.CHECKING.getCode()) {
+                    logger.error("循环查找确认中的交易记录：" + JSON.toJSONString(transaction));
+                    if (transaction.getOrderType() == WalletOrderType.TRADE_COIN_RECHARGE.getCode()) {
+                        transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.TRADE), transaction.getTxtId());
+                        if (transactionInfo == null) {
+                            continue;
+                        }
+                        if (transactionInfo.getConfirmations() > 3) {
+                            updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
+                            updateModel.setMessage("已确认");
+                            transaction.setMessage("已确认");
+                            transaction.setTransactionStatus(TransactionStatusType.CHECKED.getCode());
+                            this.updateById(updateModel.getId(), updateModel);
+                            userService.updateTradeAmtByUserId(user.getId(), transaction.getAmount());
+                        }
+                    } else if (transaction.getOrderType() == WalletOrderType.PAY_COIN_RECHARGE.getCode()) {
+                        transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.PAY), transaction.getTxtId());
+                        if (transactionInfo == null) {
+                            continue;
+                        }
+                        if (transactionInfo.getConfirmations() > 3) {
+                            updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
+                            updateModel.setMessage("已确认");
+                            transaction.setMessage("已确认");
+                            transaction.setTransactionStatus(TransactionStatusType.CHECKED.getCode());
+                            this.updateById(updateModel.getId(), updateModel);
+                            userService.updatePayAmtByUserId(user.getId(), transaction.getAmount());
+                        }
+                    }
+                }
+//                    else if (transaction.getOrderType() == WalletOrderType.EQUITY_COIN_RECHARGE.getCode()) {
+//                    updateModel.setStatus(TransactionStatusType.CHECKED.getCode());
+//                    transactionInfo = WalletUtil.getTransactionJSON(WalletUtil.getBitCoinClient(CurrencyType.EQUITY), transaction.getTxtId());
+//                    walletTransactionService.updateById(updateModel.getId(), updateModel);
+//                    userService.updateEquityAmtByUserId(user.getId(), transaction.getAmount());
+//                   }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return transactionList;
     }
 
     public static void main(String[] args) {

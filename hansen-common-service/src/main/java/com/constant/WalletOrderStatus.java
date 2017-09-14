@@ -7,7 +7,7 @@ package com.constant;
  */
 public enum WalletOrderStatus {
     /**
-     * 待结算
+     * 待审核
      */
     PENDING(1, "待审核"),
     /**
@@ -19,9 +19,9 @@ public enum WalletOrderStatus {
      */
     DENIED(3, "审核不通过"),
     /**
-     *   交易成功
+     *   到账成功
      */
-    SUCCESS(4, "交易成功"),
+    SUCCESS(4, "到账成功"),
     /**
      *  已删除
      */

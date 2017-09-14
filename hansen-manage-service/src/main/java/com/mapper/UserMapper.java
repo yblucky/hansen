@@ -34,4 +34,6 @@ public interface UserMapper extends CommonDao<User> {
 
     Double sumUserMaxProfitByTime(@Param("startTime") String startTime, @Param("endTime") String endTime);
 
+    User readUserByUid(@Param("uid") Integer uid);
+
 }

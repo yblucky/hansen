@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.WalletTransactionMapper">
 
 	<sql id="fields">
-		userId,txtId,prepayId,transactionLongTime,transactionTime,address,amount,category,fee,confirmations,transactionStatus,message,createTime,updateTime,status,remark
+		userId,txtId,prepayId,transactionLongTime,transactionTime,address,amount,category,fee,confirmations,transactionStatus,message,details,orderType,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -29,12 +29,15 @@
 			<if test="model.category != null and model.category != ''">and category=#{model.category}</if>
 			<if test="model.fee != null">and fee=#{model.fee}</if>
 			<if test="model.confirmations != null">and confirmations=#{model.confirmations}</if>
-			<if test="model.transactionStatus != null and model.transactionStatus != ''">and transactionStatus=#{model.transactionStatus}</if>
+			<if test="model.transactionStatus != null">and transactionStatus=#{model.transactionStatus}</if>
 			<if test="model.message != null and model.message != ''">and message=#{model.message}</if>
+			<if test="model.details != null">and details=#{model.details}</if>
+			<if test="model.orderType != null">and orderType=#{model.orderType}</if>
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
 		</where>
 	</sql>
+
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
 		values(#{id},#{userId},#{txtId},#{prepayId},#{transactionLongTime},#{transactionTime},#{address},#{amount},#{category},#{fee},#{confirmations},#{transactionStatus},#{message},#{details},#{orderType},now(),now(),#{status},#{remark});
@@ -69,8 +72,10 @@
 			<if test="model.category != null and model.category !=''">category= #{model.category},</if>
 			<if test="model.fee != null">fee= #{model.fee},</if>
 			<if test="model.confirmations != null">confirmations= #{model.confirmations},</if>
-			<if test="model.transactionStatus != null and model.transactionStatus !=''">transactionStatus= #{model.transactionStatus},</if>
+			<if test="model.transactionStatus != null">transactionStatus= #{model.transactionStatus},</if>
 			<if test="model.message != null and model.message !=''">message= #{model.message},</if>
+			<if test="model.details != null">details= #{model.details},</if>
+			<if test="model.orderType != null">orderType= #{model.orderType},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
 			updateTime=now()

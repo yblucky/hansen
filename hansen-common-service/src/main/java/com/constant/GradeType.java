@@ -69,6 +69,18 @@ public enum GradeType {
         return "";
     }
 
+    public static GradeType fromCode(Integer code) {
+        try {
+            for (GradeType gradeType : GradeType.values()) {
+                if (gradeType.getCode().intValue() == code.intValue()) {
+                    return gradeType;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public Integer getCode() {
         return code;

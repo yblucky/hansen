@@ -56,7 +56,7 @@ public class WalletTransaction extends BaseModel {
     /**
      * 交易状态
      */
-    private String transactionStatus;
+    private Integer transactionStatus;
     /**
      * 交易状态
      */
@@ -66,7 +66,7 @@ public class WalletTransaction extends BaseModel {
      */
     private Map<String, Object> details;
     /**
-     币种类型 1：交易币  2 支付币   3 股权币
+     * 币种类型 1：交易币  2 支付币   3 股权币
      **/
     private Integer orderType;
 
@@ -151,11 +151,12 @@ public class WalletTransaction extends BaseModel {
         this.confirmations = confirmations;
     }
 
-    public String getTransactionStatus() {
+
+    public Integer getTransactionStatus() {
         return transactionStatus;
     }
 
-    public void setTransactionStatus(String transactionStatus) {
+    public void setTransactionStatus(Integer transactionStatus) {
         this.transactionStatus = transactionStatus;
     }
 

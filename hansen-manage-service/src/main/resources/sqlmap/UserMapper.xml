@@ -62,6 +62,10 @@
 		<include refid="selector"/> where id=#{id}  limit 1;
 	</select>
 
+	<select id="readUserByUid" resultType="User">
+		<include refid="selector"/>  WHERE    uid=#{uid}   limit 1;
+	</select>
+
 	<select id="readList" resultType="User">
 		<include refid="selector"/> <include refid="condition"/>
 		ORDER BY createtime desc

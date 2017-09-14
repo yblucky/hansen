@@ -4,7 +4,8 @@ import com.base.dao.CommonDao;
 import com.base.page.Page;
 import com.base.page.PageResult;
 import com.base.service.impl.CommonServiceImpl;
-import com.constant.CurrencyType;
+import com.constant.Constant;
+import com.constant.TransactionStatusType;
 import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
 import com.mapper.WalletOrderMapper;
@@ -17,13 +18,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.paradoxs.bitcoin.client.BitcoinClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.utils.numberutils.RandomUtil.getCode;
 
 /**
  * @date 2016年11月27日
@@ -108,48 +106,55 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         if (!outType.contains(walletOrderType.getCode())) {
             return false;
         }
-        UserDetail userDetail=userDetailService.readById(fromUserId);
-        User user=userService.readById(fromUserId);
-        WalletTransaction model =new WalletTransaction();
+        UserDetail userDetail = userDetailService.readById(fromUserId);
+        User user = userService.readById(fromUserId);
+        WalletTransaction model = new WalletTransaction();
+
         if (WalletOrderType.TRADE_COIN_DRWA.getCode() == walletOrderType.getCode()) {
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.TRADECOINOUTSCALE));
-            poundageScale = amt * poundageScale;
+            poundage = amt * poundageScale;
             confirmAmount = amt - poundage;
-            userService.updateTradeAmtByUserId(fromUserId, -confirmAmount);
+            userService.updateTradeAmtByUserId(fromUserId, -amt);
             model.setAddress(userDetail.getOutTradeAddress());
             model.setOrderType(WalletOrderType.TRADE_COIN_DRWA.getCode());
             model.setRemark(WalletOrderType.TRADE_COIN_DRWA.getMsg());
-            userDetailService.updateForzenTradeAmtByUserId(fromUserId,confirmAmount);
+            model.setFee(poundage);
+            userDetailService.updateForzenTradeAmtByUserId(fromUserId, amt);
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.TRADE);
 //            txtId= WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         } else if (WalletOrderType.PAY_COIN_DRWA.getCode() == walletOrderType.getCode()) {
-            poundageScale = amt * poundageScale;
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.PAYCOINOUTSCALE));
-            userService.updatePayAmtByUserId(fromUserId, -confirmAmount);
-            userDetailService.updateForzenPayAmtByUserId(fromUserId,confirmAmount);
+            poundage = amt * poundageScale;
+            userService.updatePayAmtByUserId(fromUserId, -amt);
+            userDetailService.updateForzenPayAmtByUserId(fromUserId, amt);
             model.setAddress(userDetail.getOutPayAddress());
             model.setRemark(WalletOrderType.TRADE_COIN_DRWA.getMsg());
+            model.setFee(poundage);
             model.setOrderType(WalletOrderType.PAY_COIN_DRWA.getCode());
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.PAY);
 //            txtId=WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         } else if (WalletOrderType.EQUITY_COIN_DRWA.getCode() == walletOrderType.getCode()) {
-            poundageScale = amt * poundageScale;
             poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.EQUITYCOINOUTSCALE));
+            poundage = amt * poundageScale;
             model.setAddress(userDetail.getOutEquityAddress());
-            userService.updateEquityAmtByUserId(fromUserId, -confirmAmount);
-            userDetailService.updateForzenEquityAmtByUserId(fromUserId,confirmAmount);
+            userService.updateEquityAmtByUserId(fromUserId, -amt);
+            userDetailService.updateForzenEquityAmtByUserId(fromUserId, amt);
             model.setRemark(WalletOrderType.TRADE_COIN_DRWA.getMsg());
             model.setOrderType(WalletOrderType.EQUITY_COIN_DRWA.getCode());
+            model.setFee(poundage);
 //            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.EQUITY);
 //            txtId=  WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
         }
         //创建提币订单
 //        WalletOrder order = this.addWalletOrder(fromUserId, "", walletOrderType, -amt, -confirmAmount, poundage, WalletOrderStatus.PENDING);
-        model.setAmount(-confirmAmount);
-        model.setStatus(WalletOrderStatus.PENDING.getCode());
-        model.setTransactionStatus(WalletOrderStatus.PENDING.getMsg());
+        model.setAmount(amt);
+        model.setStatus(WalletOrderStatus.DENIED.getCode());
+        model.setTransactionStatus(TransactionStatusType.UNCHECKED.getCode());
         model.setMessage(WalletOrderStatus.PENDING.getMsg());
         model.setUserId(user.getUid().toString());
+        model.setPrepayId(OrderNoUtil.get());
+        model.setCategory(Constant.COIN_OUT);
+        model.setConfirmations(0l);
         transactionService.create(model);
         //管理后台审核通过的审核，生成此记录
 //        transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID,address,walletOrderType,txtId,order.getOrderNo(),amt);

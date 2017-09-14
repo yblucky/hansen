@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/task")
@@ -163,7 +164,7 @@ public class TaskController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public RespBody doDelTask(HttpServletRequest request, HttpServletResponse response, String taskId) throws Exception {
+    public RespBody doDelTask(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
         String token = request.getHeader("token");
@@ -174,6 +175,7 @@ public class TaskController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
             return respBody;
         }
+        String taskId = (String) map.get("id");
         if(ToolUtil.isEmpty(taskId)){
             respBody.add(RespCodeEnum.ERROR.getCode(), "任务不存在,请刷新");
             return respBody;

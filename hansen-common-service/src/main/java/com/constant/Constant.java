@@ -11,4 +11,6 @@ public class Constant {
     public  static  final String  RMB_CONVERT_TRADE_SCALE="tradeScale";
     public  static  final String  RMB_CONVERT_EQUITY_SCALE="equityScale";
     public  static  final String  KYP="KYP";
+    public  static  final String  COIN_OUT="send";
+    public  static  final String  COIN_IN="receive";
 }

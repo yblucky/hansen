@@ -4,7 +4,9 @@ import com.base.page.Page;
 import com.base.service.CommonService;
 import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
+import com.model.User;
 import com.model.WalletOrder;
+import com.vo.BackReChargeVo;
 
 import java.util.List;
 
@@ -21,5 +23,7 @@ public interface WalletOrderService extends CommonService<WalletOrder> {
     List<WalletOrder> readOrderList( String receviceUserId, List<Integer> list, Page page);
 
     Integer readOrderCount( String receviceUserId, List<Integer> list);
+
+    void chargeService(BackReChargeVo vo, User chargeTargerUser);
 
 }

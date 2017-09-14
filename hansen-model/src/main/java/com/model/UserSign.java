@@ -17,6 +17,10 @@ public class UserSign extends BaseModel {
      * 用户id
      */
     private String userId;
+    /**
+     * 用户id
+     */
+    private Integer uid;
     /***预计签到时间**/
     private Date preSignTime;
     /***实际签到时间**/
@@ -92,5 +96,13 @@ public class UserSign extends BaseModel {
 
     public void setRmbCovertTradeAmtScale(Double rmbCovertTradeAmtScale) {
         this.rmbCovertTradeAmtScale = rmbCovertTradeAmtScale;
+    }
+
+    public Integer getUid() {
+        return uid;
+    }
+
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 }

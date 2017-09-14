@@ -2,6 +2,7 @@ package com.service;
 
 import com.base.service.CommonService;
 import com.constant.WalletOrderType;
+import com.model.User;
 import com.model.WalletTransaction;
 import ru.paradoxs.bitcoin.client.BitcoinClient;
 
@@ -29,4 +30,6 @@ public interface WalletTransactionService extends CommonService<WalletTransactio
     List<WalletTransaction> readCoinOutterListByUid(String uid,List<Integer> list) throws Exception;
 
     Integer readCoinOutterCountByUid(String uid,List<Integer> list) ;
+
+    List<WalletTransaction> handleWalletTransactions(User user, List<Integer> orderTypeList, List<WalletTransaction> transactionList);
 }

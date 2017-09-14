@@ -52,7 +52,7 @@ public class ReadTransactionFromWalletTask extends BaseScheduleTask {
                 } else {
                     transaction.setAddress(info.getOtherAccount());
                 }
-                transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(Long.valueOf(info.getConfirmations() + "")).toString());
+                transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(Long.valueOf(info.getConfirmations() + "")).getCode());
                 transactionService.create(transaction);
                 if (ToolUtil.isNotEmpty(info.getTo())) {
 //                    prepayService.updatePrepayId(info.getTo(), "HANDLED");
