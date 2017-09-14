@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sun.tools.doclint.Entity.nu;
+
 /**
  * Created on 2017-08-21;
  */
@@ -58,9 +60,28 @@ public class UserController extends BaseController {
         // 创建返回对象
         RespBody respBody = new RespBody();
         User condition = new User();
-        condition.setUid(vo.getUid());
-        condition.setPhone(vo.getPhone());
-        condition.setId(vo.getId());
+        if (vo.getUid()!=null){
+            condition.setUid(vo.getUid());
+        }
+        if (ToolUtil.isNotEmpty(vo.getPhone())){
+            condition.setPhone(vo.getPhone());
+        }
+        if (ToolUtil.isNotEmpty(vo.getNickName())){
+            condition.setNickName(vo.getNickName());
+        }
+
+        if (ToolUtil.isNotEmpty(vo.getGrade())){
+            condition.setGrade(vo.getGrade());
+        }
+        if (ToolUtil.isNotEmpty(vo.getGrade())){
+            condition.setGrade(vo.getGrade());
+        }
+        if (ToolUtil.isNotEmpty(vo.getCardGrade())){
+            condition.setCardGrade(vo.getCardGrade());
+        }
+        if (ToolUtil.isNotEmpty(vo.getStatus())){
+            condition.setStatus(vo.getStatus());
+        }
         Integer count = userService.readCount(condition);
         List<User> users = userService.readList(condition, page.getPageNumber(), page.getPageSize(), count);
         List<UserVo> list = new ArrayList<UserVo>();

@@ -80,7 +80,7 @@ public class UserSignController extends BaseController {
             if (u==null){
                 respBody.add(RespCodeEnum.ERROR.getCode(), "没有记录");
             }else{
-                condion.setUid(u.getUid());
+                condition.setUid(u.getUid());
             }
         }
         List<UserSign> userSignList = new ArrayList<>();

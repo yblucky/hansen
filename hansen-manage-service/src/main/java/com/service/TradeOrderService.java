@@ -31,9 +31,13 @@ public interface TradeOrderService extends CommonService<TradeOrder> {
 
     Map<String, Double> getCoinNoFromRmb(Double rmbAmt) throws Exception;
 
+    List<TradeOrder> readInsuranceListByOrderType(String userId, List<Integer> source, Integer startRow, Integer pageSize) throws Exception;
+
     List<TradeOrder> readRewardListByOrderType(String userId, List<Integer> source, Integer startRow, Integer pageSize) throws Exception;
 
     Integer readRewardCountByOrderType(String userId, List<Integer> source);
+
+    Integer readInsuranceCountByOrderType(String userId, List<Integer> source);
 
     Double sumReadRewardByOrderType(String userId, List<Integer> source);
 

@@ -69,7 +69,7 @@ public class TradeOrderController extends BaseController {
             return respBody;
         }
         Boolean isHasData = true;
-        String receviceUserId = null;
+        String sendUserId = null;
         User con = new User();
 
         User conUser = null;
@@ -79,7 +79,7 @@ public class TradeOrderController extends BaseController {
             if (conUser == null) {
                 isHasData = false;
             } else {
-                receviceUserId = conUser.getId();
+                sendUserId = conUser.getId();
             }
         }
         if (ToolUtil.isNotEmpty(phone)) {
@@ -88,7 +88,7 @@ public class TradeOrderController extends BaseController {
             if (conUser == null) {
                 isHasData = false;
             } else {
-                receviceUserId = conUser.getId();
+                sendUserId = conUser.getId();
             }
         }
         if (page.getPageNumber() == 0) {
@@ -103,9 +103,9 @@ public class TradeOrderController extends BaseController {
         sourceList.add(OrderType.INSURANCE.getCode());
         sourceList.add(OrderType.INSURANCE_ORIGIN.getCode());
         sourceList.add(OrderType.INSURANCE_COVER.getCode());
-        Integer count = tradeOrderService.readRewardCountByOrderType(receviceUserId, sourceList);
+        Integer count = tradeOrderService.readInsuranceCountByOrderType(sendUserId, sourceList);
         if (count != null && count > 0) {
-            list = tradeOrderService.readRewardListByOrderType(receviceUserId, sourceList, page.getStartRow(), page.getPageSize());
+            list = tradeOrderService.readInsuranceListByOrderType(sendUserId, sourceList, page.getStartRow(), page.getPageSize());
             rsList = new ArrayList<>();
             TradeOrderVo vo = null;
             User userPo = null;

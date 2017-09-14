@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.UserDepartmentMapper">
 
 	<sql id="fields">
-		userId,uid,performance,grade,parentUserId,nickName,createTime,updateTime,status,remark
+		userId,uid,performance,teamPerformance,grade,parentUserId,nickName,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -31,7 +31,7 @@
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{userId},#{uid},#{performance},#{grade},#{parentUserId},#{nickName},now(),now(),#{status},#{remark});
+		values(#{id},#{userId},#{uid},#{performance},#{teamPerformance},#{grade},#{parentUserId},#{nickName},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="UserDepartment">

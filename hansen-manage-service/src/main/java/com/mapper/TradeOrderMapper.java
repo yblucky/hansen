@@ -22,7 +22,11 @@ public interface TradeOrderMapper extends CommonDao<TradeOrder> {
 
     List<TradeOrder> readRewardListByOrderType(@Param("userId")String userId,@Param("list")List<Integer> source, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize) throws Exception;
 
+    List<TradeOrder> readInsuranceListByOrderType(@Param("userId")String userId,@Param("list")List<Integer> source, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize) throws Exception;
+
     Integer readRewardCountByOrderType(@Param("userId")String userId,@Param("list") List<Integer> source);
+
+    Integer readInsuranceCountByOrderType(@Param("userId")String userId,@Param("list") List<Integer> source);
 
     Double  sumReadRewardByOrderType(@Param("userId")String userId,@Param("list") List<Integer> source);
 

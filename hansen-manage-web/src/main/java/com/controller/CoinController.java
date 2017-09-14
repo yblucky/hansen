@@ -60,7 +60,7 @@ public class CoinController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public RespBody list(HttpServletRequest request, Integer currencyType, Paging page, Integer status,String orderNo) throws Exception  {
+    public RespBody list(HttpServletRequest request, Integer currencyType, Paging page, Integer status,String orderNo,String phone,Integer uid) throws Exception  {
         // 创建返回对象
         RespBody respBody = new RespBody();
         String token = request.getHeader("token");
@@ -81,6 +81,24 @@ public class CoinController extends BaseController {
         if (ToolUtil.isNotEmpty(orderNo)){
             condition.setOrderNo(orderNo);
         }
+        if (ToolUtil.isNotEmpty(uid)){
+            User u =userService.readUserByUid(uid);
+            if (u==null){
+                respBody.add(RespCodeEnum.ERROR.getCode(), "查不到记录");
+            }else {
+                condition.setReceviceUserId(u.getId());
+            }
+        }
+        if (ToolUtil.isNotEmpty(phone)){
+            User uc=new User();
+            uc.setPhone(userVo.getMobile());
+            User u =userService.readOne(uc);
+            if (u==null){
+                respBody.add(RespCodeEnum.ERROR.getCode(), "查不到记录");
+            }else {
+                condition.setReceviceUserId(u.getId());
+            }
+        }
         Integer count = walletOrderService.readCount(condition);
         List<WalletOrder> orders = null;
         if (count != null && count > 0) {
@@ -92,7 +110,7 @@ public class CoinController extends BaseController {
                 }
                 User sendUser =  userService.readById(order.getSendUserId());
                 if (sendUser!=null){
-                    order.setSendUserId(receUser.getUid()+"");
+                    order.setSendUserId(sendUser.getUid()+"");
                 }
             }
         } else {

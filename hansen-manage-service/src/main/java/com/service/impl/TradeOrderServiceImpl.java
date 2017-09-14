@@ -223,10 +223,19 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
     public List<TradeOrder> readRewardListByOrderType(String userId, List<Integer> source, Integer startRow, Integer pageSize) throws Exception {
         return tradeOrderMapper.readRewardListByOrderType(userId, source,startRow, pageSize);
     }
+    @Override
+    public List<TradeOrder> readInsuranceListByOrderType(String userId, List<Integer> source, Integer startRow, Integer pageSize) throws Exception {
+        return tradeOrderMapper.readInsuranceListByOrderType(userId, source,startRow, pageSize);
+    }
 
     @Override
     public Integer readRewardCountByOrderType(String userId, List<Integer> source) {
         return tradeOrderMapper.readRewardCountByOrderType(userId, source);
+    }
+
+    @Override
+    public Integer readInsuranceCountByOrderType(String userId, List<Integer> source) {
+        return tradeOrderMapper.readInsuranceCountByOrderType(userId, source);
     }
 
     @Override

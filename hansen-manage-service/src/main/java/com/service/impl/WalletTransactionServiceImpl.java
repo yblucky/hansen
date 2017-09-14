@@ -99,7 +99,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             } else {
                 transaction.setAddress(info.getOtherAccount());
             }
-            transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(info.getConfirmations()).toString());
+            transaction.setTransactionStatus(WalletUtil.checkTransactionStatus(info.getConfirmations()).getCode());
             this.create(transaction);
         }
         return true;
@@ -137,7 +137,7 @@ public class WalletTransactionServiceImpl extends CommonServiceImpl<WalletTransa
             }
         }
         if (isUpdate) {
-            updateModel.setTransactionStatus(WalletUtil.checkTransactionStatus(confirmations).getMessage());
+            updateModel.setTransactionStatus(WalletUtil.checkTransactionStatus(confirmations).getCode());
             this.updateById(transaction.getId(), updateModel);
             if (transaction.getOrderType() == 1) {
                 userService.updatePayAmtByUserId(transaction.getUserId(), transaction.getAmount());
