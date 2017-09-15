@@ -353,7 +353,7 @@ public class UserController {
         Double differPayAmt = CurrencyUtil.multiply(differPayRmbAmt, payScale, 4);
         Double differTradeAmt = CurrencyUtil.multiply(differTradeRmbAmt, tradeScale, 4);
         if (loginUser.getRegisterCodeNo() < differActiceNo || loginUser.getActiveCodeNo() < differRegisterNo) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "用户激活码或注册码不足，请先补充激活码或注册码!");
+            return new JsonResult(ResultCode.ERROR.getCode(), "用户消费码不足!");
         }
         /**校验虚拟币**/
         if (loginUser.getPayAmt() < differPayAmt) {

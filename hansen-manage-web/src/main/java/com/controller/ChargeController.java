@@ -119,7 +119,7 @@ public class ChargeController {
             transferCode.setType(CodeType.ACTIVATECODE.getCode());
             transferCode.setReceviceUserNick(chargeTargerUser.getNickName());
             transferCode.setSendUserNick(Constant.SYSTEM_USER_NICKNAME);
-            transferCode.setRemark("系统赠送激活码");
+            transferCode.setRemark("系统赠送消费码");
             transferCodeService.create(transferCode);
             userService.updateUserActiveCode(chargeTargerUser.getId(), vo.getActiveCodeNo().intValue());
         }

@@ -136,7 +136,7 @@ public class ActiveCodeController {
         }
         if (vo.getCodeType()==1){
             if (fromUser.getActiveCodeNo() < vo.getTransferNo()) {
-                return new JsonResult(ResultCode.ERROR.getCode(), "激活码数量不足");
+                return new JsonResult(ResultCode.ERROR.getCode(), "消费码数量不足");
             }
         }else if (vo.getCodeType()==2){
             if (fromUser.getRegisterCodeNo() < vo.getTransferNo()) {
@@ -178,7 +178,7 @@ public class ActiveCodeController {
             return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
         }
         activeCodeService.codeTransfer(fromUser.getId(), toUser.getId(), toUser.getUid(), vo.getTransferNo(),vo.getCodeType());
-        return new JsonResult(ResultCode.SUCCESS.getCode(), "激活码转账成功");
+        return new JsonResult(ResultCode.SUCCESS.getCode(), "消费码转账成功");
     }
 
     /**
@@ -198,14 +198,14 @@ public class ActiveCodeController {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户不存在");
         }
         if (UserStatusType.OUT.getCode() != user.getStatus()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "账号不是出局状态，暂时不需要使用激活码");
+            return new JsonResult(ResultCode.ERROR.getCode(), "账号不是出局状态，暂时不需要使用消费码");
         }
         CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
         if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "无法获取用户开卡等级");
         }
         if (user.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "重新激活需要" + cardGrade.getActiveCodeNo() + "个激活码，激活码数量不足");
+            return new JsonResult(ResultCode.ERROR.getCode(), "重新激活需要" + cardGrade.getActiveCodeNo() + "个消费码，消费码数量不足");
         }
         activeCodeService.useActiveCode(user.getId(), cardGrade.getActiveCodeNo(), "");
         return new JsonResult(ResultCode.SUCCESS.getCode(), "激活账户成功");
@@ -264,7 +264,7 @@ public class ActiveCodeController {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户开卡等级有误");
         }
         if (user.getActiveCodeNo()<cardGrade.getActiveCodeNo()){
-            return new JsonResult(ResultCode.ERROR.getCode(), "激活码不足,无法激活账户");
+            return new JsonResult(ResultCode.ERROR.getCode(), "消费码不足,无法激活账户");
         }
         Boolean flag = userService.intervalActice(user.getId());
         if (flag){
