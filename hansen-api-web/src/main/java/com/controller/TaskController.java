@@ -119,4 +119,34 @@ public class TaskController {
         userTaskService.doTask(user.getId(), userTask);
         return new JsonResult(userTask);
     }
+
+    /**
+     * 根据任务id查询任务信息
+     * @param request
+     * @param response
+     * @param taskId
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getTaskInfoById", method = RequestMethod.GET)
+    public JsonResult getTaskInfoById(HttpServletRequest request, HttpServletResponse response,String taskId) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
+        User user = userService.readById(token.getId());
+        if (user == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "用户不存在");
+        }
+        if (UserStatusType.ACTIVATESUCCESSED.getCode() != user.getStatus()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "账号未激活");
+        }
+        if (ToolUtil.isEmpty(taskId)) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "任务id不能为空");
+        }
+        UserTask userTask = userTaskService.readById(taskId);
+        if (userTask == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "任务不存在");
+        }
+        return new JsonResult(userTask);
+    }
+
 }

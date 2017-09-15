@@ -253,7 +253,15 @@ public class LoginController {
                 vo.setUserTask(lastUserTask);
             }
         }
-
+        //测试数据
+/*        UserTask lastUserTask = new UserTask();
+        lastUserTask.setId("1008611");
+        lastUserTask.setAssignTaskTime(new Date());
+        lastUserTask.setDiscription("辣鸡辣鸡辣鸡辣鸡辣鸡辣鸡辣鸡辣鸡");
+        lastUserTask.setLink("www.baidu.com");
+        lastUserTask.setStatus(1);
+        lastUserTask.setTitle("测试数据");
+        vo.setUserTask(lastUserTask);*/
         return new JsonResult(vo);
     }
 
