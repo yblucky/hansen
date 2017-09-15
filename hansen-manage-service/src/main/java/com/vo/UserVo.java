@@ -1,20 +1,18 @@
 package com.vo;
 
-import com.BaseModel;
 import com.constant.CardLevelType;
 import com.constant.GradeType;
 import com.constant.UserStatusType;
+import com.model.User;
+import com.model.UserDetail;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.util.Date;
 
 
-public class UserVo extends BaseModel implements Serializable {
+public class UserVo  extends User {
     private Integer uid;
-
-    private String userName;
     /**
      * 昵称
      */
@@ -75,6 +73,40 @@ public class UserVo extends BaseModel implements Serializable {
      * 状态
      */
     protected String statusName;
+
+    private UserDetail userDetail;
+
+
+    /**
+     * '收货人'
+     */
+    private String receiver;
+    /**
+     * '收货人手机号
+     */
+    private String receiverPhone;
+    /**
+     * ''收货地址''
+     */
+    private String shopAddr;
+    /**
+     * '用户名'
+     */
+    private String userName;
+    /**
+     * '银行名称'
+     */
+    private String bankName;
+    /**
+     * '银行所属型'
+     */
+    private String bankType;
+    /**
+     * 银行卡号
+     */
+    private String bankCardNo;
+    private String confirmPassword;
+    private String confirmPayWord;
 
     public Integer getUid() {
         return uid;
@@ -158,13 +190,6 @@ public class UserVo extends BaseModel implements Serializable {
 
     }
 
-    public Integer getLoginName() {
-        return loginName;
-    }
-
-    public void setLoginName(Integer loginName) {
-        this.loginName = loginName;
-    }
 
     public Integer getCardGrade() {
         return cardGrade;
@@ -240,5 +265,77 @@ public class UserVo extends BaseModel implements Serializable {
 
     public void setStatusName(String statusName) {
         this.statusName = statusName;
+    }
+
+    public UserDetail getUserDetail() {
+        return userDetail;
+    }
+
+    public void setUserDetail(UserDetail userDetail) {
+        this.userDetail = userDetail;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
+    }
+
+    public String getShopAddr() {
+        return shopAddr;
+    }
+
+    public void setShopAddr(String shopAddr) {
+        this.shopAddr = shopAddr;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getBankType() {
+        return bankType;
+    }
+
+    public void setBankType(String bankType) {
+        this.bankType = bankType;
+    }
+
+    public String getBankCardNo() {
+        return bankCardNo;
+    }
+
+    public void setBankCardNo(String bankCardNo) {
+        this.bankCardNo = bankCardNo;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public String getConfirmPayWord() {
+        return confirmPayWord;
+    }
+
+    public void setConfirmPayWord(String confirmPayWord) {
+        this.confirmPayWord = confirmPayWord;
     }
 }

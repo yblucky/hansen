@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.UserDetailMapper">
 
     <sql id="fields">
-        forzenPayAmt,forzenTradeAmt,forzenEquityAmt,inPayAddress,inTradeAddress,inEquityAddress,outPayAddress,outEquityAddress,outTradeAddress,levles,province,city,county,addr,createTime,updateTime,status,remark
+        forzenPayAmt,forzenTradeAmt,forzenEquityAmt,inPayAddress,inTradeAddress,inEquityAddress,outPayAddress,outEquityAddress,outTradeAddress,levles,province,city,county,addr,receiver,receiverPhone,shopAddr,userName,bankName,bankType,bankCardNo,createTime,updateTime,status,remark
     </sql>
 
     <sql id="fields_id">
@@ -33,6 +33,13 @@
             <if test="model.city != null and model.city != ''">and city=#{model.city}</if>
             <if test="model.county != null and model.county != ''">and county=#{model.county}</if>
             <if test="model.addr != null and model.addr != ''">and addr=#{model.addr}</if>
+            <if test="model.receiver != null and model.receiver != ''">and receiver=#{model.receiver}</if>
+            <if test="model.receiverPhone != null and model.receiverPhone != ''">and receiverPhone=#{model.receiverPhone}</if>
+            <if test="model.shopAddr != null and model.shopAddr != ''">and shopAddr=#{model.shopAddr}</if>
+            <if test="model.userName != null and model.userName != ''">and userName=#{model.userName}</if>
+            <if test="model.bankName != null and model.bankName != ''">and bankName=#{model.bankName}</if>
+            <if test="model.bankType != null and model.bankType != ''">and bankType=#{model.bankType}</if>
+            <if test="model.bankCardNo != null and model.bankCardNo != ''">and bankCardNo=#{model.bankCardNo}</if>
             <if test="model.status != null">and status=#{model.status}</if>
             <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
         </where>
@@ -40,8 +47,9 @@
 
     <insert id="create" useGeneratedKeys="true" keyProperty="id">
         insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-        values(#{id},#{forzenPayAmt},#{forzenTradeAmt},#{forzenEquityAmt},#{inPayAddress},#{inTradeAddress},#{inEquityAddress},#{outPayAddress},#{outEquityAddress},#{outTradeAddress},#{levles},#{province},#{city},#{county},#{addr},now(),now(),#{status},#{remark});
+        values(#{id},#{forzenPayAmt},#{forzenTradeAmt},#{forzenEquityAmt},#{inPayAddress},#{inTradeAddress},#{inEquityAddress},#{outPayAddress},#{outEquityAddress},#{outTradeAddress},#{levles},#{province},#{city},#{county},#{addr},#{receiver},#{receiverPhone},#{shopAddr},#{userName},#{bankName},#{bankType},#{bankCardNo},now(),now(),#{status},#{remark});
     </insert>
+
 
     <select id="readById" resultType="com.model.UserDetail">
         <include refid="selector"/> where id=#{id}  limit 1;
@@ -90,12 +98,20 @@
             <if test="model.city != null and model.city !=''">city= #{model.city},</if>
             <if test="model.county != null and model.county !=''">county= #{model.county},</if>
             <if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
+            <if test="model.receiver != null and model.receiver !=''">receiver= #{model.receiver},</if>
+            <if test="model.receiverPhone != null and model.receiverPhone !=''">receiverPhone= #{model.receiverPhone},</if>
+            <if test="model.shopAddr != null and model.shopAddr !=''">shopAddr= #{model.shopAddr},</if>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.bankName != null and model.bankName !=''">bankName= #{model.bankName},</if>
+            <if test="model.bankType != null and model.bankType !=''">bankType= #{model.bankType},</if>
+            <if test="model.bankCardNo != null and model.bankCardNo !=''">bankCardNo= #{model.bankCardNo},</if>
             <if test="model.status != null">status= #{model.status},</if>
             <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
             updateTime=now()
         </set>
         where id=#{id}
     </update>
+
 
     <update id="deleteById">
         update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}

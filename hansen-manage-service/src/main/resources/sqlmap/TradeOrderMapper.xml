@@ -166,14 +166,14 @@
              select count(id) from <include refid="table_name"/>
                 <where>
                     1=1
+                    <if test="list != null">
+                        AND  source in    <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+                    </if>
                     <if test="startTime != null">
                         AND createTime >=#{startTime}
                     </if>
                     <if test="endTime != null">
                         AND createTime <=#{endTime}
-                    </if>
-                    <if test="list != null">
-                        AND  source in    <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
                     </if>
             </where>
         ]]>

@@ -17,7 +17,7 @@ public class AutoGenerMapper {
         System.out.println("===============================FeedBack==============================================");
         System.out.println("=============================================================================");
         System.out.println("\n\n\n\n\n\n");
-        genMapperXml(UserSign.class);
+        genMapperXml(UserDetail.class);
 
 
         System.out.println("\n\n\n\n\n\n");

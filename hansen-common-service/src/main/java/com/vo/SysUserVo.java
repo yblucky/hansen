@@ -68,6 +68,11 @@ public class SysUserVo implements Serializable {
     private String state;
 
     /**
+     * 状态
+     */
+    private String remark;
+
+    /**
      * @return the salt
      */
     public String getSalt() {
@@ -233,5 +238,13 @@ public class SysUserVo implements Serializable {
      */
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

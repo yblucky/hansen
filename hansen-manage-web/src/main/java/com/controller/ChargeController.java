@@ -14,9 +14,12 @@ import com.model.WalletOrder;
 import com.service.TransferCodeService;
 import com.service.UserService;
 import com.service.WalletOrderService;
+import com.sysservice.ManageUserService;
+import com.utils.codeutils.CryptUtils;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.ToolUtil;
 import com.vo.BackReChargeVo;
+import com.vo.SysUserVo;
 import com.vo.UserVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +45,8 @@ public class ChargeController {
     private WalletOrderService walletOrderService;
     @Autowired
     private TransferCodeService transferCodeService;
+    @Autowired
+    private ManageUserService manageUserService;
 
 
     @ResponseBody
@@ -94,10 +99,25 @@ public class ChargeController {
     @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RespBody add(HttpServletRequest request, @RequestBody BackReChargeVo vo) throws Exception {
-        // 创建返回对象
         RespBody respBody = new RespBody();
+        String token = request.getHeader("token");
+        SysUserVo userVo = manageUserService.SysUserVo(token);
+        if (userVo == null) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "登录用户不存在");
+            return respBody;
+        }
         if (vo.getUid() == null) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "uid不能为空");
+        }
+        if (ToolUtil.isEmpty(vo.getSupperPass())){
+            respBody.add(RespCodeEnum.ERROR.getCode(), "请先输入超级密码");
+        }
+        if (ToolUtil.isEmpty(userVo.getRemark())){
+            respBody.add(RespCodeEnum.ERROR.getCode(), "没有充值权限，或者没有设置过超级密码，无法完成充值");
+        }
+        String supass = CryptUtils.hmacSHA1Encrypt(vo.getSupperPass(), userVo.getSalt());
+        if (!userVo.getRemark().equals(supass)){
+            respBody.add(RespCodeEnum.ERROR.getCode(), "超级密码不正确，无法完成充值");
         }
         User condition = new User();
         condition.setUid(vo.getUid());
@@ -105,6 +125,7 @@ public class ChargeController {
         if (chargeTargerUser == null) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "充值用户不存在");
         }
+
         walletOrderService.chargeService(vo, chargeTargerUser);
         respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功");
         return respBody;
