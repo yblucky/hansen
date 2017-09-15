@@ -114,7 +114,7 @@ public class TaskController {
         }
         Boolean f = RedisLock.redisLock(RedisKey.DO_TASK.getKey()+user.getUid(),user.getId(),RedisKey.DO_TASK.getSeconds());
         if (!f){
-            return new JsonResult(ResultCode.ERROR.getCode(), "正在处理，请不要重复请求");
+            return new JsonResult(ResultCode.ERROR.getCode(), "任务处理中");
         }
         userTaskService.doTask(user.getId(), userTask);
         return new JsonResult(userTask);
