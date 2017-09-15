@@ -50,7 +50,7 @@ public class LoginController {
     @Autowired
     private UserSignService userSignService;
     @Autowired
-    private UserDepartmentService userDepartmentService;
+    private UserTaskService userTaskService;
 
 
     @ResponseBody
@@ -243,6 +243,15 @@ public class LoginController {
         vo.setRmbConvertTradeScale(rmbConvertTradeScale);
         vo.setPayCoinOutScale(payCoinOutScale);
         vo.setTradeCoinOutScale(tradeCoinOutScale);
+        //获取社区任务
+        Integer remainTaskNo = user.getRemainTaskNo();
+        if (remainTaskNo > 0) {
+            UserTask lastUserTask = userTaskService.readLastOne(user.getId());
+            if (lastUserTask!=null && lastUserTask.getStatus()!=null && lastUserTask.getStatus()==1){
+                vo.setUserTask(lastUserTask);
+            }
+        }
+
         return new JsonResult(vo);
     }
 

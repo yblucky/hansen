@@ -1,5 +1,7 @@
 package com.vo;
 
+import com.model.UserTask;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -66,39 +68,39 @@ public class UserVo implements Serializable {
     /**
      * 股权币
      */
-    private Double equityAmt=0d;
+    private Double equityAmt = 0d;
     /**
      * 支付币
      */
-    private Double payAmt=0d;
+    private Double payAmt = 0d;
     /**
      * 交易币
      */
-    private Double tradeAmt=0d;
+    private Double tradeAmt = 0d;
     /**
      * 剩余保单金额
      */
-    private Double insuranceAmt=0d;
+    private Double insuranceAmt = 0d;
     /**
      * 预期最大收益
      */
-    private Double maxProfits=0d;
+    private Double maxProfits = 0d;
     /**
      * 累计收益
      */
-    private Double sumProfits=0d;
+    private Double sumProfits = 0d;
     /**
      * 动态奖金：做任务领取的：管理奖+直推奖+级差奖+平级奖
      */
-    private Double dynamicProfits=0d;
+    private Double dynamicProfits = 0d;
     /**
      * 失效需要重新激活时候的冻结奖金
      */
-    private Double sumFrozenProfits=0d;
+    private Double sumFrozenProfits = 0d;
     /**
      * 累计提现收益
      */
-    private Double cashOutProfits=0d;
+    private Double cashOutProfits = 0d;
     /**
      * 接点人
      */
@@ -150,6 +152,7 @@ public class UserVo implements Serializable {
     private Double tradeConverRmbScale;
     private Double tradeCoinOutScale;
     private Double payCoinOutScale;
+    private UserTask userTask;
 
     /**
      * '收货人'
@@ -172,9 +175,7 @@ public class UserVo implements Serializable {
      */
     private String bankCardNo;
     /**
-     *
      * 收货人手机号
-     *
      */
     private String receiverPhone;
 
@@ -577,5 +578,13 @@ public class UserVo implements Serializable {
 
     public void setReceiverPhone(String receiverPhone) {
         this.receiverPhone = receiverPhone;
+    }
+
+    public UserTask getUserTask() {
+        return userTask;
+    }
+
+    public void setUserTask(UserTask userTask) {
+        this.userTask = userTask;
     }
 }
