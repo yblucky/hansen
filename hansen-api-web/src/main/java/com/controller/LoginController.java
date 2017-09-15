@@ -243,6 +243,8 @@ public class LoginController {
         vo.setRmbConvertTradeScale(rmbConvertTradeScale);
         vo.setPayCoinOutScale(payCoinOutScale);
         vo.setTradeCoinOutScale(tradeCoinOutScale);
+        //分配任务
+        userTaskService.assignUserTask(user.getId());
         //获取社区任务
         Integer remainTaskNo = user.getRemainTaskNo();
         if (remainTaskNo > 0) {
