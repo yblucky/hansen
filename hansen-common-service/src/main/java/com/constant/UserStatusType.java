@@ -25,7 +25,10 @@ public enum UserStatusType {
     ORDER_OUT(6, "出局"),
 
     /** 已删除 */
-    DEL(7, "已删除");
+    DEL(7, "已删除"),
+
+    /** 禁用 */
+    DISABLE(8, "禁用");
 
 
     private final Integer code;

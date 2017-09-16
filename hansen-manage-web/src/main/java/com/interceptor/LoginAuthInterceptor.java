@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 /**
@@ -39,6 +40,10 @@ public class LoginAuthInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String contextPath = request.getContextPath();
         String requestUri = request.getRequestURI();
+        LogUtils.info("请求类型:" + request.getMethod());
+        if (request.getMethod().equals("OPTIONS")){
+            return  true;
+        }
         //获取请求URL
         String url = requestUri.substring(contextPath.length());
         if (url.lastIndexOf("?") > 0) {

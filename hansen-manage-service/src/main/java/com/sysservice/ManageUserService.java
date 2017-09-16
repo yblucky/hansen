@@ -91,5 +91,12 @@ public interface ManageUserService extends CommonService<SysUser>{
      * @param id
      */
     public void updatePw(String newPw, String id);
+    /**
+     * 修改超级密码
+     *
+     * @param newPw
+     * @param id
+     */
+    public void updateSupperPassPw(String newPw, String id);
 
 }

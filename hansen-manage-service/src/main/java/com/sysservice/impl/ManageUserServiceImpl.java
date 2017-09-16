@@ -57,7 +57,7 @@ public class ManageUserServiceImpl extends CommonServiceImpl<SysUser> implements
 
     @Override
     public List<SysUserVo> findAll(Paging paging) {
-        RowBounds rwoBounds = new RowBounds(paging.getPageNumber(), paging.getPageSize());
+        RowBounds rwoBounds = new RowBounds(paging.getStartRow(), paging.getPageSize());
         return sysUserMapper.findAll(rwoBounds);
     }
 
@@ -109,6 +109,13 @@ public class ManageUserServiceImpl extends CommonServiceImpl<SysUser> implements
     public void updatePw(String newPw, String id) {
         SysUser userPo = sysUserMapper.readById(id);
         userPo.setPassword(newPw);
+        sysUserMapper.updateById(userPo.getId(), userPo);
+    }
+
+    @Override
+    public void updateSupperPassPw(String newPw, String id) {
+        SysUser userPo = sysUserMapper.readById(id);
+        userPo.setRemark(newPw);
         sysUserMapper.updateById(userPo.getId(), userPo);
     }
 

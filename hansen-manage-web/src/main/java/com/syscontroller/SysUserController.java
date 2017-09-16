@@ -3,8 +3,10 @@ package com.syscontroller;
 import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
+import com.model.SysUser;
 import com.service.RedisService;
 import com.sysservice.ManageUserService;
+import com.utils.toolutils.ToolUtil;
 import com.vo.UpdatePwVo;
 import com.vo.SysUserVo;
 import com.utils.ConfUtils;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户控制器
@@ -64,7 +67,8 @@ public class SysUserController {
         RespBody respBody = new RespBody();
         try {
             //保存返回数据
-            respBody.add(RespCodeEnum.SUCCESS.getCode(), "查找所有用户信息数据成功", manageUserService.findAll(paging));
+            List<SysUserVo> list =manageUserService.findAll(paging);
+            respBody.add(RespCodeEnum.SUCCESS.getCode(), "查找所有用户信息数据成功",list );
             //保存分页对象
             paging.setTotalCount(manageUserService.findCount());
             respBody.setPage(paging);
@@ -168,6 +172,55 @@ public class SysUserController {
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "修改密码失败");
             LogUtils.error("修改密码失败！", ex);
+        }
+        return respBody;
+    }
+
+    @RequestMapping(value = "/updatesupperpass",method = RequestMethod.POST)
+    @ResponseBody
+    public RespBody updateSupperPass(@RequestBody UpdatePwVo updatePwVo) {
+        RespBody respBody = new RespBody();
+        try {
+            if (!updatePwVo.getNewPw().equals(updatePwVo.getOkPw())) {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "新密码和确认码不一致");
+                return respBody;
+            }
+            String token = request.getHeader("token");
+            //读取用户信息
+            SysUserVo userVo = manageUserService.SysUserVo(token);
+            // 对输入密码进行加密
+            if (ToolUtil.isNotEmpty(userVo.getRemark())){
+                if (ToolUtil.isEmpty(updatePwVo.getOldPw())){
+                    respBody.add(RespCodeEnum.ERROR.getCode(), "请先输入旧密码");
+                }
+                String oldPw = CryptUtils.hmacSHA1Encrypt(updatePwVo.getOldPw(), userVo.getSalt());
+                if (userVo.getPassword().equals(oldPw)) {
+                    //对新密码进行加密
+                    String newPw = CryptUtils.hmacSHA1Encrypt(updatePwVo.getNewPw(), userVo.getSalt());
+                    //旧密码正确，调用业务层执行密码更新
+                    manageUserService.updateSupperPassPw(newPw, userVo.getId());
+                    respBody.add(RespCodeEnum.SUCCESS.getCode(), "修改密码成功");
+                    //更新redis数据
+                    userVo.setPassword(newPw);
+                    redisService.putObj(token, userVo, confUtils.getSessionTimeout());
+                } else {
+                    //旧密码输入有误
+                    respBody.add(RespCodeEnum.ERROR.getCode(), "旧密码输入不正确");
+                }
+            }else {
+                //对新密码进行加密
+                String newPw = CryptUtils.hmacSHA1Encrypt(updatePwVo.getNewPw(), userVo.getSalt());
+                //旧密码正确，调用业务层执行密码更新
+                manageUserService.updateSupperPassPw(newPw, userVo.getId());
+                respBody.add(RespCodeEnum.SUCCESS.getCode(), "修改密码成功");
+                //更新redis数据
+                userVo.setPassword(newPw);
+                redisService.putObj(token, userVo, confUtils.getSessionTimeout());
+            }
+
+        } catch (Exception ex) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "重置超级密码失败");
+            LogUtils.error("重置超级密码失败！", ex);
         }
         return respBody;
     }

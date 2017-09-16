@@ -38,14 +38,13 @@ public class ParameterController {
     public RespBody findAll(Paging paging) {
         RespBody respBody = new RespBody();
         try {
-            //保存返回数据
-            respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置查找所有数据成功", ParamUtil.getIstance().getAllModel(paging));
             //保存分页对象
-            List<Parameter> list = ParamUtil.getIstance().getAllModel();
+            List<Parameter> list =parameterService.getList();
             if(list != null){
                 paging.setTotalCount(list.size());
             }
             respBody.setPage(paging);
+            respBody.add(RespCodeEnum.SUCCESS.getCode(), "参数设置查找所有数据成功", list);
         } catch (Exception ex) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "参数设置查找所有数据失败");
             LogUtils.error("参数设置查找所有数据失败！", ex);

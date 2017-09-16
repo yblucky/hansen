@@ -10,6 +10,7 @@ public class BackReChargeVo {
     private  Double equityAmt;
     private  Double activeCodeNo;
     private  Double registerCodeNo;
+    private  String supperPass;
 
     public Integer getUid() {
         return uid;
@@ -57,5 +58,13 @@ public class BackReChargeVo {
 
     public void setRegisterCodeNo(Double registerCodeNo) {
         this.registerCodeNo = registerCodeNo;
+    }
+
+    public String getSupperPass() {
+        return supperPass;
+    }
+
+    public void setSupperPass(String supperPass) {
+        this.supperPass = supperPass;
     }
 }
