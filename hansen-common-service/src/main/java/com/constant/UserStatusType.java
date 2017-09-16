@@ -10,12 +10,12 @@ public enum UserStatusType {
     OUT_SHARE_REGISTER_SUCCESSED(1, "分享注册"),
 
     /** 注册成功 */
-    INNER_REGISTER_SUCCESSED(2, "市场内部注册成功"),
+    INNER_REGISTER_SUCCESSED(2, "内部注册成功"),
 
-    /** 激活成功  市场内部注册账号，用户登录时默认激活 */
+    /** 激活成功*/
     ACTIVATESUCCESSED(3, "激活成功"),
 
-    /** 待激活（正在保单中） */
+    /** 待激活（保单正在处理中） */
     WAITACTIVATE(4, "待激活（正在保单中）"),
 
     /** 待激活（重新使用消费码的） */

@@ -12,10 +12,7 @@ import com.constant.UserStatusType;
 import com.model.Parameter;
 import com.model.User;
 import com.model.UserSign;
-import com.service.ParamUtil;
-import com.service.UserService;
-import com.service.UserSignService;
-import com.service.UserTaskService;
+import com.service.*;
 import com.utils.classutils.MyBeanUtils;
 import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.RedisLock;
@@ -133,14 +130,18 @@ public class SignController {
         if (count != null && count > 0) {
             userSignList = userSignService.readList(condition, page.getPageNo(), page.getPageSize(), count);
             UserSignVo vo = null;
-            double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 1d);
-            double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 1d);
-            double equtyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE), 1d);
+//            double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 1d);
+//            double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 1d);
+//            double equtyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE), 1d);
+
 
             double rewardPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE), 1d);
             double rewardTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE), 1d);
             double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE), 1d);
             for (UserSign sign : userSignList) {
+                double payScale =sign.getRmbCovertPayAmtScale();
+                double tradeScale =sign.getRmbCovertTradeAmtScale();
+                double equtyScale =sign.getRmbCovertEquityScale();
                 vo = MyBeanUtils.copyProperties(sign, UserSignVo.class);
                 //三种币的收入
                 Double payAmtRmb = CurrencyUtil.multiply(sign.getAmt(), rewardPayScale, 2);

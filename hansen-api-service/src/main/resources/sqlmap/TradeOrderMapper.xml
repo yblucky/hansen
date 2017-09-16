@@ -66,7 +66,7 @@
     <select id="readRewardList" resultType="com.model.TradeOrder">
         SELECT * FROM trade_order
         <where>
-            1=1  AND  source in(2,3,4,5) AND   taskCycle>0 and signCycle>0 and `status`=1
+            1=1  AND  source in(2,3,4,5) AND   taskCycle>0 and signCycle>0 and `status`=2
             <!--<if test="taskTime != null">-->
                 <!--AND createTime &lt;= #{taskTime}-->
             <!--</if>-->
@@ -92,17 +92,17 @@
 
     <!-- 待领取的奖励 -->
     <select id="readWaiteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus" resultType="Double">
-        SELECT   SUM(signCycle*confirmAmt/#{signCycle})  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle>0 and signCycle>0 and  status=1
+        SELECT   SUM(signCycle*confirmAmt/#{signCycle})  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle>0 and signCycle>0 and  status=2
     </select>
 
     <!-- 已经领取完成的奖励 -->
     <select id="readHasAllCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus" resultType="Double">
-        SELECT   SUM(confirmAmt)  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle=0 and signCycle=0 and  status=2
+        SELECT   SUM(confirmAmt)  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle=0 and signCycle=0 and  status=3
     </select>
 
     <!-- 还在做任务中已经领取的部分奖励 -->
     <select id="readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus" resultType="Double">
-        SELECT   SUM(confirmAmt-signCycle*confirmAmt/#{signCycle})  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle>0 and signCycle>0 and  status=1
+        SELECT   SUM(confirmAmt-signCycle*confirmAmt/#{signCycle})  FROM <include refid="table_name"/>    where   source =#{source} AND  receviceUserId=#{userId}  AND  taskCycle>0 and signCycle>0 and  status=2
     </select>
 
     <update id="updateById">
@@ -131,7 +131,7 @@
     </update>
 
     <update id="deleteById">
-        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+        update <include refid="table_name"/> set status = 4,updateTime=now() where id = #{id}
     </update>
 
     <update id="batchUpdateTaskCycle">
@@ -162,7 +162,7 @@
     <update id="batchUpdateOrderStatus">
         UPDATE
         <include refid="table_name"/>
-        SET status = 2
+        SET status = 3
         where id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
     </update>

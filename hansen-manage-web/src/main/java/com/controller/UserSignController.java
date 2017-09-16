@@ -100,6 +100,9 @@ public class UserSignController extends BaseController {
             for (UserSign sign:userSignList){
                 vo = MyBeanUtils.copyProperties(sign,UserSignVo.class);
                 User userPo =userService.readById(sign.getUserId());
+                if (vo.getUid()==null){
+                    vo.setUid(userPo.getUid());
+                }
                 vo.setNickName(userPo.getNickName());
                 //三种币的收入
                 Double payAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardPayScale,2);

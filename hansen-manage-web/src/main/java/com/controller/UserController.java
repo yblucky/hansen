@@ -6,11 +6,13 @@ import com.base.TokenUtil;
 import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
+import com.constant.RedisKey;
 import com.constant.UserStatusType;
 import com.model.CardGrade;
 import com.model.SysUser;
 import com.model.User;
 import com.model.UserDetail;
+import com.redis.Strings;
 import com.service.CardGradeService;
 import com.service.UserDetailService;
 import com.service.UserService;
@@ -96,6 +98,7 @@ public class UserController extends BaseController {
             BeanUtils.copyProperties(userVo, userDetail);
             userVo.setPayWord("");
             userVo.setPassword("");
+            userVo.setStatus(po.getStatus());
             list.add(userVo);
         }
         page.setTotalCount(count);
@@ -196,19 +199,25 @@ public class UserController extends BaseController {
         String token = request.getHeader("token");
         //读取用户信息
         SysUserVo userVo = manageUserService.SysUserVo(token);
-        SysUser user = manageUserService.readById(userVo.getId());
-        if (user == null) {
-            respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
+        SysUser loginUser = manageUserService.readById(userVo.getId());
+        if (loginUser == null) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "登录用户不存在");
             return respBody;
         }
         User appUser = userService.readById(userId);
+        if (appUser == null) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "禁用账户不存在");
+            return respBody;
+        }
         if (status == null) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "状态不正确");
             return respBody;
         }
         if (UserStatusType.DISABLE.getCode() == status) {
             userService.updateUserStatusByUserId(userId, UserStatusType.DISABLE.getCode());
-            respBody.add(RespCodeEnum.SUCCESS.getCode(), "用户已删除");
+            String appUserToken = TokenUtil.generateToken(appUser.getId(), appUser.getNickName());
+            Strings.setEx(RedisKey.TOKEN_API.getKey() + loginUser.getId(), RedisKey.TOKEN_API.getSeconds(), appUserToken);
+            respBody.add(RespCodeEnum.SUCCESS.getCode(), "用户已被禁用");
         } else if (UserStatusType.DEL.getCode() == status) {
             if (UserStatusType.ACTIVATESUCCESSED.getCode().intValue() == appUser.getStatus().intValue() || UserStatusType.WAITACTIVATE.getCode().intValue() == appUser.getStatus().intValue()) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "用户激活或正在保单中，不允许删除");
@@ -216,9 +225,15 @@ public class UserController extends BaseController {
             }
             userService.deleteById(userId);
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "用户已删除");
+        }else if (100 == status) {
+            if (UserStatusType.DISABLE.getCode().intValue() !=  appUser.getStatus().intValue()) {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "用户不是禁用状态,不能重新启用");
+                return respBody;
+            }
+            userService.updateUserStatusByUserId(userId,UserStatusType.OUT.getCode());
+            userService.updateRemainTaskNoByUserId(userId,-appUser.getRemainTaskNo());
+            respBody.add(RespCodeEnum.SUCCESS.getCode(), "用户已启用，需要重新购买消费码进行激活");
         }
-
-
         return respBody;
     }
 

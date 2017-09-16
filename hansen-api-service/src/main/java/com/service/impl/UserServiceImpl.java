@@ -216,7 +216,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 // TODO 记录一代直推奖记录
                 String remark = "直推奖：会员" + pushUser.getUid() + "报单一代奖励";
                 orderNo = order.getOrderNo() + "-" + RecordType.PUSH.toString() + "-" + 1;
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.PENDING.getCode());
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.HANDING.getCode());
             }
         }
 
@@ -255,7 +255,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     // TODO 记录二代直推奖记录
                     String remark = "直推奖：会员" + pushUser.getUid() + "报单二代奖励";
                     orderNo = order.getOrderNo() + "-" + RecordType.PUSH.toString() + "-" + 2;
-                    this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.PENDING.getCode());
+                    this.addTradeOrder(pushUserId, grandfatherUser.getId(), orderNo, incomeAmt, RecordType.PUSH, -1, -1, remark, OrderStatus.HANDING.getCode());
                 }
             }
 
@@ -317,8 +317,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             String remark = "管理奖：会员" + pushUser.getUid() + "静态收益，一代管理奖励" + incomeAmt;
             String orderNo = order.getOrderNo() + "-" + RecordType.MANAGE.toString() + "-" + 1;
             manage += incomeAmt;
-            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1, -1, remark, OrderStatus.PENDING.getCode());
-            userSignService.addUserSign(parentUser.getId(), incomeAmt, SignType.WAITING_SIGN, remark);
+            this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1, -1, remark, OrderStatus.HANDING.getCode());
+//            userSignService.addUserSign(parentUser.getId(), incomeAmt, SignType.WAITING_SIGN, remark);
         }
         //二代管理奖
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
@@ -358,8 +358,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 String remark = "管理奖：会员" + pushUser.getUid() + "静态收益，二代管理奖励" + incomeAmt;
                 String orderNo = order.getOrderNo() + "-" + RecordType.MANAGE.toString() + "-" + 2;
                 manage += incomeAmt;
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1, -1, remark, OrderStatus.PENDING.getCode());
-                userSignService.addUserSign(parentUser.getId(), incomeAmt, SignType.WAITING_SIGN, remark);
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.MANAGE, 1, -1, remark, OrderStatus.HANDING.getCode());
+//                userSignService.addUserSign(parentUser.getId(), incomeAmt, SignType.WAITING_SIGN, remark);
             }
         }
         logger.error("--------------------结束计算管理奖：" + order + "----------------------");
@@ -449,7 +449,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 //                this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.SAME, orderNo);
                 //领取平级奖记录
                 orderNo = order.getOrderNo() + "-" + RecordType.SAME.toString() + "-" + activeUser.getGrade() + "-" + (i + 1) + "-" + parentUser.getGrade();
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, -1, -1, "", OrderStatus.PENDING.getCode());
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, -1, -1, "", OrderStatus.HANDING.getCode());
                 logger.error("--------------------上下级平级且等级都超过二星，领取平级奖,此单金额为：" + insuranceAmt + ",平级奖奖金比例为:" + sameRewradScale + ",计算后金额为：" + incomeAmt + "---------------");
                 //中断级差
                 return;
@@ -463,7 +463,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     orderNo = order.getOrderNo() + RecordType.DIFFERENT.toString() + "-" + (i + 1) + childUser.getGrade() + "-" + parentUser.getGrade();
 //                    this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT, orderNo);
                     logger.error("--------------------第一一个极差，领取平级奖,此单金额为：" + insuranceAmt + ",平级奖奖金比例为:" + bonusScale + ",计算后金额为：" + incomeAmt + "---------------");
-                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.PENDING.getCode());
+                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.HANDING.getCode());
                 } else {
                     parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
                     Grade childGrade = gradeService.getGradeDetail(childUser.getGrade());
@@ -481,7 +481,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     String remark = "级差奖：会员" + activeUser.getUid() + "报单平级奖励";
                     orderNo = order.getOrderNo() + "-" + RecordType.DIFFERENT.toString() + "-" + (i + 1) + user.getGrade() + "-" + parentUser.getGrade();
 //                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
-                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.PENDING.getCode());
+                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.HANDING.getCode());
                 }
             }
             childUser = parentUser;
@@ -548,7 +548,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 //领取平级奖记录
                 String remark = "平级奖：会员" + user.getUid() + "报单平级奖励";
                 orderNo = order.getOrderNo() + RecordType.SAME.toString() + "-" + (i + 1) + user.getGrade() + "-" + parentUser.getGrade();
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, -1, -1, remark, OrderStatus.PENDING.getCode());
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, -1, -1, remark, OrderStatus.HANDING.getCode());
                 //中断级差
                 return;
             }
@@ -560,7 +560,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT, orderNo);
                     String remark = "级差奖：会员" + user.getUid() + "报单一代奖励";
                     orderNo = order.getOrderNo() + RecordType.DIFFERENT.toString() + "-" + user.getGrade() + "-" + (i + 1) + "-" + parentUser.getGrade();
-                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, remark, OrderStatus.PENDING.getCode());
+                    this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, remark, OrderStatus.HANDING.getCode());
                 }
                 // TODO: 2017/7/17 领取级差奖  保单金额*1%
                 parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
@@ -573,7 +573,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 //                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
                 String remark = "级差奖：会员" + user.getUid() + "报单奖励";
                 orderNo = order.getOrderNo() + RecordType.DIFFERENT.toString() + "-" + (i + 1) + user.getGrade() + "-" + parentUser.getGrade();
-                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, remark, OrderStatus.PENDING.getCode());
+                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, remark, OrderStatus.HANDING.getCode());
             }
             childUser = parentUser;
         }
@@ -680,13 +680,13 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             } else {
                 model.setSignCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)));
             }
-            model.setStatus(model.getStatus() == null ? 0 : model.getStatus());
+            model.setStatus(status == null ? 0 : model.getStatus());
             if (recordType.getCode().intValue() == RecordType.RELASE.getCode().intValue()) {
                 model.setStatus(OrderStatus.HANDING.getCode());
                 model.setSignCycle(0);
                 model.setTaskCycle(0);
             } else if (recordType.getCode().intValue() == RecordType.MANAGE.getCode().intValue()) {
-                model.setStatus(OrderStatus.PENDING.getCode());
+                model.setStatus(OrderStatus.HANDING.getCode());
                 model.setSignCycle(1);
             }
         } catch (Exception e) {

@@ -108,7 +108,7 @@ public class WalletOrder extends BaseModel {
     }
 
     public Double getRmbCovertEquityScale() {
-        return rmbCovertEquityScale;
+        return rmbCovertEquityScale==null || rmbCovertEquityScale==0?1d:rmbCovertEquityScale;
     }
 
     public void setRmbCovertEquityScale(Double rmbCovertEquityScale) {
@@ -116,7 +116,7 @@ public class WalletOrder extends BaseModel {
     }
 
     public Double getRmbCovertPayAmtScale() {
-        return rmbCovertPayAmtScale;
+        return rmbCovertPayAmtScale==null || rmbCovertPayAmtScale==0?1d:rmbCovertPayAmtScale;
     }
 
     public void setRmbCovertPayAmtScale(Double rmbCovertPayAmtScale) {
@@ -124,7 +124,7 @@ public class WalletOrder extends BaseModel {
     }
 
     public Double getRmbCovertTradeAmtScale() {
-        return rmbCovertTradeAmtScale;
+        return rmbCovertTradeAmtScale==null || rmbCovertTradeAmtScale==0?1d:rmbCovertTradeAmtScale;
     }
 
     public void setRmbCovertTradeAmtScale(Double rmbCovertTradeAmtScale) {

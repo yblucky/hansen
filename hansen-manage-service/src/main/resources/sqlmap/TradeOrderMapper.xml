@@ -85,7 +85,7 @@
     </update>
 
     <update id="deleteById">
-        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+        update <include refid="table_name"/> set status = 4,updateTime=now() where id = #{id}
     </update>
 
     <select id="readRewardListByOrderType" resultType="com.model.TradeOrder">

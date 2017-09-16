@@ -20,7 +20,7 @@ public enum OrderStatus {
     /**
      * 任务完成，奖励已分配
      */
-    CANCEL(3, "任务完成，奖励已分配"),
+    HANDLED(3, "任务完成，奖励已分配"),
 
     /**
      * 已删除
