@@ -36,6 +36,8 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
     private UserDetailService userDetailService;
     @Autowired
     private WalletTransactionService transactionService;
+    @Autowired
+    private ParameterService parameterService;
 
     @Override
     protected CommonDao<WalletOrder> getDao() {
@@ -89,10 +91,17 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         walletOrder.setOrderType(walletOrderType.getCode());
         walletOrder.setRemark(walletOrderType.getMsg());
         walletOrder.setStatus(walletOrderStatus.getCode());
+        this.setRmbConvertRateScale(walletOrder);
         this.create(walletOrder);
         return walletOrder;
     }
 
+
+    private void setRmbConvertRateScale(WalletOrder model) {
+        model.setRmbCovertEquityScale(parameterService.getScale(Constant.RMB_CONVERT_EQUITY_SCALE));
+        model.setRmbCovertPayAmtScale(parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE));
+        model.setRmbCovertTradeAmtScale(parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE));
+    }
 
     @Override
     public Boolean coinOut(String fromUserId, String toUserId, String address, WalletOrderType walletOrderType, Double amt) throws Exception {

@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.WalletOrderMapper">
 
 	<sql id="fields">
-		orderNo,sendUserId,receviceUserId,amount,confirmAmt,poundage,orderType,createTime,updateTime,status,remark
+		orderNo,sendUserId,receviceUserId,amount,confirmAmt,poundage,orderType,rmbCovertEquityScale,rmbCovertPayAmtScale,rmbCovertTradeAmtScale,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -33,7 +33,7 @@
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{orderNo},#{sendUserId},#{receviceUserId},#{amount},#{confirmAmt},#{poundage},#{orderType},now(),now(),#{status},#{remark});
+		values(#{id},#{orderNo},#{sendUserId},#{receviceUserId},#{amount},#{confirmAmt},#{poundage},#{orderType},#{rmbCovertEquityScale},#{rmbCovertPayAmtScale},#{rmbCovertTradeAmtScale},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="com.model.WalletOrder">
@@ -64,6 +64,9 @@
 			<if test="model.confirmAmt != null">confirmAmt= #{model.confirmAmt},</if>
 			<if test="model.poundage != null">poundage= #{model.poundage},</if>
 			<if test="model.orderType != null">orderType= #{model.orderType},</if>
+			<if test="model.rmbCovertEquityScale != null">rmbCovertEquityScale= #{model.rmbCovertEquityScale},</if>
+			<if test="model.rmbCovertPayAmtScale != null">rmbCovertPayAmtScale= #{model.rmbCovertPayAmtScale},</if>
+			<if test="model.rmbCovertTradeAmtScale != null">rmbCovertTradeAmtScale= #{model.rmbCovertTradeAmtScale},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
 			updateTime=now()

@@ -12,16 +12,17 @@ import com.model.Parameter;
 import com.model.TransferCode;
 import com.model.User;
 import com.model.WalletOrder;
-import com.service.*;
+import com.service.ParamUtil;
+import com.service.TransferCodeService;
+import com.service.UserService;
+import com.service.WalletOrderService;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.ToolUtil;
 import com.vo.BackReChargeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.paradoxs.bitcoin.client.BitcoinClient;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,8 +34,6 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
     private WalletOrderMapper walletOrderMapper;
     @Autowired
     private UserService userService;
-    @Autowired
-    private WalletTransactionService transactionService;
     @Autowired
     private TransferCodeService transferCodeService;
 
@@ -92,47 +91,6 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         return walletOrder;
     }
 
-
-    @Override
-    public Boolean coinOut(String fromUserId, String toUserId, String address, WalletOrderType walletOrderType, Double amt) throws Exception {
-        List<Integer> outType = new ArrayList<>();
-        outType.add(WalletOrderType.TRADE_COIN_DRWA.getCode());
-        outType.add(WalletOrderType.PAY_COIN_DRWA.getCode());
-        outType.add(WalletOrderType.EQUITY_COIN_DRWA.getCode());
-        Double poundageScale = 0d;
-        Double poundage = 0d;
-        Double confirmAmount = 0d;
-        String txtId = "";
-        if (!outType.contains(walletOrderType.getCode())) {
-            return false;
-        }
-        BitcoinClient bitcoinClient = null;
-        if (WalletOrderType.TRADE_COIN_DRWA.getCode() == walletOrderType.getCode()) {
-            poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.TRADECOINOUTSCALE));
-            poundageScale = amt * poundageScale;
-            confirmAmount = amt - poundage;
-            userService.updateTradeAmtByUserId(fromUserId, -amt);
-//            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.TRADE);
-//            txtId= WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
-        } else if (WalletOrderType.PAY_COIN_DRWA.getCode() == walletOrderType.getCode()) {
-            poundageScale = amt * poundageScale;
-            poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.PAYCOINOUTSCALE));
-            userService.updatePayAmtByUserId(fromUserId, -amt);
-//            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.PAY);
-//            txtId=WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
-        } else if (WalletOrderType.EQUITY_COIN_DRWA.getCode() == walletOrderType.getCode()) {
-            poundageScale = amt * poundageScale;
-            poundageScale = Double.valueOf(ParamUtil.getIstance().get(Parameter.EQUITYCOINOUTSCALE));
-            userService.updateEquityAmtByUserId(fromUserId, -amt);
-//            bitcoinClient = WalletUtil.getBitCoinClient(CurrencyType.EQUITY);
-//            txtId=  WalletUtil.sendToAddress(bitcoinClient, address, new BigDecimal(amt + ""), "提币", "");
-        }
-        //创建提币订单
-        WalletOrder order = this.addWalletOrder(fromUserId, "", walletOrderType, amt, confirmAmount, poundage, WalletOrderStatus.PENDING);
-        //管理后台审核通过的审核，生成此记录
-//        transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID,address,walletOrderType,txtId,order.getOrderNo(),amt);
-        return true;
-    }
 
     @Override
     public List<WalletOrder> readOrderList(String receviceUserId, List<Integer> list, Page page) {

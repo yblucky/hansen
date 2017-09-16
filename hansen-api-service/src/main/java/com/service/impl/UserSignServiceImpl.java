@@ -2,6 +2,7 @@ package com.service.impl;
 
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
+import com.constant.Constant;
 import com.constant.RecordType;
 import com.constant.SignType;
 import com.mapper.UserSignMapper;
@@ -31,6 +32,9 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
     private TradeOrderService tradeOrderService;
     @Autowired
     private TradeRecordService tradeRecordService;
+
+    @Autowired
+    private ParameterService parameterService;
 
     @Override
     protected CommonDao<UserSign> getDao() {
@@ -66,9 +70,9 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         Double rewardConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE), 0d);
         Double rewardConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE), 0d);
         Double rewardConvertEquityScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE), 0d);
-        payAmt= CurrencyUtil.multiply(payAmt,rewardConvertPayScale,4);
-        tradeAmt= CurrencyUtil.multiply(tradeAmt,rewardConvertTradeScale,4);
-        equityAmt= CurrencyUtil.multiply(equityAmt,rewardConvertEquityScale,4);
+        payAmt = CurrencyUtil.multiply(payAmt, rewardConvertPayScale, 4);
+        tradeAmt = CurrencyUtil.multiply(tradeAmt, rewardConvertTradeScale, 4);
+        equityAmt = CurrencyUtil.multiply(equityAmt, rewardConvertEquityScale, 4);
         userService.updatePayAmtByUserId(sign.getUserId(), payAmt);
         userService.updateTradeAmtByUserId(sign.getUserId(), tradeAmt);
         userService.updateEquityAmtByUserId(sign.getUserId(), equityAmt);
@@ -92,8 +96,15 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         model.setRemark(remark);
         model.setAmt(amt);
         model.setStatus(SignType.WAITING_SIGN.getCode());
+        this.setRmbConvertRateScale(model);
         this.create(model);
         return model;
+    }
+
+    private void setRmbConvertRateScale(UserSign model) {
+        model.setRmbCovertEquityScale(parameterService.getScale(Constant.RMB_CONVERT_EQUITY_SCALE));
+        model.setRmbCovertPayAmtScale(parameterService.getScale(Constant.RMB_CONVERT_PAY_SCALE));
+        model.setRmbCovertTradeAmtScale(parameterService.getScale(Constant.RMB_CONVERT_TRADE_SCALE));
     }
 
     @Override
@@ -104,6 +115,7 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         }
         return signCount;
     }
+
     @Override
     public Double readSumFrozenCount(String userId) {
         Double signFrozenCount = userSignMapper.readSumFrozenCount(userId);

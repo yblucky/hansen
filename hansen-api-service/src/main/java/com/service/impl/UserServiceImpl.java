@@ -694,6 +694,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             model.setTaskCycle(7);
             model.setSignCycle(7);
         }
+
         tradeOrderService.create(model);
         return model;
     }
