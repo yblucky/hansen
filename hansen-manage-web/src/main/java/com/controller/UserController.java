@@ -3,9 +3,7 @@ package com.controller;
 
 import com.Token;
 import com.base.TokenUtil;
-import com.base.page.Paging;
-import com.base.page.RespBody;
-import com.base.page.RespCodeEnum;
+import com.base.page.*;
 import com.constant.RedisKey;
 import com.constant.UserStatusType;
 import com.model.CardGrade;
@@ -20,6 +18,7 @@ import com.sysservice.ManageUserService;
 import com.utils.classutils.MyBeanUtils;
 import com.utils.codeutils.Md5Util;
 import com.utils.toolutils.ToolUtil;
+import com.utils.toolutils.ValidateUtils;
 import com.vo.InnerRegisterUserVo;
 import com.vo.SysUserVo;
 import com.vo.UserVo;
@@ -163,6 +162,9 @@ public class UserController extends BaseController {
             detail.setUserName(model.getUserName());
         }
         if (ToolUtil.isNotEmpty(model.getReceiverPhone())) {
+            if (!ValidateUtils.mobile(model.getReceiverPhone())){
+                respBody.add(RespCodeEnum.ERROR.getCode(), "收货人手机号有误");
+            }
             detail.setReceiverPhone(model.getReceiverPhone());
         }
         if (ToolUtil.isNotEmpty(model.getReceiver())) {
@@ -175,6 +177,9 @@ public class UserController extends BaseController {
             detail.setBankType(model.getBankType());
         }
         if (ToolUtil.isNotEmpty(model.getBankCardNo())) {
+            if (!ValidateUtils.checkBankCard(model.getBankCardNo())){
+                respBody.add(RespCodeEnum.ERROR.getCode(), "银行卡号不合法");
+            }
             detail.setBankCardNo(model.getBankCardNo());
         }
         userService.updateById(user.getId(), model);

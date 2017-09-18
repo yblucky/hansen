@@ -51,6 +51,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     private ParameterService parameterService;
     @Autowired
     private UserSignService userSignService;
+    @Autowired
+    private WalletOrderService walletOrderService;
 
     @Override
     protected CommonDao<User> getDao() {
@@ -789,6 +791,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         tradeOrder.setCardGrade(targetCardGradeNo);
         tradeOrderService.create(tradeOrder);
+        walletOrderService.addWalletOrder(userId,Constant.SYSTEM_USER_ID,WalletOrderType.TRADE_COIN_ACTIVE,-differTradeAmt,-differTradeAmt,0d,WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(userId,Constant.SYSTEM_USER_ID,WalletOrderType.PAY_COIN_ACTIVE,-differPayAmt,-differPayAmt,0d,WalletOrderStatus.SUCCESS);
         // TODO: 2017/8/3 点位升级成功后的记录
         userGradeRecordService.addGradeRecord(user, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.ORIGINUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
@@ -898,6 +902,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         tradeOrder.setCardGrade(targetCardGradeNo);
         tradeOrderService.create(tradeOrder);
+        walletOrderService.addWalletOrder(userId,Constant.SYSTEM_USER_ID,WalletOrderType.TRADE_COIN_ACTIVE,-differTradeAmt,-differTradeAmt,0d,WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(userId,Constant.SYSTEM_USER_ID,WalletOrderType.PAY_COIN_ACTIVE,-differPayAmt,-differPayAmt,0d,WalletOrderStatus.SUCCESS);
         userGradeRecordService.addGradeRecord(user, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.COVERAGEUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
 
@@ -1047,6 +1053,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         this.updateById(updateActiveUser.getId(), updateActiveUser);
         //生成保单
         tradeOrderService.createInsuranceTradeOrder(activeUser, cardGrade);
+        walletOrderService.addWalletOrder(updateActiveUser.getId(),Constant.SYSTEM_USER_ID,WalletOrderType.TRADE_COIN_ACTIVE,-tradeCoinAmt,-tradeCoinAmt,0d,WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(updateActiveUser.getId(),Constant.SYSTEM_USER_ID,WalletOrderType.PAY_COIN_ACTIVE,-tradeCoinAmt,-tradeCoinAmt,0d,WalletOrderStatus.SUCCESS);
         return new JsonResult(ResultCode.SUCCESS.getCode(), UserStatusType.WAITACTIVATE.getMsg());
     }
 
@@ -1149,6 +1157,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         transferCode.setTransferNo(-cardGrade.getActiveCodeNo());
         transferCodeService.create(transferCode);
         this.updateUserStatus(userId, UserStatusType.ACTIVATESUCCESSED.getCode());
+        this.updateRemainTaskNoByUserId(userId,7);
         return true;
     }
 

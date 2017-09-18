@@ -17,6 +17,7 @@ import com.utils.numberutils.CurrencyUtil;
 import com.utils.toolutils.OrderNoUtil;
 import com.utils.toolutils.RedisLock;
 import com.utils.toolutils.ToolUtil;
+import com.utils.toolutils.ValidateUtils;
 import com.vo.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -171,12 +172,12 @@ public class UserController {
         if (cardGrade == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "开卡级别有误");
         }
-        if (loginUser.getRegisterCodeNo() < cardGrade.getRegisterCodeNo()) {
-            return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
-        }
-//        if (loginUser.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
+//        if (loginUser.getRegisterCodeNo() < cardGrade.getRegisterCodeNo()) {
 //            return new JsonResult(ResultCode.ERROR.getCode(), "注册码个数不足");
 //        }
+        if (loginUser.getActiveCodeNo() < cardGrade.getActiveCodeNo()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "消费码个数不足");
+        }
         User inviterUser = null;
         if (vo.getContactUserId().intValue() != loginUser.getUid().intValue()) {
             User inviterCondition = new User();
@@ -489,12 +490,21 @@ public class UserController {
             updateUser.setEmail(vo.getEmail());
         }
         if (ToolUtil.isNotEmpty(vo.getOutEquityAddress())) {
+            if (vo.getOutEquityAddress().length()<20 || vo.getOutEquityAddress().length()>40){
+                return new JsonResult(ResultCode.ERROR.getCode(), "提币地址不合法");
+            }
             upateDetail.setOutEquityAddress(vo.getOutEquityAddress());
         }
         if (ToolUtil.isNotEmpty(vo.getOutPayAddress())) {
+            if (vo.getOutPayAddress().length()<20 || vo.getOutPayAddress().length()>40){
+                return new JsonResult(ResultCode.ERROR.getCode(), "提币地址不合法");
+            }
             upateDetail.setOutPayAddress(vo.getOutPayAddress());
         }
         if (ToolUtil.isNotEmpty(vo.getOutTradeAddress())) {
+            if (vo.getOutTradeAddress().length()<20 || vo.getOutTradeAddress().length()>40){
+                return new JsonResult(ResultCode.ERROR.getCode(), "提币地址不合法");
+            }
             upateDetail.setOutTradeAddress(vo.getOutTradeAddress());
         }
 
@@ -511,6 +521,9 @@ public class UserController {
         }
 
         if (ToolUtil.isNotEmpty(vo.getBankCardNo())) {
+            if (!ValidateUtils.checkBankCard(vo.getBankCardNo())){
+                return new JsonResult(ResultCode.ERROR.getCode(), "银行卡号不合法");
+            }
             upateDetail.setBankCardNo(vo.getBankCardNo());
         }
 
@@ -519,6 +532,9 @@ public class UserController {
         }
 
         if (ToolUtil.isNotEmpty(vo.getReceiverPhone())) {
+            if (!ValidateUtils.mobile(vo.getReceiverPhone())){
+                return new JsonResult(ResultCode.ERROR.getCode(), "收货人手机号有误");
+            }
             upateDetail.setReceiverPhone(vo.getReceiverPhone());
         }
 

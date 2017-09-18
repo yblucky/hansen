@@ -91,7 +91,7 @@ public class PerFormanceController extends BaseController {
             User u = userService.readOne(condionUser);
             if (u == null) {
                 if (uid!=null){
-                    condition.setParentUserId(u.getId());
+                    condionUser.setUid(uid);
                 }
                 u = userService.readOne(condionUser);
                 if (u==null) {

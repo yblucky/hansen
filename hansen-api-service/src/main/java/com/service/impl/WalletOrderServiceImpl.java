@@ -157,7 +157,7 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
         //创建提币订单
 //        WalletOrder order = this.addWalletOrder(fromUserId, "", walletOrderType, -amt, -confirmAmount, poundage, WalletOrderStatus.PENDING);
         model.setAmount(amt);
-        model.setStatus(WalletOrderStatus.DENIED.getCode());
+        model.setStatus(WalletOrderStatus.PENDING.getCode());
         model.setTransactionStatus(TransactionStatusType.UNCHECKED.getCode());
         model.setMessage(WalletOrderStatus.PENDING.getMsg());
         model.setUserId(user.getUid().toString());

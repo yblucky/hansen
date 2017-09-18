@@ -55,7 +55,16 @@ public enum WalletOrderType {
     /**
      * 股权币提币
      */
-    EQUITY_COIN_BACK_CHARGE(12, "股权币管理员充值");
+    EQUITY_COIN_BACK_CHARGE(12, "股权币管理员充值"),
+
+    /**
+     * 激活账号使用交易币
+     */
+    TRADE_COIN_ACTIVE(13, "激活账号使用交易币"),
+    /**
+     * 激活账号使用支付币
+     */
+    PAY_COIN_ACTIVE(14, "激活账号使用支付币");
 
     private final Integer code;
 

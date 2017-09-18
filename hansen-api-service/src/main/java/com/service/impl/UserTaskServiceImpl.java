@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -71,7 +72,6 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         userTask.setTitle(task.getName());
         userTask.setDiscription(task.getDiscription());
         userTask.setLink(task.getLink());
-        userTask.setAssignTaskTime(new Date());
         userTask.setStatus(TaskStatusType.PENDING.getCode());
         userTask.setRemark(TaskStatusType.PENDING.getMsg());
         userTask.setTaskType(1);
@@ -140,7 +140,6 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             for (int i = 0; i < diffDay; i++) {
                 String taskId = RandomUtil.getRandomElement(ids);
                 Task task = taskService.readById(taskId);
-                task = taskService.readById(taskId);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(lastUserTask.getAssignTaskTime());
                 calendar.add(Calendar.DAY_OF_MONTH, (i + 1));
@@ -226,4 +225,5 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         }
         return compeleteUserTaskCount;
     }
+
 }

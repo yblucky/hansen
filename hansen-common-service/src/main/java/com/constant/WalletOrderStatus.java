@@ -19,9 +19,9 @@ public enum WalletOrderStatus {
      */
     DENIED(3, "审核不通过"),
     /**
-     *   到账成功
+     *   成功
      */
-    SUCCESS(4, "到账成功"),
+    SUCCESS(4, "成功"),
     /**
      *  已删除
      */
