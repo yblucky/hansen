@@ -82,7 +82,7 @@ public class HttpUtil {
             inputStream.close();
             inputStream = null;
             conn.disconnect();
-            String s =buffer.toString().replaceFirst("\uFEFF\uFEFF","");
+            String s = buffer.toString().replaceFirst("\uFEFF\uFEFF", "");
             jsonObject = JSONObject.fromObject(s);
         } catch (ConnectException ce) {
             System.out.println("Server connection timed out.");
@@ -118,17 +118,17 @@ public class HttpUtil {
     public static void main(String[] args) {
 //        String url =  "http://www.kuaiyipai.cc/Home/api/index?currency=KYP";
 //        String url =  "http://www.kuaiyipai.cc/Home/api/index?currency=KYP";
-        String url =  "http://www.kuaiyipai.cc/Home/api/index?currency=HSS";
+        String url = "http://www.kuaiyipai.cc/Home/api/index?currency=HSS";
         JSONObject jsonObject = HttpUtil.doGetRequest(url);
         System.out.println(jsonObject.toString());
-        Double rate=0d;
+        Double rate = 0d;
         if (jsonObject != null) {
             if (jsonObject.containsKey("24H_Last_price")) {
                 Double last24Price = jsonObject.getDouble("24H_Last_price");
                 if (last24Price == null) {
                     last24Price = 1d;
                 }
-                rate = CurrencyUtil.divide(1,last24Price,4);
+                rate = CurrencyUtil.divide(1, last24Price, 4);
             }
         }
         System.out.println(rate);

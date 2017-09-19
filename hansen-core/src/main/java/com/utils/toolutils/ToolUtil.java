@@ -1,17 +1,18 @@
 package com.utils.toolutils;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.utils.codeutils.PinYinUtil;
-import com.utils.numberutils.CurrencyUtil;
 import com.redis.Sets;
 import com.redis.Strings;
+import com.utils.numberutils.CurrencyUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -390,33 +391,6 @@ public class ToolUtil {
     }
 
 
-    public static void recreateJsonFile(String oldPath, String descPath) throws IOException {
-        String laststr = readFile(oldPath);//读取原json文件
-        BufferedWriter bw = new BufferedWriter(new FileWriter(descPath));// 输出新的json文件
-        String ws = null;
-        System.out.println(laststr);
-        try {
-            JSONObject dataJson = JSONObject.parseObject(laststr);// 创建一个包含原始json串的json对象
-            JSONArray data = dataJson.getJSONArray("data");// 找到data的json数组
-            for (int i = 0; i < data.size(); i++) {
-                JSONObject province = data.getJSONObject(i);// 获取data数组的第i个json对象
-                JSONArray poptions = province.getJSONArray("options");// 找到options的json对象
-                for (int j = 0; j < poptions.size(); j++) {
-                    String text = poptions.getJSONObject(j).getString("text");// 读取properties对象里的name字段值
-                    poptions.getJSONObject(j).put("first", PinYinUtil.getFirstLetter(text).toUpperCase());
-                }
-            }
-            ws = dataJson.toString();
-            System.out.println(ws);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        bw.write(ws);
-        bw.flush();
-        bw.close();
-    }
-
-
     public static void delRedisKey(String key) {
         if (Sets.exists(key)) {
             Strings.del(key);
@@ -433,45 +407,6 @@ public class ToolUtil {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        String a = "E:\\\\ideawork\\\\serveManage\\\\hongbao\\\\hongbao-agent-service\\\\src\\\\main\\\\resources\\\\json.json";
-        String b = "E:\\\\ideawork\\\\serveManage\\\\hongbao\\\\hongbao-agent-service\\\\src\\\\main\\\\resources\\\\new.json";
-        recreateJsonFile(a, b);
-      /*  try {
-            String laststr =readFile("E:\\ideawork\\serveManage\\hongbao\\hongbao-agent-service\\src\\main\\resources\\json.json");
-            BufferedWriter bw = new BufferedWriter(new FileWriter("E:\\ideawork\\serveManage\\hongbao\\hongbao-agent-service\\src\\main\\resources\\new.json"));// 输出新的json文件
-            String    ws = null;
-            System.out.println(laststr);
-            try {
-                JSONObject dataJson = JSONObject.parseObject(laststr);// 创建一个包含原始json串的json对象
-                JSONArray data = dataJson.getJSONArray("data");// 找到data的json数组
-                for (int i = 0; i < data.size(); i++) {
-                    JSONObject info = data.getJSONObject(i);// 获取data数组的第i个json对象
-                    JSONArray options = info.getJSONArray("options");// 找到options的json对象
-                    for (int j = 0; j < options.size(); j++) {
-                        String text = options.getJSONObject(j).getString("text");// 读取properties对象里的name字段值
-                        options.getJSONObject(j).put("first", PinYin.getFirstLetter(text).toUpperCase());
-                    }
-                }
-                ws = dataJson.toString();
-
-
-                System.out.println("0000000000000000000000000000000000000000000000");
-                System.out.println("0000000000000000000000000000000000000000000000");
-                System.out.println(ws);
-                System.out.println("0000000000000000000000000000000000000000000000");
-                System.out.println("0000000000000000000000000000000000000000000000");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            bw.write(ws);
-            bw.flush();
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-    }
 
     /**
      * 生成一个UUID

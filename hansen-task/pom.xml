@@ -29,13 +29,6 @@
 
 	<profiles>
 		<profile>
-			<id>dev</id>
-			<properties>
-				<env>dev</env>
-			</properties>
-
-		</profile>
-		<profile>
 			<id>test</id>
 			<properties>
 				<env>test</env>
@@ -43,12 +36,6 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-		</profile>
-		<profile>
-			<id>protest</id>
-			<properties>
-				<env>protest</env>
-			</properties>
 		</profile>
 		<profile>
 			<id>pro</id>

@@ -89,7 +89,9 @@
     </update>
 
     <update id="deleteById">
-        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+        <if test="id != null and id != ''">
+            DELETE  FROM `sys_user` WHERE    where id = #{id}
+        </if>
     </update>
 
 

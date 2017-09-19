@@ -77,10 +77,7 @@
 		<property name="prefix" value="/WEB-INF/view/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
-	
-	<mvc:resources mapping="/resources/**" location="/resources/" />
- 	<mvc:resources mapping="/**" location="/" />
- 	
+
  	<!-- 邮件 -->
 	<bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="${email.host}" />

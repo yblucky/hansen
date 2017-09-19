@@ -34,23 +34,8 @@
         </dependency>
     </dependencies>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>nexus_public</id>
-            <url>http://192.168.2.99:8081/nexus/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <env>dev</env>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
         <profile>
             <id>test</id>
             <properties>
@@ -58,15 +43,6 @@
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>protest</id>
-            <properties>
-                <env>protest</env>
-            </properties>
-            <activation>
-                <activeByDefault>false</activeByDefault>
             </activation>
         </profile>
         <profile>
@@ -101,8 +77,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>UTF-8</encoding>
                     <skip>true</skip>
                 </configuration>

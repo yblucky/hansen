@@ -232,6 +232,15 @@ public class LoginController {
         sources.add(OrderType.DIFFERENT.getCode());
         sources.add(OrderType.SAME.getCode());
         Double sumDynamicProfitsCount = tradeOrderService.readSumDynamicProfitsCount(user.getId(), sources);
+        Double sumMangeDynamicProfitsCount = tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(user.getId(),1, OrderType.MANAGE.getCode());
+        Double sumPushDynamicProfitsCount = tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(user.getId(),7, OrderType.PUSH.getCode());
+        Double sumDifferDynamicProfitsCount = tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(user.getId(),7, OrderType.DIFFERENT.getCode());
+        Double sumSameDynamicProfitsCount = tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(user.getId(),7, OrderType.SAME.getCode());
+        sumDynamicProfitsCount+=sumMangeDynamicProfitsCount;
+        sumDynamicProfitsCount+=sumPushDynamicProfitsCount;
+        sumDynamicProfitsCount+=sumDifferDynamicProfitsCount;
+        sumDynamicProfitsCount+=sumSameDynamicProfitsCount;
+
         //查询用户的冻结收益
         if (UserStatusType.OUT.getCode().intValue() == user.getStatus().intValue()) {
             Double sumFrozen = userSignService.readSumFrozenCount(user.getId());

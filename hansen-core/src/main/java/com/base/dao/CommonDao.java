@@ -2,14 +2,13 @@ package com.base.dao;
 
 import com.BaseModel;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * 通用mapper
  */
-public interface CommonDao<D extends  BaseModel>{
+public interface CommonDao<D extends BaseModel> {
     // C
     void create(D model);
 
@@ -26,5 +25,5 @@ public interface CommonDao<D extends  BaseModel>{
     void updateById(@Param("id") String id, @Param("model") D model);
 
     // D delete操作的原则是先根据条件查询到记录，再根据记录的ID删除
-    void deleteById(@Param("id")  String id);
+    void deleteById(@Param("id") String id);
 }

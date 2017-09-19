@@ -12,6 +12,7 @@ import com.vo.SysUserVo;
 import com.utils.ConfUtils;
 import com.utils.codeutils.CryptUtils;
 import com.utils.toolutils.LogUtils;
+import jdk.management.resource.ResourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class SysUserController {
     @Autowired
     private RedisService redisService;
 
-    @RequestMapping(value = "/findUser",method = RequestMethod.GET)
+    @RequestMapping(value = "/findUser", method = RequestMethod.GET)
     @ResponseBody
     public RespBody findUser() {
         RespBody respBody = new RespBody();
@@ -61,14 +62,14 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping(value = "/findAll",method = RequestMethod.GET)
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     @ResponseBody
     public RespBody findAll(Paging paging) {
         RespBody respBody = new RespBody();
         try {
             //保存返回数据
-            List<SysUserVo> list =manageUserService.findAll(paging);
-            respBody.add(RespCodeEnum.SUCCESS.getCode(), "查找所有用户信息数据成功",list );
+            List<SysUserVo> list = manageUserService.findAll(paging);
+            respBody.add(RespCodeEnum.SUCCESS.getCode(), "查找所有用户信息数据成功", list);
             //保存分页对象
             paging.setTotalCount(manageUserService.findCount());
             respBody.setPage(paging);
@@ -79,7 +80,7 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping(value = "/findRoles",method = RequestMethod.GET)
+    @RequestMapping(value = "/findRoles", method = RequestMethod.GET)
     @ResponseBody
     public RespBody findRoles() {
         RespBody respBody = new RespBody();
@@ -93,7 +94,7 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public RespBody add(@RequestBody SysUserVo userVo) {
         RespBody respBody = new RespBody();
@@ -114,7 +115,7 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
     public RespBody update(@RequestBody SysUserVo userVo) {
         RespBody respBody = new RespBody();
@@ -128,11 +129,15 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public RespBody delete(@RequestBody SysUserVo userVo) {
         RespBody respBody = new RespBody();
         try {
+            if (ToolUtil.isEmpty(userVo)) {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "获取用户信息失败，无法删除");
+                return respBody;
+            }
             manageUserService.delete(userVo);
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "用户信息删除成功");
         } catch (Exception ex) {
@@ -142,7 +147,7 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping(value = "/updatePw",method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePw", method = RequestMethod.POST)
     @ResponseBody
     public RespBody updatePw(@RequestBody UpdatePwVo updatePwVo) {
         RespBody respBody = new RespBody();
@@ -176,7 +181,7 @@ public class SysUserController {
         return respBody;
     }
 
-    @RequestMapping(value = "/updatesupperpass",method = RequestMethod.POST)
+    @RequestMapping(value = "/updatesupperpass", method = RequestMethod.POST)
     @ResponseBody
     public RespBody updateSupperPass(@RequestBody UpdatePwVo updatePwVo) {
         RespBody respBody = new RespBody();
@@ -188,15 +193,16 @@ public class SysUserController {
             String token = request.getHeader("token");
             //读取用户信息
             SysUserVo userVo = manageUserService.SysUserVo(token);
+            SysUser sysUser = manageUserService.readById(userVo.getId());
             // 对输入密码进行加密
-            if (ToolUtil.isNotEmpty(userVo.getRemark())){
-                if (ToolUtil.isEmpty(updatePwVo.getOldPw())){
+            if (ToolUtil.isNotEmpty(userVo.getRemark())) {
+                if (ToolUtil.isEmpty(updatePwVo.getOldPw())) {
                     respBody.add(RespCodeEnum.ERROR.getCode(), "请先输入旧密码");
                 }
                 String oldPw = CryptUtils.hmacSHA1Encrypt(updatePwVo.getOldPw(), userVo.getSalt());
                 if (userVo.getPassword().equals(oldPw)) {
                     //对新密码进行加密
-                    String newPw = CryptUtils.hmacSHA1Encrypt(updatePwVo.getNewPw(), userVo.getSalt());
+                    String newPw = CryptUtils.hmacSHA1Encrypt(updatePwVo.getNewPw(), sysUser.getSalt());
                     //旧密码正确，调用业务层执行密码更新
                     manageUserService.updateSupperPassPw(newPw, userVo.getId());
                     respBody.add(RespCodeEnum.SUCCESS.getCode(), "修改密码成功");
@@ -207,7 +213,7 @@ public class SysUserController {
                     //旧密码输入有误
                     respBody.add(RespCodeEnum.ERROR.getCode(), "旧密码输入不正确");
                 }
-            }else {
+            } else {
                 //对新密码进行加密
                 String newPw = CryptUtils.hmacSHA1Encrypt(updatePwVo.getNewPw(), userVo.getSalt());
                 //旧密码正确，调用业务层执行密码更新
@@ -223,5 +229,9 @@ public class SysUserController {
             LogUtils.error("重置超级密码失败！", ex);
         }
         return respBody;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(CryptUtils.hmacSHA1Encrypt("123456", "QWERTYUIOPLKJHGHDFFHSDDG"));
     }
 }
