@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sun.tools.doclint.Entity.nu;
-
 @Controller
 @RequestMapping("/performance")
 public class PerFormanceController extends BaseController {
@@ -67,11 +65,11 @@ public class PerFormanceController extends BaseController {
 
         List<UserDepartment> list = null;
         UserDepartment condition = new UserDepartment();
-        if (status==null){
-            status=1;
+        if (status == null) {
+            status = 1;
         }
 
-        if (status==1){
+        if (status == 1) {
             if (uid != null) {
                 condition.setUid(uid);
             }
@@ -81,25 +79,30 @@ public class PerFormanceController extends BaseController {
                 User u = userService.readOne(condionUser);
                 if (u == null) {
                     respBody.add(RespCodeEnum.ERROR.getCode(), "没有记录");
+                    return respBody;
                 } else {
                     condition.setUid(u.getUid());
                 }
             }
-        }else if (status==2){
+        } else if (status == 2) {
+            User u = null;
             User condionUser = new User();
-            condionUser.setPhone(mobile);
-            User u = userService.readOne(condionUser);
+            if (ToolUtil.isNotEmpty(mobile)) {
+                condionUser.setPhone(mobile);
+                u = userService.readOne(condionUser);
+            }
             if (u == null) {
-                if (uid!=null){
+                if (uid != null) {
                     condionUser.setUid(uid);
                 }
                 u = userService.readOne(condionUser);
-                if (u==null) {
+                if (u == null) {
                     respBody.add(RespCodeEnum.ERROR.getCode(), "没有记录");
-                }else {
+                    return respBody;
+                } else {
                     condition.setParentUserId(u.getId());
                 }
-            }else {
+            } else {
                 condition.setParentUserId(u.getId());
             }
         }
@@ -109,9 +112,9 @@ public class PerFormanceController extends BaseController {
         Integer count = userDepartmentService.readCount(condition);
         if (count != null && count > 0) {
             departments = userDepartmentService.readList(condition, page.getPageNumber(), page.getPageSize(), count);
-            for (UserDepartment department:departments){
-                User u=userService.readById(department.getParentUserId());
-                if (u!=null){
+            for (UserDepartment department : departments) {
+                User u = userService.readById(department.getParentUserId());
+                if (u != null) {
                     department.setParentUserId(u.getUid().toString());
                 }
                 department.setRemark(GradeType.fromCode(department.getGrade()).getMsg());

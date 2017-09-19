@@ -79,6 +79,7 @@ public class UserSignController extends BaseController {
             User u=userService.readOne(condion);
             if (u==null){
                 respBody.add(RespCodeEnum.ERROR.getCode(), "没有记录");
+                return respBody;
             }else{
                 condition.setUid(u.getUid());
             }
@@ -127,6 +128,4 @@ public class UserSignController extends BaseController {
         respBody.add(RespCodeEnum.SUCCESS.getCode(),"成功",page,list);
         return respBody;
     }
-
-
 }

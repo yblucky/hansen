@@ -6,12 +6,10 @@ import com.base.TokenUtil;
 import com.base.page.*;
 import com.constant.RedisKey;
 import com.constant.UserStatusType;
-import com.model.CardGrade;
-import com.model.SysUser;
-import com.model.User;
-import com.model.UserDetail;
+import com.model.*;
 import com.redis.Strings;
 import com.service.CardGradeService;
+import com.service.FeedBackService;
 import com.service.UserDetailService;
 import com.service.UserService;
 import com.sysservice.ManageUserService;
@@ -37,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static javafx.scene.input.KeyCode.R;
+
 /**
  * Created on 2017-08-21;
  */
@@ -55,6 +55,8 @@ public class UserController extends BaseController {
     private UserDetailService userDetailService;
     @Autowired
     private CardGradeService cardGradeService;
+    @Autowired
+    private FeedBackService  feedBackService;
 
     @ResponseBody
     @RequestMapping(value = "/list")
@@ -140,11 +142,13 @@ public class UserController extends BaseController {
         if (ToolUtil.isNotEmpty(model.getPassword())) {
             if (!model.getPassword().equals(model.getConfirmPassword())) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "确认登录密码错误");
+                return respBody;
             }
         }
         if (ToolUtil.isNotEmpty(model.getPayWord())) {
             if (!model.getPayWord().equals(model.getConfirmPayWord())) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "确认支付密码错误");
+                return respBody;
             }
         }
         if (ToolUtil.isNotEmpty(model.getPassword())) {
@@ -164,6 +168,7 @@ public class UserController extends BaseController {
         if (ToolUtil.isNotEmpty(model.getReceiverPhone())) {
             if (!ValidateUtils.mobile(model.getReceiverPhone())){
                 respBody.add(RespCodeEnum.ERROR.getCode(), "收货人手机号有误");
+                return respBody;
             }
             detail.setReceiverPhone(model.getReceiverPhone());
         }
@@ -179,6 +184,7 @@ public class UserController extends BaseController {
         if (ToolUtil.isNotEmpty(model.getBankCardNo())) {
             if (!ValidateUtils.checkBankCard(model.getBankCardNo())){
                 respBody.add(RespCodeEnum.ERROR.getCode(), "银行卡号不合法");
+                return respBody;
             }
             detail.setBankCardNo(model.getBankCardNo());
         }
@@ -378,6 +384,35 @@ public class UserController extends BaseController {
         model.setPayWord(vo.getPayword());
         userService.innerRegister(askUser, inviterUser, model, cardGrade);
         respBody.add(RespCodeEnum.SUCCESS.getCode(), "注册成功");
+        return respBody;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/feedbacklist", method = RequestMethod.GET)
+    public RespBody feedbackList(HttpServletRequest request, Paging page) throws Exception {
+        RespBody respBody=new RespBody();
+        FeedBack feedBack = new FeedBack();
+        String token = request.getHeader("token");
+        SysUserVo sysUserVo=manageUserService.SysUserVo(token);
+        if (sysUserVo == null) {
+            respBody.add(RespCodeEnum.ERROR.getCode(),"登录失效");
+        }
+        int count = feedBackService.readCount(feedBack);
+        List<FeedBack> list = new ArrayList<>();
+        if(count > 0) {
+            list = feedBackService.readList(feedBack, page.getPageNumber(), page.getPageSize(),count);
+            for (FeedBack feedBack1:list){
+                if (feedBack1!=null){
+                    User u=userService.readById(feedBack1.getUserId());
+                    if (u!=null){
+                        feedBack1.setUserId(u.getUid().toString());
+                    }else {
+                        feedBack1.setUserId("");
+                    }
+                }
+            }
+        }
+        respBody.add(RespCodeEnum.SUCCESS.getCode(),"成功",page,list);
         return respBody;
     }
 }

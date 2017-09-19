@@ -230,6 +230,10 @@ public class UserController {
         if (ToolUtil.isEmpty(vo.getPassword())) {
             return new JsonResult(ResultCode.ERROR.getCode(), "用户登录密码不能为空");
         }
+
+        if (vo.getUid() == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "UID不能为空");
+        }
         CardGrade condition = new CardGrade();
         condition.setGrade(vo.getCardGrade());
         CardGrade cardGrade = cardGradeService.readOne(condition);

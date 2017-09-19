@@ -38,7 +38,7 @@
 	</select>
 
 	<select id="readList" resultType="com.model.Task">
-		<include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+		<include refid="selector"/> <include refid="condition"/>  ORDER BY createTime DESC  limit #{startRow}, #{pageSize};
 	</select>
 
 	<select id="readOne" resultType="com.model.Task">

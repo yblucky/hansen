@@ -80,7 +80,12 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
 
     @Override
     public WalletOrder addWalletOrder(String fromUserId, String toUserId, WalletOrderType walletOrderType, Double amt, Double confirmAmt, Double poundage, WalletOrderStatus walletOrderStatus) throws Exception {
+        User receviceUser =  userService.readById(toUserId);
+        if (receviceUser==null){
+            throw  new RuntimeException("收款账户不存在");
+        }
         WalletOrder walletOrder = new WalletOrder();
+        walletOrder.setReceviceUid(receviceUser.getUid());
         walletOrder.setOrderNo(OrderNoUtil.get());
         walletOrder.setSendUserId(fromUserId);
         walletOrder.setReceviceUserId(toUserId);

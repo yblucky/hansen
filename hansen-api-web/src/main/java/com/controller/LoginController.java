@@ -20,6 +20,7 @@ import com.vo.UserVo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.locale.converters.DecimalLocaleConverter;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.spi.LoggerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,15 +244,19 @@ public class LoginController {
         vo.setRmbConvertTradeScale(rmbConvertTradeScale);
         vo.setPayCoinOutScale(payCoinOutScale);
         vo.setTradeCoinOutScale(tradeCoinOutScale);
-        //分配任务
-        userTaskService.assignUserTask(user.getId());
-        //获取社区任务
-        Integer remainTaskNo = user.getRemainTaskNo();
-        if (remainTaskNo > 0) {
-            UserTask lastUserTask = userTaskService.readLastOne(user.getId());
-            if (lastUserTask!=null && lastUserTask.getStatus()!=null && lastUserTask.getStatus()==1){
-                vo.setUserTask(lastUserTask);
+        try {
+            //分配任务
+            userTaskService.assignUserTask(user.getId());
+            //获取社区任务
+            Integer remainTaskNo = user.getRemainTaskNo();
+            if (remainTaskNo > 0) {
+                UserTask lastUserTask = userTaskService.readLastOne(user.getId());
+                if (lastUserTask!=null && lastUserTask.getStatus()!=null && lastUserTask.getStatus()==1){
+                    vo.setUserTask(lastUserTask);
+                }
             }
+        } catch (Exception e) {
+            logger.error("用户 "+user.getUid()+" 登录时分配任务失败");
         }
 
         return new JsonResult(vo);

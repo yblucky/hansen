@@ -37,7 +37,7 @@ public class IndexController {
      */
     @ResponseBody
     @RequestMapping(value = "/feedback", method = RequestMethod.POST)
-    public JsonResult setting(HttpServletRequest request, @RequestBody FeedBackVo vo) throws Exception {
+    public JsonResult feedback(HttpServletRequest request, @RequestBody FeedBackVo vo) throws Exception {
 
         if (ToolUtil.isEmpty(vo.getTitle()) || ToolUtil.isEmpty(vo.getType()) || ToolUtil.isEmpty(vo.getDetail())){
             return  new JsonResult(-1,"反馈信息不能为空");
@@ -67,7 +67,7 @@ public class IndexController {
      */
     @ResponseBody
     @RequestMapping(value = "/feedbacklist", method = RequestMethod.GET)
-    public JsonResult settinglist(HttpServletRequest request, Page page) throws Exception {
+    public JsonResult feedbackList(HttpServletRequest request, Page page) throws Exception {
         FeedBack feedBack = new FeedBack();
         Token token = TokenUtil.getSessionUser(request);
         User loginUser = null;

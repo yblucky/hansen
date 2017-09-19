@@ -109,7 +109,7 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
             TransferCode transferCode = new TransferCode();
             transferCode.setSendUserId(Constant.SYSTEM_USER_ID);
             transferCode.setReceviceUserId(chargeTargerUser.getId());
-            transferCode.setTransferNo(vo.getActiveCodeNo().intValue());
+            transferCode.setTransferNo(-vo.getActiveCodeNo().intValue());
             transferCode.setType(CodeType.ACTIVATECODE.getCode());
             transferCode.setReceviceUserNick(chargeTargerUser.getNickName());
             transferCode.setSendUserNick(Constant.SYSTEM_USER_NICKNAME);
@@ -121,7 +121,7 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
             TransferCode transferCode = new TransferCode();
             transferCode.setSendUserId(Constant.SYSTEM_USER_ID);
             transferCode.setReceviceUserId(chargeTargerUser.getId());
-            transferCode.setTransferNo(vo.getRegisterCodeNo().intValue());
+            transferCode.setTransferNo(-vo.getRegisterCodeNo().intValue());
             transferCode.setType(CodeType.REGISTERCODE.getCode());
             transferCode.setReceviceUserNick(chargeTargerUser.getNickName());
             transferCode.setSendUserNick(Constant.SYSTEM_USER_NICKNAME);
@@ -129,9 +129,9 @@ public class WalletOrderServiceImpl extends CommonServiceImpl<WalletOrder> imple
             transferCodeService.create(transferCode);
             userService.updateUserRegisterCode(chargeTargerUser.getId(), vo.getRegisterCodeNo().intValue());
         }
-
         WalletOrder addModel = new WalletOrder();
         addModel.setReceviceUserId(chargeTargerUser.getId());
+        addModel.setReceviceUid(chargeTargerUser.getUid());
         addModel.setSendUserId(Constant.SYSTEM_USER_ID);
         addModel.setStatus(WalletOrderStatus.SUCCESS.getCode());
         if (vo.getPayAmt() != null && vo.getPayAmt() > 0) {

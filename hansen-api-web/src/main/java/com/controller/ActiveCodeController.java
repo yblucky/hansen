@@ -134,6 +134,9 @@ public class ActiveCodeController {
         if (vo.getCodeType()==null || (vo.getCodeType()!=1  && vo.getCodeType()!=2)) {
             return new JsonResult(ResultCode.ERROR.getCode(), "转账类型错误");
         }
+        if (vo.getTransferNo()<=0){
+            return new JsonResult(ResultCode.ERROR.getCode(), "转账数量不合法");
+        }
         if (vo.getCodeType()==1){
             if (fromUser.getActiveCodeNo() < vo.getTransferNo()) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "消费码数量不足");

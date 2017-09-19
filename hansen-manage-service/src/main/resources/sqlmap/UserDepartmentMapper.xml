@@ -25,6 +25,7 @@
 			<if test="model.status != null">and status=#{model.status}</if>
 			<if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
 			<if test="model.grade != null and model.grade != ''">and grade=#{model.grade}</if>
+			<if test="model.parentUserId != null and model.parentUserId != ''">and parentUserId=#{model.parentUserId}</if>
 
 		</where>
 	</sql>

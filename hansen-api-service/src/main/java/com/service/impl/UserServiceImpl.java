@@ -667,10 +667,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         } else {
             model.setRemark(recordType.getMsg());
         }
-        if (status == null || status < 0) {
-            model.setStatus(OrderStatus.HANDING.getCode());
-        }
-
+        model.setStatus(status == null ? 0 : status);
         try {
             if (taskInterval >= 0) {
                 model.setTaskCycle(taskInterval);
@@ -682,7 +679,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             } else {
                 model.setSignCycle(ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.REWARDINTERVAL)));
             }
-            model.setStatus(status == null ? 0 : model.getStatus());
+
             if (recordType.getCode().intValue() == RecordType.RELASE.getCode().intValue()) {
                 model.setStatus(OrderStatus.HANDING.getCode());
                 model.setSignCycle(0);

@@ -39,6 +39,10 @@ public class WalletOrder extends BaseModel {
      */
     private Integer orderType;
     /**
+     *收款方uid
+     */
+    private Integer receviceUid;
+    /**
      * 当天人民币兑换股权币的汇率
      */
     private Double rmbCovertEquityScale;
@@ -129,5 +133,13 @@ public class WalletOrder extends BaseModel {
 
     public void setRmbCovertTradeAmtScale(Double rmbCovertTradeAmtScale) {
         this.rmbCovertTradeAmtScale = rmbCovertTradeAmtScale;
+    }
+
+    public Integer getReceviceUid() {
+        return receviceUid;
+    }
+
+    public void setReceviceUid(Integer receviceUid) {
+        this.receviceUid = receviceUid;
     }
 }

@@ -8,6 +8,7 @@ import com.constant.CodeType;
 import com.constant.Constant;
 import com.constant.WalletOrderStatus;
 import com.constant.WalletOrderType;
+import com.model.SysUser;
 import com.model.TransferCode;
 import com.model.User;
 import com.model.WalletOrder;
@@ -102,28 +103,35 @@ public class ChargeController {
         RespBody respBody = new RespBody();
         String token = request.getHeader("token");
         SysUserVo userVo = manageUserService.SysUserVo(token);
+
         if (userVo == null) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "登录用户不存在");
             return respBody;
         }
+        SysUser muser = manageUserService.readById(userVo.getId());
         if (vo.getUid() == null) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "uid不能为空");
+            return respBody;
         }
         if (ToolUtil.isEmpty(vo.getSupperPass())){
             respBody.add(RespCodeEnum.ERROR.getCode(), "请先输入超级密码");
+            return respBody;
         }
         if (ToolUtil.isEmpty(userVo.getRemark())){
             respBody.add(RespCodeEnum.ERROR.getCode(), "没有充值权限，或者没有设置过超级密码，无法完成充值");
+            return respBody;
         }
-        String supass = CryptUtils.hmacSHA1Encrypt(vo.getSupperPass(), userVo.getSalt());
+        String supass = CryptUtils.hmacSHA1Encrypt(vo.getSupperPass(), muser.getSalt());
         if (!userVo.getRemark().equals(supass)){
             respBody.add(RespCodeEnum.ERROR.getCode(), "超级密码不正确，无法完成充值");
+            return respBody;
         }
         User condition = new User();
         condition.setUid(vo.getUid());
         User chargeTargerUser = userService.readOne(condition);
         if (chargeTargerUser == null) {
             respBody.add(RespCodeEnum.ERROR.getCode(), "充值用户不存在");
+            return respBody;
         }
 
         walletOrderService.chargeService(vo, chargeTargerUser);
@@ -131,65 +139,4 @@ public class ChargeController {
         return respBody;
     }
 
-    private void chargeService(BackReChargeVo vo, User chargeTargerUser) {
-        if (vo.getActiveCodeNo() != null && vo.getActiveCodeNo() > 0) {
-            TransferCode transferCode = new TransferCode();
-            transferCode.setSendUserId(Constant.SYSTEM_USER_ID);
-            transferCode.setReceviceUserId(chargeTargerUser.getId());
-            transferCode.setTransferNo(vo.getActiveCodeNo().intValue());
-            transferCode.setType(CodeType.ACTIVATECODE.getCode());
-            transferCode.setReceviceUserNick(chargeTargerUser.getNickName());
-            transferCode.setSendUserNick(Constant.SYSTEM_USER_NICKNAME);
-            transferCode.setRemark("系统赠送消费码");
-            transferCodeService.create(transferCode);
-            userService.updateUserActiveCode(chargeTargerUser.getId(), vo.getActiveCodeNo().intValue());
-        }
-        if (vo.getRegisterCodeNo() != null && vo.getRegisterCodeNo() > 0) {
-            TransferCode transferCode = new TransferCode();
-            transferCode.setSendUserId(Constant.SYSTEM_USER_ID);
-            transferCode.setReceviceUserId(chargeTargerUser.getId());
-            transferCode.setTransferNo(vo.getRegisterCodeNo().intValue());
-            transferCode.setType(CodeType.REGISTERCODE.getCode());
-            transferCode.setReceviceUserNick(chargeTargerUser.getNickName());
-            transferCode.setSendUserNick(Constant.SYSTEM_USER_NICKNAME);
-            transferCode.setRemark("系统赠送注册码");
-            transferCodeService.create(transferCode);
-            userService.updateUserRegisterCode(chargeTargerUser.getId(), vo.getRegisterCodeNo().intValue());
-        }
-
-        WalletOrder addModel = new WalletOrder();
-        addModel.setReceviceUserId(chargeTargerUser.getId());
-        addModel.setSendUserId(Constant.SYSTEM_USER_ID);
-        addModel.setStatus(WalletOrderStatus.SUCCESS.getCode());
-        if (vo.getPayAmt() != null && vo.getPayAmt() > 0) {
-            addModel.setId(ToolUtil.getUUID());
-            addModel.setOrderNo(OrderNoUtil.get());
-            addModel.setAmount(-vo.getPayAmt());
-            addModel.setConfirmAmt(-vo.getPayAmt());
-            addModel.setOrderType(WalletOrderType.PAY_COIN_BACK_CHARGE.getCode());
-            addModel.setRemark("管理员后台充值购物币");
-            walletOrderService.create(addModel);
-            userService.updatePayAmtByUserId(chargeTargerUser.getId(), vo.getPayAmt());
-        }
-        if (vo.getTradeAmt() != null && vo.getTradeAmt() > 0) {
-            addModel.setId(ToolUtil.getUUID());
-            addModel.setOrderNo(OrderNoUtil.get());
-            addModel.setAmount(-vo.getTradeAmt());
-            addModel.setConfirmAmt(-vo.getTradeAmt());
-            addModel.setOrderType(WalletOrderType.TRADE_COIN_BACK_CHARGE.getCode());
-            addModel.setRemark("管理员后台充值交易币");
-            walletOrderService.create(addModel);
-            userService.updateTradeAmtByUserId(chargeTargerUser.getId(), vo.getTradeAmt());
-        }
-        if (vo.getEquityAmt() != null && vo.getEquityAmt() > 0) {
-            addModel.setId(ToolUtil.getUUID());
-            addModel.setOrderNo(OrderNoUtil.get());
-            addModel.setAmount(-vo.getEquityAmt());
-            addModel.setConfirmAmt(-vo.getEquityAmt());
-            addModel.setOrderType(WalletOrderType.EQUITY_COIN_BACK_CHARGE.getCode());
-            addModel.setRemark("管理员后台充值股权币");
-            walletOrderService.create(addModel);
-            userService.updateEquityAmtByUserId(chargeTargerUser.getId(), vo.getEquityAmt());
-        }
-    }
 }

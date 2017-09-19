@@ -8,10 +8,10 @@ import com.constant.*;
 import com.model.*;
 import com.service.*;
 import com.sysservice.ManageUserService;
+import com.utils.toolutils.ToolUtil;
+import com.vo.CoinVerfyVo;
 import com.vo.SysUserVo;
 import com.vo.UserVo;
-import com.vo.CoinVerfyVo;
-import com.utils.toolutils.ToolUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +26,7 @@ import ru.paradoxs.bitcoin.client.BitcoinClient;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,9 +48,79 @@ public class CoinController extends BaseController {
     @Autowired
     private WalletTransactionService transactionService;
     @Resource
-    private ManageUserService manageUserService;//用户业务层
+    private ManageUserService manageUserService;
     @Resource
     private WalletTransactionService walletTransactionService;
+    @Resource
+    private TransferCodeService transferCodeService;
+
+    @ResponseBody
+    @RequestMapping(value = "/codelist", method = RequestMethod.GET)
+    public RespBody codeList(HttpServletRequest request, Paging page, Integer status, String phone, Integer ruid, Integer suid) throws Exception {
+        // 创建返回对象
+        RespBody respBody = new RespBody();
+        String token = request.getHeader("token");
+        SysUserVo userVo = manageUserService.SysUserVo(token);
+        SysUser user = manageUserService.readById(userVo.getId());
+        if (user == null) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "用户不存在");
+            return respBody;
+        }
+        TransferCode condition = new TransferCode();
+        if (ruid != null && ruid!=0) {
+            User u = userService.readUserByUid(ruid);
+            if (u == null) {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "查不到记录");
+                return respBody;
+            } else {
+                condition.setReceviceUserId(u.getId());
+            }
+        }
+        if (suid != null && suid!=0) {
+            User u = userService.readUserByUid(suid);
+            if (u == null) {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "查不到记录");
+                return respBody;
+            } else {
+                condition.setSendUserId(u.getId());
+            }
+        }
+//        if (ToolUtil.isNotEmpty(phone)){
+//            User uc=new User();
+//            uc.setPhone(userVo.getMobile());
+//            User u =userService.readOne(uc);
+//            if (u==null){
+//                respBody.add(RespCodeEnum.ERROR.getCode(), "查不到记录");
+//                return respBody;
+//            }else {
+//                condition.setReceviceUserId(u.getId());
+//            }
+//        }
+
+        Integer count = transferCodeService.readCount(condition);
+        List<TransferCode> list = new ArrayList<>();
+        if (count != null && count > 0) {
+            list = transferCodeService.readList(condition, page.getPageNumber(), page.getPageSize(), count);
+            for (TransferCode order : list) {
+                User receUser = userService.readById(order.getReceviceUserId());
+                if (receUser != null) {
+                    order.setReceviceUserId(receUser.getUid() + "");
+                }
+                User sendUser = userService.readById(order.getSendUserId());
+                if (sendUser != null) {
+                    order.setSendUserId(sendUser.getUid() + "");
+                }
+            }
+        } else {
+            count = 0;
+            list = Collections.emptyList();
+        }
+        //返回
+        page.setTotalCount(count);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功", page, list);
+        return respBody;
+    }
+
 
     /**
      * @param request
@@ -59,8 +130,8 @@ public class CoinController extends BaseController {
      */
 
     @ResponseBody
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public RespBody list(HttpServletRequest request, Integer currencyType, Paging page, Integer status,String orderNo,String phone,Integer uid) throws Exception  {
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public RespBody list(HttpServletRequest request, Integer currencyType, Paging page, Integer status, String orderNo, String phone, Integer uid) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
         String token = request.getHeader("token");
@@ -78,24 +149,26 @@ public class CoinController extends BaseController {
         if (status != null) {
             condition.setStatus(status);
         }
-        if (ToolUtil.isNotEmpty(orderNo)){
+        if (ToolUtil.isNotEmpty(orderNo)) {
             condition.setOrderNo(orderNo);
         }
-        if (ToolUtil.isNotEmpty(uid)){
-            User u =userService.readUserByUid(uid);
-            if (u==null){
+        if (ToolUtil.isNotEmpty(uid)) {
+            User u = userService.readUserByUid(uid);
+            if (u == null) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "查不到记录");
-            }else {
+                return respBody;
+            } else {
                 condition.setReceviceUserId(u.getId());
             }
         }
-        if (ToolUtil.isNotEmpty(phone)){
-            User uc=new User();
+        if (ToolUtil.isNotEmpty(phone)) {
+            User uc = new User();
             uc.setPhone(userVo.getMobile());
-            User u =userService.readOne(uc);
-            if (u==null){
+            User u = userService.readOne(uc);
+            if (u == null) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "查不到记录");
-            }else {
+                return respBody;
+            } else {
                 condition.setReceviceUserId(u.getId());
             }
         }
@@ -103,14 +176,14 @@ public class CoinController extends BaseController {
         List<WalletOrder> orders = null;
         if (count != null && count > 0) {
             orders = walletOrderService.readList(condition, page.getPageNumber(), page.getPageSize(), count);
-            for (WalletOrder order:orders){
-               User receUser =  userService.readById(order.getReceviceUserId());
-                if (receUser!=null){
-                    order.setReceviceUserId(receUser.getUid()+"");
+            for (WalletOrder order : orders) {
+                User receUser = userService.readById(order.getReceviceUserId());
+                if (receUser != null) {
+                    order.setReceviceUserId(receUser.getUid() + "");
                 }
-                User sendUser =  userService.readById(order.getSendUserId());
-                if (sendUser!=null){
-                    order.setSendUserId(sendUser.getUid()+"");
+                User sendUser = userService.readById(order.getSendUserId());
+                if (sendUser != null) {
+                    order.setSendUserId(sendUser.getUid() + "");
                 }
             }
         } else {
@@ -119,11 +192,9 @@ public class CoinController extends BaseController {
         }
         //返回
         page.setTotalCount(count);
-        respBody.add(RespCodeEnum.SUCCESS.getCode(),"成功",page,orders);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功", page, orders);
         return respBody;
     }
-
-
 
 
     /**
@@ -134,8 +205,8 @@ public class CoinController extends BaseController {
      */
 
     @ResponseBody
-    @RequestMapping(value = "/coinOutList",method = RequestMethod.GET)
-    public RespBody coinOutList(HttpServletRequest request, Integer currencyType, Paging page, Integer status,String uid,String orderNo) throws Exception  {
+    @RequestMapping(value = "/coinOutList", method = RequestMethod.GET)
+    public RespBody coinOutList(HttpServletRequest request, Integer currencyType, Paging page, Integer status, String uid, String orderNo) throws Exception {
         // 创建返回对象
         RespBody respBody = new RespBody();
 //        String token = request.getHeader("token");
@@ -154,10 +225,10 @@ public class CoinController extends BaseController {
         if (status != null) {
             condition.setStatus(status);
         }
-        if (ToolUtil.isNotEmpty(uid)){
+        if (ToolUtil.isNotEmpty(uid)) {
             condition.setUserId(uid);
         }
-        if (ToolUtil.isNotEmpty(orderNo)){
+        if (ToolUtil.isNotEmpty(orderNo)) {
             condition.setPrepayId(orderNo);
         }
         Integer count = walletTransactionService.readCount(condition);
@@ -170,7 +241,7 @@ public class CoinController extends BaseController {
         }
         //返回
         page.setTotalCount(count);
-        respBody.add(RespCodeEnum.SUCCESS.getCode(),"成功",page,orders);
+        respBody.add(RespCodeEnum.SUCCESS.getCode(), "成功", page, orders);
         return respBody;
     }
 
@@ -186,8 +257,8 @@ public class CoinController extends BaseController {
      */
 
     @ResponseBody
-    @RequestMapping(value = "/coinverfy",method = RequestMethod.POST)
-    public RespBody coinVerfy(HttpServletRequest request,@RequestBody CoinVerfyVo vo) {
+    @RequestMapping(value = "/coinverfy", method = RequestMethod.POST)
+    public RespBody coinVerfy(HttpServletRequest request, @RequestBody CoinVerfyVo vo) {
         // 创建返回对象
         RespBody respBody = new RespBody();
 
@@ -213,7 +284,7 @@ public class CoinController extends BaseController {
                 return respBody;
             }
 
-            WalletTransaction  model = new WalletTransaction();
+            WalletTransaction model = new WalletTransaction();
             model.setPrepayId(vo.getOrderId());
             WalletTransaction order = walletTransactionService.readOne(model);
             if (order == null) {
@@ -239,15 +310,15 @@ public class CoinController extends BaseController {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "提币用户信息不存在");
                 return respBody;
             }
-            Integer coinTyep=2;
-            if (WalletOrderType.TRADE_COIN_DRWA.getCode()==order.getOrderType()){
-                coinTyep=CurrencyType.TRADE.getCode();
+            Integer coinTyep = 2;
+            if (WalletOrderType.TRADE_COIN_DRWA.getCode() == order.getOrderType()) {
+                coinTyep = CurrencyType.TRADE.getCode();
             }
-            if (WalletOrderType.PAY_COIN_DRWA.getCode()==order.getOrderType()){
-                coinTyep=CurrencyType.PAY.getCode();
+            if (WalletOrderType.PAY_COIN_DRWA.getCode() == order.getOrderType()) {
+                coinTyep = CurrencyType.PAY.getCode();
             }
-            if (WalletOrderType.EQUITY_COIN_DRWA.getCode()==order.getOrderType()){
-                coinTyep=CurrencyType.EQUITY.getCode();
+            if (WalletOrderType.EQUITY_COIN_DRWA.getCode() == order.getOrderType()) {
+                coinTyep = CurrencyType.EQUITY.getCode();
             }
             CurrencyType currencyType = WalletOrderType.getCoinTypeFromWalletOrderTypeCode(coinTyep);
             String address = "";
@@ -287,7 +358,7 @@ public class CoinController extends BaseController {
 
             BitcoinClient client = WalletUtil.getBitCoinClient(currencyType);
 //            String txtId = WalletUtil.sendToAddress(client, address, new BigDecimal(order.getAmount().toString()), "用户" + coinUser.getUid() + "提币", "用户" + address + "收币");
-            String txtId=ToolUtil.getUUID();
+            String txtId = ToolUtil.getUUID();
             if (ToolUtil.isNotEmpty(txtId)) {
 
                 vo.setStatus(WalletOrderStatus.CONFIRMING.getCode());
@@ -296,7 +367,7 @@ public class CoinController extends BaseController {
                 updateModel.setId(order.getId());
                 updateModel.setStatus(vo.getStatus());
                 walletTransactionService.updateById(order.getId(), updateModel);
-                respBody.add(RespCodeEnum.SUCCESS.getCode(),WalletOrderStatus.CONFIRMING.getMsg());
+                respBody.add(RespCodeEnum.SUCCESS.getCode(), WalletOrderStatus.CONFIRMING.getMsg());
 //                transactionService.addWalletOrderTransaction(Constant.SYSTEM_USER_ID, address, WalletOrderType.fromCode(order.getOrderType()), WalletOrderStatus.CONFIRMING, txtId, order.getPrepayId(), order.getAmount());
             }
         } catch (Exception e) {
@@ -376,8 +447,8 @@ public class CoinController extends BaseController {
      */
 
     @ResponseBody
-    @RequestMapping(value = "/coincheckorder",method = RequestMethod.POST)
-    public RespBody coinCheckorder(HttpServletRequest request,@RequestBody CoinVerfyVo vo) {
+    @RequestMapping(value = "/coincheckorder", method = RequestMethod.POST)
+    public RespBody coinCheckorder(HttpServletRequest request, @RequestBody CoinVerfyVo vo) {
         // 创建返回对象
         RespBody respBody = new RespBody();
 
@@ -464,12 +535,12 @@ public class CoinController extends BaseController {
                 return respBody;
             }
             BitcoinClient client = WalletUtil.getBitCoinClient(currencyType);
-            Double  blance =  client.getBalance().doubleValue();
-            if (blance<order.getConfirmAmt()){
+            Double blance = client.getBalance().doubleValue();
+            if (blance < order.getConfirmAmt()) {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "钱包币数量不足,请充值");
                 return respBody;
             }
-            walletTransactionService.checkCoinOut(sysUser,order.getId(),vo.getStatus());
+            walletTransactionService.checkCoinOut(sysUser, order.getId(), vo.getStatus());
         } catch (Exception e) {
             e.printStackTrace();
             respBody.add(RespCodeEnum.ERROR.getCode(), "提现审核异常");

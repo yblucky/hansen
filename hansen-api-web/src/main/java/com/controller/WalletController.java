@@ -78,6 +78,9 @@ public class WalletController {
         if (!user.getPayWord().equals(Md5Util.MD5Encode(vo.getPayPassWord(), user.getSalt()))) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付密码不正确");
         }
+        if (vo.getAmount()<=0){
+            return new JsonResult(ResultCode.ERROR.getCode(), "转账数量不合法");
+        }
         if (WalletOrderType.TRADE_COIN_INNER_TRANSFER.getCode()== vo.getWalletOrderType()) {
             if (user.getTradeAmt() < vo.getAmount()) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足");
