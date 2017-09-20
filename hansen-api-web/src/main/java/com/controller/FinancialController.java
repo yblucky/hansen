@@ -7,6 +7,7 @@ import com.base.page.ResultCode;
 import com.constant.Constant;
 import com.constant.OrderStatus;
 import com.constant.OrderType;
+import com.constant.UserStatusType;
 import com.model.CardGrade;
 import com.model.Parameter;
 import com.model.User;
@@ -77,7 +78,7 @@ public class FinancialController {
 
 
         //总资产
-        Double sumRmbAmt=40000d;
+        Double sumRmbAmt=0d;
         //支付币数量
         Double payAmt=loginUser.getPayAmt();
         //股权币数量
@@ -87,10 +88,13 @@ public class FinancialController {
 
         //股权币数量人民币市值
         Double equityRmbAmt= CurrencyUtil.divide(equityAmt,equityRate,2);
+        sumRmbAmt+=equityRmbAmt;
         //支付币数量人民币市值
         Double payRmbAmt=CurrencyUtil.divide(payAmt,payRate,2);
+        sumRmbAmt+=payRmbAmt;
         //交易币数量人民币市值
         Double tradeRmbAmt=CurrencyUtil.divide(tradeAmt,tradeRate,2);
+        sumRmbAmt+=tradeRmbAmt;
         //待释放奖金
         Double waitReleaseRmbAmt=0d;
         Double waitManageRmbAmt=tradeOrderService.readWaiteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(loginUser.getId(),1, OrderType.MANAGE.getCode());
@@ -128,7 +132,7 @@ public class FinancialController {
         Double rewardAllCompeletePushRmbAmt=tradeOrderService.readHasAllCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(loginUser.getId(), OrderType.PUSH.getCode());
         Double rewardAllCompeleteDifferRmbAmt=tradeOrderService.readHasAllCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(loginUser.getId(), OrderType.DIFFERENT.getCode());
 
-        Double rewardPartCompeleterReleaseRmbAmt=tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(loginUser.getId(),1, OrderType.RELASE.getCode());
+//        Double rewardPartCompeleterReleaseRmbAmt=tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(loginUser.getId(),1, OrderType.RELASE.getCode());
         Double rewardPartCompeleteSameRmbAmt=tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(loginUser.getId(),4, OrderType.SAME.getCode());
         Double rewardPartCompeleteManageRmbAmt=tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(loginUser.getId(), 1,OrderType.MANAGE.getCode());
         Double rewardPartCompeletePushRmbAmt=tradeOrderService.readHasPartCompeleteSumDynamicProfitsCountByReceviceUserIdAndSourceAndStatus(loginUser.getId(), 4,OrderType.PUSH.getCode());
@@ -137,7 +141,6 @@ public class FinancialController {
         //静态奖
         Double rewardStaticAmt=0d;
         rewardStaticAmt+=rewardAllCompeleterReleaseRmbAmt;
-        rewardStaticAmt+=rewardPartCompeleterReleaseRmbAmt;
         //推荐奖
         Double rewardPushAmt=0d;
         rewardPushAmt+=rewardAllCompeletePushRmbAmt;
@@ -161,8 +164,12 @@ public class FinancialController {
         hasReleaseRmbAmt+=rewardDifferAmt;
         hasReleaseRmbAmt+=rewardPushAmt;
         hasReleaseRmbAmt+=rewardSameAmt;
+        sumRmbAmt+=hasReleaseRmbAmt;
         //冻结
-        Double frozenRmbAmt=userSignService.readSumFrozenCount(loginUser.getId());
+        Double frozenRmbAmt=0d;
+        if (UserStatusType.ACTIVATESUCCESSED.getCode().intValue()!=loginUser.getStatus()){
+            frozenRmbAmt=userSignService.readSumFrozenCount(loginUser.getId());
+        }
 
         Map  map= new HashedMap();
         map.put("sumRmbAmt",sumRmbAmt);

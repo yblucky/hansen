@@ -101,8 +101,8 @@ public class CardGradeController {
         cardGradeVo.setEquityAmt(0d);
         CardGrade targetModel = cardGradeService.readOne(conditon);
         Double targetMaxProfit = CurrencyUtil.multiply(model.getInsuranceAmt(), targetModel.getOutMultiple(), 4);
-        cardGradeVo.setMaxProfits(CurrencyUtil.add(targetMaxProfit, user.getMaxProfits(), 4));
-
+//        cardGradeVo.setMaxProfits(CurrencyUtil.add(targetMaxProfit, user.getMaxProfits(), 4));
+        cardGradeVo.setMaxProfits(CurrencyUtil.add(targetMaxProfit,0, 4));
         return new JsonResult(cardGradeVo);
     }
 

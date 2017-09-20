@@ -234,7 +234,7 @@ public class UserController extends BaseController {
                 respBody.add(RespCodeEnum.ERROR.getCode(), "用户激活或正在保单中，不允许删除");
                 return respBody;
             }
-            userService.deleteById(userId);
+            userService.updateUserStatusByUserId(userId,UserStatusType.DEL.getCode());
             respBody.add(RespCodeEnum.SUCCESS.getCode(), "用户已删除");
         }else if (100 == status) {
             if (UserStatusType.DISABLE.getCode().intValue() !=  appUser.getStatus().intValue()) {

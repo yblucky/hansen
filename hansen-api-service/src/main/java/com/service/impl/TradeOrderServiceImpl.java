@@ -111,7 +111,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             activeUserDetailContion.setId(activeUser.getId());
         } else if (OrderType.INSURANCE_COVER.getCode().intValue() == tradeOrder.getSource()) {
             upGradeType = UpGradeType.COVERAGEUPGRADE.getCode();
-            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
+//            userService.updateMaxProfitsByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
+            userService.updateMaxProfitsCoverByUserId(tradeOrder.getSendUserId(), cardGrade.getOutMultiple() * cardGrade.getInsuranceAmt());
             //更新用户的静态收益释放基数
 //            userService.updateInsuranceAmtByUserId(tradeOrder.getSendUserId(),cardGrade.getInsuranceAmt());
             //不做叠加
@@ -153,23 +154,8 @@ public class TradeOrderServiceImpl extends CommonServiceImpl<TradeOrder> impleme
             if (refferUser == null && UserStatusType.ACTIVATESUCCESSED.getCode() != refferUser.getStatus()) {
                 continue;
             }
-//            userDepartmentService.updatePerformance(referId, tradeOrder.getAmt());
               userDepartmentService.updateDeparmentAndTeamPerformanceByUserId(referId,tradeOrder.getConfirmAmt(),tradeOrder.getConfirmAmt());
             Integer historyGrade = refferUser.getGrade();
-//            //重新计算用户星级
-//            Grade grade = gradeService.getUserGrade(refferUser.getId());
-//            if (grade != null && grade.getGrade() != refferUser.getGrade()) {
-//                //更新用户星级
-//                userService.updateUserGradeByUserId(referId, grade.getGrade());
-//                UserDepartment con = new UserDepartment();
-//                con.setUserId(refferUser.getId());
-//                UserDepartment userDepartment = userDepartmentService.readOne(con);
-//                UserDepartment updateModel = new UserDepartment();
-//                updateModel.setGrade(grade.getGrade());
-//                userDepartmentService.updateById(userDepartment.getId(),updateModel);
-//                //写入用户升级记录
-//                userGradeRecordService.addGradeRecord(refferUser, GradeRecordType.GRADEUPDATE, historyGrade, grade.getGrade(), UpGradeType.STARGRADE.getCode(), orderNo);
-//            }
             referId = refferUser.getContactUserId();
         }
         //写入结算记录

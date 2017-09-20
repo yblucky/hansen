@@ -139,7 +139,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         // TODO记录用户释放信息
         String remark = "收益释放：会员" + user.getUid() + "领取任务收益";
         String orderNo = OrderNoUtil.get() + "-" + RecordType.RELASE.toString();
-        TradeOrder tradeOrder = this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE, 1, -1, remark, OrderStatus.HANDING.getCode());
+        TradeOrder tradeOrder = this.addTradeOrder(user.getId(), user.getId(), orderNo, incomeAmt, RecordType.RELASE, 1, -1, remark, OrderStatus.HANDLED.getCode());
 
         userSignService.addUserSign(user.getId(), incomeAmt, SignType.WAITING_SIGN, "静态释放，新增奖励发放记录");
 
@@ -195,6 +195,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         Boolean isHasPushFirst = true;
         Boolean isHasPushSecond = true;
 
+        if (parentUser.getSumProfits() > parentUser.getMaxProfits()) {
+            logger.error("用户累计收益已超过最大收益，不能继续领取");
+            return;
+        }
         //一代推荐人必须也是激活状态
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
             if (isOrignal) {
@@ -225,6 +229,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         //二代直推奖
 
         if (grandfatherUser == null) {
+            return;
+        }
+        if (grandfatherUser.getSumProfits() > grandfatherUser.getMaxProfits()) {
+            logger.error("用户累计收益已超过最大收益，不能继续领取");
             return;
         }
         //二代推荐人必须是激活状态
@@ -292,6 +300,11 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         CardGrade cardGrade = null;
         //一代推荐人必须也是激活状态
         logger.error("--------------------开始计算管理奖一代：" + order.getOrderNo() + "----------------------");
+
+        if (parentUser.getSumProfits() > parentUser.getMaxProfits()) {
+            logger.error("用户累计收益已超过最大收益，不能继续领取");
+            return 0d;
+        }
         if (parentUser.getStatus().intValue() == UserStatusType.ACTIVATESUCCESSED.getCode()) {
             //保单等级以最小为准
             cardGrade = cardGradeService.getUserCardGrade(cardLevel);
@@ -326,6 +339,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         User grandfatherUser = this.readById(pushUser.getSecondReferrer());
         if (grandfatherUser == null) {
             return manage;
+        }
+        if (grandfatherUser.getSumProfits() > grandfatherUser.getMaxProfits()) {
+            logger.error("用户累计收益已超过最大收益，不能继续领取");
+            return 0d;
         }
         //二代推荐人必须是激活状态
         logger.error("--------------------开始计算管理奖二代：" + order + "----------------------");
@@ -396,7 +413,6 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         double insuranceAmt = order.getConfirmAmt();
         //用户所处的等级所能拿到奖金的比例
         double bonusScale = 0d;
-
         Double differRewardBaseAmt = order.getAmt();
         if (differRewardBaseAmt == null || differRewardBaseAmt.doubleValue() == 0) {
             logger.error("--------------------计算级差奖 保单金额为空，数据错误 " + order + "----------------------");
@@ -451,6 +467,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 //                this.userIncomeAmt(incomeAmt, parentUser.getId(), RecordType.SAME, orderNo);
                 //领取平级奖记录
                 orderNo = order.getOrderNo() + "-" + RecordType.SAME.toString() + "-" + activeUser.getGrade() + "-" + (i + 1) + "-" + parentUser.getGrade();
+                if (parentUser.getSumProfits() > parentUser.getMaxProfits()) {
+                    logger.error("用户累计收益已超过最大收益，不能继续领取");
+                    return ;
+                }
                 this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, -1, -1, "", OrderStatus.HANDING.getCode());
                 logger.error("--------------------上下级平级且等级都超过二星，领取平级奖,此单金额为：" + insuranceAmt + ",平级奖奖金比例为:" + sameRewradScale + ",计算后金额为：" + incomeAmt + "---------------");
                 //中断级差
@@ -465,6 +485,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     orderNo = order.getOrderNo() + RecordType.DIFFERENT.toString() + "-" + (i + 1) + childUser.getGrade() + "-" + parentUser.getGrade();
 //                    this.userIncomeAmt(incomeAmt, user.getId(), RecordType.DIFFERENT, orderNo);
                     logger.error("--------------------第一一个极差，领取平级奖,此单金额为：" + insuranceAmt + ",平级奖奖金比例为:" + bonusScale + ",计算后金额为：" + incomeAmt + "---------------");
+                    if (parentUser.getSumProfits() > parentUser.getMaxProfits()) {
+                        logger.error("用户累计收益已超过最大收益，不能继续领取");
+                        return ;
+                    }
                     this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.HANDING.getCode());
                 } else {
                     parentGrade = gradeService.getGradeDetail(parentUser.getGrade());
@@ -483,6 +507,10 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     String remark = "级差奖：会员" + activeUser.getUid() + "报单平级奖励";
                     orderNo = order.getOrderNo() + "-" + RecordType.DIFFERENT.toString() + "-" + (i + 1) + user.getGrade() + "-" + parentUser.getGrade();
 //                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
+                    if (parentUser.getSumProfits() > parentUser.getMaxProfits()) {
+                        logger.error("用户累计收益已超过最大收益，不能继续领取");
+                        return ;
+                    }
                     this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.HANDING.getCode());
                 }
             }
@@ -687,6 +715,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             } else if (recordType.getCode().intValue() == RecordType.MANAGE.getCode().intValue()) {
                 model.setStatus(OrderStatus.HANDING.getCode());
                 model.setSignCycle(1);
+                model.setTaskCycle(7);
             }
         } catch (Exception e) {
             e.printStackTrace();

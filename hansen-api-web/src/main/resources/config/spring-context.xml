@@ -105,6 +105,8 @@
 		<bean class="com.interceptor.ApiActionInterceptor"></bean>
 	</mvc:interceptors>
 
+	<mvc:resources mapping="/**" location="/" />
+
 
 	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
 		<property name="config">

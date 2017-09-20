@@ -64,7 +64,16 @@ public enum WalletOrderType {
     /**
      * 激活账号使用支付币
      */
-    PAY_COIN_ACTIVE(14, "激活账号使用支付币");
+    PAY_COIN_ACTIVE(14, "激活账号使用支付币"),
+
+    /**
+     * 升级账号使用交易币
+     */
+    TRADE_COIN_UPGRADE(15, "升级账号使用交易币"),
+    /**
+     * 升级账号使用支付币
+     */
+    PAY_COIN_UPGRADE(16, "升级账号使用支付币");
 
     private final Integer code;
 

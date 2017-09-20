@@ -4,9 +4,12 @@ import com.base.page.Paging;
 import com.base.page.RespBody;
 import com.base.page.RespCodeEnum;
 import com.model.SysUser;
+import com.model.User;
 import com.model.UserDetail;
 import com.service.UserDetailService;
+import com.service.UserService;
 import com.sysservice.ManageUserService;
+import com.utils.toolutils.ToolUtil;
 import com.vo.SysUserVo;
 import com.vo.UserDetailVo;
 import org.slf4j.Logger;
@@ -30,6 +33,8 @@ public class UserDetailController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(UserSignController.class);
     @Autowired
     private UserDetailService userDetailService;
+    @Autowired
+    private UserService userService;
     @Resource
     private ManageUserService manageUserService;//用户业务层
 
@@ -59,8 +64,35 @@ public class UserDetailController extends BaseController {
         if(vo.getUid()!=null || !"".equals(vo.getPhone())){
             page.setPageNumber(0);
         }
+
+        User condition = new User();
+        UserDetail userDetail = new UserDetail();
+        User u=null;
+        if (vo.getUid() != null) {
+            condition.setUid(vo.getUid());
+            u= userService.readOne(condition);
+            if (u!=null){
+                userDetail.setId(u.getId());
+            }else {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "查询不到记录");
+                return respBody;
+            }
+        }
+        if (ToolUtil.isNotEmpty(vo.getPhone())) {
+            condition.setPhone(vo.getPhone());
+            u= userService.readOne(condition);
+            if (u!=null){
+                userDetail.setId(u.getId());
+            }else {
+                respBody.add(RespCodeEnum.ERROR.getCode(), "查询不到记录");
+                return respBody;
+            }
+        }
+        if (ToolUtil.isNotEmpty(vo.getStatus())) {
+            condition.setStatus(vo.getStatus());
+        }
         List<UserDetailVo> list = new ArrayList<>();
-        Integer count = userDetailService.readCount(new UserDetail());
+        Integer count = userDetailService.readCount(userDetail);
         if (count != null && count > 0) {
             list = userDetailService.findAll(vo, page.getPageNumber(), page.getPageSize(), count);
         }
