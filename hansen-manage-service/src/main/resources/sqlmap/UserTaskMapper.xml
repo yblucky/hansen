@@ -3,7 +3,7 @@
 
 <mapper namespace="com.mapper.UserTaskMapper">
 	<sql id="fields">
-		userId,taskId,title,discription,rewardNo,link,taskType,assignTaskTime,createTime,updateTime,status,remark
+		userId,taskId,title,discription,rewardNo,link,taskType,linkImgPath,assignTaskTime,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -34,7 +34,7 @@
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{userId},#{taskId},#{title},#{discription},#{rewardNo},#{link},#{taskType},#{assignTaskTime},now(),now(),#{status},#{remark});
+		values(#{id},#{userId},#{taskId},#{title},#{discription},#{rewardNo},#{link},#{taskType},#{linkImgPath},#{assignTaskTime},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="com.model.UserTask">

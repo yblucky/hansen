@@ -3,6 +3,7 @@ package com.service.impl;
 import com.base.dao.CommonDao;
 import com.base.service.impl.CommonServiceImpl;
 import com.constant.SignType;
+import com.constant.StatusType;
 import com.constant.TaskStatusType;
 import com.constant.UserStatusType;
 import com.mapper.UserTaskMapper;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -78,6 +78,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         userTask.setRewardNo(1);
         userTask.setLinkImgPath(task.getLinkImgPath());
         userTask.setAssignTaskTime(assignTime);
+        userTask.setLinkImgPath(task.getLinkImgPath());
         this.create(userTask);
         return true;
     }
@@ -104,7 +105,9 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             //从来都没有领取过任务，默认第一天
             if (ids.size() == 0) {
                 //获取所有任务列表
-                List<Task> taskList = taskService.readAll(new Task());
+                Task taskCon = new Task();
+                taskCon.setStatus(StatusType.TRUE.getCode().intValue());
+                List<Task> taskList = taskService.readAll(taskCon);
                 //判断是否有任务列表，如果没有，就return
                 if (taskList == null) {
                     return false;
@@ -126,7 +129,9 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
             }
             if (ids.size() == 0) {
                 //获取所有任务列表
-                List<Task> taskList = taskService.readAll(new Task());
+                Task taskCon = new Task();
+                taskCon.setStatus(StatusType.TRUE.getCode().intValue());
+                List<Task> taskList = taskService.readAll(taskCon);
                 //判断是否有任务列表，如果没有，就return
                 if (taskList == null) {
                     return false;

@@ -11,6 +11,7 @@ import com.model.Task;
 import com.service.TaskService;
 import com.service.UserService;
 import com.sysservice.ManageUserService;
+import com.utils.codeutils.Md5Util;
 import com.utils.toolutils.ToolUtil;
 import com.vo.SysUserVo;
 import org.slf4j.Logger;
@@ -144,11 +145,20 @@ public class TaskController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "任务标题不能为空");
             return respBody;
         }
-        if (ToolUtil.isEmpty(vo.getLink())) {
-            respBody.add(RespCodeEnum.ERROR.getCode(), "任务链接不能为空");
+        if (ToolUtil.isEmpty(vo.getTaskType())) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "任务类型不能为空");
+            return respBody;
+        }
+        if (ToolUtil.isEmpty(vo.getRemark())) {
+            respBody.add(RespCodeEnum.ERROR.getCode(), "任务描述不能为空");
             return respBody;
         }
         vo.setStatus(StatusType.TRUE.getCode());
+        Task updateTask = new Task();
+        updateTask.setLinkImgPath(vo.getLinkImgPath());
+        updateTask.setName(vo.getName());
+        updateTask.setTaskType(vo.getTaskType());
+        updateTask.setRemark(vo.getRemark());
         taskService.updateById(vo.getId(), vo);
         respBody.add(RespCodeEnum.SUCCESS.getCode(),"更新成功");
         return respBody;
@@ -183,5 +193,9 @@ public class TaskController extends BaseController {
         taskService.deleteById(taskId);
         respBody.add(RespCodeEnum.SUCCESS.getCode(), "任务已删除");
         return respBody;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Md5Util.MD5Encode("123456","20170920"));
     }
 }

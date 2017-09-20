@@ -34,15 +34,15 @@
 	</insert>
 
 	<select id="readById" resultType="com.model.Task">
-		<include refid="selector"/> where id=#{id}  limit 1;
+		<include refid="selector"/> where id=#{id} and status=1 limit 1;
 	</select>
 
 	<select id="readList" resultType="com.model.Task">
-		<include refid="selector"/> <include refid="condition"/>  ORDER BY createTime DESC  limit #{startRow}, #{pageSize};
+		<include refid="selector"/> <include refid="condition"/>   ORDER BY createTime DESC  limit #{startRow}, #{pageSize};
 	</select>
 
 	<select id="readOne" resultType="com.model.Task">
-		<include refid="selector"/> <include refid="condition"/> limit 1;
+		<include refid="selector"/> <include refid="condition"/>  limit 1;
 	</select>
 
 	<select id="readCount" resultType="int">
@@ -65,7 +65,7 @@
 	</update>
 
 	<update id="deleteById">
-		update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+		update <include refid="table_name"/> set status = 2,updateTime=now() where id = #{id}
 	</update>
 </mapper>
 
