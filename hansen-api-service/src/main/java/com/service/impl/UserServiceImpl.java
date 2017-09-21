@@ -1402,6 +1402,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             updateModel.setInsuranceAmt(cardGrade.getInsuranceAmt());
             updateModel.setMaxProfits(CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), cardGrade.getOutMultiple(), 2));
             updateModel.setCardGrade(cardGrade.getGrade());
+            updateModel.setRemainTaskNo(0);
             this.updateUserStatusByUserId(creatUser.getId(),UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
             this.updateById(creatUser.getId(), updateModel);
             logger.error("更新分享注册用户的卡等级成功");
