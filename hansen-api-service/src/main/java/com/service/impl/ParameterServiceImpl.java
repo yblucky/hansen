@@ -62,7 +62,7 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
             String url = ParamUtil.getIstance().get(Parameter.RMBCONVERTCOINSCALEBASEURL) + name;
             JSONObject jsonObject = HttpUtil.doGetRequest(url);
             if (jsonObject == null) {
-                return 0d;
+                return 1d;
             }
             if (jsonObject.containsKey("24H_Last_price")) {
                 Double last24Price = jsonObject.getDouble("24H_Last_price");
@@ -85,7 +85,7 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
             String url = ParamUtil.getIstance().get(Parameter.RMBCONVERTCOINSCALEBASEURL) + Constant.KYP;
             JSONObject jsonObject = HttpUtil.doGetRequest(url);
             if (jsonObject == null) {
-                return 0d;
+                return 1d;
             }
             if (jsonObject.containsKey("24H_Last_price")) {
                 Double last24Price = jsonObject.getDouble("24H_Last_price");

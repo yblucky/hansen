@@ -50,7 +50,7 @@
 	</select>
 
 	<select id="readLastOne" resultType="com.model.UserTask">
-		<include refid="selector"/> WHERE  userId=#{userId} order by  createTime DESC limit 1;
+		<include refid="selector"/> WHERE  userId=#{userId} order by  createTime DESC,assignTaskTime DESC limit 1;
 	</select>
 
 	<select id="readCount" resultType="int">

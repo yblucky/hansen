@@ -90,7 +90,15 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
 
     @Override
     public UserSign addUserSign(String userId, Double amt, SignType signType, String remark) {
+        if (ToolUtil.isEmpty(userId)){
+            return null;
+        }
+        User user=userService.readById(userId);
+        if (user==null){
+            return null;
+        }
         UserSign model = new UserSign();
+        model.setUid(user.getUid());
         model.setSignTime(new Date());
         model.setUserId(userId);
         model.setRemark(remark);
