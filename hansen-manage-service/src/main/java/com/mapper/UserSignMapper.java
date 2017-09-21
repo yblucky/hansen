@@ -10,5 +10,5 @@ public interface UserSignMapper extends CommonDao<UserSign> {
 
     Double sumUserSignByTime(@Param("startTime") String startTime, @Param("endTime") String endTime);
 
-
+    Double updateAmtCoverByUserId(@Param("id") String id, @Param("amt") Double amt);
 }

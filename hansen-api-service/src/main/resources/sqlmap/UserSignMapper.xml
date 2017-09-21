@@ -54,7 +54,7 @@
 			<if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
 			<if test="model.preSignTime != null">preSignTime= #{model.preSignTime},</if>
 			<if test="model.signTime != null">signTime= #{model.signTime},</if>
-			<if test="model.amt != null">amt= #{model.amt},</if>
+			<if test="model.amt != null and model.amt>0">amt= #{model.amt},</if>
 			<if test="model.status != null">status= #{model.status},</if>
 			<if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
 			updateTime=now()
@@ -74,6 +74,10 @@
 	<select id="readSumFrozenCount" resultType="Double">
 		select SUM(amt) from <include refid="table_name"/> WHERE `status`=1 AND  userId=#{userId}
 	</select>
+
+	<update id="updateAmtCoverByUserId">
+		update <include refid="table_name"/> set amt =   #{amt},updateTime=now() where id = #{id} and (  #{amt})>=0
+	</update>
 
 
 

@@ -15,4 +15,5 @@ public interface UserSignService extends CommonService<UserSign> {
 
     Double sumUserSignByTime(String startTime, String endTime);
 
+
 }

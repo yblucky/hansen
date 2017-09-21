@@ -39,6 +39,21 @@ public enum SignType {
 		}
 		return "";
 	}
+
+	public static SignType fromCode(Integer code) {
+		try {
+			for(SignType signType : SignType.values()){
+				if(signType.getCode().intValue() == code.intValue()){
+					return signType;
+				}
+			}
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+
 	public Integer getCode() {
 		return code;
 	}

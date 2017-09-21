@@ -5,6 +5,7 @@ import com.base.service.impl.CommonServiceImpl;
 import com.constant.Constant;
 import com.constant.RecordType;
 import com.constant.SignType;
+import com.constant.UserStatusType;
 import com.mapper.UserSignMapper;
 import com.model.Parameter;
 import com.model.User;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Map;
 
 /**
  * @date 2016年11月27日
@@ -49,6 +49,7 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
     @Override
     @Transactional
     public Boolean sign(String signId) throws Exception {
+        Boolean isOut = false;
         if (ToolUtil.isEmpty(signId)) {
             return false;
         }
@@ -60,13 +61,35 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         if (user == null) {
             return false;
         }
-        if (user.getSumProfits() > user.getMaxProfits() || (user.getSumProfits() + sign.getAmt()) > user.getMaxProfits()) {
+        Double avaibleAmt = 0d;
+        if (user.getSumProfits() > user.getMaxProfits()) {
+            userService.updateUserStatusByUserId(user.getId(),UserStatusType.ORDER_OUT.getCode());
             return false;
         }
-        Map<String, Double> map = tradeOrderService.getCoinNoFromRmb(sign.getAmt());
-        Double payAmt = map.get("payAmt");
-        Double tradeAmt = map.get("tradeAmt");
-        Double equityAmt = map.get("equityAmt");
+        if ((user.getSumProfits() + sign.getAmt()) > user.getMaxProfits()) {
+            avaibleAmt=CurrencyUtil.subtract(user.getMaxProfits(),user.getSumProfits(),2);
+            sign.setAmt(avaibleAmt);
+            Boolean isSpilt = this.splitSign(signId,avaibleAmt);
+            if (isSpilt){
+                isOut=true;
+            }
+        }
+//        Map<String, Double> map = tradeOrderService.getCoinNoFromRmb(sign.getAmt());
+//        Double payAmt = map.get("payAmt");
+//        Double tradeAmt = map.get("tradeAmt");
+//        Double equityAmt = map.get("equityAmt");
+        Double payAmt = 1d;
+        Double tradeAmt = 1d;
+        Double equityAmt = 1d;
+        if (sign.getRmbCovertPayAmtScale() != null) {
+            payAmt = sign.getRmbCovertPayAmtScale();
+        }
+        if (sign.getRmbCovertTradeAmtScale() != null) {
+            tradeAmt = sign.getRmbCovertTradeAmtScale();
+        }
+        if (sign.getRmbCovertEquityScale() != null) {
+            equityAmt = sign.getRmbCovertEquityScale();
+        }
         Double rewardConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE), 0d);
         Double rewardConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE), 0d);
         Double rewardConvertEquityScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE), 0d);
@@ -78,6 +101,9 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         userService.updateEquityAmtByUserId(sign.getUserId(), equityAmt);
         userService.updateSumProfitsByUserId(sign.getUserId(), sign.getAmt());
         UserSign updateModel = new UserSign();
+        if (isOut){
+            updateModel.setAmt(sign.getAmt());
+        }
         updateModel.setSignTime(new Date());
         updateModel.setStatus(SignType.SIGNED.getCode());
         updateModel.setRemark("用户成功领取到" + sign.getAmt() + "红包");
@@ -90,11 +116,11 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
 
     @Override
     public UserSign addUserSign(String userId, Double amt, SignType signType, String remark) {
-        if (ToolUtil.isEmpty(userId)){
+        if (ToolUtil.isEmpty(userId)) {
             return null;
         }
-        User user=userService.readById(userId);
-        if (user==null){
+        User user = userService.readById(userId);
+        if (user == null) {
             return null;
         }
         UserSign model = new UserSign();
@@ -131,5 +157,22 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
             return 0d;
         }
         return signFrozenCount;
+    }
+
+    @Override
+    public Boolean splitSign(String id,Double availableAmt) {
+        if (ToolUtil.isEmpty(id)){
+            return false;
+        }
+        UserSign sign =this.readById(id);
+        if (sign==null){
+            return false;
+        }
+        Double remainAmt = CurrencyUtil.subtract(sign.getAmt(),availableAmt,2);
+        if (remainAmt>0){
+            this.addUserSign(sign.getUserId(),remainAmt,SignType.WAITING_SIGN,"保单出局,拆分奖励发放记录");
+        }
+        userService.updateUserStatusByUserId(sign.getUserId(),UserStatusType.ORDER_OUT.getCode());
+        return true;
     }
 }

@@ -116,10 +116,10 @@ public class UserSignController extends BaseController {
                     payScale=sign.getRmbCovertPayAmtScale();
                 }
                 if (sign.getRmbCovertTradeAmtScale()!=null){
-                    payScale=sign.getRmbCovertTradeAmtScale();
+                    tradeScale=sign.getRmbCovertTradeAmtScale();
                 }
                 if (sign.getRmbCovertEquityScale()!=null){
-                    payScale=sign.getRmbCovertEquityScale();
+                    equtyScale=sign.getRmbCovertEquityScale();
                 }
                 Double payAmt=CurrencyUtil.multiply(payAmtRmb,payScale,2);
                 Double tradeAmt=CurrencyUtil.multiply(tradeAmtRmb,tradeScale,2);

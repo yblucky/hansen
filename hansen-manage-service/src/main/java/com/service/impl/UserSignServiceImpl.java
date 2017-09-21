@@ -98,4 +98,6 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         }
         return sum;
     }
+
+
 }
