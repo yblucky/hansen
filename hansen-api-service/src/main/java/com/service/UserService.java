@@ -60,6 +60,8 @@ public interface UserService extends CommonService<User> {
 
     Integer updateSumProfitsCoverByUserId(String userId, Double maxProfits);
 
+    public   Integer updateHistorySumProfitsByUserId(String userId, Double historySumProfits);
+
     Integer updateInsuranceAmtCoverByUserId(String userId, Double insuranceAmt);
 
     Integer updateMaxProfitsCoverByUserId(String userId, Double maxProfits);

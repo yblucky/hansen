@@ -4,7 +4,7 @@
 <mapper namespace="com.mapper.UserMapper">
 
 	<sql id="fields">
-		uid,unionId,phone,loginName,email,nickName,userName,sex,salt,headImgUrl,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardGrade,releaseTime,equityAmt,payAmt,tradeAmt,insuranceAmt,maxProfits,sumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,remainTaskNo,createType,createTime,updateTime,status,remark
+		uid,unionId,phone,loginName,email,nickName,userName,sex,salt,headImgUrl,loginTime,openId,payWord,password,firstReferrer,secondReferrer,grade,cardGrade,releaseTime,equityAmt,payAmt,tradeAmt,insuranceAmt,maxProfits,sumProfits,historySumProfits,cashOutProfits,contactUserId,activeCodeNo,registerCodeNo,remainTaskNo,createType,createTime,updateTime,status,remark
 	</sql>
 
 	<sql id="fields_id">
@@ -45,6 +45,7 @@
 			<if test="model.tradeAmt != null">and tradeAmt=#{model.tradeAmt}</if>
 			<if test="model.maxProfits != null">and maxProfits=#{model.maxProfits}</if>
 			<if test="model.sumProfits != null">and sumProfits=#{model.sumProfits}</if>
+			<if test="model.historySumProfits != null">and historySumProfits=#{model.historySumProfits}</if>
 			<if test="model.cashOutProfits != null">and cashOutProfits=#{model.cashOutProfits}</if>
 			<if test="model.contactUserId != null and model.contactUserId != ''">and contactUserId=#{model.contactUserId}</if>
 			<if test="model.activeCodeNo != null">and activeCodeNo=#{model.activeCodeNo}</if>
@@ -57,7 +58,7 @@
 
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
 		insert into <include refid="table_name"/>(<include refid="fields_id"/>)
-		values(#{id},#{uid},#{unionId},#{phone},#{loginName},#{email},#{nickName},#{userName},#{sex},#{salt},#{headImgUrl},#{loginTime},#{openId},#{payWord},#{password},#{firstReferrer},#{secondReferrer},#{grade},#{cardGrade},#{releaseTime},#{equityAmt},#{payAmt},#{tradeAmt},#{insuranceAmt},#{maxProfits},#{sumProfits},#{cashOutProfits},#{contactUserId},#{activeCodeNo},#{registerCodeNo},#{remainTaskNo},#{createType},now(),now(),#{status},#{remark});
+		values(#{id},#{uid},#{unionId},#{phone},#{loginName},#{email},#{nickName},#{userName},#{sex},#{salt},#{headImgUrl},#{loginTime},#{openId},#{payWord},#{password},#{firstReferrer},#{secondReferrer},#{grade},#{cardGrade},#{releaseTime},#{equityAmt},#{payAmt},#{tradeAmt},#{insuranceAmt},#{maxProfits},#{sumProfits},#{historySumProfits},#{cashOutProfits},#{contactUserId},#{activeCodeNo},#{registerCodeNo},#{remainTaskNo},#{createType},now(),now(),#{status},#{remark});
 	</insert>
 
 	<select id="readById" resultType="User">
@@ -120,6 +121,7 @@
 			<if test="model.tradeAmt != null">tradeAmt= #{model.tradeAmt},</if>
 			<if test="model.maxProfits != null">maxProfits= #{model.maxProfits},</if>
 			<if test="model.sumProfits != null">sumProfits= #{model.sumProfits},</if>
+			<if test="model.historySumProfits != null">historySumProfits= #{model.historySumProfits},</if>
 			<if test="model.cashOutProfits != null">cashOutProfits= #{model.cashOutProfits},</if>
 			<if test="model.contactUserId != null and model.contactUserId !=''">contactUserId= #{model.contactUserId},</if>
 			<if test="model.activeCodeNo != null">activeCodeNo= #{model.activeCodeNo},</if>
@@ -155,6 +157,11 @@
 
 	<update id="updateSumProfitsByUserId">
 		update <include refid="table_name"/> set sumProfits = sumProfits + #{sumProfits},updateTime=now() where id = #{id} and (sumProfits + #{sumProfits})>=0
+	</update>
+
+
+	<update id="updateHistorySumProfitsByUserId">
+		update <include refid="table_name"/> set historySumProfits = historySumProfits + #{historySumProfits},updateTime=now() where id = #{id} and (historySumProfits + #{historySumProfits})>=0
 	</update>
 
 

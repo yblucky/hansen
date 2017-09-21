@@ -465,7 +465,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                 orderNo = order.getOrderNo() + "-" + RecordType.SAME.toString() + "-" + activeUser.getGrade() + "-" + (i + 1) + "-" + parentUser.getGrade();
                 if (parentUser.getSumProfits() > parentUser.getMaxProfits()) {
                     logger.error("用户累计收益已超过最大收益，不能继续领取");
-                    return ;
+                    return;
                 }
                 this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.SAME, -1, -1, "", OrderStatus.HANDING.getCode());
                 logger.error("--------------------上下级平级且等级都超过二星，领取平级奖,此单金额为：" + insuranceAmt + ",平级奖奖金比例为:" + sameRewradScale + ",计算后金额为：" + incomeAmt + "---------------");
@@ -483,7 +483,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
                     logger.error("--------------------第一一个极差，领取平级奖,此单金额为：" + insuranceAmt + ",平级奖奖金比例为:" + bonusScale + ",计算后金额为：" + incomeAmt + "---------------");
                     if (parentUser.getSumProfits() > parentUser.getMaxProfits()) {
                         logger.error("用户累计收益已超过最大收益，不能继续领取");
-                        return ;
+                        return;
                     }
                     this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.HANDING.getCode());
                 } else {
@@ -505,7 +505,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 //                this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, 0, 0);
                     if (parentUser.getSumProfits() > parentUser.getMaxProfits()) {
                         logger.error("用户累计收益已超过最大收益，不能继续领取");
-                        return ;
+                        return;
                     }
                     this.addTradeOrder(pushUserId, parentUser.getId(), orderNo, incomeAmt, RecordType.DIFFERENT, -1, -1, "", OrderStatus.HANDING.getCode());
                 }
@@ -813,8 +813,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         tradeOrder.setCardGrade(targetCardGradeNo);
         tradeOrderService.create(tradeOrder);
-        walletOrderService.addWalletOrder(userId,Constant.SYSTEM_USER_ID,WalletOrderType.TRADE_COIN_ACTIVE,-differTradeAmt,-differTradeAmt,0d,WalletOrderStatus.SUCCESS);
-        walletOrderService.addWalletOrder(userId,Constant.SYSTEM_USER_ID,WalletOrderType.PAY_COIN_ACTIVE,-differPayAmt,-differPayAmt,0d,WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(userId, Constant.SYSTEM_USER_ID, WalletOrderType.TRADE_COIN_ACTIVE, -differTradeAmt, -differTradeAmt, 0d, WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(userId, Constant.SYSTEM_USER_ID, WalletOrderType.PAY_COIN_ACTIVE, -differPayAmt, -differPayAmt, 0d, WalletOrderStatus.SUCCESS);
         // TODO: 2017/8/3 点位升级成功后的记录
         userGradeRecordService.addGradeRecord(user, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.ORIGINUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
@@ -924,8 +924,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         }
         tradeOrder.setCardGrade(targetCardGradeNo);
         tradeOrderService.create(tradeOrder);
-        walletOrderService.addWalletOrder(userId,Constant.SYSTEM_USER_ID,WalletOrderType.TRADE_COIN_ACTIVE,-differTradeAmt,-differTradeAmt,0d,WalletOrderStatus.SUCCESS);
-        walletOrderService.addWalletOrder(userId,Constant.SYSTEM_USER_ID,WalletOrderType.PAY_COIN_ACTIVE,-differPayAmt,-differPayAmt,0d,WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(userId, Constant.SYSTEM_USER_ID, WalletOrderType.TRADE_COIN_ACTIVE, -differTradeAmt, -differTradeAmt, 0d, WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(userId, Constant.SYSTEM_USER_ID, WalletOrderType.PAY_COIN_ACTIVE, -differPayAmt, -differPayAmt, 0d, WalletOrderStatus.SUCCESS);
         userGradeRecordService.addGradeRecord(user, GradeRecordType.CARDUPDATE, user.getCardGrade(), targetCardGradeNo, UpGradeType.COVERAGEUPGRADE.getCode(), tradeOrder.getOrderNo());
     }
 
@@ -1052,14 +1052,14 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
         Double payRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCEPAYSCALE)), 2);
         Double payCoinAmt = payRmbAmt * payScale;
-        payCoinAmt=CurrencyUtil.getPoundage(payCoinAmt,1d,2);
+        payCoinAmt = CurrencyUtil.getPoundage(payCoinAmt, 1d, 2);
         if (activeUser.getPayAmt() < payCoinAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "支付币数量不足，无法激活账号");
         }
 
         Double tradeRmbAmt = CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), Double.valueOf(ParamUtil.getIstance().get(Parameter.INSURANCETRADESCALE)), 2);
         Double tradeCoinAmt = tradeRmbAmt * tradeScale;
-        tradeCoinAmt=CurrencyUtil.getPoundage(tradeCoinAmt,1d,2);
+        tradeCoinAmt = CurrencyUtil.getPoundage(tradeCoinAmt, 1d, 2);
         if (activeUser.getTradeAmt() < tradeCoinAmt) {
             return new JsonResult(ResultCode.ERROR.getCode(), "交易币数量不足，无法激活账号");
         }
@@ -1077,8 +1077,8 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         this.updateById(updateActiveUser.getId(), updateActiveUser);
         //生成保单
         tradeOrderService.createInsuranceTradeOrder(activeUser, cardGrade);
-        walletOrderService.addWalletOrder(updateActiveUser.getId(),Constant.SYSTEM_USER_ID,WalletOrderType.TRADE_COIN_ACTIVE,-tradeCoinAmt,-tradeCoinAmt,0d,WalletOrderStatus.SUCCESS);
-        walletOrderService.addWalletOrder(updateActiveUser.getId(),Constant.SYSTEM_USER_ID,WalletOrderType.PAY_COIN_ACTIVE,-tradeCoinAmt,-tradeCoinAmt,0d,WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(updateActiveUser.getId(), Constant.SYSTEM_USER_ID, WalletOrderType.TRADE_COIN_ACTIVE, -tradeCoinAmt, -tradeCoinAmt, 0d, WalletOrderStatus.SUCCESS);
+        walletOrderService.addWalletOrder(updateActiveUser.getId(), Constant.SYSTEM_USER_ID, WalletOrderType.PAY_COIN_ACTIVE, -tradeCoinAmt, -tradeCoinAmt, 0d, WalletOrderStatus.SUCCESS);
         return new JsonResult(ResultCode.SUCCESS.getCode(), UserStatusType.WAITACTIVATE.getMsg());
     }
 
@@ -1120,6 +1120,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Override
     public Integer updateSumProfitsCoverByUserId(String userId, Double sumProfits) {
         return userMapper.updateSumProfitsCoverByUserId(userId, sumProfits);
+    }
+
+
+    @Override
+    public Integer updateHistorySumProfitsByUserId(String userId, Double historySumProfits) {
+        return userMapper.updateHistorySumProfitsByUserId(userId, historySumProfits);
     }
 
     @Override
@@ -1181,7 +1187,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         transferCode.setTransferNo(-cardGrade.getActiveCodeNo());
         transferCodeService.create(transferCode);
         this.updateUserStatus(userId, UserStatusType.ACTIVATESUCCESSED.getCode());
-        this.updateRemainTaskNoByUserId(userId,7);
+        this.updateRemainTaskNoByUserId(userId, 7);
         return true;
     }
 
@@ -1399,7 +1405,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             updateModel.setInsuranceAmt(cardGrade.getInsuranceAmt());
             updateModel.setMaxProfits(CurrencyUtil.multiply(cardGrade.getInsuranceAmt(), cardGrade.getOutMultiple(), 2));
             updateModel.setCardGrade(cardGrade.getGrade());
-            this.updateUserStatusByUserId(creatUser.getId(),UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
+            this.updateUserStatusByUserId(creatUser.getId(), UserStatusType.INNER_REGISTER_SUCCESSED.getCode());
             this.updateById(creatUser.getId(), updateModel);
             logger.error("更新分享注册用户的卡等级成功");
         } catch (Exception e) {
@@ -1413,12 +1419,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
     @Transactional
     public JsonResult shareActicveUser(String userId) throws Exception {
         User user = this.readById(userId);
-        if (user==null){
-            return  new JsonResult(ResultCode.ERROR.getCode(),"找不到用户");
+        if (user == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "找不到用户");
         }
         CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
-        if (cardGrade==null){
-            return  new JsonResult(ResultCode.ERROR.getCode(),"用户卡等级有误");
+        if (cardGrade == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "用户卡等级有误");
         }
         //人民币兑换支付币汇率
         Double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);

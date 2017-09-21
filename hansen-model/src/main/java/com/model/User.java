@@ -111,6 +111,10 @@ public class User extends BaseModel {
      */
     private Double sumProfits;
     /**
+     * 累计收益
+     */
+    private Double historySumProfits;
+    /**
      * 累计提现收益
      */
     private Double cashOutProfits;
@@ -388,4 +392,11 @@ public class User extends BaseModel {
         this.userName = userName;
     }
 
+    public Double getHistorySumProfits() {
+        return historySumProfits;
+    }
+
+    public void setHistorySumProfits(Double historySumProfits) {
+        this.historySumProfits = historySumProfits;
+    }
 }

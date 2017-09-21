@@ -168,11 +168,17 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         if (sign==null){
             return false;
         }
+        User  user =userService.readById(sign.getUserId());
+        if (user==null){
+            return  false;
+        }
         Double remainAmt = CurrencyUtil.subtract(sign.getAmt(),availableAmt,2);
         if (remainAmt>0){
             this.addUserSign(sign.getUserId(),remainAmt,SignType.WAITING_SIGN,"保单出局,拆分奖励发放记录");
         }
         userService.updateUserStatusByUserId(sign.getUserId(),UserStatusType.ORDER_OUT.getCode());
+        userService.updateHistorySumProfitsByUserId(sign.getUserId(),user.getSumProfits());
+        userService.updateSumProfitsCoverByUserId(user.getId(),0d);
         return true;
     }
 }
