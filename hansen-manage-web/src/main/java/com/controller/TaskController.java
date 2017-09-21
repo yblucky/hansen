@@ -105,10 +105,6 @@ public class TaskController extends BaseController {
             respBody.add(RespCodeEnum.ERROR.getCode(), "任务标题不能为空");
             return respBody;
         }
-        if (ToolUtil.isEmpty(vo.getLink())) {
-            respBody.add(RespCodeEnum.ERROR.getCode(), "任务链接不能为空");
-            return respBody;
-        }
         vo.setStatus(StatusType.TRUE.getCode());
         taskService.create(vo);
         respBody.add(RespCodeEnum.SUCCESS.getCode(),"新增任务成功");
