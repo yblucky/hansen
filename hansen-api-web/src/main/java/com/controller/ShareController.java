@@ -175,6 +175,45 @@ public class ShareController {
         return new JsonResult(ResultCode.SUCCESS.getCode(), "选卡成功");
     }
 
+
+
+    /**
+     *
+     * 分享注册首次登陆选择等级
+     *
+     * @param request
+     * @param vo
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping(value = "/chooseCardeGradeAgain", method = RequestMethod.POST)
+    public JsonResult chooseCardeGradeAgain(HttpServletRequest request, @RequestBody CardGradeVo vo) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
+        User loginUser = userService.readById(token.getId());
+        if (loginUser == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "登陆用户不存在");
+        }
+        if (loginUser != null && UserStatusType.ORDER_OUT.getCode().intValue()!=loginUser.getStatus()) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "用户不是保单出局状态");
+        }
+        if (vo.getGrade()==null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "选择开卡等级不能为空");
+        }
+        if (!ValidateUtils.Number(vo.getGrade().toString())){
+            return new JsonResult(ResultCode.ERROR.getCode(), "卡等级必须是数字");
+        }
+        if (vo.getGrade()<=0 || vo.getGrade()>5){
+            return new JsonResult(ResultCode.ERROR.getCode(), "卡等级必须在【1-5】范围内");
+        }
+        CardGrade cardGrade= cardGradeService.getUserCardGrade(vo.getGrade());
+        if (cardGrade==null){
+            return new JsonResult(ResultCode.ERROR.getCode(), "找不到开卡等级");
+        }
+        userService.updateUserCardGrade(loginUser,cardGrade);
+        return new JsonResult(ResultCode.SUCCESS.getCode(), "选卡成功");
+    }
+
     public static void main(String[] args) {
         System.out.println(ValidateUtils.Number("1"));
     }
