@@ -124,8 +124,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         model.setInsuranceAmt(insuranceAmt);
         //更新释放时间
         model.setReleaseTime("");
-        //更新累计收益
-        model.setSumProfits(CurrencyUtil.getPoundage(user.getSumProfits() + incomeAmt, 1d));
+
         if (user.getSumProfits() > user.getMaxProfits()) {
             System.out.println("用户累计收益已超过最大收益，不能继续领取");
             //用户状态设为出局
