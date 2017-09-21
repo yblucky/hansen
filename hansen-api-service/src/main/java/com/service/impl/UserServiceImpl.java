@@ -1025,7 +1025,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
         userDepartment.setPerformance(0d);
         userDepartment.setTeamPerformance(0d);
         userDepartment.setStatus(StatusType.TRUE.getCode());
-        userDepartment.setGrade(cardGrade.getGrade());
+        userDepartment.setGrade(GradeType.GRADE0.getCode());
         userDepartmentService.createUserDepartment(userDepartment);
         /**扣注册码**/
 //        activeCodeService.useRegisterCode(innerUser.getId(), cardGrade.getRegisterCodeNo(), "内部注册，推荐会员" + createUser.getUid() + "，使用" + cardGrade.getRegisterCodeNo() + "个注册码");
