@@ -104,6 +104,7 @@ public class LoginController {
             userStatus.add(UserStatusType.WAITACTIVATE.getCode());
             userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
             userStatus.add(UserStatusType.OUT.getCode());
+            userStatus.add(UserStatusType.ORDER_OUT.getCode());
             if (!userStatus.contains(loginUser.getStatus())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
             }
@@ -196,7 +197,7 @@ public class LoginController {
         if (null == user) {
             return new JsonResult(2, "无法找到用户信息");
         }
-        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode() && user.getStatus() != UserStatusType.WAITACTIVATE.getCode() && user.getStatus() != UserStatusType.OUT.getCode() && user.getStatus() != UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode()) {
+        if (user.getStatus() != UserStatusType.ACTIVATESUCCESSED.getCode() && user.getStatus() != UserStatusType.INNER_REGISTER_SUCCESSED.getCode() && user.getStatus() != UserStatusType.WAITACTIVATE.getCode() && user.getStatus() != UserStatusType.OUT.getCode() && user.getStatus() != UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode()&& user.getStatus() != UserStatusType.ORDER_OUT.getCode()) {
             return new JsonResult(ResultCode.ERROR.getCode(), "您的帐号已被禁用");
         }
         // Redis获取Token
@@ -245,6 +246,9 @@ public class LoginController {
         if (UserStatusType.OUT.getCode().intValue() == user.getStatus().intValue()) {
             Double sumFrozen = userSignService.readSumFrozenCount(user.getId());
             vo.setSumFrozenProfits(sumFrozen);
+        }
+        if (user.getHistorySumProfits()!=null){
+            vo.setSumProfits(vo.getSumProfits()+user.getHistorySumProfits());
         }
         vo.setDynamicProfits(sumDynamicProfitsCount);
         vo.setPayConverRmbScale(payConverRmbScale);

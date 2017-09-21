@@ -171,6 +171,10 @@ public class FinancialController {
             frozenRmbAmt=userSignService.readSumFrozenCount(loginUser.getId());
         }
 
+        if (loginUser.getHistorySumProfits()!=null){
+            sumRmbAmt+=loginUser.getHistorySumProfits();
+        }
+
         Map  map= new HashedMap();
         map.put("sumRmbAmt",sumRmbAmt);
         map.put("payAmt",payAmt);
