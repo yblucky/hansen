@@ -633,7 +633,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             Integer historyGrade = user.getGrade();
             user = this.readById(user.getId());
             UserDepartment userDepartment = new UserDepartment();
-            model.setGrade(userGrade.getGrade());
+            userDepartment.setGrade(userGrade.getGrade());
             userDepartmentService.updateById(user.getId(), userDepartment);
             userGradeRecordService.addGradeRecord(user, GradeRecordType.GRADEUPDATE, historyGrade, userGrade.getGrade(), UpGradeType.STARGRADE.getCode(), OrderNoUtil.get());
         }
