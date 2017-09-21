@@ -151,7 +151,7 @@
 	</update>
 
 	<update id="updateInsuranceAmtByUserId">
-		update <include refid="table_name"/> set insuranceAmt = insuranceAmt + #{insuranceAmt},updateTime=now() where id = #{id} and (insuranceAmt + #{insuranceAmt})>=0
+		 update <include refid="table_name"/> set insuranceAmt = insuranceAmt + #{insuranceAmt},updateTime=now() where id = #{id} and (insuranceAmt + #{insuranceAmt})>=0
 	</update>
 
 
