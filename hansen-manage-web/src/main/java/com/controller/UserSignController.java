@@ -91,13 +91,16 @@ public class UserSignController extends BaseController {
         if (count != null && count > 0) {
             userSignList = userSignService.readList(condition, page.getPageNumber(), page.getPageSize(), count);
             UserSignVo vo = null;
-            double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE),1d);
-            double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE),1d);
-            double equtyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE),1d);
+            Double payScale = 1d;
+            Double tradeScale = 1d;
+            Double equtyScale = 1d;
+//            double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE),1d);
+//            double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE),1d);
+//            double equtyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE),1d);
 
-            double rewardPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE),1d);
-            double rewardTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE),1d);
-            double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE),1d);
+            Double rewardPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE),1d);
+            Double rewardTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE),1d);
+            Double rewardEqutyScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE),1d);
             for (UserSign sign:userSignList){
                 vo = MyBeanUtils.copyProperties(sign,UserSignVo.class);
                 User userPo =userService.readById(sign.getUserId());
@@ -109,11 +112,21 @@ public class UserSignController extends BaseController {
                 Double payAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardPayScale,2);
                 Double tradeAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardTradeScale,2);
                 Double equityAmtRmb = CurrencyUtil.multiply(sign.getAmt(),rewardEqutyScale,2);
-
+                if (sign.getRmbCovertPayAmtScale()!=null){
+                    payScale=sign.getRmbCovertPayAmtScale();
+                }
+                if (sign.getRmbCovertTradeAmtScale()!=null){
+                    payScale=sign.getRmbCovertTradeAmtScale();
+                }
+                if (sign.getRmbCovertEquityScale()!=null){
+                    payScale=sign.getRmbCovertEquityScale();
+                }
                 Double payAmt=CurrencyUtil.multiply(payAmtRmb,payScale,2);
                 Double tradeAmt=CurrencyUtil.multiply(tradeAmtRmb,tradeScale,2);
                 Double equityAmt=CurrencyUtil.multiply(equityAmtRmb,equtyScale,2);
-
+                vo.setRmbCovertPayAmtScale(payScale);
+                vo.setRmbCovertTradeAmtScale(tradeScale);
+                vo.setRmbCovertEquityScale(equtyScale);
                 vo.setStatus(sign.getStatus());
                 vo.setPayAmt(payAmt);
                 vo.setTradeAmt(tradeAmt);
