@@ -74,7 +74,7 @@ public class UserTaskServiceImpl extends CommonServiceImpl<UserTask> implements 
         userTask.setLink(task.getLink());
         userTask.setStatus(TaskStatusType.PENDING.getCode());
         userTask.setRemark(TaskStatusType.PENDING.getMsg());
-        userTask.setTaskType(1);
+        userTask.setTaskType(task.getTaskType());
         userTask.setRewardNo(1);
         userTask.setLinkImgPath(task.getLinkImgPath());
         userTask.setAssignTaskTime(assignTime);
