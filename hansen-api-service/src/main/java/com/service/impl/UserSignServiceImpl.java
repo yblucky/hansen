@@ -90,12 +90,12 @@ public class UserSignServiceImpl extends CommonServiceImpl<UserSign> implements 
         if (sign.getRmbCovertEquityScale() != null) {
             equityAmt = sign.getRmbCovertEquityScale();
         }
-        Double rewardConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE), 0d);
-        Double rewardConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE), 0d);
-        Double rewardConvertEquityScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE), 0d);
-        payAmt = CurrencyUtil.multiply(payAmt, rewardConvertPayScale, 4);
-        tradeAmt = CurrencyUtil.multiply(tradeAmt, rewardConvertTradeScale, 4);
-        equityAmt = CurrencyUtil.multiply(equityAmt, rewardConvertEquityScale, 4);
+        Double rewardConvertPayScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTPAYSCALE), 1d);
+        Double rewardConvertTradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTTRADESCALE), 1d);
+        Double rewardConvertEquityScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.REWARDCONVERTEQUITYSCALE), 1d);
+        payAmt = CurrencyUtil.multiply(sign.getAmt()*payAmt, rewardConvertPayScale, 4);
+        tradeAmt = CurrencyUtil.multiply(sign.getAmt()*tradeAmt, rewardConvertTradeScale, 4);
+        equityAmt = CurrencyUtil.multiply(sign.getAmt()*equityAmt, rewardConvertEquityScale, 4);
         userService.updatePayAmtByUserId(sign.getUserId(), payAmt);
         userService.updateTradeAmtByUserId(sign.getUserId(), tradeAmt);
         userService.updateEquityAmtByUserId(sign.getUserId(), equityAmt);

@@ -319,7 +319,7 @@ public class User extends BaseModel {
     }
 
     public Double getSumProfits() {
-        return( sumProfits+historySumProfits);
+        return sumProfits;
     }
 
     public void setSumProfits(Double sumProfits) {

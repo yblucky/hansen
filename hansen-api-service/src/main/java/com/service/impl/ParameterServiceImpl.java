@@ -108,14 +108,15 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
         try {
             Map<String, Object> map = new HashedMap();
             //人民币兑换支付币汇率
-            Double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 0d);
+            Double payScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTPAYSCALE), 1d);
             //人民币兑换交易币汇率
-            Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 0d);
+            Double tradeScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTTRADESCALE), 1d);
             //人民币兑换交易币汇率
-            Double equityScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE), 0d);
+            Double equityScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.RMBCONVERTEQUITYSCALE), 1d);
             map.put(Constant.RMB_CONVERT_PAY_SCALE, payScale);
             map.put(Constant.RMB_CONVERT_TRADE_SCALE, tradeScale);
             map.put(Constant.RMB_CONVERT_EQUITY_SCALE, equityScale);
+            return map;
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("从系统参数表查询汇率出错");
@@ -126,7 +127,7 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
     @Override
     public Double getScale(String key) {
         Map<String, Object> map = this.getScale();
-        if (ToolUtil.isEmpty(key)) {
+        if (ToolUtil.isNotEmpty(key)) {
             if (map.containsKey(key)) {
                 return (Double) map.get(key);
             }

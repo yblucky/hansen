@@ -848,6 +848,7 @@ public class UserController {
             userStatus.add(UserStatusType.ACTIVATESUCCESSED.getCode());
             userStatus.add(UserStatusType.WAITACTIVATE.getCode());
             userStatus.add(UserStatusType.OUT.getCode());
+            userStatus.add(UserStatusType.ORDER_OUT.getCode());
             if (UserStatusType.OUT_SHARE_REGISTER_SUCCESSED.getCode().intValue()==(loginUser.getStatus())) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "必须先选择开卡等级");
             }
