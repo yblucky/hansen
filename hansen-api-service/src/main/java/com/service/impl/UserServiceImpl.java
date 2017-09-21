@@ -111,25 +111,22 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             System.out.println("用户累计收益已超过最大收益，不能继续领取");
             return;
         }
-//        this.reloadUserGrade(user);
         CardGrade cardGrade = cardGradeService.getUserCardGrade(user.getCardGrade());
         //静态收益
         double incomeAmt = CurrencyUtil.getPoundage(user.getInsuranceAmt() * cardGrade.getReleaseScale(), 1d);
         //静态收益转为三种币
 //        userIncomeAmt(incomeAmt, user.getId(), RecordType.RELASE, orderNo);
         //用户剩余保单金额
-        double insuranceAmt = CurrencyUtil.getPoundage(user.getInsuranceAmt() - incomeAmt, 1d);
+//        double insuranceAmt = CurrencyUtil.getPoundage(user.getInsuranceAmt() - incomeAmt, 1d);
         User model = new User();
         //剩余保单金额
-        model.setInsuranceAmt(insuranceAmt);
+//        model.setInsuranceAmt(insuranceAmt);
         //更新释放时间
         model.setReleaseTime("");
-
         if (user.getSumProfits() > user.getMaxProfits()) {
             System.out.println("用户累计收益已超过最大收益，不能继续领取");
             //用户状态设为出局
-            model.setStatus(UserStatusType.OUT.getCode());
-            //TODO 记录出局信息
+            model.setStatus(UserStatusType.ORDER_OUT.getCode());
         } else {
             model.setStatus(UserStatusType.OUT.getCode());
             //用户需要重新激活才可以继续释放奖金
@@ -456,7 +453,7 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
             if (parentUser.getGrade().intValue() < childUser.getGrade().intValue()) {
                 logger.error("--------------------中断级差---------------");
                 //中断级差
-                return;
+                break;
             }
             //上下级平级且等级都超过二星
             if (parentUser.getGrade().intValue() > GradeType.GRADE1.getCode().intValue() && parentUser.getGrade().intValue() == childUser.getGrade().intValue()) {

@@ -18,4 +18,6 @@ public interface UserSignService extends CommonService<UserSign> {
 
     Double readSumFrozenCount(String userId);
 
+    Boolean  splitSign(String id,Double availableAmt);
+
 }
