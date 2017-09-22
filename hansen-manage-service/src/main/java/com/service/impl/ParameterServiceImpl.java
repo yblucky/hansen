@@ -118,7 +118,7 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
     @Override
     public Double getScale(String key) {
         Map<String, Object> map = this.getScale();
-        if (ToolUtil.isNotEmpty(key)) {
+        if (ToolUtil.isEmpty(key)) {
             if (map.containsKey(key)) {
                 return (Double) map.get(key);
             }
