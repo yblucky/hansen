@@ -116,7 +116,6 @@ public class ParameterServiceImpl extends CommonServiceImpl<Parameter> implement
             map.put(Constant.RMB_CONVERT_PAY_SCALE, payScale);
             map.put(Constant.RMB_CONVERT_TRADE_SCALE, tradeScale);
             map.put(Constant.RMB_CONVERT_EQUITY_SCALE, equityScale);
-            return map;
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("从系统参数表查询汇率出错");
